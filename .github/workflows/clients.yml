@@ -3,6 +3,23 @@ on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
 jobs:
+  release:
+    name: Detect a new NuGet version
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.version.outputs.changed }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - id: version
+        run: python scripts/nuget/publish.py plan
   clients:
     runs-on: windows-latest
     steps:
@@ -32,6 +49,8 @@ jobs:
       - name: .NET tests
         shell: pwsh
         run: ./scripts/Test-PortalClients.ps1
+      - name: NuGet publishing safeguards
+        run: python -m unittest discover -s scripts/nuget -p "test_*.py" -v
       - name: Generated clients
         run: |
           python scripts/Generate-PortalScriptClients.py --check
@@ -48,3 +67,59 @@ jobs:
           pnpm test
       - name: PHP tests
         run: python scripts/Test-PhpClients.py
+
+  publish:
+    name: Publish new Portal NuGet version
+    needs: [clients, release]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.release.outputs.changed == 'true'
+    runs-on: windows-latest
+    timeout-minutes: 20
+    concurrency:
+      group: portal-nuget-${{ needs.release.outputs.version }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      NUGET_USER: ${{ vars.NUGET_USER }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.201
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build the versioned package
+        shell: pwsh
+        run: |
+          dotnet restore Kombine.Flex.Portal.Client --locked-mode
+          if ($LASTEXITCODE) { throw 'Client restore failed.' }
+          dotnet pack Kombine.Flex.Portal.Client -c Release --no-restore -o artifacts/packages --nologo
+          if ($LASTEXITCODE) { throw 'Client packaging failed.' }
+          ./scripts/Test-PortalClientPackage.ps1
+      - name: Preserve the tested package
+        uses: actions/upload-artifact@v4
+        with:
+          name: portal-nuget-${{ needs.release.outputs.version }}
+          path: artifacts/packages/*.nupkg
+          if-no-files-found: error
+      - name: Check package identity and existing version
+        id: package
+        run: python scripts/nuget/publish.py preflight
+      - name: Request a temporary nuget.org publishing key
+        if: steps.package.outputs.needs_publish == 'true'
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1
+        id: nuget
+        with:
+          user: ${{ vars.NUGET_USER }}
+      - name: Publish and verify the package
+        env:
+          NUGET_API_KEY: ${{ steps.nuget.outputs.NUGET_API_KEY }}
+        run: python scripts/nuget/publish.py publish
