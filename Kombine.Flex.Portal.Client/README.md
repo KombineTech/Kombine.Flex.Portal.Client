@@ -1,3 +1,7 @@
+Version 0.3.3 uses the [official Kombine logo](https://static.kombine.services/kombinelogotext1/black.svg), preserved as logo.svg and rendered to icon.png for NuGet. API contracts and client behavior are unchanged.
+
+Version 0.3.2 adds the official Kombine logo, publisher metadata and company contact information. API contracts and client behavior are unchanged.
+
 Version 0.3.1 synchronizes GetBankUserBalances documentation with its 20-second database deadline. Request and response fields are unchanged. Allow extra time for transport and authorization; HTTP 503 still returns no partial balances.
 
 Version 0.2.5 adds optional latestPostingMs2000 and hasActiveSubscription fields to GetBankUserBalances. The posting time is a 64-bit UTC millisecond count since 2000-01-01; zero means no postings. Null or an absent field means unknown, and missing or hidden residents return null. Subscription status is not payment confirmation. Keep existing balance handling and permissions; see /docs#user-balances.
@@ -103,9 +107,21 @@ To configure timeouts/proxies, inject a dedicated `HttpClient` with a fixed `Bas
 ```powershell
 dotnet pack Kombine.Flex.Portal.Client -c Release -o artifacts/packages
 dotnet nuget add source <local-package-directory> --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.3.1
+dotnet add package Kombine.Flex.Portal.Client --version 0.3.3
 ```
 
-Production releases publish this package to [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). After publication, install with `dotnet add package Kombine.Flex.Portal.Client --version 0.3.1 --source https://api.nuget.org/v3/index.json`. For a beta version not yet listed there, use the reviewed `.nupkg` from your API documentation in a local NuGet source as shown above. `OpenApi/portal.openapi.json` is the source snapshot. Run `pwsh -File scripts/Update-PortalClient.ps1` to regenerate; optionally add `-ApiBaseUrl https://localhost:7241/` to first refresh both public Swagger documents. Review the generated changes and run `scripts/Test-PortalClients.ps1` before packing. NSwag 14.7.1 is a pinned development tool, not a package dependency. Generated code is checked in: consumer builds need neither NSwag, a running API nor private feeds.
+Production releases publish this package to [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). After publication, install with `dotnet add package Kombine.Flex.Portal.Client --version 0.3.3 --source https://api.nuget.org/v3/index.json`. For a beta version not yet listed there, use the reviewed `.nupkg` from your API documentation in a local NuGet source as shown above. `OpenApi/portal.openapi.json` is the source snapshot. Run `pwsh -File scripts/Update-PortalClient.ps1` to regenerate; optionally add `-ApiBaseUrl https://localhost:7241/` to first refresh both public Swagger documents. Review the generated changes and run `scripts/Test-PortalClients.ps1` before packing. NSwag 14.7.1 is a pinned development tool, not a package dependency. Generated code is checked in: consumer builds need neither NSwag, a running API nor private feeds.
 
 `scripts/Test-PortalClients.ps1` runs client and sample-app tests, builds the package and invokes `scripts/Test-PortalClientPackage.ps1`. The latter verifies all three package assets and dependency groups, then repeats the client contract/session/error tests in a separate NuGet-only consumer with a fresh package cache. No API/server projects or private package feeds are referenced; tests use synthetic data only.
+
+## Publisher and support
+
+![Kombine](icon.png)
+
+**Kombine Technology ApS**  
+Finlandsvej 61 st. th.  
+DK-7100 Vejle, Denmark  
+CVR: 44637928  
++45 76 43 70 20  
+[support@kombinetech.com](mailto:support@kombinetech.com)  
+[kombinetech.com](https://kombinetech.com/)
