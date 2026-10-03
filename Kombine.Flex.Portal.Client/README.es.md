@@ -1,3 +1,7 @@
+La versión 0.3.3 utiliza el [logotipo oficial de Kombine](https://static.kombine.services/kombinelogotext1/black.svg), conservado como logo.svg y convertido a icon.png para NuGet. Los contratos API y el comportamiento del cliente no cambian.
+
+La versión 0.3.2 añade el logotipo oficial de Kombine, los metadatos del editor y los datos de contacto de la empresa. Los contratos API y el comportamiento del cliente no cambian.
+
 La versión 0.3.1 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales.
 
 La versión 0.2.5 añade los campos opcionales latestPostingMs2000 y hasActiveSubscription a GetBankUserBalances. La fecha del asiento es un entero de 64 bits en milisegundos UTC desde 2000-01-01; cero indica que no hay asientos. Null o un campo ausente significa desconocido; los residentes inexistentes u ocultos devuelven null. El estado de suscripción no confirma un pago. Mantenga el tratamiento de saldos y los permisos existentes; consulte /docs#user-balances.
@@ -22,11 +26,11 @@ La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Amba
 
 ## Instalación y plataformas
 
-Las versiones de producción se publican en [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Instale una versión publicada con el comando siguiente y nuget.org como fuente. Si una versión beta aún no está disponible allí, añada el archivo revisado Kombine.Flex.Portal.Client.0.3.1.nupkg de la documentación API a una fuente NuGet local.
+Las versiones de producción se publican en [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Instale una versión publicada con el comando siguiente y nuget.org como fuente. Si una versión beta aún no está disponible allí, añada el archivo revisado Kombine.Flex.Portal.Client.0.3.3.nupkg de la documentación API a una fuente NuGet local.
 
 ```powershell
 dotnet nuget add source ./packages --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.3.1
+dotnet add package Kombine.Flex.Portal.Client --version 0.3.3
 ```
 
 .NET Framework 4.7.2/4.8/4.8.1 usa netstandard2.0 con Microsoft System.Text.Json 10.0.12 y sus dependencias. .NET 8/9 usa net8.0; .NET 10 usa net10.0 sin paquetes adicionales. Mantenga nuget.org o un mirror aprobado para dependencias Microsoft. Framework puede necesitar binding redirects automáticos y System.Net.Http al inyectar HttpClient. Las pruebas Framework compilan contra 4.7.2/4.8 y se ejecutan en 4.8.1 instalado; no se ha probado una instalación original de 4.7.2.
@@ -61,3 +65,15 @@ Las descargas son streams que deben cerrarse con using/Dispose. El constructor U
 ## Mantenimiento
 
 scripts/Update-PortalClient.ps1 regenera desde OpenAPI con la versión fijada de NSwag. El código generado se incluye; el consumidor no necesita generadores ni feeds privados. scripts/Test-PortalClients.ps1 prueba los clientes y aplicaciones, crea el paquete y lo verifica en un consumidor NuGet independiente con caché nueva y datos sintéticos. Consulte la referencia inglesa para más detalles.
+
+## Editor y soporte
+
+![Kombine](icon.png)
+
+**Kombine Technology ApS**  
+Finlandsvej 61 st. th.  
+DK-7100 Vejle, Dinamarca  
+CVR: 44637928  
++45 76 43 70 20  
+[support@kombinetech.com](mailto:support@kombinetech.com)  
+[kombinetech.com](https://kombinetech.com/)
