@@ -44,11 +44,40 @@ refresh its snapshot using `-ApiBaseUrl https://api.example.invalid/`.
 generate script clients; both accept `--check`. PHP has its own snapshot in
 `Kombine.Flex.Portal.Client.Php/OpenApi`.
 
-Client releases are prepared with the Portal beta release. Existing downloadable
-archives remain served by the API; moving source does not publish new packages.
+The .NET NuGet client is published automatically when a push to `main` increases
+`Version` in `Kombine.Flex.Portal.Client/Kombine.Flex.Portal.Client.csproj`.
+Use a stable `major.minor.patch` version, for example `0.3.1` → `0.3.2`.
+All client checks and independent package-consumer tests must pass first.
+Commits with the same version, pull requests, branches and tags never publish.
+Decreasing the version fails validation. An existing version is accepted only
+when its contents match exactly (excluding NuGet's added signature).
+
+Publication is independent of Portal deployment. Existing downloadable archives
+remain served by the API; update its pinned SDK revision, archives and manifests
+during server release preparation. No other package variants are auto-published.
 Increment every changed package version before packaging, including documentation
 changes. The migration corrects the PHP operation inventory's snapshot checksum;
 its next package therefore needs a version newer than 0.3.1.
+
+### One-time nuget.org setup
+
+Configure [Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing)
+using the NuGet account authorized to publish this package:
+
+- Repository owner: `KombineTech`
+- Repository: `Kombine.Flex.Portal.Client`
+- Workflow file: `clients.yml`
+- Environment: leave empty (this workflow does not use a GitHub environment)
+- Package pattern: exactly `Kombine.Flex.Portal.Client`, allowing new packages/versions
+- Set the GitHub repository variable `NUGET_USER` to the account's NuGet profile
+  name, not its email address. No long-lived API key is stored in GitHub.
+
+The existing `0.3.1` version is not released merely by enabling this workflow.
+Merge a version increase into `main` when ready to release. If authorization,
+upload or NuGet validation fails, fix the cause and rerun the original failed
+workflow. Its original before/after commits and version are retained; do not bump
+the version just to retry the same package. The workflow retains the tested
+`.nupkg` artifact and verifies the public package after upload.
 
 See the [API integration guide](https://api.team.kombine.technology/docs) and
 [API changelog](https://api.team.kombine.technology/docs#changelog) for released
