@@ -1,0 +1,50 @@
+name: Client checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  clients:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.201
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: curl
+          coverage: none
+      - name: .NET tests
+        shell: pwsh
+        run: ./scripts/Test-PortalClients.ps1
+      - name: Generated clients
+        run: |
+          python scripts/Generate-PortalScriptClients.py --check
+          python scripts/Generate-PhpClients.py --check
+      - name: Python tests
+        working-directory: Kombine.Flex.Portal.Client.Python
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -v
+      - name: JavaScript and TypeScript tests
+        working-directory: Kombine.Flex.Portal.Client.JavaScript
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm test
+      - name: PHP tests
+        run: python scripts/Test-PhpClients.py

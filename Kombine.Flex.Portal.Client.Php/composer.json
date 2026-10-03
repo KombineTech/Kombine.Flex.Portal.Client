@@ -1,0 +1,18 @@
+{
+  "name": "kombine/flex-portal-client",
+  "description": "Standalone HTTPS/JSON client for Kombine Flex Portal.",
+  "type": "library",
+  "version": "0.3.1",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.2",
+    "php-64bit": "^8.2",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  }
+}

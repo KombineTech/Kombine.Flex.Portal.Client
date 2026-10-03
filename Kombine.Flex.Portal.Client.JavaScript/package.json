@@ -1,0 +1,19 @@
+{
+  "name": "@kombine/flex-portal-client",
+  "version": "0.3.1",
+  "description": "Typed, dependency-free HTTPS client for the public Kombine Flex Portal API",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist", "README.md", "README.da.md", "README.es.md", "OPERATIONS.md"],
+  "sideEffects": false,
+  "engines": { "node": ">=22" },
+  "author": "Kombine Technology ApS",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "pnpm run build && tsc -p tests/tsconfig.json && node --test tests/*.test.mjs",
+    "prepack": "pnpm run build"
+  },
+  "devDependencies": { "typescript": "7.0.2" }
+}

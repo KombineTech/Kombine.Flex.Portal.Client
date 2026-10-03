@@ -1,0 +1,3 @@
+include OPERATIONS.md
+include README.md README.da.md README.es.md
+recursive-include tests *.py *.json

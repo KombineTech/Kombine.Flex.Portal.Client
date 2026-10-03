@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kombine-flex-portal-client"
+version = "0.3.1"
+description = "Typed, dependency-free HTTPS client for the Kombine Flex Portal API"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{name = "Kombine Technology ApS"}]
+dependencies = []
+classifiers = ["Programming Language :: Python :: 3", "Operating System :: OS Independent", "Typing :: Typed"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+kombine_flex_portal = ["py.typed", "_contract.json"]
+
+[tool.setuptools.data-files]
+"share/doc/kombine-flex-portal-client" = ["README.md", "README.da.md", "README.es.md", "OPERATIONS.md"]

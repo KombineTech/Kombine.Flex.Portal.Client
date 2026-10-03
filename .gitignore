@@ -427,3 +427,10 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+/artifacts/
+**/node_modules/
+**/dist/
+**/__pycache__/
+**/*.egg-info/
+**/build/

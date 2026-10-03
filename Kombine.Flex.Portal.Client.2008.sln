@@ -1,0 +1,25 @@
+﻿Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kombine.Flex.Portal.Client.Net20", "Kombine.Flex.Portal.Client.Net20\Kombine.Flex.Portal.Client.Net20.csproj", "{1CD011A7-3845-43F8-B63F-6E7616D9732B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kombine.Flex.Portal.Client.Net20.Tests", "tests\Kombine.Flex.Portal.Client.Net20.Tests\Kombine.Flex.Portal.Client.Net20.Tests.csproj", "{E449E32D-781B-472E-A14F-97B7B153640F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CD011A7-3845-43F8-B63F-6E7616D9732B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CD011A7-3845-43F8-B63F-6E7616D9732B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CD011A7-3845-43F8-B63F-6E7616D9732B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CD011A7-3845-43F8-B63F-6E7616D9732B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E449E32D-781B-472E-A14F-97B7B153640F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E449E32D-781B-472E-A14F-97B7B153640F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E449E32D-781B-472E-A14F-97B7B153640F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E449E32D-781B-472E-A14F-97B7B153640F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

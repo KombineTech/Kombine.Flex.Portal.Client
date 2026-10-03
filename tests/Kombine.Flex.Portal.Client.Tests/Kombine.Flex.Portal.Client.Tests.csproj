@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net472;net48;net8.0;net9.0;net10.0</TargetFrameworks><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>12.0</LangVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <IsPackable>false</IsPackable><IsTestProject>true</IsTestProject>
+    <RestoreConfigFile>$(MSBuildThisFileDirectory)..\..\NuGet.Client.Config</RestoreConfigFile>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <Authors>Codex - prompted by Jens Aage Arendt</Authors><Company>Kombine Technology ApS</Company>
+    <Copyright>Kombine Technology ApS</Copyright><Description>Automated tests for the Flex Portal Client project.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0"><PrivateAssets>all</PrivateAssets></PackageReference>
+    <Using Include="Xunit" />
+    <ProjectReference Include="../../Kombine.Flex.Portal.Client/Kombine.Flex.Portal.Client.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup><None Include="../../Kombine.Flex.Portal.Client/OpenApi/portal.openapi.json" Link="portal.openapi.json" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
+</Project>

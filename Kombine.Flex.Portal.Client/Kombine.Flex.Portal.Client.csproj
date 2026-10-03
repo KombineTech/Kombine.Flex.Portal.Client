@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
+    <LangVersion>12.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <RestoreConfigFile>$(MSBuildThisFileDirectory)..\NuGet.Client.Config</RestoreConfigFile>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.3.1</Version>
+    <IsPackable>true</IsPackable><PackageReadmeFile>README.md</PackageReadmeFile>
+    <Authors>Codex - prompted by Jens Aage Arendt</Authors><Company>Kombine Technology ApS</Company>
+    <Copyright>Kombine Technology ApS</Copyright>
+    <Description>Typed HTTPS client for all public Flex Portal integration APIs, with no dependencies on Kombine libraries.</Description>
+    <PackageTags>Flex;Portal;API;Client</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="README.md;README.da.md;README.es.md" Pack="true" PackagePath="/" />
+    <None Include="OPERATIONS.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Text.Json" Version="10.0.12" />
+  </ItemGroup>
+</Project>

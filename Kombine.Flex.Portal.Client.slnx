@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Kombine.Flex.Portal.Client/Kombine.Flex.Portal.Client.csproj" />
+  <Project Path="tests/Kombine.Flex.Portal.Client.Tests/Kombine.Flex.Portal.Client.Tests.csproj" />
+</Solution>

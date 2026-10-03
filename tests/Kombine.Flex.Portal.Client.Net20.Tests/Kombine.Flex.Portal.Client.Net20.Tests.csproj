@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion><SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E449E32D-781B-472E-A14F-97B7B153640F}</ProjectGuid><OutputType>Exe</OutputType>
+    <RootNamespace>Kombine.Flex.Portal.Client.Net20.Tests</RootNamespace><AssemblyName>Kombine.Flex.Portal.Client.Net20.Tests</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion><LangVersion>ISO-2</LangVersion>
+    <FileAlignment>512</FileAlignment><WarningLevel>4</WarningLevel><TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Authors>Codex - prompted by Jens Aage Arendt</Authors><Company>Kombine Technology ApS</Company>
+    <Copyright>Kombine Technology ApS</Copyright><Description>Standalone .NET Framework 2.0 HTTPS client for the Flex Portal API.</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols><DebugType>full</DebugType><Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath><DefineConstants>DEBUG;TRACE</DefineConstants>
+    
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType><Optimize>true</Optimize><OutputPath>bin\Release\</OutputPath><DefineConstants>TRACE</DefineConstants>
+    
+  </PropertyGroup>
+  <ItemGroup><Reference Include="System" /></ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <None Include="ContractCases.tsv"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="App.config" />
+    <ProjectReference Include="..\..\Kombine.Flex.Portal.Client.Net20\Kombine.Flex.Portal.Client.Net20.csproj">
+      <Project>{1CD011A7-3845-43F8-B63F-6E7616D9732B}</Project><Name>Kombine.Flex.Portal.Client.Net20</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

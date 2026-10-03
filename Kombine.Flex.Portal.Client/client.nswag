@@ -1,0 +1,31 @@
+{
+  "runtime": "Net100",
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "OpenApi/portal.openapi.json"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "PortalApiClient",
+      "namespace": "Kombine.Flex.Portal.Client",
+      "operationGenerationMode": "SingleClientFromOperationId",
+      "jsonLibrary": "SystemTextJson",
+      "generateClientInterfaces": true,
+      "generateOptionalParameters": true,
+      "generateNullableReferenceTypes": true,
+      "generateOptionalPropertiesAsNullable": true,
+      "generateDataAnnotations": false,
+      "useBaseUrl": false,
+      "generateBaseUrlProperty": false,
+      "injectHttpClient": true,
+      "disposeHttpClient": false,
+      "generateExceptionClasses": false,
+      "exceptionClass": "PortalApiException",
+      "dateType": "System.DateTimeOffset",
+      "dateTimeType": "System.DateTimeOffset",
+      "parameterDateTimeFormat": "O",
+      "output": "Generated/PortalApiClient.g.cs"
+    }
+  }
+}
