@@ -54,6 +54,8 @@
 | `GetKombineTextSized` | GET | `/api/v1/logos/kombine-text/{color}/{width}.svg` |
 | `GetKombineTextWithBackground` | GET | `/api/v1/logos/kombine-text/{color}/{background}/{width}.svg` |
 | `GetKombineText` | GET | `/api/v1/logos/kombine-text/{color}.svg` |
+| `GetLinearGradientSized` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` |
+| `GetLinearGradient` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` |
 | `GetLiveLogs` | GET | `/api/v1/diagnostics/live-logs` |
 | `GetLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` |
 | `GetLocationIcons` | GET | `/api/v1/locations/icons` |

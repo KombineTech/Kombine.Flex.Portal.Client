@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `f176ab6fb43fb15b2cf00ff49c4fac19d1006b4ba77a7a507517874ef1802a13`).
-110 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `ea58f5968e327b3714708b395c474aa3f661f1ed309caf6553c57343907a537f`).
+112 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -57,6 +57,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `f176ab6fb43fb15b2cf
 | `getKombineTextSized` | `GetKombineTextSized` | GET | `/api/v1/logos/kombine-text/{color}/{width}.svg` | Anonymous |
 | `getKombineTextWithBackground` | `GetKombineTextWithBackground` | GET | `/api/v1/logos/kombine-text/{color}/{background}/{width}.svg` | Anonymous |
 | `getKombineText` | `GetKombineText` | GET | `/api/v1/logos/kombine-text/{color}.svg` | Anonymous |
+| `getLinearGradientSized` | `GetLinearGradientSized` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` | Anonymous |
+| `getLinearGradient` | `GetLinearGradient` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` | Anonymous |
 | `getLiveLogs` | `GetLiveLogs` | GET | `/api/v1/diagnostics/live-logs` | Bearer |
 | `getLocationBookingRules` | `GetLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` | Bearer |
 | `getLocationIcons` | `GetLocationIcons` | GET | `/api/v1/locations/icons` | Bearer |

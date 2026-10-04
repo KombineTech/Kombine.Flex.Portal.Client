@@ -90,6 +90,8 @@ GetCircleProgress	GET	/api/v1/circles/progress/{background}/{colors}/{percent}.s
 GetCircleProgressSized	GET	/api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg	200	{}
 GetCircleRunning	GET	/api/v1/circles/running/{color}.svg	200	{}
 GetCircleRunningSized	GET	/api/v1/circles/running/{color}/{width}x{height}.svg	200	{}
+GetLinearGradient	GET	/api/v1/gradients/linear/{colors}/{angle}.svg	200	{}
+GetLinearGradientSized	GET	/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg	200	{}
 GetIconPresentation	GET	/api/v1/icon/presentation	200	{}
 GetIconAssetCatalog	GET	/api/v1/icon/catalog/{iconSet}	200	[]
 GetIconFromSet	GET	/api/v1/icon/{iconSet}/{kid}.{format}	200	{}

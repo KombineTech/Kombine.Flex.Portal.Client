@@ -56,6 +56,8 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetKombineTextAsync` | GET | `/api/v1/logos/kombine-text/{color}.svg` |
 | `GetKombineTextSizedAsync` | GET | `/api/v1/logos/kombine-text/{color}/{width}.svg` |
 | `GetKombineTextWithBackgroundAsync` | GET | `/api/v1/logos/kombine-text/{color}/{background}/{width}.svg` |
+| `GetLinearGradientAsync` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` |
+| `GetLinearGradientSizedAsync` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` |
 | `GetLiveLogsAsync` | GET | `/api/v1/diagnostics/live-logs` |
 | `GetLocationBookingRulesAsync` | GET | `/api/v1/locations/{locationKid}/booking-rules` |
 | `GetLocationIconsAsync` | GET | `/api/v1/locations/icons` |

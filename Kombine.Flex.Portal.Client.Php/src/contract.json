@@ -7347,6 +7347,90 @@
       },
       "binary": true
     },
+    "GetLinearGradient": {
+      "method": "GET",
+      "path": "api/v1/gradients/linear/{colors}/{angle}.svg",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "colors",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "angle",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
+    "GetLinearGradientSized": {
+      "method": "GET",
+      "path": "api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "colors",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "angle",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        {
+          "name": "width",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "height",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
     "GetIconPresentation": {
       "method": "GET",
       "path": "api/v1/icon/presentation",

@@ -2369,6 +2369,38 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Renders a linear gradient at 200 × 200 pixels.
+        /// </summary>
+        /// <remarks>
+        /// Public presentation only; no login, KID, permissions or database access.
+        /// <br/>Colors: 2–4 hyphen-separated 3/6-digit RGB hex values without #, exact eColor names,
+        /// <br/>standard named colors or transparent (case-insensitive), evenly spaced.
+        /// <br/>Angle: finite degrees, clockwise from left-to-right (0); 90 is top-to-bottom,
+        /// <br/>180 right-to-left, 270 bottom-to-top. Decimal angles use a dot; negative angles and full turns normalize modulo 360.
+        /// <br/>Pure SVG covering the full canvas; no raster formats, scripts or external assets.
+        /// <br/>Invalid parameters return 400 with invalid-gradient-parameters; malformed numbers use validation ProblemDetails.
+        /// <br/>Private disk cache: 24 hours, up to 512 files/32 MiB; cache I/O failure falls back to rendering.
+        /// <br/>Public HTTP cache: 600 seconds; ETag/If-None-Match supports 304. On 429 retry with backoff.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetLinearGradientAsync(string colors, double angle, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Renders a linear gradient at a selected width and height.
+        /// </summary>
+        /// <remarks>
+        /// Same colors, angle, public access, errors and cache as GetLinearGradient.
+        /// <br/>            Width/height: 16–4096 pixels each. The gradient spans the full rectangle and retains its angle at the requested dimensions.
+        /// <br/>            All inputs are path segments. Example: /api/v1/gradients/linear/22aa88-ffcc33/45/800x400.svg.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetLinearGradientSizedAsync(string colors, double angle, int width, int height, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Resolve an IconKid, optionally changing its text, count or RGB colour.
         /// </summary>
         /// <remarks>
@@ -15969,6 +16001,248 @@ namespace Kombine.Flex.Portal.Client
                     // Operation Path: "api/v1/circles/running/{color}/{width}x{height}.svg"
                     urlBuilder_.Append("api/v1/circles/running/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(color, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(width, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('x');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(height, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(".svg");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 304)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Not Modified", status_, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Renders a linear gradient at 200 × 200 pixels.
+        /// </summary>
+        /// <remarks>
+        /// Public presentation only; no login, KID, permissions or database access.
+        /// <br/>Colors: 2–4 hyphen-separated 3/6-digit RGB hex values without #, exact eColor names,
+        /// <br/>standard named colors or transparent (case-insensitive), evenly spaced.
+        /// <br/>Angle: finite degrees, clockwise from left-to-right (0); 90 is top-to-bottom,
+        /// <br/>180 right-to-left, 270 bottom-to-top. Decimal angles use a dot; negative angles and full turns normalize modulo 360.
+        /// <br/>Pure SVG covering the full canvas; no raster formats, scripts or external assets.
+        /// <br/>Invalid parameters return 400 with invalid-gradient-parameters; malformed numbers use validation ProblemDetails.
+        /// <br/>Private disk cache: 24 hours, up to 512 files/32 MiB; cache I/O failure falls back to rendering.
+        /// <br/>Public HTTP cache: 600 seconds; ETag/If-None-Match supports 304. On 429 retry with backoff.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetLinearGradientAsync(string colors, double angle, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (colors == null)
+                throw new System.ArgumentNullException("colors");
+
+            if (angle == null)
+                throw new System.ArgumentNullException("angle");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("image/svg+xml"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/gradients/linear/{colors}/{angle}.svg"
+                    urlBuilder_.Append("api/v1/gradients/linear/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(colors, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(angle, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(".svg");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 304)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Not Modified", status_, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Renders a linear gradient at a selected width and height.
+        /// </summary>
+        /// <remarks>
+        /// Same colors, angle, public access, errors and cache as GetLinearGradient.
+        /// <br/>            Width/height: 16–4096 pixels each. The gradient spans the full rectangle and retains its angle at the requested dimensions.
+        /// <br/>            All inputs are path segments. Example: /api/v1/gradients/linear/22aa88-ffcc33/45/800x400.svg.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetLinearGradientSizedAsync(string colors, double angle, int width, int height, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (colors == null)
+                throw new System.ArgumentNullException("colors");
+
+            if (angle == null)
+                throw new System.ArgumentNullException("angle");
+
+            if (width == null)
+                throw new System.ArgumentNullException("width");
+
+            if (height == null)
+                throw new System.ArgumentNullException("height");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("image/svg+xml"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg"
+                    urlBuilder_.Append("api/v1/gradients/linear/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(colors, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(angle, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(width, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('x');
