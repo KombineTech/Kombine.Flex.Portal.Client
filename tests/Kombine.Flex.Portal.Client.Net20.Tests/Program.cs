@@ -29,7 +29,7 @@ internal static class Program
             Contracts();
             JsonRoundTripAndTyping(); ReceiptPaging();
             MalformedJson();
-            LoginAndSessionIsolation();
+            LoginAndSessionIsolation(); _assertions += SessionChecks.Run();
             LogoutDuringLogin();
             InvalidSessions();
             ErrorsAndBoundedResponses();

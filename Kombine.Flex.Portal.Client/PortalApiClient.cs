@@ -10,12 +10,25 @@ public partial class PortalApiClient : IDisposable
     private string? _accessToken;
     private int _sessionVersion;
     private readonly object _sessionLock = new();
+    private PortalSession? _managedSession;
 
     /// <summary>Creates a client with its own transport, with cookies and redirects disabled.</summary>
     public PortalApiClient(Uri apiBaseUri) : this(CreateTransport(apiBaseUri)) => _ownsHttpClient = true;
 
+    /// <summary>Creates a client that obtains/renews its token on each use through a shared session. Disposing it does not log out that session.</summary>
+    public PortalApiClient(PortalSession session) : this(session?.Endpoint ?? throw new ArgumentNullException(nameof(session))) => AttachSession(session);
+
+    internal void AttachSession(PortalSession session)
+    {
+        if (session.Endpoint != Endpoint) throw new ArgumentException("The session endpoint cannot change.", nameof(session));
+        _managedSession = session;
+    }
+
     /// <summary>The fixed endpoint to which this instance sends requests.</summary>
     public Uri Endpoint => _endpoint;
+
+    /// <summary>Optional client address forwarded by a trusted portal server for login diagnostics. Never used for authorization.</summary>
+    public string? LoginClientAddress { get; set; }
 
     /// <summary>Opaque bearer token for this endpoint only. Never put it in URLs or logs.</summary>
     public string? AccessToken
@@ -28,6 +41,7 @@ public partial class PortalApiClient : IDisposable
             lock (_sessionLock)
             {
                 _sessionVersion++;
+                _managedSession = null;
                 Volatile.Write(ref _accessToken, value);
             }
         }
@@ -46,7 +60,7 @@ public partial class PortalApiClient : IDisposable
             ClearSession();
             version = _sessionVersion;
         }
-        var session = await LoginManagerAsync(body: new ManagerLoginRequest { Email = email, Password = password }, cancellationToken: cancellationToken).ConfigureAwait(false);
+        var session = await LoginManagerAsync(x_Portal_Login_Client_IP: LoginClientAddress, body: new ManagerLoginRequest { Email = email, Password = password }, cancellationToken: cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
         if (!string.Equals(session.TokenType, "Bearer", StringComparison.OrdinalIgnoreCase)
             || string.IsNullOrWhiteSpace(session.AccessToken) || session.AccessToken.Any(char.IsWhiteSpace)

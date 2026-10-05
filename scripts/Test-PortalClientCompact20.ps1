@@ -11,7 +11,7 @@ try {
     & './tests/Kombine.Flex.Portal.Client.Compact20.Tests/bin/Desktop/Release/Kombine.Flex.Portal.Client.Compact20.Tests.exe'
     if ($LASTEXITCODE) { throw 'Desktop-hosted Compact client checks failed.' }
 
-    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Compact20.0.4.1.zip'
+    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Compact20.0.4.2.zip'
     $null = New-Item -ItemType Directory -Force (Split-Path $output)
     $stream = [IO.File]::Open($output, [IO.FileMode]::Create)
     $archive = [IO.Compression.ZipArchive]::new($stream, [IO.Compression.ZipArchiveMode]::Create)
@@ -32,6 +32,8 @@ try {
             Add-PackageFile (Join-Path $device $file) "DeviceTests/$file"
         }
         Add-PackageFile (Join-Path $root 'Kombine.Flex.Portal.Client.Compact2008.sln') 'Source/Kombine.Flex.Portal.Client.Compact2008.sln'
+        Add-PackageFile (Join-Path $root 'Shared/LegacyPortalSession.cs') 'Source/Shared/LegacyPortalSession.cs'
+        Add-PackageFile (Join-Path $root 'tests/Shared/SessionChecks.cs') 'Source/tests/Shared/SessionChecks.cs'
         foreach ($relative in @('Kombine.Flex.Portal.Client.Compact20', 'tests/Kombine.Flex.Portal.Client.Compact20.Tests')) {
             Get-ChildItem (Join-Path $root $relative) -Recurse -File | Where-Object {
                 $_.FullName -notmatch '[\\/](bin|obj)[\\/]' -and $_.Extension -notin @('.user', '.suo')
