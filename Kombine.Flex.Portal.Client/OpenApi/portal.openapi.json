@@ -1591,7 +1591,7 @@
           "Assistant"
         ],
         "summary": "Ask the portal assistant to discover and combine approved read operations.",
-        "description": "Sends the question, supplied visible history and relevant authorized API results to OpenAI.\r\nWith Logz.io shipping enabled, the current question text is logged once after session revalidation,\r\nbefore model use. History, answers and bearer credentials are not included in this log event.\r\nRequires server-side configuration. The current manager session is revalidated before model use;\r\neach business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.\r\nquestion: 1–2000 characters. history: at most 12 user/assistant messages, 8000 characters each,\r\n20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects\r\nthe default answer language. Response answer is plain text. operations lists attempted business reads;\r\nlinks contains up to 20 bank/location links derived from successful authorized results.\r\nAt most 8 reads, pages capped at 50, 48000 bytes per result and 120 seconds per question.\r\nAvailable reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,\r\nGetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not\r\nbe interpreted as empty/healthy data. Generated answers can be wrong; verify the underlying records.\r\nReviewed AGENTS.md instructions and three named skills are packaged with the API. Skill loading uses\r\nthe same model-turn budget and grants no extra permissions. The balance skill explains that balance\r\nand account-transaction reads are not currently in the approved chat catalogue.\r\n400 invalid input; 401 invalid/revoked session; 403 session denied; 429 six questions/minute per manager\r\nor global capacity exhausted; 503 assistant-not-configured/provider unavailable/deadline. Assistant\r\nfailures have a code extension; middleware authentication, validation and throttling retain their normal\r\nerror format. No automatic retries. Responses application-state storage is disabled with store=false.",
+        "description": "Sends the question, supplied visible history and relevant authorized API results to OpenAI.\r\nWith Logz.io shipping enabled, the current question text is logged once after session revalidation,\r\nbefore model use. History, answers and bearer credentials are not included in this log event.\r\nRequires server-side configuration. The current manager session is revalidated before model use;\r\neach business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.\r\nquestion: 1–2000 characters. history: at most 12 user/assistant messages, 8000 characters each,\r\n20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects\r\nthe default answer language. Response answer is plain text. operations lists attempted business reads;\r\nlinks contains up to 20 bank/location links derived from successful authorized results.\r\nEach link includes kid/path, optional name, canonical parent bankKid and ready-to-render iconKid.\r\nThe portal uses this metadata to add the clicked object to the local workspace; access is rechecked on navigation.\r\nAt most 8 reads, pages capped at 50, 48000 bytes per result and 120 seconds per question.\r\nAvailable reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,\r\nGetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not\r\nbe interpreted as empty/healthy data. Generated answers can be wrong; verify the underlying records.\r\nReviewed AGENTS.md instructions and three named skills are packaged with the API. Skill loading uses\r\nthe same model-turn budget and grants no extra permissions. The balance skill explains that balance\r\nand account-transaction reads are not currently in the approved chat catalogue.\r\n400 invalid input; 401 invalid/revoked session; 403 session denied; 429 six questions/minute per manager\r\nor global capacity exhausted; 503 assistant-not-configured/provider unavailable/deadline. Assistant\r\nfailures have a code extension; middleware authentication, validation and throttling retain their normal\r\nerror format. No automatic retries. Responses application-state storage is disabled with store=false.",
         "operationId": "AskPortalAssistant",
         "requestBody": {
           "content": {
@@ -4815,7 +4815,7 @@
                       "enabled": true,
                       "deleted": false,
                       "deletedAt": null,
-                      "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
+                      "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
                     }
                   ],
                   "nextCursor": null
@@ -4978,7 +4978,7 @@
                     "enabled": true,
                     "deleted": false,
                     "deletedAt": null,
-                    "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
+                    "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
                   },
                   "canEditIcon": true,
                   "iconRevision": "5CE7200DE215F47D73E8C782F447813306BD7DD66F0C468AD961D92D0C950FDE",
@@ -5521,7 +5521,7 @@
           "Locations"
         ],
         "summary": "List accessible locations with parent banks, Visma customer numbers and authorized activation codes.",
-        "description": "### Authorization and data\r\nRequires an active manager, Banks2 (5), Bank Read, Location Read and site/bank/location grants.\r\nEvery page rechecks the current bounded manager snapshot. Location-only grants never reveal sibling locations.\r\nReads only the site's Log24; BankId must be at least 1000. Discovery requires Name, Icon, VismaCustNo, Enabled or Deleted.\r\nAn explicit site-wide grant lists all states, including disabled locations and deletions outside RetentionDays.\r\nLimited grants require the location's Enabled value to be exactly 1 (missing/other values are hidden).\r\nFor limited grants, both bank and location deletion follow RetentionDays: zero or an inclusive window ending now;\r\nmissing Deleted means zero, malformed/future values are hidden. All filtering precedes paging.\r\nEnabled is true only for stored 1. Deleted is null when malformed, otherwise indicates a positive MS2000 value.\r\nDeletedAt is the corresponding UTC timestamp, or null for zero, invalid or unrepresentable values.\r\nBankKid and Kid are canonical identifiers. Missing names/VismaCustNo are empty, invalid icons use bank_building/house.\r\nHasAllBanksAccess indicates an explicit site-wide grant. Both activation codes require this grant;\r\nBankActivationCode additionally requires Bank Create and LocationActivationCode requires Location Create.\r\nOtherwise the code is null. A displayed code never grants API permission.\r\n            \r\n### Search, sorting and paging\r\npageSize: 1–100, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,\r\nlocation name or VismaCustNo. Exact canonical/readable/site-relative bank and location KIDs are supported.\r\nComplete bank/location activation codes match only when the caller could view that code; bank codes include tenant,\r\nlocation codes use the trusted site tenant. No cross-tenant reads. Empty filter lists all accessible locations.\r\nsort: name (default, location name), bankName or vismaCustNo (external ID, text order);\r\ndirection: asc (default) or desc. MySQL utf8mb4_general_ci\r\nordering precedes LIMIT; numeric bank/location identities break ties in the same direction.\r\nFollow nextCursor until null; cursors are protected, expire after 15 minutes and are bound to tenant, manager,\r\nresource grants, retention, filter, enabledOnly, sort, direction and page size. Restart without a cursor when these change.\r\nenabledOnly: false by default. When true, exclude locations whose Enabled is not exactly 1 before paging.\r\nThis narrows the authorized view only; deletion/retention rules and activation-code permissions remain unchanged.\r\nConcurrent edits are not a frozen snapshot; renamed rows may move. No count or full catalogue is returned.\r\n            \r\n### Errors\r\n400: invalid-page, invalid-filter, invalid-sort, invalid-cursor. 401: invalid/revoked session.\r\n403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access.\r\n503 locations-unavailable: storage unavailable or the 12-second deadline elapsed. Retry manually. No-store.",
+        "description": "### Authorization and data\r\nRequires an active manager, Banks2 (5), Bank Read, Location Read and site/bank/location grants.\r\nEvery page rechecks the current bounded manager snapshot. Location-only grants never reveal sibling locations.\r\nReads only the site's Log24; BankId must be at least 1000. Discovery requires Name, Icon, VismaCustNo, Enabled or Deleted.\r\nAn explicit site-wide grant lists all states, including disabled locations and deletions outside RetentionDays.\r\nLimited grants require the location's Enabled value to be exactly 1 (missing/other values are hidden).\r\nFor limited grants, both bank and location deletion follow RetentionDays: zero or an inclusive window ending now;\r\nmissing Deleted means zero, malformed/future values are hidden. All filtering precedes paging.\r\nEnabled is true only for stored 1. Deleted is null when malformed, otherwise indicates a positive MS2000 value.\r\nDeletedAt is the corresponding UTC timestamp, or null for zero, invalid or unrepresentable values.\r\nBankKid and Kid are canonical identifiers. Missing names/VismaCustNo are empty, invalid icons use bank_building/house.\r\nHasAllBanksAccess indicates an explicit site-wide grant. Both activation codes require this grant;\r\nBankActivationCode additionally requires Bank Create and LocationActivationCode requires Location Create.\r\nOtherwise the code is null. A displayed code never grants API permission.\r\n            \r\n### Optional columns\r\nfields: comma-separated vismaCustNo, bankActivationCode, locationActivationCode, address, zip, longitude, latitude,\r\nteltonikaSms, alternativeBankName, mask, timeZone, online, lastContactAt.\r\nText filtering also searches all selected stored columns before pagination; unselected extra columns do not match.\r\nDecimal coordinates and gift amounts accept dot/comma; date searches accept ISO or dd.MM.yyyy/dd-MM-yyyy, UTC for contacts.\r\nbankName is an optional selection marker for showing the bank name and bank icon together after the location in the portal. Core bank identity properties remain populated.\r\nBilling fields (also accepted as sort keys): vismaCrAcNo, vismaInvoiceVersion, vismaOrdre, vismaPNTurnover, vismaPNSettlement, vismaSettlement, vismaVAT, vismaServiceKey, vismaStart, vismaNote, hiddenNote, vismaGuaranteeMonth, vismaGuaranteeUnder, vismaGuarantee, vismaGuaranteeCustomer, vismaGuaranteeOver, gift, giftBegin, giftEnd, giftSplit, giftPN.\r\nGiftPN uses legacy location setting 1620 (the shared enum calls this identity DurationIsETA for units).\r\nBilling fields return location-owned stored text; omitted fields are null, selected missing fields are empty.\r\nTeltonikaSms, alternativeBankName, mask and timeZone are location-owned TeltonikaSMS, Bank, Access and TimeZone settings, returned as stored text without inheritance.\r\nMissing selected text is empty; unselected text is null. Preserve mask syntax, phone prefixes and legacy time-zone codes (100 means UTC+1).\r\nOmitted/empty means core identifiers, status, names and icons only; unselected properties are null.\r\nAddress and Zip are location-owned settings without bank fallback. Coordinates are decimal degrees (stored microdegrees / 1,000,000), null when missing/invalid.\r\nOnly selected settings are joined, plus the sort setting and VismaCustNo when required for search. Codes retain all scope/Create checks.\r\nThe response fields array names the requested columns. Keep fields unchanged across cursor requests; order and duplicates do not matter.\r\n            \r\nOnline and LastContactAt read the tenant-bound Alive table only when selected or sorted, for Log24-discovered visible main units (Alive.UnitId = Alive.MainId).\r\nOnline is false if any is offline, true only for a nonempty entirely known-online set, otherwise null.\r\nLastContactAt is the latest MS2000 in (0,now], returned as UTC ISO 8601; absent/invalid contacts are null.\r\nIt means last contact, not last machine run. Deleted units follow RetentionDays; orphan Alive rows do not contribute.\r\n            \r\n### Search, sorting and paging\r\npageSize: 1–100, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,\r\nlocation name or VismaCustNo. Exact canonical/readable/site-relative bank and location KIDs are supported.\r\nComplete bank/location activation codes match only when the caller could view that code; bank codes include tenant,\r\nlocation codes use the trusted site tenant. No cross-tenant reads. Empty filter lists all accessible locations.\r\nsort: name (default), bankName, vismaCustNo, address, zip, longitude, latitude, teltonikaSms,\r\nalternativeBankName, mask, timeZone, online, lastContactAt, bankActivationCode or locationActivationCode;\r\ndirection: asc (default) or desc. MySQL utf8mb4_general_ci\r\ntext ordering precedes LIMIT. Coordinates (validated microdegrees) and legacy timeZone sort numerically;\r\nOnline sorts unknown/offline/online; lastContactAt sorts chronologically; missing/invalid numeric values sort first ascending and last descending. Gift, giftBegin and giftEnd also sort numerically; other settings sort as text.\r\nCodes sort numerically using FlexActivation: stream authorized matching rows and retain at most pageSize+1 candidates.\r\nCode sorts may take longer on large result sets; narrow filter when needed. No full catalogue is retained in memory.\r\nSorting codes requires permission to see that code (otherwise 403 missing-code-access).\r\nNumeric bank/location identities break ties in the same direction for every sort.\r\nFollow nextCursor until null; cursors are protected, expire after 15 minutes and are bound to tenant, manager,\r\nresource grants, retention, filter, enabledOnly, sort, direction and page size. Restart without a cursor when these change.\r\nenabledOnly: false by default. When true, exclude locations whose Enabled is not exactly 1 before paging.\r\nThis narrows the authorized view only; deletion/retention rules and activation-code permissions remain unchanged.\r\nConcurrent edits are not a frozen snapshot; renamed rows may move. No count or full catalogue is returned.\r\n            \r\n### Errors\r\n400: invalid-page, invalid-filter, invalid-sort, invalid-fields, invalid-cursor. 401: invalid/revoked session.\r\n403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access, missing-code-access.\r\n503 locations-unavailable: storage unavailable or the 12-second deadline elapsed. Retry manually. No-store.",
         "operationId": "GetLocations",
         "parameters": [
           {
@@ -5569,6 +5569,13 @@
             "schema": {
               "type": "boolean",
               "default": false
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -8730,7 +8737,7 @@
                       "enabled": true,
                       "deleted": false,
                       "deletedAt": null,
-                      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
+                      "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
                       "retentionDays": 30,
                       "canEditPermissions": true,
                       "canEditTabs": true,
@@ -8976,7 +8983,7 @@
                   "enabled": true,
                   "deleted": false,
                   "deletedAt": null,
-                  "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
+                  "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
                   "retentionDays": 30,
                   "canEditPermissions": true,
                   "canEditTabs": true,
@@ -13291,6 +13298,107 @@
         ]
       }
     },
+    "/api/v1/banks/{bankKid}/users/next-number": {
+      "get": {
+        "tags": [
+          "UserChanges"
+        ],
+        "summary": "Suggest the next resident number from the bank's first NumberFormats entry and stored NumberFormatUserIndex (default 1).",
+        "description": "Requires an active manager, Users2, User Read and Create, and bank-wide scope. Uses FlexOrm conversion, testing up to nine candidates and skipping occupied active numbers. Empty number means no suggestion. Read-only: no reservation or index update. Creation revalidates availability. Errors: 400 invalid bank, 401 session, 403 permission, 503 invalid stored format or unavailable storage.",
+        "operationId": "GetBankUserNumberForNewUser",
+        "parameters": [
+          {
+            "name": "bankKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserNumberSuggestionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserNumberSuggestionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserNumberSuggestionResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/banks/{bankKid}/users/next-number-after": {
+      "get": {
+        "tags": [
+          "UserChanges"
+        ],
+        "summary": "Suggest the next resident number after userNumber using the bank's first NumberFormats entry.",
+        "description": "Same access and non-reserving behavior as GetBankUserNumberForNewUser. userNumber is required and must match the configured segment lengths and ranges; otherwise 400 number-format. Tests up to nine candidates; empty number means no suggestion. Missing format returns an empty number; malformed stored settings return 503.",
+        "operationId": "GetBankNextUserNumber",
+        "parameters": [
+          {
+            "name": "bankKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserNumberSuggestionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserNumberSuggestionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserNumberSuggestionResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/banks/{bankKid}/users/{userKid}/workspace": {
       "get": {
         "tags": [
@@ -13352,7 +13460,7 @@
           "UserChanges"
         ],
         "summary": "Read the resident activation code for printing. Requires bank-wide Users2/User Create.",
-        "description": "### Access\r\n            \r\n- Requires an active manager, **Users2**, **User Read**, **User Create** and a **bank-wide grant**.\r\n- Send canonical bank and resident KIDs belonging to this site and the same bank.\r\n            \r\n### Result\r\n            \r\n- Returns the active resident's activation code, name and number for printing.\r\n- **HTTP 404:** resident missing or deleted.",
+        "description": "### Access\r\n            \r\n- Requires an active manager, **Users2**, **User Read**, **User Create** and a **bank-wide grant**.\r\n- Send canonical bank and resident KIDs belonging to this site and the same bank.\r\n            \r\n### Result\r\n            \r\n- Returns the active resident's activation code, name and number for printing.\r\n- `qrCodeDataV1` contains the tenant URL and a FlexCipherLongs fragment with bank code, user code and UTC seconds since 2000-01-01, matching FlexORM GetQRCodeString.\r\n- `qrCodeDataV2` uses the same URL and timestamp, with a fourth value (random noise, 0–1073741823) and a fifth value: 30-bit checksum = (((bankCode * 31 + userCode) * 31 + seconds) * 31 + noise) modulo 1073741824; reduce inputs modulo 1073741824 before arithmetic to avoid overflow. Decode with FlexCipherLongs.Parse(5, fragment) and verify the checksum. It is error detection, not authentication; existing version 1 consumers must explicitly support version 2.\r\n- Encode the complete string unchanged as a QR code in the client; the API returns no image. Empty means no tenant activation URL is configured.\r\n- Treat both codes as credentials: do not log, cache or send them to external QR services. Reload to obtain a fresh timestamp; validity is determined by the existing activation consumer.\r\n- **HTTP 404:** resident missing or deleted.",
         "operationId": "GetBankUserActivation",
         "parameters": [
           {
@@ -16333,8 +16441,8 @@
                   "amount": 123.45,
                   "currency": "DKK",
                   "lookbackHours": 1,
-                  "sinceUtc": "2026-09-23T09:00:00+00:00",
-                  "measuredAtUtc": "2026-09-23T10:00:00+00:00"
+                  "sinceUtc": "2026-09-23T11:00:00+02:00",
+                  "measuredAtUtc": "2026-09-23T12:00:00+02:00"
                 }
               },
               "text/json": {
@@ -16392,8 +16500,8 @@
                   "tenantKid": "3E7QAo",
                   "count": 12450,
                   "lookbackDays": 100,
-                  "sinceUtc": "2026-06-15T10:00:00+00:00",
-                  "measuredAtUtc": "2026-09-23T10:00:00+00:00"
+                  "sinceUtc": "2026-06-15T12:00:00+02:00",
+                  "measuredAtUtc": "2026-09-23T12:00:00+02:00"
                 }
               },
               "text/json": {
@@ -16747,6 +16855,18 @@
             "nullable": true
           },
           "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconKid": {
             "type": "string",
             "nullable": true
           }
@@ -18043,6 +18163,133 @@
             "format": "date-time",
             "nullable": true
           },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "teltonikaSms": {
+            "type": "string",
+            "nullable": true
+          },
+          "alternativeBankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "mask": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeZone": {
+            "type": "string",
+            "nullable": true
+          },
+          "online": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "lastContactAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "vismaCrAcNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaInvoiceVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaOrdre": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaPNTurnover": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaPNSettlement": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaSettlement": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaVAT": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaServiceKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaStart": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "hiddenNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaGuaranteeMonth": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaGuaranteeUnder": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaGuarantee": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaGuaranteeCustomer": {
+            "type": "string",
+            "nullable": true
+          },
+          "vismaGuaranteeOver": {
+            "type": "string",
+            "nullable": true
+          },
+          "gift": {
+            "type": "string",
+            "nullable": true
+          },
+          "giftBegin": {
+            "type": "string",
+            "nullable": true
+          },
+          "giftEnd": {
+            "type": "string",
+            "nullable": true
+          },
+          "giftSplit": {
+            "type": "string",
+            "nullable": true
+          },
+          "giftPN": {
+            "type": "string",
+            "nullable": true
+          },
           "iconKid": {
             "type": "string",
             "description": "API-computed icon identity; use unchanged in the icon image URL.",
@@ -18073,6 +18320,13 @@
           },
           "hasAllBanksAccess": {
             "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -20300,6 +20554,16 @@
           "activationCode": {
             "type": "string",
             "nullable": true
+          },
+          "qrCodeDataV1": {
+            "type": "string",
+            "description": "Opaque QR payload in the existing FlexORM/FlexCipherLongs format. Empty when the tenant has no activation URL. Render the QR image in the client.",
+            "nullable": true
+          },
+          "qrCodeDataV2": {
+            "type": "string",
+            "description": "Version 2: the same three values, a random 30-bit noise value, and a 30-bit checksum (0–1073741823), (((bankCode * 31 + userCode) * 31 + seconds) * 31 + noise) modulo 1073741824. Decode five values with FlexCipherLongs. Empty when the tenant has no activation URL.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -20528,6 +20792,21 @@
         },
         "additionalProperties": false,
         "description": "A location KID, Access/NoAccess state and eIcon name (default house), cached up to 60 seconds. Location-scoped managers see only their locations."
+      },
+      "UserNumberSuggestionResponse": {
+        "type": "object",
+        "properties": {
+          "bankKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "number": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Non-reserving number suggestion. Number is empty when no configured candidate is available."
       },
       "UserReceipt": {
         "type": "object",

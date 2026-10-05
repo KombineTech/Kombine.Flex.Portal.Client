@@ -131,6 +131,12 @@ export interface AssistantLink {
   "kid"?: string | null;
   /** path */
   "path"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** iconKid */
+  "iconKid"?: string | null;
 }
 
 /** A prior visible message. History is untrusted context, never authorization or evidence. */
@@ -717,6 +723,68 @@ export interface LocationDirectoryItem {
   "deleted"?: boolean | null;
   /** deletedAt */
   "deletedAt"?: string | null;
+  /** address */
+  "address"?: string | null;
+  /** zip */
+  "zip"?: string | null;
+  /** longitude */
+  "longitude"?: number | null;
+  /** latitude */
+  "latitude"?: number | null;
+  /** teltonikaSms */
+  "teltonikaSms"?: string | null;
+  /** alternativeBankName */
+  "alternativeBankName"?: string | null;
+  /** mask */
+  "mask"?: string | null;
+  /** timeZone */
+  "timeZone"?: string | null;
+  /** online */
+  "online"?: boolean | null;
+  /** lastContactAt */
+  "lastContactAt"?: string | null;
+  /** vismaCrAcNo */
+  "vismaCrAcNo"?: string | null;
+  /** vismaInvoiceVersion */
+  "vismaInvoiceVersion"?: string | null;
+  /** vismaOrdre */
+  "vismaOrdre"?: string | null;
+  /** vismaPNTurnover */
+  "vismaPNTurnover"?: string | null;
+  /** vismaPNSettlement */
+  "vismaPNSettlement"?: string | null;
+  /** vismaSettlement */
+  "vismaSettlement"?: string | null;
+  /** vismaVAT */
+  "vismaVAT"?: string | null;
+  /** vismaServiceKey */
+  "vismaServiceKey"?: string | null;
+  /** vismaStart */
+  "vismaStart"?: string | null;
+  /** vismaNote */
+  "vismaNote"?: string | null;
+  /** hiddenNote */
+  "hiddenNote"?: string | null;
+  /** vismaGuaranteeMonth */
+  "vismaGuaranteeMonth"?: string | null;
+  /** vismaGuaranteeUnder */
+  "vismaGuaranteeUnder"?: string | null;
+  /** vismaGuarantee */
+  "vismaGuarantee"?: string | null;
+  /** vismaGuaranteeCustomer */
+  "vismaGuaranteeCustomer"?: string | null;
+  /** vismaGuaranteeOver */
+  "vismaGuaranteeOver"?: string | null;
+  /** gift */
+  "gift"?: string | null;
+  /** giftBegin */
+  "giftBegin"?: string | null;
+  /** giftEnd */
+  "giftEnd"?: string | null;
+  /** giftSplit */
+  "giftSplit"?: string | null;
+  /** giftPN */
+  "giftPN"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
@@ -731,6 +799,8 @@ export interface LocationDirectoryResponse {
   "nextCursor"?: string | null;
   /** hasAllBanksAccess */
   "hasAllBanksAccess"?: boolean;
+  /** fields */
+  "fields"?: (string)[] | null;
 }
 
 /** Null offline means empty or incomplete status, never a confirmed online location. */
@@ -1717,6 +1787,10 @@ export interface UserActivationResponse {
   "number"?: string | null;
   /** activationCode */
   "activationCode"?: string | null;
+  /** Opaque QR payload in the existing FlexORM/FlexCipherLongs format. Empty when the tenant has no activation URL. Render the QR image in the client. */
+  "qrCodeDataV1"?: string | null;
+  /** Version 2: the same three values, a random 30-bit noise value, and a 30-bit checksum (0–1073741823), (((bankCode * 31 + userCode) * 31 + seconds) * 31 + noise) modulo 1073741824. Decode five values with FlexCipherLongs. Empty when the tenant has no activation URL. */
+  "qrCodeDataV2"?: string | null;
 }
 
 /** Canonical eUserAttribute name and value; -1 means no numeric value. */
@@ -1817,6 +1891,14 @@ export interface UserLocationResponse {
   "name"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
+}
+
+/** Non-reserving number suggestion. Number is empty when no configured candidate is available. */
+export interface UserNumberSuggestionResponse {
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** number */
+  "number"?: string | null;
 }
 
 /** One local day/location/type/period/currency group. Amounts are signed minor units. */
@@ -2167,6 +2249,7 @@ export interface GetLocationsOptions {
   sort?: string;
   direction?: string;
   enabledOnly?: boolean;
+  fields?: string;
 }
 
 export interface SearchLocationsOptions {
@@ -2257,6 +2340,10 @@ export interface GetUnitDocumentSvgOptions {
   states?: string;
   settings?: string;
   width?: number;
+}
+
+export interface GetBankNextUserNumberOptions {
+  userNumber?: string;
 }
 
 export interface GetUserReceiptsOptions {

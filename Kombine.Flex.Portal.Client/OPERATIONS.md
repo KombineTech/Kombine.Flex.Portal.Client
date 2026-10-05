@@ -25,10 +25,12 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetBankDocumentsAsync` | GET | `/api/v1/banks/{bankKid}/documents` |
 | `GetBankIconsAsync` | GET | `/api/v1/banks/icons` |
 | `GetBankLocationsAsync` | GET | `/api/v1/banks/{bankKid}/locations` |
+| `GetBankNextUserNumberAsync` | GET | `/api/v1/banks/{bankKid}/users/next-number-after` |
 | `GetBankSettlementPeriodAsync` | GET | `/api/v1/banks/{bankKid}/settlements/{period}` |
 | `GetBankSettlementsAsync` | GET | `/api/v1/banks/{bankKid}/settlements` |
 | `GetBankUserActivationAsync` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` |
 | `GetBankUserBalancesAsync` | POST | `/api/v1/banks/{bankKid}/users/balances` |
+| `GetBankUserNumberForNewUserAsync` | GET | `/api/v1/banks/{bankKid}/users/next-number` |
 | `GetBankUsersAsync` | GET | `/api/v1/banks/{bankKid}/users` |
 | `GetBankUserWorkspaceAsync` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
 | `GetCircleGradientAsync` | GET | `/api/v1/circles/gradient/{colors}.svg` |

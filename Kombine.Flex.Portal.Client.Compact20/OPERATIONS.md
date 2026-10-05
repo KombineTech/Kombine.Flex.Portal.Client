@@ -23,10 +23,12 @@
 | `GetBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` |
 | `GetBankIcons` | GET | `/api/v1/banks/icons` |
 | `GetBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` |
+| `GetBankNextUserNumber` | GET | `/api/v1/banks/{bankKid}/users/next-number-after` |
 | `GetBankSettlementPeriod` | GET | `/api/v1/banks/{bankKid}/settlements/{period}` |
 | `GetBankSettlements` | GET | `/api/v1/banks/{bankKid}/settlements` |
 | `GetBankUserActivation` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` |
 | `GetBankUserBalances` | POST | `/api/v1/banks/{bankKid}/users/balances` |
+| `GetBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` |
 | `GetBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
 | `GetBankUsers` | GET | `/api/v1/banks/{bankKid}/users` |
 | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` |

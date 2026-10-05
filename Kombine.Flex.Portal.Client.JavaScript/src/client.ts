@@ -160,7 +160,7 @@ export class PortalClient extends BaseClient {
 
   /** List accessible locations with parent banks, Visma customer numbers and authorized activation codes. */
   getLocations(options: Models.GetLocationsOptions = {}, request: RequestOptions = {}): Promise<Models.LocationDirectoryResponse> {
-    return this.send("GetLocations", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly}, undefined, request) as Promise<Models.LocationDirectoryResponse>;
+    return this.send("GetLocations", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields}, undefined, request) as Promise<Models.LocationDirectoryResponse>;
   }
 
   /** Search location Name, Bank (alternative bank name), Zip, Address, VismaCustNo and TeltonikaSMS in Log24. */
@@ -381,6 +381,16 @@ export class PortalClient extends BaseClient {
   /** Read current and previous-period balances for up to 50 residents in one bank. */
   getBankUserBalances(bankKid: string, body: Models.UserBalancesRequest, request: RequestOptions = {}): Promise<Models.UserBalancesResponse> {
     return this.send("GetBankUserBalances", {"bankKid": bankKid}, body, request) as Promise<Models.UserBalancesResponse>;
+  }
+
+  /** Suggest the next resident number from the bank's first NumberFormats entry and stored NumberFormatUserIndex (default 1). */
+  getBankUserNumberForNewUser(bankKid: string, request: RequestOptions = {}): Promise<Models.UserNumberSuggestionResponse> {
+    return this.send("GetBankUserNumberForNewUser", {"bankKid": bankKid}, undefined, request) as Promise<Models.UserNumberSuggestionResponse>;
+  }
+
+  /** Suggest the next resident number after userNumber using the bank's first NumberFormats entry. */
+  getBankNextUserNumber(bankKid: string, options: Models.GetBankNextUserNumberOptions = {}, request: RequestOptions = {}): Promise<Models.UserNumberSuggestionResponse> {
+    return this.send("GetBankNextUserNumber", {"bankKid": bankKid, "userNumber": options.userNumber}, undefined, request) as Promise<Models.UserNumberSuggestionResponse>;
   }
 
   /** Read authoritative editing fields and an opaque concurrency revision. Bank-wide Users2/User Read required. */

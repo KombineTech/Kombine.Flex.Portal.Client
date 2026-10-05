@@ -46,7 +46,7 @@ generate script clients; both accept `--check`. PHP has its own snapshot in
 
 The .NET NuGet client is published automatically when a push to `main` increases
 `Version` in `Kombine.Flex.Portal.Client/Kombine.Flex.Portal.Client.csproj`.
-Use a stable `major.minor.patch` version, for example `0.3.2` → `0.3.2`.
+Use a stable `major.minor.patch` version, for example `0.4.1` → `0.4.1`.
 All client checks and independent package-consumer tests must pass first.
 Commits with the same version, pull requests, branches and tags never publish.
 Decreasing the version fails validation. An existing version is accepted only
@@ -57,7 +57,7 @@ remain served by the API; update its pinned SDK revision, archives and manifests
 during server release preparation. No other package variants are auto-published.
 Increment every changed package version before packaging, including documentation
 changes. The migration corrects the PHP operation inventory's snapshot checksum;
-its next package therefore needs a version newer than 0.3.2.
+its next package therefore needs a version newer than 0.4.1.
 
 ### One-time nuget.org setup
 
@@ -72,7 +72,7 @@ using the NuGet account authorized to publish this package:
 - Set the GitHub repository variable `NUGET_USER` to the account's NuGet profile
   name, not its email address. No long-lived API key is stored in GitHub.
 
-The existing `0.3.2` version is not released merely by enabling this workflow.
+The existing `0.4.1` version is not released merely by enabling this workflow.
 Merge a version increase into `main` when ready to release. If authorization,
 upload or NuGet validation fails, fix the cause and rerun the original failed
 workflow. Its original before/after commits and version are retained; do not bump

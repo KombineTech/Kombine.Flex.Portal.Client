@@ -273,6 +273,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects
         /// <br/>the default answer language. Response answer is plain text. operations lists attempted business reads;
         /// <br/>links contains up to 20 bank/location links derived from successful authorized results.
+        /// <br/>Each link includes kid/path, optional name, canonical parent bankKid and ready-to-render iconKid.
+        /// <br/>The portal uses this metadata to add the clicked object to the local workspace; access is rechecked on navigation.
         /// <br/>At most 8 reads, pages capped at 50, 48000 bytes per result and 120 seconds per question.
         /// <br/>Available reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,
         /// <br/>GetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not
@@ -878,14 +880,41 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>BankActivationCode additionally requires Bank Create and LocationActivationCode requires Location Create.
         /// <br/>Otherwise the code is null. A displayed code never grants API permission.
         /// <br/>
+        /// <br/>### Optional columns
+        /// <br/>fields: comma-separated vismaCustNo, bankActivationCode, locationActivationCode, address, zip, longitude, latitude,
+        /// <br/>teltonikaSms, alternativeBankName, mask, timeZone, online, lastContactAt.
+        /// <br/>Text filtering also searches all selected stored columns before pagination; unselected extra columns do not match.
+        /// <br/>Decimal coordinates and gift amounts accept dot/comma; date searches accept ISO or dd.MM.yyyy/dd-MM-yyyy, UTC for contacts.
+        /// <br/>bankName is an optional selection marker for showing the bank name and bank icon together after the location in the portal. Core bank identity properties remain populated.
+        /// <br/>Billing fields (also accepted as sort keys): vismaCrAcNo, vismaInvoiceVersion, vismaOrdre, vismaPNTurnover, vismaPNSettlement, vismaSettlement, vismaVAT, vismaServiceKey, vismaStart, vismaNote, hiddenNote, vismaGuaranteeMonth, vismaGuaranteeUnder, vismaGuarantee, vismaGuaranteeCustomer, vismaGuaranteeOver, gift, giftBegin, giftEnd, giftSplit, giftPN.
+        /// <br/>GiftPN uses legacy location setting 1620 (the shared enum calls this identity DurationIsETA for units).
+        /// <br/>Billing fields return location-owned stored text; omitted fields are null, selected missing fields are empty.
+        /// <br/>TeltonikaSms, alternativeBankName, mask and timeZone are location-owned TeltonikaSMS, Bank, Access and TimeZone settings, returned as stored text without inheritance.
+        /// <br/>Missing selected text is empty; unselected text is null. Preserve mask syntax, phone prefixes and legacy time-zone codes (100 means UTC+1).
+        /// <br/>Omitted/empty means core identifiers, status, names and icons only; unselected properties are null.
+        /// <br/>Address and Zip are location-owned settings without bank fallback. Coordinates are decimal degrees (stored microdegrees / 1,000,000), null when missing/invalid.
+        /// <br/>Only selected settings are joined, plus the sort setting and VismaCustNo when required for search. Codes retain all scope/Create checks.
+        /// <br/>The response fields array names the requested columns. Keep fields unchanged across cursor requests; order and duplicates do not matter.
+        /// <br/>
+        /// <br/>Online and LastContactAt read the tenant-bound Alive table only when selected or sorted, for Log24-discovered visible main units (Alive.UnitId = Alive.MainId).
+        /// <br/>Online is false if any is offline, true only for a nonempty entirely known-online set, otherwise null.
+        /// <br/>LastContactAt is the latest MS2000 in (0,now], returned as UTC ISO 8601; absent/invalid contacts are null.
+        /// <br/>It means last contact, not last machine run. Deleted units follow RetentionDays; orphan Alive rows do not contribute.
+        /// <br/>
         /// <br/>### Search, sorting and paging
         /// <br/>pageSize: 1–100, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,
         /// <br/>location name or VismaCustNo. Exact canonical/readable/site-relative bank and location KIDs are supported.
         /// <br/>Complete bank/location activation codes match only when the caller could view that code; bank codes include tenant,
         /// <br/>location codes use the trusted site tenant. No cross-tenant reads. Empty filter lists all accessible locations.
-        /// <br/>sort: name (default, location name), bankName or vismaCustNo (external ID, text order);
+        /// <br/>sort: name (default), bankName, vismaCustNo, address, zip, longitude, latitude, teltonikaSms,
+        /// <br/>alternativeBankName, mask, timeZone, online, lastContactAt, bankActivationCode or locationActivationCode;
         /// <br/>direction: asc (default) or desc. MySQL utf8mb4_general_ci
-        /// <br/>ordering precedes LIMIT; numeric bank/location identities break ties in the same direction.
+        /// <br/>text ordering precedes LIMIT. Coordinates (validated microdegrees) and legacy timeZone sort numerically;
+        /// <br/>Online sorts unknown/offline/online; lastContactAt sorts chronologically; missing/invalid numeric values sort first ascending and last descending. Gift, giftBegin and giftEnd also sort numerically; other settings sort as text.
+        /// <br/>Codes sort numerically using FlexActivation: stream authorized matching rows and retain at most pageSize+1 candidates.
+        /// <br/>Code sorts may take longer on large result sets; narrow filter when needed. No full catalogue is retained in memory.
+        /// <br/>Sorting codes requires permission to see that code (otherwise 403 missing-code-access).
+        /// <br/>Numeric bank/location identities break ties in the same direction for every sort.
         /// <br/>Follow nextCursor until null; cursors are protected, expire after 15 minutes and are bound to tenant, manager,
         /// <br/>resource grants, retention, filter, enabledOnly, sort, direction and page size. Restart without a cursor when these change.
         /// <br/>enabledOnly: false by default. When true, exclude locations whose Enabled is not exactly 1 before paging.
@@ -893,13 +922,13 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Concurrent edits are not a frozen snapshot; renamed rows may move. No count or full catalogue is returned.
         /// <br/>
         /// <br/>### Errors
-        /// <br/>400: invalid-page, invalid-filter, invalid-sort, invalid-cursor. 401: invalid/revoked session.
-        /// <br/>403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access.
+        /// <br/>400: invalid-page, invalid-filter, invalid-sort, invalid-fields, invalid-cursor. 401: invalid/revoked session.
+        /// <br/>403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access, missing-code-access.
         /// <br/>503 locations-unavailable: storage unavailable or the 12-second deadline elapsed. Retry manually. No-store.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2070,6 +2099,28 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Suggest the next resident number from the bank's first NumberFormats entry and stored NumberFormatUserIndex (default 1).
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Users2, User Read and Create, and bank-wide scope. Uses FlexOrm conversion, testing up to nine candidates and skipping occupied active numbers. Empty number means no suggestion. Read-only: no reservation or index update. Creation revalidates availability. Errors: 400 invalid bank, 401 session, 403 permission, 503 invalid stored format or unavailable storage.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserNumberSuggestionResponse> GetBankUserNumberForNewUserAsync(string bankKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Suggest the next resident number after userNumber using the bank's first NumberFormats entry.
+        /// </summary>
+        /// <remarks>
+        /// Same access and non-reserving behavior as GetBankUserNumberForNewUser. userNumber is required and must match the configured segment lengths and ranges; otherwise 400 number-format. Tests up to nine candidates; empty number means no suggestion. Missing format returns an empty number; malformed stored settings return 503.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserNumberSuggestionResponse> GetBankNextUserNumberAsync(string bankKid, string? userNumber = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read authoritative editing fields and an opaque concurrency revision. Bank-wide Users2/User Read required.
         /// </summary>
         /// <remarks>
@@ -2101,6 +2152,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Result
         /// <br/>
         /// <br/>- Returns the active resident's activation code, name and number for printing.
+        /// <br/>- `qrCodeDataV1` contains the tenant URL and a FlexCipherLongs fragment with bank code, user code and UTC seconds since 2000-01-01, matching FlexORM GetQRCodeString.
+        /// <br/>- `qrCodeDataV2` uses the same URL and timestamp, with a fourth value (random noise, 0–1073741823) and a fifth value: 30-bit checksum = (((bankCode * 31 + userCode) * 31 + seconds) * 31 + noise) modulo 1073741824; reduce inputs modulo 1073741824 before arithmetic to avoid overflow. Decode with FlexCipherLongs.Parse(5, fragment) and verify the checksum. It is error detection, not authentication; existing version 1 consumers must explicitly support version 2.
+        /// <br/>- Encode the complete string unchanged as a QR code in the client; the API returns no image. Empty means no tenant activation URL is configured.
+        /// <br/>- Treat both codes as credentials: do not log, cache or send them to external QR services. Reload to obtain a fresh timestamp; validity is determined by the existing activation consumer.
         /// <br/>- **HTTP 404:** resident missing or deleted.
         /// </remarks>
         /// <returns>OK</returns>
@@ -4113,6 +4168,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects
         /// <br/>the default answer language. Response answer is plain text. operations lists attempted business reads;
         /// <br/>links contains up to 20 bank/location links derived from successful authorized results.
+        /// <br/>Each link includes kid/path, optional name, canonical parent bankKid and ready-to-render iconKid.
+        /// <br/>The portal uses this metadata to add the clicked object to the local workspace; access is rechecked on navigation.
         /// <br/>At most 8 reads, pages capped at 50, 48000 bytes per result and 120 seconds per question.
         /// <br/>Available reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,
         /// <br/>GetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not
@@ -7568,14 +7625,41 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>BankActivationCode additionally requires Bank Create and LocationActivationCode requires Location Create.
         /// <br/>Otherwise the code is null. A displayed code never grants API permission.
         /// <br/>
+        /// <br/>### Optional columns
+        /// <br/>fields: comma-separated vismaCustNo, bankActivationCode, locationActivationCode, address, zip, longitude, latitude,
+        /// <br/>teltonikaSms, alternativeBankName, mask, timeZone, online, lastContactAt.
+        /// <br/>Text filtering also searches all selected stored columns before pagination; unselected extra columns do not match.
+        /// <br/>Decimal coordinates and gift amounts accept dot/comma; date searches accept ISO or dd.MM.yyyy/dd-MM-yyyy, UTC for contacts.
+        /// <br/>bankName is an optional selection marker for showing the bank name and bank icon together after the location in the portal. Core bank identity properties remain populated.
+        /// <br/>Billing fields (also accepted as sort keys): vismaCrAcNo, vismaInvoiceVersion, vismaOrdre, vismaPNTurnover, vismaPNSettlement, vismaSettlement, vismaVAT, vismaServiceKey, vismaStart, vismaNote, hiddenNote, vismaGuaranteeMonth, vismaGuaranteeUnder, vismaGuarantee, vismaGuaranteeCustomer, vismaGuaranteeOver, gift, giftBegin, giftEnd, giftSplit, giftPN.
+        /// <br/>GiftPN uses legacy location setting 1620 (the shared enum calls this identity DurationIsETA for units).
+        /// <br/>Billing fields return location-owned stored text; omitted fields are null, selected missing fields are empty.
+        /// <br/>TeltonikaSms, alternativeBankName, mask and timeZone are location-owned TeltonikaSMS, Bank, Access and TimeZone settings, returned as stored text without inheritance.
+        /// <br/>Missing selected text is empty; unselected text is null. Preserve mask syntax, phone prefixes and legacy time-zone codes (100 means UTC+1).
+        /// <br/>Omitted/empty means core identifiers, status, names and icons only; unselected properties are null.
+        /// <br/>Address and Zip are location-owned settings without bank fallback. Coordinates are decimal degrees (stored microdegrees / 1,000,000), null when missing/invalid.
+        /// <br/>Only selected settings are joined, plus the sort setting and VismaCustNo when required for search. Codes retain all scope/Create checks.
+        /// <br/>The response fields array names the requested columns. Keep fields unchanged across cursor requests; order and duplicates do not matter.
+        /// <br/>
+        /// <br/>Online and LastContactAt read the tenant-bound Alive table only when selected or sorted, for Log24-discovered visible main units (Alive.UnitId = Alive.MainId).
+        /// <br/>Online is false if any is offline, true only for a nonempty entirely known-online set, otherwise null.
+        /// <br/>LastContactAt is the latest MS2000 in (0,now], returned as UTC ISO 8601; absent/invalid contacts are null.
+        /// <br/>It means last contact, not last machine run. Deleted units follow RetentionDays; orphan Alive rows do not contribute.
+        /// <br/>
         /// <br/>### Search, sorting and paging
         /// <br/>pageSize: 1–100, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,
         /// <br/>location name or VismaCustNo. Exact canonical/readable/site-relative bank and location KIDs are supported.
         /// <br/>Complete bank/location activation codes match only when the caller could view that code; bank codes include tenant,
         /// <br/>location codes use the trusted site tenant. No cross-tenant reads. Empty filter lists all accessible locations.
-        /// <br/>sort: name (default, location name), bankName or vismaCustNo (external ID, text order);
+        /// <br/>sort: name (default), bankName, vismaCustNo, address, zip, longitude, latitude, teltonikaSms,
+        /// <br/>alternativeBankName, mask, timeZone, online, lastContactAt, bankActivationCode or locationActivationCode;
         /// <br/>direction: asc (default) or desc. MySQL utf8mb4_general_ci
-        /// <br/>ordering precedes LIMIT; numeric bank/location identities break ties in the same direction.
+        /// <br/>text ordering precedes LIMIT. Coordinates (validated microdegrees) and legacy timeZone sort numerically;
+        /// <br/>Online sorts unknown/offline/online; lastContactAt sorts chronologically; missing/invalid numeric values sort first ascending and last descending. Gift, giftBegin and giftEnd also sort numerically; other settings sort as text.
+        /// <br/>Codes sort numerically using FlexActivation: stream authorized matching rows and retain at most pageSize+1 candidates.
+        /// <br/>Code sorts may take longer on large result sets; narrow filter when needed. No full catalogue is retained in memory.
+        /// <br/>Sorting codes requires permission to see that code (otherwise 403 missing-code-access).
+        /// <br/>Numeric bank/location identities break ties in the same direction for every sort.
         /// <br/>Follow nextCursor until null; cursors are protected, expire after 15 minutes and are bound to tenant, manager,
         /// <br/>resource grants, retention, filter, enabledOnly, sort, direction and page size. Restart without a cursor when these change.
         /// <br/>enabledOnly: false by default. When true, exclude locations whose Enabled is not exactly 1 before paging.
@@ -7583,13 +7667,13 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Concurrent edits are not a frozen snapshot; renamed rows may move. No count or full catalogue is returned.
         /// <br/>
         /// <br/>### Errors
-        /// <br/>400: invalid-page, invalid-filter, invalid-sort, invalid-cursor. 401: invalid/revoked session.
-        /// <br/>403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access.
+        /// <br/>400: invalid-page, invalid-filter, invalid-sort, invalid-fields, invalid-cursor. 401: invalid/revoked session.
+        /// <br/>403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access, missing-code-access.
         /// <br/>503 locations-unavailable: storage unavailable or the 12-second deadline elapsed. Retry manually. No-store.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7628,6 +7712,10 @@ namespace Kombine.Flex.Portal.Client
                     if (enabledOnly != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (fields != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fields")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(fields, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -14163,6 +14251,176 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Suggest the next resident number from the bank's first NumberFormats entry and stored NumberFormatUserIndex (default 1).
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Users2, User Read and Create, and bank-wide scope. Uses FlexOrm conversion, testing up to nine candidates and skipping occupied active numbers. Empty number means no suggestion. Read-only: no reservation or index update. Creation revalidates availability. Errors: 400 invalid bank, 401 session, 403 permission, 503 invalid stored format or unavailable storage.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UserNumberSuggestionResponse> GetBankUserNumberForNewUserAsync(string bankKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (bankKid == null)
+                throw new System.ArgumentNullException("bankKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks/{bankKid}/users/next-number"
+                    urlBuilder_.Append("api/v1/banks/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/users/next-number");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserNumberSuggestionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Suggest the next resident number after userNumber using the bank's first NumberFormats entry.
+        /// </summary>
+        /// <remarks>
+        /// Same access and non-reserving behavior as GetBankUserNumberForNewUser. userNumber is required and must match the configured segment lengths and ranges; otherwise 400 number-format. Tests up to nine candidates; empty number means no suggestion. Missing format returns an empty number; malformed stored settings return 503.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UserNumberSuggestionResponse> GetBankNextUserNumberAsync(string bankKid, string? userNumber = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (bankKid == null)
+                throw new System.ArgumentNullException("bankKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks/{bankKid}/users/next-number-after"
+                    urlBuilder_.Append("api/v1/banks/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/users/next-number-after");
+                    urlBuilder_.Append('?');
+                    if (userNumber != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("userNumber")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userNumber, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserNumberSuggestionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read authoritative editing fields and an opaque concurrency revision. Bank-wide Users2/User Read required.
         /// </summary>
         /// <remarks>
@@ -14270,6 +14528,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Result
         /// <br/>
         /// <br/>- Returns the active resident's activation code, name and number for printing.
+        /// <br/>- `qrCodeDataV1` contains the tenant URL and a FlexCipherLongs fragment with bank code, user code and UTC seconds since 2000-01-01, matching FlexORM GetQRCodeString.
+        /// <br/>- `qrCodeDataV2` uses the same URL and timestamp, with a fourth value (random noise, 0–1073741823) and a fifth value: 30-bit checksum = (((bankCode * 31 + userCode) * 31 + seconds) * 31 + noise) modulo 1073741824; reduce inputs modulo 1073741824 before arithmetic to avoid overflow. Decode with FlexCipherLongs.Parse(5, fragment) and verify the checksum. It is error detection, not authentication; existing version 1 consumers must explicitly support version 2.
+        /// <br/>- Encode the complete string unchanged as a QR code in the client; the API returns no image. Empty means no tenant activation URL is configured.
+        /// <br/>- Treat both codes as credentials: do not log, cache or send them to external QR services. Reload to obtain a fresh timestamp; validity is determined by the existing activation consumer.
         /// <br/>- **HTTP 404:** resident missing or deleted.
         /// </remarks>
         /// <returns>OK</returns>
@@ -18757,6 +19019,15 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("path")]
         public string? Path { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankKid")]
+        public string? BankKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
     }
 
     /// <summary>
@@ -19973,6 +20244,99 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("deletedAt")]
         public System.DateTimeOffset? DeletedAt { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("address")]
+        public string? Address { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("zip")]
+        public string? Zip { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("longitude")]
+        public double? Longitude { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("latitude")]
+        public double? Latitude { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("teltonikaSms")]
+        public string? TeltonikaSms { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("alternativeBankName")]
+        public string? AlternativeBankName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mask")]
+        public string? Mask { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("timeZone")]
+        public string? TimeZone { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("online")]
+        public bool? Online { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastContactAt")]
+        public System.DateTimeOffset? LastContactAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaCrAcNo")]
+        public string? VismaCrAcNo { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaInvoiceVersion")]
+        public string? VismaInvoiceVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaOrdre")]
+        public string? VismaOrdre { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaPNTurnover")]
+        public string? VismaPNTurnover { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaPNSettlement")]
+        public string? VismaPNSettlement { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaSettlement")]
+        public string? VismaSettlement { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaVAT")]
+        public string? VismaVAT { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaServiceKey")]
+        public string? VismaServiceKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaStart")]
+        public string? VismaStart { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaNote")]
+        public string? VismaNote { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hiddenNote")]
+        public string? HiddenNote { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaGuaranteeMonth")]
+        public string? VismaGuaranteeMonth { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaGuaranteeUnder")]
+        public string? VismaGuaranteeUnder { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaGuarantee")]
+        public string? VismaGuarantee { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaGuaranteeCustomer")]
+        public string? VismaGuaranteeCustomer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("vismaGuaranteeOver")]
+        public string? VismaGuaranteeOver { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("gift")]
+        public string? Gift { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("giftBegin")]
+        public string? GiftBegin { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("giftEnd")]
+        public string? GiftEnd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("giftSplit")]
+        public string? GiftSplit { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("giftPN")]
+        public string? GiftPN { get; set; } = default!;
+
         /// <summary>
         /// API-computed icon identity; use unchanged in the icon image URL.
         /// </summary>
@@ -20002,6 +20366,9 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("hasAllBanksAccess")]
         public bool? HasAllBanksAccess { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fields")]
+        public System.Collections.Generic.ICollection<string>? Fields { get; set; } = default!;
 
     }
 
@@ -22110,6 +22477,18 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("activationCode")]
         public string? ActivationCode { get; set; } = default!;
 
+        /// <summary>
+        /// Opaque QR payload in the existing FlexORM/FlexCipherLongs format. Empty when the tenant has no activation URL. Render the QR image in the client.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("qrCodeDataV1")]
+        public string? QrCodeDataV1 { get; set; } = default!;
+
+        /// <summary>
+        /// Version 2: the same three values, a random 30-bit noise value, and a 30-bit checksum (0–1073741823), (((bankCode * 31 + userCode) * 31 + seconds) * 31 + noise) modulo 1073741824. Decode five values with FlexCipherLongs. Empty when the tenant has no activation URL.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("qrCodeDataV2")]
+        public string? QrCodeDataV2 { get; set; } = default!;
+
     }
 
     /// <summary>
@@ -22316,6 +22695,21 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
         public string? IconKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Non-reserving number suggestion. Number is empty when no configured candidate is available.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UserNumberSuggestionResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankKid")]
+        public string? BankKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("number")]
+        public string? Number { get; set; } = default!;
 
     }
 

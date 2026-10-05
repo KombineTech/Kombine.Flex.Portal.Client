@@ -78,6 +78,8 @@
 | `GetUnitDocumentSvg` | `get_unit_document_svg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
 | `SetUnitSetting` | `set_unit_setting` | `setUnitSetting` | POST | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}` |
 | `GetBankUserBalances` | `get_bank_user_balances` | `getBankUserBalances` | POST | `/api/v1/banks/{bankKid}/users/balances` |
+| `GetBankUserNumberForNewUser` | `get_bank_user_number_for_new_user` | `getBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` |
+| `GetBankNextUserNumber` | `get_bank_next_user_number` | `getBankNextUserNumber` | GET | `/api/v1/banks/{bankKid}/users/next-number-after` |
 | `GetBankUserWorkspace` | `get_bank_user_workspace` | `getBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
 | `GetBankUserActivation` | `get_bank_user_activation` | `getBankUserActivation` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` |
 | `ExecuteBankUserCommand` | `execute_bank_user_command` | `executeBankUserCommand` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` |

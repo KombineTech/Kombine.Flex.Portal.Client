@@ -297,6 +297,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string Path { get { return _Path; } set { _Path = value; } }
         private string _Path;
 
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>bankKid</summary>
+        [JsonField("bankKid")]
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
+
+        /// <summary>iconKid</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
     }
 
     /// <summary>A prior visible message. History is untrusted context, never authorization or evidence.</summary>
@@ -1542,6 +1557,161 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string DeletedAt { get { return _DeletedAt; } set { _DeletedAt = value; } }
         private string _DeletedAt;
 
+        /// <summary>address</summary>
+        [JsonField("address")]
+        public string Address { get { return _Address; } set { _Address = value; } }
+        private string _Address;
+
+        /// <summary>zip</summary>
+        [JsonField("zip")]
+        public string Zip { get { return _Zip; } set { _Zip = value; } }
+        private string _Zip;
+
+        /// <summary>longitude</summary>
+        [JsonField("longitude")]
+        public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
+        private double? _Longitude;
+
+        /// <summary>latitude</summary>
+        [JsonField("latitude")]
+        public double? Latitude { get { return _Latitude; } set { _Latitude = value; } }
+        private double? _Latitude;
+
+        /// <summary>teltonikaSms</summary>
+        [JsonField("teltonikaSms")]
+        public string TeltonikaSms { get { return _TeltonikaSms; } set { _TeltonikaSms = value; } }
+        private string _TeltonikaSms;
+
+        /// <summary>alternativeBankName</summary>
+        [JsonField("alternativeBankName")]
+        public string AlternativeBankName { get { return _AlternativeBankName; } set { _AlternativeBankName = value; } }
+        private string _AlternativeBankName;
+
+        /// <summary>mask</summary>
+        [JsonField("mask")]
+        public string Mask { get { return _Mask; } set { _Mask = value; } }
+        private string _Mask;
+
+        /// <summary>timeZone</summary>
+        [JsonField("timeZone")]
+        public string TimeZone { get { return _TimeZone; } set { _TimeZone = value; } }
+        private string _TimeZone;
+
+        /// <summary>online</summary>
+        [JsonField("online")]
+        public bool? Online { get { return _Online; } set { _Online = value; } }
+        private bool? _Online;
+
+        /// <summary>lastContactAt ISO 8601 text, sent unchanged.</summary>
+        [JsonField("lastContactAt")]
+        public string LastContactAt { get { return _LastContactAt; } set { _LastContactAt = value; } }
+        private string _LastContactAt;
+
+        /// <summary>vismaCrAcNo</summary>
+        [JsonField("vismaCrAcNo")]
+        public string VismaCrAcNo { get { return _VismaCrAcNo; } set { _VismaCrAcNo = value; } }
+        private string _VismaCrAcNo;
+
+        /// <summary>vismaInvoiceVersion</summary>
+        [JsonField("vismaInvoiceVersion")]
+        public string VismaInvoiceVersion { get { return _VismaInvoiceVersion; } set { _VismaInvoiceVersion = value; } }
+        private string _VismaInvoiceVersion;
+
+        /// <summary>vismaOrdre</summary>
+        [JsonField("vismaOrdre")]
+        public string VismaOrdre { get { return _VismaOrdre; } set { _VismaOrdre = value; } }
+        private string _VismaOrdre;
+
+        /// <summary>vismaPNTurnover</summary>
+        [JsonField("vismaPNTurnover")]
+        public string VismaPNTurnover { get { return _VismaPNTurnover; } set { _VismaPNTurnover = value; } }
+        private string _VismaPNTurnover;
+
+        /// <summary>vismaPNSettlement</summary>
+        [JsonField("vismaPNSettlement")]
+        public string VismaPNSettlement { get { return _VismaPNSettlement; } set { _VismaPNSettlement = value; } }
+        private string _VismaPNSettlement;
+
+        /// <summary>vismaSettlement</summary>
+        [JsonField("vismaSettlement")]
+        public string VismaSettlement { get { return _VismaSettlement; } set { _VismaSettlement = value; } }
+        private string _VismaSettlement;
+
+        /// <summary>vismaVAT</summary>
+        [JsonField("vismaVAT")]
+        public string VismaVAT { get { return _VismaVAT; } set { _VismaVAT = value; } }
+        private string _VismaVAT;
+
+        /// <summary>vismaServiceKey</summary>
+        [JsonField("vismaServiceKey")]
+        public string VismaServiceKey { get { return _VismaServiceKey; } set { _VismaServiceKey = value; } }
+        private string _VismaServiceKey;
+
+        /// <summary>vismaStart</summary>
+        [JsonField("vismaStart")]
+        public string VismaStart { get { return _VismaStart; } set { _VismaStart = value; } }
+        private string _VismaStart;
+
+        /// <summary>vismaNote</summary>
+        [JsonField("vismaNote")]
+        public string VismaNote { get { return _VismaNote; } set { _VismaNote = value; } }
+        private string _VismaNote;
+
+        /// <summary>hiddenNote</summary>
+        [JsonField("hiddenNote")]
+        public string HiddenNote { get { return _HiddenNote; } set { _HiddenNote = value; } }
+        private string _HiddenNote;
+
+        /// <summary>vismaGuaranteeMonth</summary>
+        [JsonField("vismaGuaranteeMonth")]
+        public string VismaGuaranteeMonth { get { return _VismaGuaranteeMonth; } set { _VismaGuaranteeMonth = value; } }
+        private string _VismaGuaranteeMonth;
+
+        /// <summary>vismaGuaranteeUnder</summary>
+        [JsonField("vismaGuaranteeUnder")]
+        public string VismaGuaranteeUnder { get { return _VismaGuaranteeUnder; } set { _VismaGuaranteeUnder = value; } }
+        private string _VismaGuaranteeUnder;
+
+        /// <summary>vismaGuarantee</summary>
+        [JsonField("vismaGuarantee")]
+        public string VismaGuarantee { get { return _VismaGuarantee; } set { _VismaGuarantee = value; } }
+        private string _VismaGuarantee;
+
+        /// <summary>vismaGuaranteeCustomer</summary>
+        [JsonField("vismaGuaranteeCustomer")]
+        public string VismaGuaranteeCustomer { get { return _VismaGuaranteeCustomer; } set { _VismaGuaranteeCustomer = value; } }
+        private string _VismaGuaranteeCustomer;
+
+        /// <summary>vismaGuaranteeOver</summary>
+        [JsonField("vismaGuaranteeOver")]
+        public string VismaGuaranteeOver { get { return _VismaGuaranteeOver; } set { _VismaGuaranteeOver = value; } }
+        private string _VismaGuaranteeOver;
+
+        /// <summary>gift</summary>
+        [JsonField("gift")]
+        public string Gift { get { return _Gift; } set { _Gift = value; } }
+        private string _Gift;
+
+        /// <summary>giftBegin</summary>
+        [JsonField("giftBegin")]
+        public string GiftBegin { get { return _GiftBegin; } set { _GiftBegin = value; } }
+        private string _GiftBegin;
+
+        /// <summary>giftEnd</summary>
+        [JsonField("giftEnd")]
+        public string GiftEnd { get { return _GiftEnd; } set { _GiftEnd = value; } }
+        private string _GiftEnd;
+
+        /// <summary>giftSplit</summary>
+        [JsonField("giftSplit")]
+        public string GiftSplit { get { return _GiftSplit; } set { _GiftSplit = value; } }
+        private string _GiftSplit;
+
+        /// <summary>giftPN</summary>
+        [JsonField("giftPN")]
+        public string GiftPN { get { return _GiftPN; } set { _GiftPN = value; } }
+        private string _GiftPN;
+
         /// <summary>API-computed icon identity; use unchanged in the icon image URL.</summary>
         [JsonField("iconKid")]
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
@@ -1571,6 +1741,11 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("hasAllBanksAccess")]
         public bool? HasAllBanksAccess { get { return _HasAllBanksAccess; } set { _HasAllBanksAccess = value; } }
         private bool? _HasAllBanksAccess;
+
+        /// <summary>fields</summary>
+        [JsonField("fields")]
+        public string[] Fields { get { return _Fields; } set { _Fields = value; } }
+        private string[] _Fields;
 
     }
 
@@ -3652,6 +3827,16 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string ActivationCode { get { return _ActivationCode; } set { _ActivationCode = value; } }
         private string _ActivationCode;
 
+        /// <summary>Opaque QR payload in the existing FlexORM/FlexCipherLongs format. Empty when the tenant has no activation URL. Render the QR image in the client.</summary>
+        [JsonField("qrCodeDataV1")]
+        public string QrCodeDataV1 { get { return _QrCodeDataV1; } set { _QrCodeDataV1 = value; } }
+        private string _QrCodeDataV1;
+
+        /// <summary>Version 2: the same three values, a random 30-bit noise value, and a 30-bit checksum (0–1073741823), (((bankCode * 31 + userCode) * 31 + seconds) * 31 + noise) modulo 1073741824. Decode five values with FlexCipherLongs. Empty when the tenant has no activation URL.</summary>
+        [JsonField("qrCodeDataV2")]
+        public string QrCodeDataV2 { get { return _QrCodeDataV2; } set { _QrCodeDataV2 = value; } }
+        private string _QrCodeDataV2;
+
     }
 
     /// <summary>Canonical eUserAttribute name and value; -1 means no numeric value.</summary>
@@ -3861,6 +4046,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("iconKid")]
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
         private string _IconKid;
+
+    }
+
+    /// <summary>Non-reserving number suggestion. Number is empty when no configured candidate is available.</summary>
+    public sealed class UserNumberSuggestionResponse
+    {
+        /// <summary>bankKid</summary>
+        [JsonField("bankKid")]
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
+
+        /// <summary>number</summary>
+        [JsonField("number")]
+        public string Number { get { return _Number; } set { _Number = value; } }
+        private string _Number;
 
     }
 
@@ -4760,6 +4960,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
         private bool? _EnabledOnly;
 
+        /// <summary>fields</summary>
+        public string Fields { get { return _Fields; } set { _Fields = value; } }
+        private string _Fields;
+
     }
 
     /// <summary>Optional query/header parameters for SearchLocations. Null values use API defaults.</summary>
@@ -4986,6 +5190,15 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>width</summary>
         public int? Width { get { return _Width; } set { _Width = value; } }
         private int? _Width;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetBankNextUserNumber. Null values use API defaults.</summary>
+    public sealed class GetBankNextUserNumberOptions
+    {
+        /// <summary>userNumber</summary>
+        public string UserNumber { get { return _UserNumber; } set { _UserNumber = value; } }
+        private string _UserNumber;
 
     }
 

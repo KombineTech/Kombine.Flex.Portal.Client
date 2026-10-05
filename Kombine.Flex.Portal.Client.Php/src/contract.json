@@ -269,6 +269,18 @@
         "path": {
           "type": "string",
           "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -1451,6 +1463,133 @@
           "format": "date-time",
           "nullable": true
         },
+        "address": {
+          "type": "string",
+          "nullable": true
+        },
+        "zip": {
+          "type": "string",
+          "nullable": true
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "teltonikaSms": {
+          "type": "string",
+          "nullable": true
+        },
+        "alternativeBankName": {
+          "type": "string",
+          "nullable": true
+        },
+        "mask": {
+          "type": "string",
+          "nullable": true
+        },
+        "timeZone": {
+          "type": "string",
+          "nullable": true
+        },
+        "online": {
+          "type": "boolean",
+          "nullable": true
+        },
+        "lastContactAt": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "vismaCrAcNo": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaInvoiceVersion": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaOrdre": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaPNTurnover": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaPNSettlement": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaSettlement": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaVAT": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaServiceKey": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaStart": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaNote": {
+          "type": "string",
+          "nullable": true
+        },
+        "hiddenNote": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaGuaranteeMonth": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaGuaranteeUnder": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaGuarantee": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaGuaranteeCustomer": {
+          "type": "string",
+          "nullable": true
+        },
+        "vismaGuaranteeOver": {
+          "type": "string",
+          "nullable": true
+        },
+        "gift": {
+          "type": "string",
+          "nullable": true
+        },
+        "giftBegin": {
+          "type": "string",
+          "nullable": true
+        },
+        "giftEnd": {
+          "type": "string",
+          "nullable": true
+        },
+        "giftSplit": {
+          "type": "string",
+          "nullable": true
+        },
+        "giftPN": {
+          "type": "string",
+          "nullable": true
+        },
         "iconKid": {
           "type": "string",
           "nullable": true
@@ -1478,6 +1617,13 @@
         },
         "hasAllBanksAccess": {
           "type": "boolean"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -3484,6 +3630,14 @@
         "activationCode": {
           "type": "string",
           "nullable": true
+        },
+        "qrCodeDataV1": {
+          "type": "string",
+          "nullable": true
+        },
+        "qrCodeDataV2": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -3685,6 +3839,20 @@
           "nullable": true
         },
         "iconKid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "UserNumberSuggestionResponse": {
+      "type": "object",
+      "properties": {
+        "bankKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "number": {
           "type": "string",
           "nullable": true
         }
@@ -5564,6 +5732,14 @@
           "schema": {
             "type": "boolean"
           }
+        },
+        {
+          "name": "fields",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "body": null,
@@ -6828,6 +7004,60 @@
       },
       "response": {
         "$ref": "#/components/schemas/UserBalancesResponse"
+      },
+      "binary": false
+    },
+    "GetBankUserNumberForNewUser": {
+      "method": "GET",
+      "path": "api/v1/banks/{bankKid}/users/next-number",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "bankKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/UserNumberSuggestionResponse"
+      },
+      "binary": false
+    },
+    "GetBankNextUserNumber": {
+      "method": "GET",
+      "path": "api/v1/banks/{bankKid}/users/next-number-after",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "bankKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "userNumber",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/UserNumberSuggestionResponse"
       },
       "binary": false
     },

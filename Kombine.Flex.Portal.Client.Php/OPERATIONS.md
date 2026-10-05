@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `ea58f5968e327b3714708b395c474aa3f661f1ed309caf6553c57343907a537f`).
-112 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `bc04f9c7ec48cf0fe124252b42dde34da081ec3f3f8f964a9290411762633793`).
+114 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -26,10 +26,12 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `ea58f5968e327b37147
 | `getBankDocuments` | `GetBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` | Bearer |
 | `getBankIcons` | `GetBankIcons` | GET | `/api/v1/banks/icons` | Bearer |
 | `getBankLocations` | `GetBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` | Bearer |
+| `getBankNextUserNumber` | `GetBankNextUserNumber` | GET | `/api/v1/banks/{bankKid}/users/next-number-after` | Bearer |
 | `getBankSettlementPeriod` | `GetBankSettlementPeriod` | GET | `/api/v1/banks/{bankKid}/settlements/{period}` | Bearer |
 | `getBankSettlements` | `GetBankSettlements` | GET | `/api/v1/banks/{bankKid}/settlements` | Bearer |
 | `getBankUserActivation` | `GetBankUserActivation` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` | Bearer |
 | `getBankUserBalances` | `GetBankUserBalances` | POST | `/api/v1/banks/{bankKid}/users/balances` | Bearer |
+| `getBankUserNumberForNewUser` | `GetBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` | Bearer |
 | `getBankUserWorkspace` | `GetBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` | Bearer |
 | `getBankUsers` | `GetBankUsers` | GET | `/api/v1/banks/{bankKid}/users` | Bearer |
 | `getCircleGradientSized` | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` | Anonymous |
