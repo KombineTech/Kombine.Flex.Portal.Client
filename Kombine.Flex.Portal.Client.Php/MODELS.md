@@ -47,7 +47,7 @@ array{'count'?: int, 'iconKid'?: string|null}
 ### AssistantLink
 
 ```php
-array{'kid'?: string|null, 'path'?: string|null}
+array{'kid'?: string|null, 'path'?: string|null, 'name'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
 ```
 
 ### AssistantMessage
@@ -311,13 +311,13 @@ array{'locationKid'?: string|null, 'calculatedAt'?: string, 'groups'?: list<Loca
 ### LocationDirectoryItem
 
 ```php
-array{'kid'?: string|null, 'bankKid'?: string|null, 'bankName'?: string|null, 'name'?: string|null, 'vismaCustNo'?: string|null, 'bankActivationCode'?: string|null, 'locationActivationCode'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'iconKid'?: string|null, 'bankIconKid'?: string|null}
+array{'kid'?: string|null, 'bankKid'?: string|null, 'bankName'?: string|null, 'name'?: string|null, 'vismaCustNo'?: string|null, 'bankActivationCode'?: string|null, 'locationActivationCode'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'longitude'?: int|float|null, 'latitude'?: int|float|null, 'teltonikaSms'?: string|null, 'alternativeBankName'?: string|null, 'mask'?: string|null, 'timeZone'?: string|null, 'online'?: bool|null, 'lastContactAt'?: string|null, 'vismaCrAcNo'?: string|null, 'vismaInvoiceVersion'?: string|null, 'vismaOrdre'?: string|null, 'vismaPNTurnover'?: string|null, 'vismaPNSettlement'?: string|null, 'vismaSettlement'?: string|null, 'vismaVAT'?: string|null, 'vismaServiceKey'?: string|null, 'vismaStart'?: string|null, 'vismaNote'?: string|null, 'hiddenNote'?: string|null, 'vismaGuaranteeMonth'?: string|null, 'vismaGuaranteeUnder'?: string|null, 'vismaGuarantee'?: string|null, 'vismaGuaranteeCustomer'?: string|null, 'vismaGuaranteeOver'?: string|null, 'gift'?: string|null, 'giftBegin'?: string|null, 'giftEnd'?: string|null, 'giftSplit'?: string|null, 'giftPN'?: string|null, 'iconKid'?: string|null, 'bankIconKid'?: string|null}
 ```
 
 ### LocationDirectoryResponse
 
 ```php
-array{'items'?: list<LocationDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool}
+array{'items'?: list<LocationDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
 ```
 
 ### LocationIconResponse
@@ -779,7 +779,7 @@ array{'address': string|null, 'zip': string|null, 'expectedRevision': string|nul
 ### UserActivationResponse
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'number'?: string|null, 'activationCode'?: string|null}
+array{'kid'?: string|null, 'name'?: string|null, 'number'?: string|null, 'activationCode'?: string|null, 'qrCodeDataV1'?: string|null, 'qrCodeDataV2'?: string|null}
 ```
 
 ### UserAttributeInput
@@ -828,6 +828,12 @@ array{'currency'?: string|null, 'currentBalanceMinor'?: int, 'previousBalanceMin
 
 ```php
 array{'kid'?: string|null, 'state'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
+```
+
+### UserNumberSuggestionResponse
+
+```php
+array{'bankKid'?: string|null, 'number'?: string|null}
 ```
 
 ### UserReceipt

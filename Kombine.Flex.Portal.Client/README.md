@@ -1,3 +1,7 @@
+Version 0.4.2: GetLocations now requires fields=vismaCustNo,bankActivationCode,locationActivationCode to retain the previous optional values; accept null for unselected fields. Keep fields unchanged while paging and restart old cursors. New resident-number suggestions are read-only and do not reserve a number. Activation responses include qrCodeDataV1 and qrCodeDataV2 (five values with 30-bit noise/checksum); treat both as credentials. See /docs#changelog for migration and /docs for permissions and error handling.
+
+ersion 0.4.2 synchronizes GetBankUserBalances documentation with its 20-second database deadline. Request and response fields are unchanged. Allow extra time for transport and authorization; HTTP 503 still returns no partial balances.
+
 Version 0.3.3 uses the [official Kombine logo](https://static.kombine.services/kombinelogotext1/black.svg), preserved as logo.svg and rendered to icon.png for NuGet. API contracts and client behavior are unchanged.
 
 Version 0.3.2 adds the official Kombine logo, publisher metadata and company contact information. API contracts and client behavior are unchanged.
@@ -20,7 +24,7 @@ Use the same tenant and environment as your client: append /docs#changelog to it
 
 Typed .NET Standard 2.0 / .NET 8 / .NET 10 client for the Flex Portal public integration API. **No dependencies on other Kombine packages or projects**: no enums, KID, database, ORM, API-server or Web assemblies. Authentication, data access and business authorization run on the selected tenant's HTTPS API.
 
-Version 0.3.1 targets the current API contract (110 operations). Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.
+Version 0.4.2 targets the current API contract (110 operations). Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.
 
 Version 0.2.5 adds GetLocationOpeningHours and GetLocationBookingRules. Both require Location Read, Unit Read and the authorized location scope. Reservation rules contain plain text plus ordered parts with text/isValue for optional value emphasis; never render these strings as HTML. Keep text as the fallback for older responses. See /docs#location-opening-hours and /docs#location-booking-rules for permissions, examples and limits.
 
@@ -107,10 +111,10 @@ To configure timeouts/proxies, inject a dedicated `HttpClient` with a fixed `Bas
 ```powershell
 dotnet pack Kombine.Flex.Portal.Client -c Release -o artifacts/packages
 dotnet nuget add source <local-package-directory> --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.3.5
+dotnet add package Kombine.Flex.Portal.Client --version 0.4.2
 ```
 
-Production releases publish this package to [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). After publication, install with `dotnet add package Kombine.Flex.Portal.Client --version 0.3.5 --source https://api.nuget.org/v3/index.json`. For a beta version not yet listed there, use the reviewed `.nupkg` from your API documentation in a local NuGet source as shown above. `OpenApi/portal.openapi.json` is the source snapshot. Run `pwsh -File scripts/Update-PortalClient.ps1` to regenerate; optionally add `-ApiBaseUrl https://localhost:7241/` to first refresh both public Swagger documents. Review the generated changes and run `scripts/Test-PortalClients.ps1` before packing. NSwag 14.7.1 is a pinned development tool, not a package dependency. Generated code is checked in: consumer builds need neither NSwag, a running API nor private feeds.
+Production releases publish this package to [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). After publication, install with `dotnet add package Kombine.Flex.Portal.Client --version 0.4.2 --source https://api.nuget.org/v3/index.json`. For a beta version not yet listed there, use the reviewed `.nupkg` from your API documentation in a local NuGet source as shown above. `OpenApi/portal.openapi.json` is the source snapshot. Run `pwsh -File scripts/Update-PortalClient.ps1` to regenerate; optionally add `-ApiBaseUrl https://localhost:7241/` to first refresh both public Swagger documents. Review the generated changes and run `scripts/Test-PortalClients.ps1` before packing. NSwag 14.7.1 is a pinned development tool, not a package dependency. Generated code is checked in: consumer builds need neither NSwag, a running API nor private feeds.
 
 `scripts/Test-PortalClients.ps1` runs client and sample-app tests, builds the package and invokes `scripts/Test-PortalClientPackage.ps1`. The latter verifies all three package assets and dependency groups, then repeats the client contract/session/error tests in a separate NuGet-only consumer with a fresh package cache. No API/server projects or private package feeds are referenced; tests use synthetic data only.
 
@@ -125,3 +129,47 @@ CVR: 44637928
 +45 76 43 70 20  
 [support@kombinetech.com](mailto:support@kombinetech.com)  
 [kombinetech.com](https://kombinetech.com/)
+
+## Managed sessions — 0.4.2 (unreleased)
+
+`SendRequestAsync` also supports downloads, streaming responses and operations added after the bundled generated contract. It checks that the request stays within the client's fixed API endpoint, preserves application headers and never retries. The caller owns the request and response. Pass `HttpCompletionOption.ResponseHeadersRead` for streaming. Application-specific response models may be used with this transport; permissions remain enforced by the API.
+
+Keep one `PortalSession` per API endpoint and account/login. Clients created from it renew on use shortly before expiry; concurrent authentication is serialized. No background timer runs. Disposing a client does not log out the shared session; call `session.ClearSession()` to log out. Pending authentication cannot restore a cleared session. Do not log tokens or credentials.
+
+Interactive applications call `Login`/`LoginAsync` once. Expired sessions require a new login. Web applications may `Restore` a trusted token and expiry from their protected cookie, call `Renew`/`RenewAsync` only after verified user activity, then update that cookie. Background status checks must use a separate anonymous client. Session renewal grants no additional API permissions.
+
+Configured-account applications can pass a credential provider to `PortalSession`: `PortalCredentialsProvider` on legacy frameworks, or `Func<CancellationToken, Task<PortalCredentials>>` on modern .NET. It returns a new `PortalCredentials(email, password)` read from the application's current secure configuration only when login is needed. The library does not retain the returned password. No credentials provider is needed for interactive browser sessions.
+
+Use `ExecuteRead`/`ExecuteReadAsync` only for explicitly side-effect-free callbacks: HTTP 401 invalidates the matching session and permits one new login and one retry when a provider exists. HTTP 403, 409, 429, 503, transport failures and timeouts are not retried. Ordinary client methods never automatically retry business operations, including writes. Without a provider, an expired/cleared session raises `InvalidOperationException`; an API rejection retains its `PortalApiException` status/code. Handle these by asking the user to log in again, never by looping indefinitely.
+
+C# and VB.NET use the same DLL. The following interactive examples use caller-supplied credentials:
+
+```csharp
+using Kombine.Flex.Portal.Client;
+
+async Task Example(Uri apiUrl, string email, string password)
+{
+    var session = new PortalSession(apiUrl);
+    await session.LoginAsync(email, password);
+    using (var api = await session.CreateClientAsync())
+    {
+        var profile = await api.GetCurrentManagerAsync();
+        // Keep this client for later user actions; it renews on use.
+    }
+    session.ClearSession();
+}
+```
+
+```vbnet
+Imports Kombine.Flex.Portal.Client
+
+Async Function Example(apiUrl As Uri, email As String, password As String) As Task
+    Dim session = New PortalSession(apiUrl)
+    Await session.LoginAsync(email, password)
+    Using api = Await session.CreateClientAsync()
+        Dim profile = Await api.GetCurrentManagerAsync()
+        ' Keep this client for later user actions; it renews on use.
+    End Using
+    session.ClearSession()
+End Function
+```

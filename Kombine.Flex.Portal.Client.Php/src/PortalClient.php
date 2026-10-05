@@ -12,7 +12,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type AccountTotal array{'currency'?: string|null, 'entries'?: int, 'amountMinor'?: int}
  * @phpstan-type AccountUnitResponse array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: string|null, 'name'?: string|null}
  * @phpstan-type ActiveLocationCountResponse array{'count'?: int, 'iconKid'?: string|null}
- * @phpstan-type AssistantLink array{'kid'?: string|null, 'path'?: string|null}
+ * @phpstan-type AssistantLink array{'kid'?: string|null, 'path'?: string|null, 'name'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type AssistantMessage array{'role'?: string|null, 'content'?: string|null}
  * @phpstan-type AssistantRequest array{'question': string, 'history'?: list<AssistantMessage>|null}
  * @phpstan-type AssistantResponse array{'answer'?: string|null, 'operations'?: list<string>|null, 'links'?: list<AssistantLink>|null}
@@ -56,8 +56,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type LocationBookingRuleGroup array{'name'?: string|null, 'units'?: list<BookingRuleUnit>|null, 'rules'?: list<LocationBookingRule>|null, 'common'?: bool, 'help'?: string|null}
  * @phpstan-type LocationBookingRulePart array{'text'?: string|null, 'isValue'?: bool}
  * @phpstan-type LocationBookingRulesResponse array{'locationKid'?: string|null, 'calculatedAt'?: string, 'groups'?: list<LocationBookingRuleGroup>|null}
- * @phpstan-type LocationDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'bankName'?: string|null, 'name'?: string|null, 'vismaCustNo'?: string|null, 'bankActivationCode'?: string|null, 'locationActivationCode'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'iconKid'?: string|null, 'bankIconKid'?: string|null}
- * @phpstan-type LocationDirectoryResponse array{'items'?: list<LocationDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool}
+ * @phpstan-type LocationDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'bankName'?: string|null, 'name'?: string|null, 'vismaCustNo'?: string|null, 'bankActivationCode'?: string|null, 'locationActivationCode'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'longitude'?: int|float|null, 'latitude'?: int|float|null, 'teltonikaSms'?: string|null, 'alternativeBankName'?: string|null, 'mask'?: string|null, 'timeZone'?: string|null, 'online'?: bool|null, 'lastContactAt'?: string|null, 'vismaCrAcNo'?: string|null, 'vismaInvoiceVersion'?: string|null, 'vismaOrdre'?: string|null, 'vismaPNTurnover'?: string|null, 'vismaPNSettlement'?: string|null, 'vismaSettlement'?: string|null, 'vismaVAT'?: string|null, 'vismaServiceKey'?: string|null, 'vismaStart'?: string|null, 'vismaNote'?: string|null, 'hiddenNote'?: string|null, 'vismaGuaranteeMonth'?: string|null, 'vismaGuaranteeUnder'?: string|null, 'vismaGuarantee'?: string|null, 'vismaGuaranteeCustomer'?: string|null, 'vismaGuaranteeOver'?: string|null, 'gift'?: string|null, 'giftBegin'?: string|null, 'giftEnd'?: string|null, 'giftSplit'?: string|null, 'giftPN'?: string|null, 'iconKid'?: string|null, 'bankIconKid'?: string|null}
+ * @phpstan-type LocationDirectoryResponse array{'items'?: list<LocationDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
  * @phpstan-type LocationIconResponse array{'kid'?: string|null, 'iconKid'?: string|null, 'offline'?: bool|null, 'status'?: int}
  * @phpstan-type LocationIconsResponse array{'items'?: list<LocationIconResponse>|null}
  * @phpstan-type LocationOpeningHoursResponse array{'locationKid'?: string|null, 'timeZone'?: string|null, 'calculatedAt'?: string, 'groups'?: list<OpeningHoursGroup>|null}
@@ -134,7 +134,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UnitSettingRequest array{'value': string|null, 'expectedRevision': string|null}
  * @phpstan-type UnitSettingResponse array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, 'value'?: string|null, 'ms2000'?: int, 'revision'?: string|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse}
  * @phpstan-type UpdateObjectAddressRequest array{'address': string|null, 'zip': string|null, 'expectedRevision': string|null}
- * @phpstan-type UserActivationResponse array{'kid'?: string|null, 'name'?: string|null, 'number'?: string|null, 'activationCode'?: string|null}
+ * @phpstan-type UserActivationResponse array{'kid'?: string|null, 'name'?: string|null, 'number'?: string|null, 'activationCode'?: string|null, 'qrCodeDataV1'?: string|null, 'qrCodeDataV2'?: string|null}
  * @phpstan-type UserAttributeInput array{'attribute'?: string|null, 'value'?: int}
  * @phpstan-type UserAttributeResponse array{'attribute'?: string|null, 'value'?: int}
  * @phpstan-type UserBalanceItem array{'kid'?: string|null, 'status'?: string|null, 'currentBalanceMinor'?: int|null, 'previousBalanceMinor'?: int|null, 'previousPeriod'?: int|null, 'previousPeriodIsProvisional'?: bool, 'latestPostingMs2000'?: int|null, 'hasActiveSubscription'?: bool|null, 'balances'?: list<UserCurrencyBalanceItem>|null}
@@ -143,6 +143,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserCommandRequest array{'action'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'number'?: string|null, 'deleteAtUtc'?: string|null, 'tagKid'?: string|null, 'state'?: string|null, 'locationKid'?: string|null, 'attributes'?: list<UserAttributeInput>|null, 'icon'?: string|null}
  * @phpstan-type UserCurrencyBalanceItem array{'currency'?: string|null, 'currentBalanceMinor'?: int, 'previousBalanceMinor'?: int|null, 'previousPeriod'?: int|null, 'previousPeriodIsProvisional'?: bool}
  * @phpstan-type UserLocationResponse array{'kid'?: string|null, 'state'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
+ * @phpstan-type UserNumberSuggestionResponse array{'bankKid'?: string|null, 'number'?: string|null}
  * @phpstan-type UserReceipt array{'key'?: string|null, 'date'?: string, 'locationKid'?: string|null, 'locationName'?: string|null, 'period'?: int, 'provisional'?: bool, 'kind'?: string|null, 'currency'?: string|null, 'totalMinor'?: int, 'vatMinor'?: int|null, 'balanceAfterMinor'?: int, 'lines'?: list<UserReceiptLine>|null}
  * @phpstan-type UserReceiptLine array{'kid'?: string|null, 'occurredAt'?: string, 'unitKid'?: string|null, 'unitName'?: string|null, 'texts'?: list<string>|null, 'amountMinor'?: int, 'calculated'?: bool}
  * @phpstan-type UserReceiptsResponse array{'userKid'?: string|null, 'revision'?: string|null, 'items'?: list<UserReceipt>|null, 'nextOffset'?: int|null, 'periodCount'?: int}
@@ -507,7 +508,7 @@ final class PortalClient extends BaseClient
 
     /**
      * List accessible locations with parent banks, Visma customer numbers and authorized activation codes.
-     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool} $options
+     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string} $options
      * @return LocationDirectoryResponse
      */
     public function getLocations(array $options = []): mixed
@@ -988,6 +989,27 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Suggest the next resident number from the bank's first NumberFormats entry and stored NumberFormatUserIndex (default 1).
+     * @param string $bankKid
+     * @return UserNumberSuggestionResponse
+     */
+    public function getBankUserNumberForNewUser(mixed $bankKid): mixed
+    {
+        return $this->request('GetBankUserNumberForNewUser', ['bankKid' => $bankKid], null);
+    }
+
+    /**
+     * Suggest the next resident number after userNumber using the bank's first NumberFormats entry.
+     * @param string $bankKid
+     * @param array{'userNumber'?: string} $options
+     * @return UserNumberSuggestionResponse
+     */
+    public function getBankNextUserNumber(mixed $bankKid, array $options = []): mixed
+    {
+        return $this->request('GetBankNextUserNumber', ['bankKid' => $bankKid] + $options, null);
+    }
+
+    /**
      * Read authoritative editing fields and an opaque concurrency revision. Bank-wide Users2/User Read required.
      * @param string $bankKid
      * @param string $userKid
@@ -1169,6 +1191,32 @@ final class PortalClient extends BaseClient
     public function getCircleRunningSized(mixed $color, mixed $width, mixed $height, mixed $destination): mixed
     {
         return $this->request('GetCircleRunningSized', ['color' => $color, 'width' => $width, 'height' => $height], null, $destination);
+    }
+
+    /**
+     * Renders a linear gradient at 200 × 200 pixels.
+     * @param string $colors
+     * @param int|float $angle
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getLinearGradient(mixed $colors, mixed $angle, mixed $destination): mixed
+    {
+        return $this->request('GetLinearGradient', ['colors' => $colors, 'angle' => $angle], null, $destination);
+    }
+
+    /**
+     * Renders a linear gradient at a selected width and height.
+     * @param string $colors
+     * @param int|float $angle
+     * @param int $width
+     * @param int $height
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getLinearGradientSized(mixed $colors, mixed $angle, mixed $width, mixed $height, mixed $destination): mixed
+    {
+        return $this->request('GetLinearGradientSized', ['colors' => $colors, 'angle' => $angle, 'width' => $width, 'height' => $height], null, $destination);
     }
 
     /**

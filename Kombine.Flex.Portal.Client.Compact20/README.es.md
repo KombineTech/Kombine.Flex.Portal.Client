@@ -1,4 +1,6 @@
-La versión 0.3.1 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales.
+Versión 0.4.2: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.
+
+a versión 0.4.2 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales.
 
 La versión 0.2.5 añade los campos opcionales latestPostingMs2000 y hasActiveSubscription a GetBankUserBalances. La fecha del asiento es un entero de 64 bits en milisegundos UTC desde 2000-01-01; cero indica que no hay asientos. Null o un campo ausente significa desconocido; los residentes inexistentes u ocultos devuelven null. El estado de suscripción no confirma un pago. Mantenga el tratamiento de saldos y los permisos existentes; consulte /docs#user-balances.
 
@@ -16,13 +18,13 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 
 `Kombine.Flex.Portal.Client.Compact20` ofrece métodos síncronos y tipados para las **110 operaciones públicas**. No requiere NuGet, bibliotecas Kombine, acceso a bases de datos ni cálculos de KID. Las reglas de negocio y los permisos se aplican en la API. Consulte [OPERATIONS.md](OPERATIONS.md).
 
-La versión 0.3.1 corresponde al candidato beta actual (110 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
+La versión 0.4.2 corresponde al candidato beta actual (110 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
 
 La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites.
 
 ## Instalación
 
-Extraiga `Kombine.Flex.Portal.Client.Compact20.0.3.1.zip` y seleccione **Add Reference → Browse → Kombine.Flex.Portal.Client.Compact20.dll**. Conserve el XML junto a la DLL para IntelliSense y distribuya la DLL con su aplicación. `Source` contiene el código y `Kombine.Flex.Portal.Client.Compact2008.sln`. Cree un proyecto Smart Device para CF 2.0; no es .NET Framework de escritorio ni .NET Standard.
+Extraiga `Kombine.Flex.Portal.Client.Compact20.0.4.2.zip` y seleccione **Add Reference → Browse → Kombine.Flex.Portal.Client.Compact20.dll**. Conserve el XML junto a la DLL para IntelliSense y distribuya la DLL con su aplicación. `Source` contiene el código y `Kombine.Flex.Portal.Client.Compact2008.sln`. Cree un proyecto Smart Device para CF 2.0; no es .NET Framework de escritorio ni .NET Standard.
 
 ## Primero la URL de la API, después las credenciales
 
@@ -107,3 +109,45 @@ Copie el EXE, la DLL y ContractCases.tsv de DeviceTests al mismo directorio del 
 Verificados: compilación con MSBuild 3.5 y referencias CF 2.0, las 110 operaciones y comprobaciones sintéticas en escritorio, incluidas las identidades de ensamblado. El programa para dispositivos compila. **No se han verificado la ejecución ni HTTPS en dispositivos o emuladores CE/Mobile.** No se realizaron inicios de sesión reales ni cambios en bases de datos.
 
 En el repositorio de desarrollo, `scripts/Test-PortalClientCompact20.ps1` compila, prueba y empaqueta el ZIP; PowerShell 7 no es necesario en el equipo cliente. `scripts/Generate-PortalClientNet20.py --compact` regenera los contratos desde OpenAPI. Para usar o compilar la DLL, el cliente no necesita Python, generadores ni una API en ejecución. El idioma principal de la documentación es inglés; se incluyen alternativas en danés y español.
+
+## Gestión automática de sesiones — 0.4.2 (sin publicar)
+
+Mantenga una `PortalSession` por dirección API y cuenta/inicio de sesión. Los clientes creados a partir de ella renuevan al usarse poco antes de caducar; la autenticación simultánea se coordina. No hay temporizador en segundo plano. Dispose del cliente no cierra la sesión compartida; use `session.ClearSession()`. La autenticación pendiente no puede restaurar una sesión borrada. No registre tokens ni contraseñas.
+
+Las aplicaciones interactivas llaman a `Login`/`LoginAsync` una vez. Una sesión caducada requiere otro inicio de sesión. Una aplicación web puede usar `Restore` con el token y vencimiento fiables de su cookie protegida, llamar a `Renew`/`RenewAsync` después de actividad verificada del usuario y actualizar la cookie. Las comprobaciones de estado en segundo plano deben usar otro cliente anónimo. La renovación no concede permisos adicionales.
+
+Las aplicaciones con cuenta configurada pueden proporcionar una función: `PortalCredentialsProvider` para frameworks antiguos o `Func<CancellationToken, Task<PortalCredentials>>` para .NET moderno. Devuelve `PortalCredentials(email, password)` desde la configuración segura y actual de la aplicación solo cuando hace falta iniciar sesión. La biblioteca no conserva la contraseña devuelta. Las sesiones interactivas del navegador no necesitan esta función.
+
+Use `ExecuteRead`/`ExecuteReadAsync` solo para lecturas explícitamente seguras: HTTP 401 invalida la sesión correspondiente y permite un nuevo inicio y un único reintento si existe un proveedor. No se reintentan HTTP 403, 409, 429, 503, fallos de red ni tiempos de espera. Los métodos normales nunca repiten automáticamente operaciones de negocio, incluidas escrituras. Sin proveedor, una sesión caducada o borrada produce `InvalidOperationException`; un rechazo de la API conserva estado y código en `PortalApiException`. Solicite otro inicio de sesión, sin bucles ilimitados.
+
+C# y VB.NET usan la misma DLL. Los ejemplos interactivos reciben las credenciales del llamador:
+
+```csharp
+using Kombine.Flex.Portal.Client.Compact20;
+
+void Example(Uri apiUrl, string email, string password)
+{
+    PortalSession session = new PortalSession(apiUrl);
+    session.Login(email, password);
+    using (PortalApiClient api = session.CreateClient())
+    {
+        ManagerProfileResponse profile = api.GetCurrentManager();
+        // Keep this client for later user actions; it renews on use.
+    }
+    session.ClearSession();
+}
+```
+
+```vbnet
+Imports Kombine.Flex.Portal.Client.Compact20
+
+Sub Example(ByVal apiUrl As Uri, ByVal email As String, ByVal password As String)
+    Dim session As New PortalSession(apiUrl)
+    session.Login(email, password)
+    Using api As PortalApiClient = session.CreateClient()
+        Dim profile As ManagerProfileResponse = api.GetCurrentManager()
+        ' Keep this client for later user actions; it renews on use.
+    End Using
+    session.ClearSession()
+End Sub
+```

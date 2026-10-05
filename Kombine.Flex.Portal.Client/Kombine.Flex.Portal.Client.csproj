@@ -6,7 +6,7 @@
     <RestoreConfigFile>$(MSBuildThisFileDirectory)..\NuGet.Client.Config</RestoreConfigFile>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.3.5</Version>
+    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.4.2</Version>
     <IsPackable>true</IsPackable><PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Kombine Technology ApS</Authors><Company>Kombine Technology ApS</Company>
     <Copyright>Kombine Technology ApS</Copyright>
@@ -15,7 +15,7 @@
     <PackageProjectUrl>https://kombinetech.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KombineTech/Kombine.Flex.Portal.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Use the square Kombine symbol as the package icon for readability at small sizes; API contracts and client behavior are unchanged.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add reusable activity-driven manager sessions for interactive and configured-account clients.</PackageReleaseNotes>
     <PackageTags>Flex;Portal;API;Client</PackageTags>
   </PropertyGroup>
   <ItemGroup>

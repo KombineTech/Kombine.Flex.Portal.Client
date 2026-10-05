@@ -14,6 +14,7 @@ namespace Kombine.Flex.Portal.Client.Net20
         private readonly IPortalTransport _transport;
         private readonly object _sessionLock = new object();
         private string _accessToken;
+        private PortalSession _managedSession;
         private int _sessionVersion;
         private bool _disposed;
         private int _timeout = 30000;
@@ -21,6 +22,13 @@ namespace Kombine.Flex.Portal.Client.Net20
 
         /// <summary>Select the tenant API URL first. Requires HTTPS and a trailing slash; HTTP is allowed only on loopback for tests.</summary>
         public PortalApiClient(Uri apiBaseUri) : this(apiBaseUri, new WebRequestTransport()) { }
+        /// <summary>Renews a shared session on use. Disposing this client does not log out the shared session.</summary>
+        public PortalApiClient(PortalSession session) : this(session == null ? null : session.Endpoint) { AttachSession(session); }
+        internal void AttachSession(PortalSession session)
+        {
+            if (session == null || session.Endpoint != _endpoint) throw new ArgumentException("The session endpoint cannot change.", "session");
+            lock (_sessionLock) { CheckDisposed(); _managedSession = session; }
+        }
         internal PortalApiClient(Uri apiBaseUri, IPortalTransport transport)
         {
             if (apiBaseUri == null || !apiBaseUri.IsAbsoluteUri || apiBaseUri.UserInfo.Length != 0 || apiBaseUri.Query.Length != 0 || apiBaseUri.Fragment.Length != 0
@@ -42,7 +50,7 @@ namespace Kombine.Flex.Portal.Client.Net20
             set
             {
                 if (value != null && !ValidToken(value)) throw new ArgumentException("Invalid bearer token.", "value");
-                lock (_sessionLock) { CheckDisposed(); _sessionVersion++; _accessToken = value; }
+                lock (_sessionLock) { CheckDisposed(); _sessionVersion++; _managedSession = null; _accessToken = value; }
             }
         }
         /// <summary>Calls LoginManager and retains the session in memory. Does not retain the password.</summary>
@@ -66,7 +74,7 @@ namespace Kombine.Flex.Portal.Client.Net20
             return response;
         }
         /// <summary>Forgets this client's token. The API has no logout/revocation endpoint; other token copies retain server expiry.</summary>
-        public void ClearSession() { lock (_sessionLock) { _sessionVersion++; _accessToken = null; } }
+        public void ClearSession() { lock (_sessionLock) { _sessionVersion++; _managedSession = null; _accessToken = null; } }
         /// <summary>Clears the token and prevents new requests. Already-started synchronous requests are not cancelled.</summary>
         public void Dispose() { lock (_sessionLock) { if (_disposed) return; ClearSession(); _disposed = true; } }
 
@@ -102,6 +110,17 @@ namespace Kombine.Flex.Portal.Client.Net20
             request.Uri = new Uri(_endpoint, path);
             if (request.Uri.GetLeftPart(UriPartial.Authority) != _endpoint.GetLeftPart(UriPartial.Authority)) throw new InvalidOperationException("The API endpoint cannot change.");
             request.Method = method; request.Headers = headers; request.Timeout = _timeout;
+            PortalSession managed;
+            lock (_sessionLock) { CheckDisposed(); managed = _managedSession; }
+            if (managed != null)
+            {
+                PortalSessionToken token = managed.GetToken();
+                lock (_sessionLock)
+                {
+                    if (!Object.ReferenceEquals(managed, _managedSession)) throw new InvalidOperationException("The client session changed.");
+                    _accessToken = token.AccessToken;
+                }
+            }
             lock (_sessionLock)
             {
                 CheckDisposed();

@@ -1,10 +1,12 @@
+Versión 0.4.2: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.
+
 [English](README.md) · [Dansk](README.da.md) · [Español](README.es.md)
 
 # Cliente PHP de Kombine Flex Portal
 
 [Changelog del contrato API](https://api.team.kombine.technology/docs#changelog) — utiliza `/docs#changelog` en la API del mismo tenant y entorno que el cliente. El changelog está solo en inglés.
 
-Versión **0.3.1**, preparada localmente; no desplegada ni publicada en Packagist. Incluye 110 operaciones públicas del contrato OpenAPI adjunto. Requiere **PHP 8.2+ de 64 bits**, `ext-curl`, `ext-json`, HTTPS y certificados CA de confianza. No necesita bibliotecas PHP externas ni ensamblados internos de Kombine. El transporte admite Windows, Linux y macOS; esta versión se probó con Windows CLI. Utiliza una versión de PHP con soporte vigente.
+Versión **0.4.2**, preparada localmente; no desplegada ni publicada en Packagist. Incluye 114 operaciones públicas del contrato OpenAPI adjunto. Requiere **PHP 8.2+ de 64 bits**, `ext-curl`, `ext-json`, HTTPS y certificados CA de confianza. No necesita bibliotecas PHP externas ni ensamblados internos de Kombine. El transporte admite Windows, Linux y macOS; esta versión se probó con Windows CLI. Utiliza una versión de PHP con soporte vigente.
 
 La versión 0.3.1 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales. La versión 0.2.5 añade los campos opcionales latestPostingMs2000 y hasActiveSubscription a GetBankUserBalances. La fecha del asiento es un entero de 64 bits en milisegundos UTC desde 2000-01-01; cero indica que no hay asientos. Null o un campo ausente significa desconocido; los residentes inexistentes u ocultos devuelven null. El estado de suscripción no confirma un pago. Mantenga el tratamiento de saldos y los permisos existentes; consulte /docs#user-balances. La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites. La versión 0.2.5 añade GetUserReceipts y GetHostingMetrics para versiones de la API que ofrecen estas operaciones. Cargue los recibos bajo demanda desde offset 0. Continúe con nextOffset y la misma revision; ante HTTP 409 (receipts-changed), descarte las páginas anteriores y reinicie en offset 0. Mantenga las monedas separadas y los importes como enteros de 64 bits en unidades menores. Consulte /docs#user-receipts y /docs#hosting para los permisos y límites.
 
@@ -12,11 +14,11 @@ Para este candidato beta, cambie los campos icon/bankIcon/unitIcon por iconKid/b
 
 ## Instalación
 
-Descarga `kombine-flex-portal-client-php-0.3.1.zip` desde la sección PHP de la guía API. Con Composer, guarda el ZIP en el directorio `packages/` de la aplicación:
+Descarga `kombine-flex-portal-client-php-0.4.2.zip` desde la sección PHP de la guía API. Con Composer, guarda el ZIP en el directorio `packages/` de la aplicación:
 
 ```sh
 composer config repositories.kombine artifact ./packages
-composer require kombine/flex-portal-client:0.3.1
+composer require kombine/flex-portal-client:0.4.2
 ```
 
 El repositorio artifact de Composer requiere `ext-zip` durante la instalación. Sin Composer, extrae el ZIP en `flex-portal-client/` y sustituye la línea de autoload por `require __DIR__ . '/flex-portal-client/autoload.php';`. Conserva todo `src/`, incluido `contract.json`. Ambos paquetes se pueden cargar juntos.

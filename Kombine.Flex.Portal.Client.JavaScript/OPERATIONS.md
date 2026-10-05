@@ -78,6 +78,8 @@
 | `GetUnitDocumentSvg` | `get_unit_document_svg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
 | `SetUnitSetting` | `set_unit_setting` | `setUnitSetting` | POST | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}` |
 | `GetBankUserBalances` | `get_bank_user_balances` | `getBankUserBalances` | POST | `/api/v1/banks/{bankKid}/users/balances` |
+| `GetBankUserNumberForNewUser` | `get_bank_user_number_for_new_user` | `getBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` |
+| `GetBankNextUserNumber` | `get_bank_next_user_number` | `getBankNextUserNumber` | GET | `/api/v1/banks/{bankKid}/users/next-number-after` |
 | `GetBankUserWorkspace` | `get_bank_user_workspace` | `getBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
 | `GetBankUserActivation` | `get_bank_user_activation` | `getBankUserActivation` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` |
 | `ExecuteBankUserCommand` | `execute_bank_user_command` | `executeBankUserCommand` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` |
@@ -94,6 +96,8 @@
 | `GetCircleProgressSized` | `get_circle_progress_sized` | `getCircleProgressSized` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg` |
 | `GetCircleRunning` | `get_circle_running` | `getCircleRunning` | GET | `/api/v1/circles/running/{color}.svg` |
 | `GetCircleRunningSized` | `get_circle_running_sized` | `getCircleRunningSized` | GET | `/api/v1/circles/running/{color}/{width}x{height}.svg` |
+| `GetLinearGradient` | `get_linear_gradient` | `getLinearGradient` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` |
+| `GetLinearGradientSized` | `get_linear_gradient_sized` | `getLinearGradientSized` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` |
 | `GetIconPresentation` | `get_icon_presentation` | `getIconPresentation` | GET | `/api/v1/icon/presentation` |
 | `GetIconAssetCatalog` | `get_icon_asset_catalog` | `getIconAssetCatalog` | GET | `/api/v1/icon/catalog/{iconSet}` |
 | `GetIconFromSet` | `get_icon_from_set` | `getIconFromSet` | GET | `/api/v1/icon/{iconSet}/{kid}.{format}` |

@@ -21,7 +21,7 @@ function sample(spec) {
   }
 }
 
-assert.equal(cases.length, 110);
+assert.equal(cases.length, 114);
 for (const spec of cases) {
   test('wire contract: ' + spec.operation, async () => {
     let observed;

@@ -1,4 +1,6 @@
-Version 0.3.1 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
+Version 0.4.2: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
+
+ersion 0.4.2 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
 
 Version 0.2.5 tilføjer de valgfrie felter latestPostingMs2000 og hasActiveSubscription til GetBankUserBalances. Posteringstidspunktet er et 64-bit antal UTC-millisekunder siden 2000-01-01; nul betyder ingen posteringer. Null eller et manglende felt betyder ukendt, og manglende eller skjulte beboere giver null. Abonnementsstatus bekræfter ikke en betaling. Bevar eksisterende saldohåndtering og rettigheder; se /docs#user-balances.
 
@@ -18,7 +20,7 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 Ingen NuGet-pakker, databaseforbindelser, Kombine-biblioteker eller reference til desktop-klienten. Kun Compact Frameworks egne `mscorlib` og `System`, version 2.0, kræves. Biblioteket indeholder kommunikation og serialisering; forretningsregler og adgangskontrol ligger fortsat i API'et.
 
-Version 0.3.1 følger den aktuelle beta-kandidat (110 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
+Version 0.4.2 følger den aktuelle beta-kandidat (110 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
 
 Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser.
 
@@ -154,3 +156,45 @@ Solutionen indeholder:
 I udviklingsrepoet bygger/tester/pakker `scripts/Test-PortalClientCompact20.ps1`. Scriptet kræver PowerShell 7 på udviklings-pc'en; kunder og enheder behøver det ikke. `scripts/Generate-PortalClientNet20.py --compact` opdaterer de indtjekkede kontraktklasser fra det fælles OpenAPI-snapshot.
 
 **Verificeret:** Release-build med de originale VS2008/MSBuild 3.5-værktøjer og CF 2.0-referencebiblioteker; alle 110 operationer og syntetiske kontroller på desktop-testværten. Tests kontrollerer også, at DLL'en refererer til Compact Frameworks assembly-identiteter. Device-testprogrammet er bygget mod CF 2.0. **Ikke verificeret:** kørsel eller HTTPS på en fysisk CE/Mobile-enhed eller emulator. Der er ikke udført rigtige login eller databaseændringer.
+
+## Automatisk sessionshåndtering — 0.4.2 (ikke udgivet)
+
+Behold én `PortalSession` pr. API-adresse og konto/login. Klienter oprettet fra den fornyer ved brug kort før udløb; samtidige login og fornyelser samles. Der kører ingen baggrundstimer. Dispose af en klient logger ikke den fælles session ud; brug `session.ClearSession()`. Et igangværende login kan ikke genoprette en ryddet session. Log aldrig tokens eller adgangskoder.
+
+Interaktive programmer kalder `Login`/`LoginAsync` én gang. Udløb kræver nyt login. Webprogrammer kan bruge `Restore` med et betroet token og udløbstid fra deres beskyttede cookie, kalde `Renew`/`RenewAsync` efter verificeret brugeraktivitet og derefter opdatere cookien. Statuskontrol i baggrunden skal bruge en separat anonym klient. Fornyelse giver ingen ekstra API-rettigheder.
+
+Programmer med en konfigureret konto kan give `PortalSession` en callback: `PortalCredentialsProvider` på ældre frameworks eller `Func<CancellationToken, Task<PortalCredentials>>` på moderne .NET. Den returnerer `PortalCredentials(email, password)` fra programmets aktuelle sikre konfiguration, når nyt login er nødvendigt. Biblioteket gemmer ikke den returnerede adgangskode. Browserbaserede brugerlogin behøver ingen sådan callback.
+
+Brug kun `ExecuteRead`/`ExecuteReadAsync` til udtrykkeligt sikre læsninger: HTTP 401 rydder den berørte session og tillader ét nyt login og ét genforsøg, hvis en callback findes. HTTP 403, 409, 429, 503, netværksfejl og timeout gentages ikke. Almindelige klientmetoder gentager aldrig automatisk forretningskald, heller ikke skrivninger. Uden callback giver udløbet/ryddet session `InvalidOperationException`; afvisning fra API'et bevarer status og kode i `PortalApiException`. Bed da brugeren logge ind igen; lav ikke en uendelig løkke.
+
+C# og VB.NET bruger samme DLL. De interaktive eksempler modtager loginoplysninger fra kalderen:
+
+```csharp
+using Kombine.Flex.Portal.Client.Compact20;
+
+void Example(Uri apiUrl, string email, string password)
+{
+    PortalSession session = new PortalSession(apiUrl);
+    session.Login(email, password);
+    using (PortalApiClient api = session.CreateClient())
+    {
+        ManagerProfileResponse profile = api.GetCurrentManager();
+        // Keep this client for later user actions; it renews on use.
+    }
+    session.ClearSession();
+}
+```
+
+```vbnet
+Imports Kombine.Flex.Portal.Client.Compact20
+
+Sub Example(ByVal apiUrl As Uri, ByVal email As String, ByVal password As String)
+    Dim session As New PortalSession(apiUrl)
+    session.Login(email, password)
+    Using api As PortalApiClient = session.CreateClient()
+        Dim profile As ManagerProfileResponse = api.GetCurrentManager()
+        ' Keep this client for later user actions; it renews on use.
+    End Using
+    session.ClearSession()
+End Sub
+```

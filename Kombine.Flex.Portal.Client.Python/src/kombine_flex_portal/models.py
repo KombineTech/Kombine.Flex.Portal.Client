@@ -75,6 +75,9 @@ ActiveLocationCountResponse = TypedDict('ActiveLocationCountResponse', {
 AssistantLink = TypedDict('AssistantLink', {
     'kid': 'str | None',
     'path': 'str | None',
+    'name': 'str | None',
+    'bankKid': 'str | None',
+    'iconKid': 'str | None',
 }, total=False)
 
 AssistantMessage = TypedDict('AssistantMessage', {
@@ -412,6 +415,37 @@ LocationDirectoryItem = TypedDict('LocationDirectoryItem', {
     'enabled': 'bool',
     'deleted': 'bool | None',
     'deletedAt': 'str | None',
+    'address': 'str | None',
+    'zip': 'str | None',
+    'longitude': 'float | None',
+    'latitude': 'float | None',
+    'teltonikaSms': 'str | None',
+    'alternativeBankName': 'str | None',
+    'mask': 'str | None',
+    'timeZone': 'str | None',
+    'online': 'bool | None',
+    'lastContactAt': 'str | None',
+    'vismaCrAcNo': 'str | None',
+    'vismaInvoiceVersion': 'str | None',
+    'vismaOrdre': 'str | None',
+    'vismaPNTurnover': 'str | None',
+    'vismaPNSettlement': 'str | None',
+    'vismaSettlement': 'str | None',
+    'vismaVAT': 'str | None',
+    'vismaServiceKey': 'str | None',
+    'vismaStart': 'str | None',
+    'vismaNote': 'str | None',
+    'hiddenNote': 'str | None',
+    'vismaGuaranteeMonth': 'str | None',
+    'vismaGuaranteeUnder': 'str | None',
+    'vismaGuarantee': 'str | None',
+    'vismaGuaranteeCustomer': 'str | None',
+    'vismaGuaranteeOver': 'str | None',
+    'gift': 'str | None',
+    'giftBegin': 'str | None',
+    'giftEnd': 'str | None',
+    'giftSplit': 'str | None',
+    'giftPN': 'str | None',
     'iconKid': 'str | None',
     'bankIconKid': 'str | None',
 }, total=False)
@@ -420,6 +454,7 @@ LocationDirectoryResponse = TypedDict('LocationDirectoryResponse', {
     'items': 'list[LocationDirectoryItem] | None',
     'nextCursor': 'str | None',
     'hasAllBanksAccess': 'bool',
+    'fields': 'list[str] | None',
 }, total=False)
 
 LocationIconResponse = TypedDict('LocationIconResponse', {
@@ -990,6 +1025,8 @@ UserActivationResponse = TypedDict('UserActivationResponse', {
     'name': 'str | None',
     'number': 'str | None',
     'activationCode': 'str | None',
+    'qrCodeDataV1': 'str | None',
+    'qrCodeDataV2': 'str | None',
 }, total=False)
 
 UserAttributeInput = TypedDict('UserAttributeInput', {
@@ -1048,6 +1085,11 @@ UserLocationResponse = TypedDict('UserLocationResponse', {
     'state': 'str | None',
     'name': 'str | None',
     'iconKid': 'str | None',
+}, total=False)
+
+UserNumberSuggestionResponse = TypedDict('UserNumberSuggestionResponse', {
+    'bankKid': 'str | None',
+    'number': 'str | None',
 }, total=False)
 
 UserReceipt = TypedDict('UserReceipt', {

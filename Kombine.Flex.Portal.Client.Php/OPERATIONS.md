@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `f176ab6fb43fb15b2cf00ff49c4fac19d1006b4ba77a7a507517874ef1802a13`).
-110 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `d70bc41e3237c4cef3b2dbb384fe108151c588c2271a72f08f124f9a1629709e`).
+114 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -26,10 +26,12 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `f176ab6fb43fb15b2cf
 | `getBankDocuments` | `GetBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` | Bearer |
 | `getBankIcons` | `GetBankIcons` | GET | `/api/v1/banks/icons` | Bearer |
 | `getBankLocations` | `GetBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` | Bearer |
+| `getBankNextUserNumber` | `GetBankNextUserNumber` | GET | `/api/v1/banks/{bankKid}/users/next-number-after` | Bearer |
 | `getBankSettlementPeriod` | `GetBankSettlementPeriod` | GET | `/api/v1/banks/{bankKid}/settlements/{period}` | Bearer |
 | `getBankSettlements` | `GetBankSettlements` | GET | `/api/v1/banks/{bankKid}/settlements` | Bearer |
 | `getBankUserActivation` | `GetBankUserActivation` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` | Bearer |
 | `getBankUserBalances` | `GetBankUserBalances` | POST | `/api/v1/banks/{bankKid}/users/balances` | Bearer |
+| `getBankUserNumberForNewUser` | `GetBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` | Bearer |
 | `getBankUserWorkspace` | `GetBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` | Bearer |
 | `getBankUsers` | `GetBankUsers` | GET | `/api/v1/banks/{bankKid}/users` | Bearer |
 | `getCircleGradientSized` | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` | Anonymous |
@@ -57,6 +59,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `f176ab6fb43fb15b2cf
 | `getKombineTextSized` | `GetKombineTextSized` | GET | `/api/v1/logos/kombine-text/{color}/{width}.svg` | Anonymous |
 | `getKombineTextWithBackground` | `GetKombineTextWithBackground` | GET | `/api/v1/logos/kombine-text/{color}/{background}/{width}.svg` | Anonymous |
 | `getKombineText` | `GetKombineText` | GET | `/api/v1/logos/kombine-text/{color}.svg` | Anonymous |
+| `getLinearGradientSized` | `GetLinearGradientSized` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` | Anonymous |
+| `getLinearGradient` | `GetLinearGradient` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` | Anonymous |
 | `getLiveLogs` | `GetLiveLogs` | GET | `/api/v1/diagnostics/live-logs` | Bearer |
 | `getLocationBookingRules` | `GetLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` | Bearer |
 | `getLocationIcons` | `GetLocationIcons` | GET | `/api/v1/locations/icons` | Bearer |

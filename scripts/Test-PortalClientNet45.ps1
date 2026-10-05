@@ -28,7 +28,7 @@ try {
         & $test --status $StatusUrl.AbsoluteUri
         if ($LASTEXITCODE) { throw '.NET Framework HTTPS status check failed.' }
     }
-    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Net45.0.3.1.zip'
+    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Net45.0.4.2.zip'
     $null = New-Item -ItemType Directory -Force (Split-Path $output)
     # Build the ZIP directly from known files: no cleanup/deletion of another staging tree.
     Add-Type -AssemblyName System.IO.Compression
@@ -47,6 +47,8 @@ try {
         }
         foreach ($file in @('README.md', 'README.da.md', 'README.es.md', 'OPERATIONS.md')) { Add-PackageFile (Join-Path $project $file) $file }
         Add-PackageFile (Join-Path $root 'Kombine.Flex.Portal.Client.2012.sln') 'Source/Kombine.Flex.Portal.Client.2012.sln'
+        Add-PackageFile (Join-Path $root 'Shared/LegacyPortalSession.cs') 'Source/Shared/LegacyPortalSession.cs'
+        Add-PackageFile (Join-Path $root 'tests/Shared/SessionChecks.cs') 'Source/tests/Shared/SessionChecks.cs'
         foreach ($relative in @('Kombine.Flex.Portal.Client.Net45', 'tests/Kombine.Flex.Portal.Client.Net45.Tests')) {
             $directory = Join-Path $root $relative
             Get-ChildItem $directory -Recurse -File | Where-Object { $_.FullName -notmatch '[\\/](bin|obj)[\\/]' -and $_.Extension -notin @('.user', '.suo') } | ForEach-Object {

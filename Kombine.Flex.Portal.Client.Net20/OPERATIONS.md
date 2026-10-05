@@ -23,10 +23,12 @@
 | `GetBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` |
 | `GetBankIcons` | GET | `/api/v1/banks/icons` |
 | `GetBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` |
+| `GetBankNextUserNumber` | GET | `/api/v1/banks/{bankKid}/users/next-number-after` |
 | `GetBankSettlementPeriod` | GET | `/api/v1/banks/{bankKid}/settlements/{period}` |
 | `GetBankSettlements` | GET | `/api/v1/banks/{bankKid}/settlements` |
 | `GetBankUserActivation` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` |
 | `GetBankUserBalances` | POST | `/api/v1/banks/{bankKid}/users/balances` |
+| `GetBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` |
 | `GetBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
 | `GetBankUsers` | GET | `/api/v1/banks/{bankKid}/users` |
 | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` |
@@ -54,6 +56,8 @@
 | `GetKombineTextSized` | GET | `/api/v1/logos/kombine-text/{color}/{width}.svg` |
 | `GetKombineTextWithBackground` | GET | `/api/v1/logos/kombine-text/{color}/{background}/{width}.svg` |
 | `GetKombineText` | GET | `/api/v1/logos/kombine-text/{color}.svg` |
+| `GetLinearGradientSized` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` |
+| `GetLinearGradient` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` |
 | `GetLiveLogs` | GET | `/api/v1/diagnostics/live-logs` |
 | `GetLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` |
 | `GetLocationIcons` | GET | `/api/v1/locations/icons` |

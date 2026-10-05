@@ -131,9 +131,9 @@ class PortalClient(BaseClient):
         'Count accessible active locations for the Banks2 navigation icon.'
         return self._request('GetActiveLocationCount', {}, None)
 
-    def get_locations(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None) -> LocationDirectoryResponse:
+    def get_locations(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None) -> LocationDirectoryResponse:
         'List accessible locations with parent banks, Visma customer numbers and authorized activation codes.'
-        return self._request('GetLocations', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only}, None)
+        return self._request('GetLocations', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields}, None)
 
     def search_locations(self, *, q: str | None = None) -> SearchResults:
         'Search location Name, Bank (alternative bank name), Zip, Address, VismaCustNo and TeltonikaSMS in Log24.'
@@ -311,6 +311,14 @@ class PortalClient(BaseClient):
         'Read current and previous-period balances for up to 50 residents in one bank.'
         return self._request('GetBankUserBalances', {'bankKid': bank_kid}, body)
 
+    def get_bank_user_number_for_new_user(self, bank_kid: str) -> UserNumberSuggestionResponse:
+        "Suggest the next resident number from the bank's first NumberFormats entry and stored NumberFormatUserIndex (default 1)."
+        return self._request('GetBankUserNumberForNewUser', {'bankKid': bank_kid}, None)
+
+    def get_bank_next_user_number(self, bank_kid: str, *, user_number: str | None = None) -> UserNumberSuggestionResponse:
+        "Suggest the next resident number after userNumber using the bank's first NumberFormats entry."
+        return self._request('GetBankNextUserNumber', {'bankKid': bank_kid, 'userNumber': user_number}, None)
+
     def get_bank_user_workspace(self, bank_kid: str, user_kid: str) -> UserWorkspaceResponse:
         'Read authoritative editing fields and an opaque concurrency revision. Bank-wide Users2/User Read required.'
         return self._request('GetBankUserWorkspace', {'bankKid': bank_kid, 'userKid': user_kid}, None)
@@ -374,6 +382,14 @@ class PortalClient(BaseClient):
     def get_circle_running_sized(self, color: str, width: int, height: int) -> PortalDownload:
         'Renders a running indicator at a selected width and height.'
         return self._request('GetCircleRunningSized', {'color': color, 'width': width, 'height': height}, None)
+
+    def get_linear_gradient(self, colors: str, angle: float) -> PortalDownload:
+        'Renders a linear gradient at 200 × 200 pixels.'
+        return self._request('GetLinearGradient', {'colors': colors, 'angle': angle}, None)
+
+    def get_linear_gradient_sized(self, colors: str, angle: float, width: int, height: int) -> PortalDownload:
+        'Renders a linear gradient at a selected width and height.'
+        return self._request('GetLinearGradientSized', {'colors': colors, 'angle': angle, 'width': width, 'height': height}, None)
 
     def get_icon_presentation(self, *, icon_kid: str | None = None, text: str | None = None, count: int | None = None, color: int | None = None) -> IconPresentationResponse:
         'Resolve an IconKid, optionally changing its text, count or RGB colour.'

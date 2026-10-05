@@ -529,6 +529,7 @@ namespace Kombine.Flex.Portal.Client.Net45
                 path = AddQuery(path, "sort", options.Sort);
                 path = AddQuery(path, "direction", options.Direction);
                 path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+                path = AddQuery(path, "fields", options.Fields);
             }
             return (LocationDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(LocationDirectoryResponse));
         }
@@ -1125,6 +1126,34 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (UserBalancesResponse)SendJson("POST", path, body, headers, 200, typeof(UserBalancesResponse));
         }
 
+        /// <summary>Suggest the next resident number from the bank's first NumberFormats entry and stored NumberFormatUserIndex (default 1).</summary>
+        public UserNumberSuggestionResponse GetBankUserNumberForNewUser(string @bankKid)
+        {
+            string path = "api/v1/banks/{bankKid}/users/next-number";
+            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (UserNumberSuggestionResponse)SendJson("GET", path, null, headers, 200, typeof(UserNumberSuggestionResponse));
+        }
+
+        /// <summary>Suggest the next resident number after userNumber using the bank's first NumberFormats entry.</summary>
+        public UserNumberSuggestionResponse GetBankNextUserNumber(string @bankKid)
+        {
+            return GetBankNextUserNumber(@bankKid, null);
+        }
+
+        /// <summary>Suggest the next resident number after userNumber using the bank's first NumberFormats entry.</summary>
+        public UserNumberSuggestionResponse GetBankNextUserNumber(string @bankKid, GetBankNextUserNumberOptions options)
+        {
+            string path = "api/v1/banks/{bankKid}/users/next-number-after";
+            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "userNumber", options.UserNumber);
+            }
+            return (UserNumberSuggestionResponse)SendJson("GET", path, null, headers, 200, typeof(UserNumberSuggestionResponse));
+        }
+
         /// <summary>Read authoritative editing fields and an opaque concurrency revision. Bank-wide Users2/User Read required.</summary>
         public UserWorkspaceResponse GetBankUserWorkspace(string @bankKid, string @userKid)
         {
@@ -1315,6 +1344,28 @@ namespace Kombine.Flex.Portal.Client.Net45
         {
             string path = "api/v1/circles/running/{color}/{width}x{height}.svg";
             path = path.Replace("{color}", PathValue(@color));
+            path = path.Replace("{width}", PathValue(@width));
+            path = path.Replace("{height}", PathValue(@height));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Renders a linear gradient at 200 × 200 pixels.</summary>
+        public PortalDownload GetLinearGradient(string @colors, double @angle)
+        {
+            string path = "api/v1/gradients/linear/{colors}/{angle}.svg";
+            path = path.Replace("{colors}", PathValue(@colors));
+            path = path.Replace("{angle}", PathValue(@angle));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Renders a linear gradient at a selected width and height.</summary>
+        public PortalDownload GetLinearGradientSized(string @colors, double @angle, int @width, int @height)
+        {
+            string path = "api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg";
+            path = path.Replace("{colors}", PathValue(@colors));
+            path = path.Replace("{angle}", PathValue(@angle));
             path = path.Replace("{width}", PathValue(@width));
             path = path.Replace("{height}", PathValue(@height));
             Dictionary<string, string> headers = new Dictionary<string, string>();
