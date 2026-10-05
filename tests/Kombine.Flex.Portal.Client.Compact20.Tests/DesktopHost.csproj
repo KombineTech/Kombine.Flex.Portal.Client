@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,16 +13,16 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols><DebugType>full</DebugType><Optimize>false</Optimize>
-    <OutputPath>bin\Desktop\Debug\</OutputPath><DefineConstants>DESKTOP_TEST_HOST;DEBUG;TRACE</DefineConstants>
+    <OutputPath>bin\Desktop\Debug\</OutputPath><DefineConstants>DESKTOP_TEST_HOST;DEBUG;TRACE;PORTAL_COMPACT20</DefineConstants>
     
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType><Optimize>true</Optimize><OutputPath>bin\Desktop\Release\</OutputPath><DefineConstants>DESKTOP_TEST_HOST;TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType><Optimize>true</Optimize><OutputPath>bin\Desktop\Release\</OutputPath><DefineConstants>DESKTOP_TEST_HOST;TRACE;PORTAL_COMPACT20</DefineConstants>
     
   </PropertyGroup>
   <ItemGroup><Reference Include="System" /></ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" /><Compile Include="DesktopMain.cs" />
+    <Compile Include="..\Shared\SessionChecks.cs"><Link>SessionChecks.cs</Link></Compile><Compile Include="Program.cs" /><Compile Include="DesktopMain.cs" />
     <None Include="ContractCases.tsv"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
     <None Include="App.config" />
     <ProjectReference Include="..\..\Kombine.Flex.Portal.Client.Compact20\Kombine.Flex.Portal.Client.Compact20.csproj">

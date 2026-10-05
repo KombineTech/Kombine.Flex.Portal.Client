@@ -17,7 +17,7 @@ internal static class Program
     {
         _assertions = 0; _directory = directory;
         RuntimeAndDependencies();
-        Contracts(); JsonRoundTripAndTyping(); ReceiptPaging(); MalformedJson(); LoginAndSessionIsolation();
+        Contracts(); JsonRoundTripAndTyping(); ReceiptPaging(); MalformedJson(); LoginAndSessionIsolation(); _assertions += SessionChecks.Run();
         LogoutDuringLogin(); InvalidSessions(); ErrorsAndBoundedResponses(); QueryAndHeaderEncoding();
         DownloadOwnership(); EndpointValidation();
 #if DESKTOP_TEST_HOST

@@ -225,3 +225,45 @@ Der følger en selvstændig .NET 2.0-testapplikation med, uden testframework-pak
 Udvikling i hovedrepoet: `scripts/Test-PortalClientNet20.ps1` bygger, tester og pakker ZIP-filen. `scripts/Generate-PortalClientNet20.py` regenererer modeller/metoder fra den moderne klients kontrollerede OpenAPI-snapshot. Python kræves **kun ved regenerering hos udvikleren**, aldrig for at bygge eller bruge kundeklienten. Genereret C# ligger i source og kræver ikke en kørende API-server.
 
 Verificeret lokalt med de gamle MSBuild 3.5-værktøjer og kørsel på CLR 2.0.50727. Visual Studio 2008-IDE'en og kundens konkrete Windows-installation er ikke afprøvet her. API-login med en rigtig kundekonto er heller ikke en del af de syntetiske tests.
+
+## Automatisk sessionshåndtering — 0.4.0 (ikke udgivet)
+
+Behold én `PortalSession` pr. API-adresse og konto/login. Klienter oprettet fra den fornyer ved brug kort før udløb; samtidige login og fornyelser samles. Der kører ingen baggrundstimer. Dispose af en klient logger ikke den fælles session ud; brug `session.ClearSession()`. Et igangværende login kan ikke genoprette en ryddet session. Log aldrig tokens eller adgangskoder.
+
+Interaktive programmer kalder `Login`/`LoginAsync` én gang. Udløb kræver nyt login. Webprogrammer kan bruge `Restore` med et betroet token og udløbstid fra deres beskyttede cookie, kalde `Renew`/`RenewAsync` efter verificeret brugeraktivitet og derefter opdatere cookien. Statuskontrol i baggrunden skal bruge en separat anonym klient. Fornyelse giver ingen ekstra API-rettigheder.
+
+Programmer med en konfigureret konto kan give `PortalSession` en callback: `PortalCredentialsProvider` på ældre frameworks eller `Func<CancellationToken, Task<PortalCredentials>>` på moderne .NET. Den returnerer `PortalCredentials(email, password)` fra programmets aktuelle sikre konfiguration, når nyt login er nødvendigt. Biblioteket gemmer ikke den returnerede adgangskode. Browserbaserede brugerlogin behøver ingen sådan callback.
+
+Brug kun `ExecuteRead`/`ExecuteReadAsync` til udtrykkeligt sikre læsninger: HTTP 401 rydder den berørte session og tillader ét nyt login og ét genforsøg, hvis en callback findes. HTTP 403, 409, 429, 503, netværksfejl og timeout gentages ikke. Almindelige klientmetoder gentager aldrig automatisk forretningskald, heller ikke skrivninger. Uden callback giver udløbet/ryddet session `InvalidOperationException`; afvisning fra API'et bevarer status og kode i `PortalApiException`. Bed da brugeren logge ind igen; lav ikke en uendelig løkke.
+
+C# og VB.NET bruger samme DLL. De interaktive eksempler modtager loginoplysninger fra kalderen:
+
+```csharp
+using Kombine.Flex.Portal.Client.Net20;
+
+void Example(Uri apiUrl, string email, string password)
+{
+    PortalSession session = new PortalSession(apiUrl);
+    session.Login(email, password);
+    using (PortalApiClient api = session.CreateClient())
+    {
+        ManagerProfileResponse profile = api.GetCurrentManager();
+        // Keep this client for later user actions; it renews on use.
+    }
+    session.ClearSession();
+}
+```
+
+```vbnet
+Imports Kombine.Flex.Portal.Client.Net20
+
+Sub Example(ByVal apiUrl As Uri, ByVal email As String, ByVal password As String)
+    Dim session As New PortalSession(apiUrl)
+    session.Login(email, password)
+    Using api As PortalApiClient = session.CreateClient()
+        Dim profile As ManagerProfileResponse = api.GetCurrentManager()
+        ' Keep this client for later user actions; it renews on use.
+    End Using
+    session.ClearSession()
+End Sub
+```

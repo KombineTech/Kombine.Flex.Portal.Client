@@ -23,7 +23,7 @@
   <ItemGroup><Reference Include="System" /></ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PortalApiClient.cs" /><Compile Include="PortalApiException.cs" />
+    <Compile Include="..\Shared\LegacyPortalSession.cs"><Link>PortalSession.cs</Link></Compile><Compile Include="PortalApiClient.cs" /><Compile Include="PortalApiException.cs" />
     <Compile Include="Transport.cs" /><Compile Include="PortalJson.cs" />
     <Compile Include="Generated\Models.cs" /><Compile Include="Generated\Operations.cs" />
     <None Include="README.md" /><None Include="README.da.md" /><None Include="README.es.md" /><None Include="OPERATIONS.md" />

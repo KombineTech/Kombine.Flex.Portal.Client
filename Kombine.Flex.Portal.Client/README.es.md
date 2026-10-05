@@ -30,7 +30,7 @@ Las versiones de producción se publican en [nuget.org](https://www.nuget.org/pa
 
 ```powershell
 dotnet nuget add source ./packages --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.3.5
+dotnet add package Kombine.Flex.Portal.Client --version 0.4.0
 ```
 
 .NET Framework 4.7.2/4.8/4.8.1 usa netstandard2.0 con Microsoft System.Text.Json 10.0.12 y sus dependencias. .NET 8/9 usa net8.0; .NET 10 usa net10.0 sin paquetes adicionales. Mantenga nuget.org o un mirror aprobado para dependencias Microsoft. Framework puede necesitar binding redirects automáticos y System.Net.Http al inyectar HttpClient. Las pruebas Framework compilan contra 4.7.2/4.8 y se ejecutan en 4.8.1 instalado; no se ha probado una instalación original de 4.7.2.
@@ -77,3 +77,45 @@ CVR: 44637928
 +45 76 43 70 20  
 [support@kombinetech.com](mailto:support@kombinetech.com)  
 [kombinetech.com](https://kombinetech.com/)
+
+## Gestión automática de sesiones — 0.4.0 (sin publicar)
+
+Mantenga una `PortalSession` por dirección API y cuenta/inicio de sesión. Los clientes creados a partir de ella renuevan al usarse poco antes de caducar; la autenticación simultánea se coordina. No hay temporizador en segundo plano. Dispose del cliente no cierra la sesión compartida; use `session.ClearSession()`. La autenticación pendiente no puede restaurar una sesión borrada. No registre tokens ni contraseñas.
+
+Las aplicaciones interactivas llaman a `Login`/`LoginAsync` una vez. Una sesión caducada requiere otro inicio de sesión. Una aplicación web puede usar `Restore` con el token y vencimiento fiables de su cookie protegida, llamar a `Renew`/`RenewAsync` después de actividad verificada del usuario y actualizar la cookie. Las comprobaciones de estado en segundo plano deben usar otro cliente anónimo. La renovación no concede permisos adicionales.
+
+Las aplicaciones con cuenta configurada pueden proporcionar una función: `PortalCredentialsProvider` para frameworks antiguos o `Func<CancellationToken, Task<PortalCredentials>>` para .NET moderno. Devuelve `PortalCredentials(email, password)` desde la configuración segura y actual de la aplicación solo cuando hace falta iniciar sesión. La biblioteca no conserva la contraseña devuelta. Las sesiones interactivas del navegador no necesitan esta función.
+
+Use `ExecuteRead`/`ExecuteReadAsync` solo para lecturas explícitamente seguras: HTTP 401 invalida la sesión correspondiente y permite un nuevo inicio y un único reintento si existe un proveedor. No se reintentan HTTP 403, 409, 429, 503, fallos de red ni tiempos de espera. Los métodos normales nunca repiten automáticamente operaciones de negocio, incluidas escrituras. Sin proveedor, una sesión caducada o borrada produce `InvalidOperationException`; un rechazo de la API conserva estado y código en `PortalApiException`. Solicite otro inicio de sesión, sin bucles ilimitados.
+
+C# y VB.NET usan la misma DLL. Los ejemplos interactivos reciben las credenciales del llamador:
+
+```csharp
+using Kombine.Flex.Portal.Client;
+
+async Task Example(Uri apiUrl, string email, string password)
+{
+    var session = new PortalSession(apiUrl);
+    await session.LoginAsync(email, password);
+    using (var api = await session.CreateClientAsync())
+    {
+        var profile = await api.GetCurrentManagerAsync();
+        // Keep this client for later user actions; it renews on use.
+    }
+    session.ClearSession();
+}
+```
+
+```vbnet
+Imports Kombine.Flex.Portal.Client
+
+Async Function Example(apiUrl As Uri, email As String, password As String) As Task
+    Dim session = New PortalSession(apiUrl)
+    Await session.LoginAsync(email, password)
+    Using api = Await session.CreateClientAsync()
+        Dim profile = Await api.GetCurrentManagerAsync()
+        ' Keep this client for later user actions; it renews on use.
+    End Using
+    session.ClearSession()
+End Function
+```

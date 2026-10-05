@@ -130,3 +130,45 @@ Use Visual Studio 2012 with the .NET 4.5 targeting kit. The classic MSBuild 4.0 
 The developer script obtains Microsoft's reference-assembly package 1.0.3 only if the targeting kit is missing; it is not shipped or required at runtime. Verified against .NET 4.5 reference assemblies, with 454 synthetic checks and an anonymous local HTTPS status request. Execution used the installed newer CLR 4 runtime; an original .NET 4.5 machine and the VS2012 IDE were not tested.
 
 In the development repository, `scripts/Test-PortalClientNet45.ps1` builds, tests and creates the ZIP. PowerShell 7 is a developer tool, not a customer/device requirement. `scripts/Generate-PortalClientNet20.py --net45` regenerates checked-in contracts from the shared OpenAPI snapshot; customers do not need Python, a generator or a running API to build/use the DLL. Documentation is primarily English, with Danish and Spanish alternatives included in the package.
+
+## Managed sessions — 0.4.0 (unreleased)
+
+Keep one `PortalSession` per API endpoint and account/login. Clients created from it renew on use shortly before expiry; concurrent authentication is serialized. No background timer runs. Disposing a client does not log out the shared session; call `session.ClearSession()` to log out. Pending authentication cannot restore a cleared session. Do not log tokens or credentials.
+
+Interactive applications call `Login`/`LoginAsync` once. Expired sessions require a new login. Web applications may `Restore` a trusted token and expiry from their protected cookie, call `Renew`/`RenewAsync` only after verified user activity, then update that cookie. Background status checks must use a separate anonymous client. Session renewal grants no additional API permissions.
+
+Configured-account applications can pass a credential provider to `PortalSession`: `PortalCredentialsProvider` on legacy frameworks, or `Func<CancellationToken, Task<PortalCredentials>>` on modern .NET. It returns a new `PortalCredentials(email, password)` read from the application's current secure configuration only when login is needed. The library does not retain the returned password. No credentials provider is needed for interactive browser sessions.
+
+Use `ExecuteRead`/`ExecuteReadAsync` only for explicitly side-effect-free callbacks: HTTP 401 invalidates the matching session and permits one new login and one retry when a provider exists. HTTP 403, 409, 429, 503, transport failures and timeouts are not retried. Ordinary client methods never automatically retry business operations, including writes. Without a provider, an expired/cleared session raises `InvalidOperationException`; an API rejection retains its `PortalApiException` status/code. Handle these by asking the user to log in again, never by looping indefinitely.
+
+C# and VB.NET use the same DLL. The following interactive examples use caller-supplied credentials:
+
+```csharp
+using Kombine.Flex.Portal.Client.Net45;
+
+void Example(Uri apiUrl, string email, string password)
+{
+    PortalSession session = new PortalSession(apiUrl);
+    session.Login(email, password);
+    using (PortalApiClient api = session.CreateClient())
+    {
+        ManagerProfileResponse profile = api.GetCurrentManager();
+        // Keep this client for later user actions; it renews on use.
+    }
+    session.ClearSession();
+}
+```
+
+```vbnet
+Imports Kombine.Flex.Portal.Client.Net45
+
+Sub Example(ByVal apiUrl As Uri, ByVal email As String, ByVal password As String)
+    Dim session As New PortalSession(apiUrl)
+    session.Login(email, password)
+    Using api As PortalApiClient = session.CreateClient()
+        Dim profile As ManagerProfileResponse = api.GetCurrentManager()
+        ' Keep this client for later user actions; it renews on use.
+    End Using
+    session.ClearSession()
+End Sub
+```

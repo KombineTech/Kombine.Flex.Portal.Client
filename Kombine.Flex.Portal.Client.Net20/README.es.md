@@ -101,3 +101,45 @@ Use Visual Studio 2008 o MSBuild 3.5. El proyecto emplea sintaxis C# 2.0 y Targe
 Verificado con MSBuild 3.5 y CLR 2.0.50727. No se probaron el IDE de VS2008, cada instalación de Windows del cliente ni inicios de sesión reales.
 
 En el repositorio de desarrollo, `scripts/Test-PortalClientNet20.ps1` compila, prueba y empaqueta el ZIP; PowerShell 7 no es necesario en el equipo cliente. `scripts/Generate-PortalClientNet20.py` regenera los contratos desde OpenAPI. Para usar o compilar la DLL, el cliente no necesita Python, generadores ni una API en ejecución. El idioma principal de la documentación es inglés; se incluyen alternativas en danés y español.
+
+## Gestión automática de sesiones — 0.4.0 (sin publicar)
+
+Mantenga una `PortalSession` por dirección API y cuenta/inicio de sesión. Los clientes creados a partir de ella renuevan al usarse poco antes de caducar; la autenticación simultánea se coordina. No hay temporizador en segundo plano. Dispose del cliente no cierra la sesión compartida; use `session.ClearSession()`. La autenticación pendiente no puede restaurar una sesión borrada. No registre tokens ni contraseñas.
+
+Las aplicaciones interactivas llaman a `Login`/`LoginAsync` una vez. Una sesión caducada requiere otro inicio de sesión. Una aplicación web puede usar `Restore` con el token y vencimiento fiables de su cookie protegida, llamar a `Renew`/`RenewAsync` después de actividad verificada del usuario y actualizar la cookie. Las comprobaciones de estado en segundo plano deben usar otro cliente anónimo. La renovación no concede permisos adicionales.
+
+Las aplicaciones con cuenta configurada pueden proporcionar una función: `PortalCredentialsProvider` para frameworks antiguos o `Func<CancellationToken, Task<PortalCredentials>>` para .NET moderno. Devuelve `PortalCredentials(email, password)` desde la configuración segura y actual de la aplicación solo cuando hace falta iniciar sesión. La biblioteca no conserva la contraseña devuelta. Las sesiones interactivas del navegador no necesitan esta función.
+
+Use `ExecuteRead`/`ExecuteReadAsync` solo para lecturas explícitamente seguras: HTTP 401 invalida la sesión correspondiente y permite un nuevo inicio y un único reintento si existe un proveedor. No se reintentan HTTP 403, 409, 429, 503, fallos de red ni tiempos de espera. Los métodos normales nunca repiten automáticamente operaciones de negocio, incluidas escrituras. Sin proveedor, una sesión caducada o borrada produce `InvalidOperationException`; un rechazo de la API conserva estado y código en `PortalApiException`. Solicite otro inicio de sesión, sin bucles ilimitados.
+
+C# y VB.NET usan la misma DLL. Los ejemplos interactivos reciben las credenciales del llamador:
+
+```csharp
+using Kombine.Flex.Portal.Client.Net20;
+
+void Example(Uri apiUrl, string email, string password)
+{
+    PortalSession session = new PortalSession(apiUrl);
+    session.Login(email, password);
+    using (PortalApiClient api = session.CreateClient())
+    {
+        ManagerProfileResponse profile = api.GetCurrentManager();
+        // Keep this client for later user actions; it renews on use.
+    }
+    session.ClearSession();
+}
+```
+
+```vbnet
+Imports Kombine.Flex.Portal.Client.Net20
+
+Sub Example(ByVal apiUrl As Uri, ByVal email As String, ByVal password As String)
+    Dim session As New PortalSession(apiUrl)
+    session.Login(email, password)
+    Using api As PortalApiClient = session.CreateClient()
+        Dim profile As ManagerProfileResponse = api.GetCurrentManager()
+        ' Keep this client for later user actions; it renews on use.
+    End Using
+    session.ClearSession()
+End Sub
+```

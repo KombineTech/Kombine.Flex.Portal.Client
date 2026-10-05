@@ -107,10 +107,10 @@ To configure timeouts/proxies, inject a dedicated `HttpClient` with a fixed `Bas
 ```powershell
 dotnet pack Kombine.Flex.Portal.Client -c Release -o artifacts/packages
 dotnet nuget add source <local-package-directory> --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.3.5
+dotnet add package Kombine.Flex.Portal.Client --version 0.4.0
 ```
 
-Production releases publish this package to [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). After publication, install with `dotnet add package Kombine.Flex.Portal.Client --version 0.3.5 --source https://api.nuget.org/v3/index.json`. For a beta version not yet listed there, use the reviewed `.nupkg` from your API documentation in a local NuGet source as shown above. `OpenApi/portal.openapi.json` is the source snapshot. Run `pwsh -File scripts/Update-PortalClient.ps1` to regenerate; optionally add `-ApiBaseUrl https://localhost:7241/` to first refresh both public Swagger documents. Review the generated changes and run `scripts/Test-PortalClients.ps1` before packing. NSwag 14.7.1 is a pinned development tool, not a package dependency. Generated code is checked in: consumer builds need neither NSwag, a running API nor private feeds.
+Production releases publish this package to [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). After publication, install with `dotnet add package Kombine.Flex.Portal.Client --version 0.4.0 --source https://api.nuget.org/v3/index.json`. For a beta version not yet listed there, use the reviewed `.nupkg` from your API documentation in a local NuGet source as shown above. `OpenApi/portal.openapi.json` is the source snapshot. Run `pwsh -File scripts/Update-PortalClient.ps1` to regenerate; optionally add `-ApiBaseUrl https://localhost:7241/` to first refresh both public Swagger documents. Review the generated changes and run `scripts/Test-PortalClients.ps1` before packing. NSwag 14.7.1 is a pinned development tool, not a package dependency. Generated code is checked in: consumer builds need neither NSwag, a running API nor private feeds.
 
 `scripts/Test-PortalClients.ps1` runs client and sample-app tests, builds the package and invokes `scripts/Test-PortalClientPackage.ps1`. The latter verifies all three package assets and dependency groups, then repeats the client contract/session/error tests in a separate NuGet-only consumer with a fresh package cache. No API/server projects or private package feeds are referenced; tests use synthetic data only.
 
@@ -125,3 +125,45 @@ CVR: 44637928
 +45 76 43 70 20  
 [support@kombinetech.com](mailto:support@kombinetech.com)  
 [kombinetech.com](https://kombinetech.com/)
+
+## Managed sessions — 0.4.0 (unreleased)
+
+Keep one `PortalSession` per API endpoint and account/login. Clients created from it renew on use shortly before expiry; concurrent authentication is serialized. No background timer runs. Disposing a client does not log out the shared session; call `session.ClearSession()` to log out. Pending authentication cannot restore a cleared session. Do not log tokens or credentials.
+
+Interactive applications call `Login`/`LoginAsync` once. Expired sessions require a new login. Web applications may `Restore` a trusted token and expiry from their protected cookie, call `Renew`/`RenewAsync` only after verified user activity, then update that cookie. Background status checks must use a separate anonymous client. Session renewal grants no additional API permissions.
+
+Configured-account applications can pass a credential provider to `PortalSession`: `PortalCredentialsProvider` on legacy frameworks, or `Func<CancellationToken, Task<PortalCredentials>>` on modern .NET. It returns a new `PortalCredentials(email, password)` read from the application's current secure configuration only when login is needed. The library does not retain the returned password. No credentials provider is needed for interactive browser sessions.
+
+Use `ExecuteRead`/`ExecuteReadAsync` only for explicitly side-effect-free callbacks: HTTP 401 invalidates the matching session and permits one new login and one retry when a provider exists. HTTP 403, 409, 429, 503, transport failures and timeouts are not retried. Ordinary client methods never automatically retry business operations, including writes. Without a provider, an expired/cleared session raises `InvalidOperationException`; an API rejection retains its `PortalApiException` status/code. Handle these by asking the user to log in again, never by looping indefinitely.
+
+C# and VB.NET use the same DLL. The following interactive examples use caller-supplied credentials:
+
+```csharp
+using Kombine.Flex.Portal.Client;
+
+async Task Example(Uri apiUrl, string email, string password)
+{
+    var session = new PortalSession(apiUrl);
+    await session.LoginAsync(email, password);
+    using (var api = await session.CreateClientAsync())
+    {
+        var profile = await api.GetCurrentManagerAsync();
+        // Keep this client for later user actions; it renews on use.
+    }
+    session.ClearSession();
+}
+```
+
+```vbnet
+Imports Kombine.Flex.Portal.Client
+
+Async Function Example(apiUrl As Uri, email As String, password As String) As Task
+    Dim session = New PortalSession(apiUrl)
+    Await session.LoginAsync(email, password)
+    Using api = Await session.CreateClientAsync()
+        Dim profile = Await api.GetCurrentManagerAsync()
+        ' Keep this client for later user actions; it renews on use.
+    End Using
+    session.ClearSession()
+End Function
+```

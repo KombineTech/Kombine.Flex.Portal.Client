@@ -30,7 +30,7 @@ Produktionsudgaver publiceres på [nuget.org](https://www.nuget.org/packages/Kom
 
 ```powershell
 dotnet nuget add source ./packages --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.3.5
+dotnet add package Kombine.Flex.Portal.Client --version 0.4.0
 ```
 
 .NET Framework 4.7.2/4.8/4.8.1 bruger netstandard2.0 med Microsoft System.Text.Json 10.0.12 og dets afhængigheder. .NET 8/9 bruger net8.0; .NET 10 bruger net10.0 uden ekstra pakker. Behold nuget.org eller en godkendt mirror til Microsoft-afhængigheder. Framework-programmer kan have brug for automatiske binding redirects og System.Net.Http-reference ved egen HttpClient. Framework-tests er bygget mod 4.7.2/4.8 og kørt på installeret 4.8.1; en oprindelig 4.7.2-installation er ikke afprøvet.
@@ -77,3 +77,45 @@ CVR: 44637928
 +45 76 43 70 20  
 [support@kombinetech.com](mailto:support@kombinetech.com)  
 [kombinetech.com](https://kombinetech.com/)
+
+## Automatisk sessionshåndtering — 0.4.0 (ikke udgivet)
+
+Behold én `PortalSession` pr. API-adresse og konto/login. Klienter oprettet fra den fornyer ved brug kort før udløb; samtidige login og fornyelser samles. Der kører ingen baggrundstimer. Dispose af en klient logger ikke den fælles session ud; brug `session.ClearSession()`. Et igangværende login kan ikke genoprette en ryddet session. Log aldrig tokens eller adgangskoder.
+
+Interaktive programmer kalder `Login`/`LoginAsync` én gang. Udløb kræver nyt login. Webprogrammer kan bruge `Restore` med et betroet token og udløbstid fra deres beskyttede cookie, kalde `Renew`/`RenewAsync` efter verificeret brugeraktivitet og derefter opdatere cookien. Statuskontrol i baggrunden skal bruge en separat anonym klient. Fornyelse giver ingen ekstra API-rettigheder.
+
+Programmer med en konfigureret konto kan give `PortalSession` en callback: `PortalCredentialsProvider` på ældre frameworks eller `Func<CancellationToken, Task<PortalCredentials>>` på moderne .NET. Den returnerer `PortalCredentials(email, password)` fra programmets aktuelle sikre konfiguration, når nyt login er nødvendigt. Biblioteket gemmer ikke den returnerede adgangskode. Browserbaserede brugerlogin behøver ingen sådan callback.
+
+Brug kun `ExecuteRead`/`ExecuteReadAsync` til udtrykkeligt sikre læsninger: HTTP 401 rydder den berørte session og tillader ét nyt login og ét genforsøg, hvis en callback findes. HTTP 403, 409, 429, 503, netværksfejl og timeout gentages ikke. Almindelige klientmetoder gentager aldrig automatisk forretningskald, heller ikke skrivninger. Uden callback giver udløbet/ryddet session `InvalidOperationException`; afvisning fra API'et bevarer status og kode i `PortalApiException`. Bed da brugeren logge ind igen; lav ikke en uendelig løkke.
+
+C# og VB.NET bruger samme DLL. De interaktive eksempler modtager loginoplysninger fra kalderen:
+
+```csharp
+using Kombine.Flex.Portal.Client;
+
+async Task Example(Uri apiUrl, string email, string password)
+{
+    var session = new PortalSession(apiUrl);
+    await session.LoginAsync(email, password);
+    using (var api = await session.CreateClientAsync())
+    {
+        var profile = await api.GetCurrentManagerAsync();
+        // Keep this client for later user actions; it renews on use.
+    }
+    session.ClearSession();
+}
+```
+
+```vbnet
+Imports Kombine.Flex.Portal.Client
+
+Async Function Example(apiUrl As Uri, email As String, password As String) As Task
+    Dim session = New PortalSession(apiUrl)
+    Await session.LoginAsync(email, password)
+    Using api = Await session.CreateClientAsync()
+        Dim profile = Await api.GetCurrentManagerAsync()
+        ' Keep this client for later user actions; it renews on use.
+    End Using
+    session.ClearSession()
+End Function
+```
