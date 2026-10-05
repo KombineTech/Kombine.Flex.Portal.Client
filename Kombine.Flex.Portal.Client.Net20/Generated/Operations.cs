@@ -530,6 +530,7 @@ namespace Kombine.Flex.Portal.Client.Net20
                 path = AddQuery(path, "direction", options.Direction);
                 path = AddQuery(path, "enabledOnly", options.EnabledOnly);
                 path = AddQuery(path, "fields", options.Fields);
+                path = AddQuery(path, "includeCoordinates", options.IncludeCoordinates);
             }
             return (LocationDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(LocationDirectoryResponse));
         }

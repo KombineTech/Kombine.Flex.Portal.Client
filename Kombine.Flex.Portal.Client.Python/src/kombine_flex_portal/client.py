@@ -131,9 +131,9 @@ class PortalClient(BaseClient):
         'Count accessible active locations for the Banks2 navigation icon.'
         return self._request('GetActiveLocationCount', {}, None)
 
-    def get_locations(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None) -> LocationDirectoryResponse:
+    def get_locations(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None) -> LocationDirectoryResponse:
         'List accessible locations with parent banks, Visma customer numbers and authorized activation codes.'
-        return self._request('GetLocations', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields}, None)
+        return self._request('GetLocations', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates}, None)
 
     def search_locations(self, *, q: str | None = None) -> SearchResults:
         'Search location Name, Bank (alternative bank name), Zip, Address, VismaCustNo and TeltonikaSMS in Log24.'

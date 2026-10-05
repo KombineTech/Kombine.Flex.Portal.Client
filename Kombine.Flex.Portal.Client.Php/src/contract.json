@@ -5740,6 +5740,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "name": "includeCoordinates",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
         }
       ],
       "body": null,

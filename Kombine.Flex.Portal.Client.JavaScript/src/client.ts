@@ -160,7 +160,7 @@ export class PortalClient extends BaseClient {
 
   /** List accessible locations with parent banks, Visma customer numbers and authorized activation codes. */
   getLocations(options: Models.GetLocationsOptions = {}, request: RequestOptions = {}): Promise<Models.LocationDirectoryResponse> {
-    return this.send("GetLocations", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields}, undefined, request) as Promise<Models.LocationDirectoryResponse>;
+    return this.send("GetLocations", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates}, undefined, request) as Promise<Models.LocationDirectoryResponse>;
   }
 
   /** Search location Name, Bank (alternative bank name), Zip, Address, VismaCustNo and TeltonikaSMS in Log24. */

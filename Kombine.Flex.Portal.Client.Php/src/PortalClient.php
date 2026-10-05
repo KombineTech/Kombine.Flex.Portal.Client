@@ -508,7 +508,7 @@ final class PortalClient extends BaseClient
 
     /**
      * List accessible locations with parent banks, Visma customer numbers and authorized activation codes.
-     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string} $options
+     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'includeCoordinates'?: bool} $options
      * @return LocationDirectoryResponse
      */
     public function getLocations(array $options = []): mixed

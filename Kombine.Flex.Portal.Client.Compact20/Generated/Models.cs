@@ -4964,6 +4964,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string Fields { get { return _Fields; } set { _Fields = value; } }
         private string _Fields;
 
+        /// <summary>includeCoordinates</summary>
+        public bool? IncludeCoordinates { get { return _IncludeCoordinates; } set { _IncludeCoordinates = value; } }
+        private bool? _IncludeCoordinates;
+
     }
 
     /// <summary>Optional query/header parameters for SearchLocations. Null values use API defaults.</summary>

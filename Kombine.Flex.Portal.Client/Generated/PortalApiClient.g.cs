@@ -894,6 +894,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Omitted/empty means core identifiers, status, names and icons only; unselected properties are null.
         /// <br/>Address and Zip are location-owned settings without bank fallback. Coordinates are decimal degrees (stored microdegrees / 1,000,000), null when missing/invalid.
         /// <br/>Only selected settings are joined, plus the sort setting and VismaCustNo when required for search. Codes retain all scope/Create checks.
+        /// <br/>includeCoordinates=true additionally returns latitude/longitude for map presentation without adding them to text search.
+        /// <br/>Defaults to false; keep it unchanged across cursor requests. Authorization and coordinate null/degree rules are unchanged.
         /// <br/>The response fields array names the requested columns. Keep fields unchanged across cursor requests; order and duplicates do not matter.
         /// <br/>
         /// <br/>Online and LastContactAt read the tenant-bound Alive table only when selected or sorted, for Log24-discovered visible main units (Alive.UnitId = Alive.MainId).
@@ -928,7 +930,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -7639,6 +7641,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Omitted/empty means core identifiers, status, names and icons only; unselected properties are null.
         /// <br/>Address and Zip are location-owned settings without bank fallback. Coordinates are decimal degrees (stored microdegrees / 1,000,000), null when missing/invalid.
         /// <br/>Only selected settings are joined, plus the sort setting and VismaCustNo when required for search. Codes retain all scope/Create checks.
+        /// <br/>includeCoordinates=true additionally returns latitude/longitude for map presentation without adding them to text search.
+        /// <br/>Defaults to false; keep it unchanged across cursor requests. Authorization and coordinate null/degree rules are unchanged.
         /// <br/>The response fields array names the requested columns. Keep fields unchanged across cursor requests; order and duplicates do not matter.
         /// <br/>
         /// <br/>Online and LastContactAt read the tenant-bound Alive table only when selected or sorted, for Log24-discovered visible main units (Alive.UnitId = Alive.MainId).
@@ -7673,7 +7677,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7716,6 +7720,10 @@ namespace Kombine.Flex.Portal.Client
                     if (fields != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("fields")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(fields, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (includeCoordinates != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("includeCoordinates")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeCoordinates, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -14286,7 +14294,7 @@ namespace Kombine.Flex.Portal.Client
 
                     PrepareRequest(client_, request_, url_);
 
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
                     {
@@ -14374,7 +14382,7 @@ namespace Kombine.Flex.Portal.Client
 
                     PrepareRequest(client_, request_, url_);
 
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
                     {

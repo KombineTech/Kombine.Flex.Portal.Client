@@ -1771,7 +1771,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
         }
       ],
       "nextCursor": null
@@ -1822,7 +1822,7 @@
         "enabled": true,
         "deleted": false,
         "deletedAt": null,
-        "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+        "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
       },
       "canEditIcon": true,
       "iconRevision": "5CE7200DE215F47D73E8C782F447813306BD7DD66F0C468AD961D92D0C950FDE",
@@ -2143,6 +2143,15 @@
         "js": "fields",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "includeCoordinates",
+        "where": "query",
+        "py": "include_coordinates",
+        "js": "includeCoordinates",
+        "schema": {
+          "type": "boolean"
         }
       }
     ],
@@ -3131,7 +3140,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
           "retentionDays": 30,
           "canEditPermissions": true,
           "canEditTabs": true,
@@ -3269,7 +3278,7 @@
       "enabled": true,
       "deleted": false,
       "deletedAt": null,
-      "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
       "retentionDays": 30,
       "canEditPermissions": true,
       "canEditTabs": true,
@@ -6101,8 +6110,8 @@
       "amount": 123.45,
       "currency": "DKK",
       "lookbackHours": 1,
-      "sinceUtc": "2026-09-23T11:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-09-23T09:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     }
   },
   {
@@ -6123,8 +6132,8 @@
       "tenantKid": "3E7QAo",
       "count": 12450,
       "lookbackDays": 100,
-      "sinceUtc": "2026-06-15T12:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-06-15T10:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     }
   },
   {

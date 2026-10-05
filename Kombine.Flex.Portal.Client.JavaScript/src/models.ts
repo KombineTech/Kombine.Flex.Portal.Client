@@ -2250,6 +2250,7 @@ export interface GetLocationsOptions {
   direction?: string;
   enabledOnly?: boolean;
   fields?: string;
+  includeCoordinates?: boolean;
 }
 
 export interface SearchLocationsOptions {
