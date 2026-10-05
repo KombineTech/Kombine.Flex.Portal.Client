@@ -94,6 +94,8 @@
 | `GetCircleProgressSized` | `get_circle_progress_sized` | `getCircleProgressSized` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg` |
 | `GetCircleRunning` | `get_circle_running` | `getCircleRunning` | GET | `/api/v1/circles/running/{color}.svg` |
 | `GetCircleRunningSized` | `get_circle_running_sized` | `getCircleRunningSized` | GET | `/api/v1/circles/running/{color}/{width}x{height}.svg` |
+| `GetLinearGradient` | `get_linear_gradient` | `getLinearGradient` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` |
+| `GetLinearGradientSized` | `get_linear_gradient_sized` | `getLinearGradientSized` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` |
 | `GetIconPresentation` | `get_icon_presentation` | `getIconPresentation` | GET | `/api/v1/icon/presentation` |
 | `GetIconAssetCatalog` | `get_icon_asset_catalog` | `getIconAssetCatalog` | GET | `/api/v1/icon/catalog/{iconSet}` |
 | `GetIconFromSet` | `get_icon_from_set` | `getIconFromSet` | GET | `/api/v1/icon/{iconSet}/{kid}.{format}` |

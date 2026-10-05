@@ -5313,6 +5313,100 @@
     "example": {}
   },
   {
+    "operation": "GetLinearGradient",
+    "python": "get_linear_gradient",
+    "javascript": "getLinearGradient",
+    "method": "GET",
+    "path": "api/v1/gradients/linear/{colors}/{angle}.svg",
+    "status": 200,
+    "auth": false,
+    "parameters": [
+      {
+        "name": "colors",
+        "where": "path",
+        "py": "colors",
+        "js": "colors",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "angle",
+        "where": "path",
+        "py": "angle",
+        "js": "angle",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetLinearGradientSized",
+    "python": "get_linear_gradient_sized",
+    "javascript": "getLinearGradientSized",
+    "method": "GET",
+    "path": "api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg",
+    "status": 200,
+    "auth": false,
+    "parameters": [
+      {
+        "name": "colors",
+        "where": "path",
+        "py": "colors",
+        "js": "colors",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "angle",
+        "where": "path",
+        "py": "angle",
+        "js": "angle",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      {
+        "name": "width",
+        "where": "path",
+        "py": "width",
+        "js": "width",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "height",
+        "where": "path",
+        "py": "height",
+        "js": "height",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
     "operation": "GetIconPresentation",
     "python": "get_icon_presentation",
     "javascript": "getIconPresentation",

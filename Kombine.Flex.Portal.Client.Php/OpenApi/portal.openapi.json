@@ -14731,6 +14731,164 @@
         }
       }
     },
+    "/api/v1/gradients/linear/{colors}/{angle}.svg": {
+      "get": {
+        "tags": [
+          "Gradients"
+        ],
+        "summary": "Renders a linear gradient at 200 \u00D7 200 pixels.",
+        "description": "Public presentation only; no login, KID, permissions or database access.\r\nColors: 2\u20134 hyphen-separated 3/6-digit RGB hex values without #, exact eColor names,\r\nstandard named colors or transparent (case-insensitive), evenly spaced.\r\nAngle: finite degrees, clockwise from left-to-right (0); 90 is top-to-bottom,\r\n180 right-to-left, 270 bottom-to-top. Decimal angles use a dot; negative angles and full turns normalize modulo 360.\r\nPure SVG covering the full canvas; no raster formats, scripts or external assets.\r\nInvalid parameters return 400 with invalid-gradient-parameters; malformed numbers use validation ProblemDetails.\r\nPrivate disk cache: 24 hours, up to 512 files/32 MiB; cache I/O failure falls back to rendering.\r\nPublic HTTP cache: 600 seconds; ETag/If-None-Match supports 304. On 429 retry with backoff.",
+        "operationId": "GetLinearGradient",
+        "parameters": [
+          {
+            "name": "colors",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "22aa88-ffcc33-ee4444"
+          },
+          {
+            "name": "angle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "example": 45
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not Modified"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg": {
+      "get": {
+        "tags": [
+          "Gradients"
+        ],
+        "summary": "Renders a linear gradient at a selected width and height.",
+        "description": "Same colors, angle, public access, errors and cache as GetLinearGradient.\r\n            Width/height: 16\u20134096 pixels each. The gradient spans the full rectangle and retains its angle at the requested dimensions.\r\n            All inputs are path segments. Example: /api/v1/gradients/linear/22aa88-ffcc33/45/800x400.svg.",
+        "operationId": "GetLinearGradientSized",
+        "parameters": [
+          {
+            "name": "colors",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "22aa88-ffcc33-ee4444"
+          },
+          {
+            "name": "angle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "example": 45
+          },
+          {
+            "name": "width",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maximum": 4096,
+              "minimum": 16,
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 200
+          },
+          {
+            "name": "height",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maximum": 4096,
+              "minimum": 16,
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 200
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not Modified"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/icon/presentation": {
       "get": {
         "tags": [

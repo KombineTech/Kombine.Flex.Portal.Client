@@ -1321,6 +1321,28 @@ namespace Kombine.Flex.Portal.Client.Net20
             return SendDownload("GET", path, null, headers, 200);
         }
 
+        /// <summary>Renders a linear gradient at 200 × 200 pixels.</summary>
+        public PortalDownload GetLinearGradient(string @colors, double @angle)
+        {
+            string path = "api/v1/gradients/linear/{colors}/{angle}.svg";
+            path = path.Replace("{colors}", PathValue(@colors));
+            path = path.Replace("{angle}", PathValue(@angle));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Renders a linear gradient at a selected width and height.</summary>
+        public PortalDownload GetLinearGradientSized(string @colors, double @angle, int @width, int @height)
+        {
+            string path = "api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg";
+            path = path.Replace("{colors}", PathValue(@colors));
+            path = path.Replace("{angle}", PathValue(@angle));
+            path = path.Replace("{width}", PathValue(@width));
+            path = path.Replace("{height}", PathValue(@height));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
         /// <summary>Resolve an IconKid, optionally changing its text, count or RGB colour.</summary>
         public IconPresentationResponse GetIconPresentation()
         {

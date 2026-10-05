@@ -31,8 +31,8 @@ class PublishingTests(unittest.TestCase):
                 release.require_main(dict(self.environment, **{field: value}))
 
     def test_version_change_is_numeric_and_strict(self):
-        self.assertFalse(release.increased('0.3.1', '0.3.1'))
-        self.assertTrue(release.increased('0.3.9', '0.3.10'))
+        self.assertFalse(release.increased('0.3.2', '0.3.2'))
+        self.assertTrue(release.increased('0.3.9', '0.3.20'))
         self.assertTrue(release.increased('0.9.9', '1.0.0'))
         with self.assertRaises(ValueError):
             release.increased('1.0.0', '0.9.9')

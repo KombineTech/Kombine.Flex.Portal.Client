@@ -463,6 +463,16 @@ export class PortalClient extends BaseClient {
     return this.send("GetCircleRunningSized", {"color": color, "width": width, "height": height}, undefined, request) as Promise<PortalDownload>;
   }
 
+  /** Renders a linear gradient at 200 × 200 pixels. */
+  getLinearGradient(colors: string, angle: number, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetLinearGradient", {"colors": colors, "angle": angle}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Renders a linear gradient at a selected width and height. */
+  getLinearGradientSized(colors: string, angle: number, width: number, height: number, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetLinearGradientSized", {"colors": colors, "angle": angle, "width": width, "height": height}, undefined, request) as Promise<PortalDownload>;
+  }
+
   /** Resolve an IconKid, optionally changing its text, count or RGB colour. */
   getIconPresentation(options: Models.GetIconPresentationOptions = {}, request: RequestOptions = {}): Promise<Models.IconPresentationResponse> {
     return this.send("GetIconPresentation", {"iconKid": options.iconKid, "text": options.text, "count": options.count, "color": options.color}, undefined, request) as Promise<Models.IconPresentationResponse>;

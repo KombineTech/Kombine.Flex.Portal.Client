@@ -375,6 +375,14 @@ class PortalClient(BaseClient):
         'Renders a running indicator at a selected width and height.'
         return self._request('GetCircleRunningSized', {'color': color, 'width': width, 'height': height}, None)
 
+    def get_linear_gradient(self, colors: str, angle: float) -> PortalDownload:
+        'Renders a linear gradient at 200 × 200 pixels.'
+        return self._request('GetLinearGradient', {'colors': colors, 'angle': angle}, None)
+
+    def get_linear_gradient_sized(self, colors: str, angle: float, width: int, height: int) -> PortalDownload:
+        'Renders a linear gradient at a selected width and height.'
+        return self._request('GetLinearGradientSized', {'colors': colors, 'angle': angle, 'width': width, 'height': height}, None)
+
     def get_icon_presentation(self, *, icon_kid: str | None = None, text: str | None = None, count: int | None = None, color: int | None = None) -> IconPresentationResponse:
         'Resolve an IconKid, optionally changing its text, count or RGB colour.'
         return self._request('GetIconPresentation', {'iconKid': icon_kid, 'text': text, 'count': count, 'color': color}, None)

@@ -1172,6 +1172,32 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Renders a linear gradient at 200 × 200 pixels.
+     * @param string $colors
+     * @param int|float $angle
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getLinearGradient(mixed $colors, mixed $angle, mixed $destination): mixed
+    {
+        return $this->request('GetLinearGradient', ['colors' => $colors, 'angle' => $angle], null, $destination);
+    }
+
+    /**
+     * Renders a linear gradient at a selected width and height.
+     * @param string $colors
+     * @param int|float $angle
+     * @param int $width
+     * @param int $height
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getLinearGradientSized(mixed $colors, mixed $angle, mixed $width, mixed $height, mixed $destination): mixed
+    {
+        return $this->request('GetLinearGradientSized', ['colors' => $colors, 'angle' => $angle, 'width' => $width, 'height' => $height], null, $destination);
+    }
+
+    /**
      * Resolve an IconKid, optionally changing its text, count or RGB colour.
      * @param array{'iconKid'?: string, 'text'?: string, 'count'?: int, 'color'?: int} $options
      * @return IconPresentationResponse
