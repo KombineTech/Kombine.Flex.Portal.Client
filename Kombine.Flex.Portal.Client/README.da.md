@@ -26,7 +26,7 @@ Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begg
 
 ## Installation og platforme
 
-Produktionsudgaver publiceres på [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Installér den publicerede version med kommandoen nedenfor og nuget.org som pakkekilde. Hvis en beta-version endnu ikke findes dér, lægges den kontrollerede Kombine.Flex.Portal.Client.0.3.5.nupkg fra API-dokumentationen i en lokal NuGet-kilde.
+Produktionsudgaver publiceres på [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Installér den publicerede version med kommandoen nedenfor og nuget.org som pakkekilde. Hvis en beta-version endnu ikke findes dér, lægges den kontrollerede Kombine.Flex.Portal.Client.0.4.0.nupkg fra API-dokumentationen i en lokal NuGet-kilde.
 
 ```powershell
 dotnet nuget add source ./packages --name flex-local
@@ -79,6 +79,8 @@ CVR: 44637928
 [kombinetech.com](https://kombinetech.com/)
 
 ## Automatisk sessionshåndtering — 0.4.0 (ikke udgivet)
+
+`SendRequestAsync` understøtter også downloads, streaming og operationer tilføjet efter den medfølgende genererede kontrakt. Den kontrollerer, at kaldet holder sig til klientens faste API-adresse, bevarer applikationens headers og gentager aldrig kald. Den kaldende kode ejer request og response. Brug `HttpCompletionOption.ResponseHeadersRead` til streaming. Applikationen kan bruge egne svarmodeller med denne transport; API'et håndhæver fortsat rettighederne.
 
 Behold én `PortalSession` pr. API-adresse og konto/login. Klienter oprettet fra den fornyer ved brug kort før udløb; samtidige login og fornyelser samles. Der kører ingen baggrundstimer. Dispose af en klient logger ikke den fælles session ud; brug `session.ClearSession()`. Et igangværende login kan ikke genoprette en ryddet session. Log aldrig tokens eller adgangskoder.
 

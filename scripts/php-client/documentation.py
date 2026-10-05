@@ -66,7 +66,7 @@ $rows = $sync['SyncKrumbData'] ?? [];
 
 def generate(root, project, api, count, write):
     lower = api.lower()
-    version = '0.3.2' if api == 'Portal' else '0.1.0'
+    version = '0.3.3' if api == 'Portal' else '0.1.0'
     archive = f'kombine-flex-{lower}-client-php-{version}.zip'
     domain = 'technology' if api == 'Portal' else 'equipment'
     login = '$email, $password' if api == 'Portal' else '$serviceKid, $apiKey'

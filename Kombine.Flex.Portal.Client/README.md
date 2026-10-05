@@ -128,6 +128,8 @@ CVR: 44637928
 
 ## Managed sessions — 0.4.0 (unreleased)
 
+`SendRequestAsync` also supports downloads, streaming responses and operations added after the bundled generated contract. It checks that the request stays within the client's fixed API endpoint, preserves application headers and never retries. The caller owns the request and response. Pass `HttpCompletionOption.ResponseHeadersRead` for streaming. Application-specific response models may be used with this transport; permissions remain enforced by the API.
+
 Keep one `PortalSession` per API endpoint and account/login. Clients created from it renew on use shortly before expiry; concurrent authentication is serialized. No background timer runs. Disposing a client does not log out the shared session; call `session.ClearSession()` to log out. Pending authentication cannot restore a cleared session. Do not log tokens or credentials.
 
 Interactive applications call `Login`/`LoginAsync` once. Expired sessions require a new login. Web applications may `Restore` a trusted token and expiry from their protected cookie, call `Renew`/`RenewAsync` only after verified user activity, then update that cookie. Background status checks must use a separate anonymous client. Session renewal grants no additional API permissions.

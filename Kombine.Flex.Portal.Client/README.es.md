@@ -26,7 +26,7 @@ La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Amba
 
 ## Instalación y plataformas
 
-Las versiones de producción se publican en [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Instale una versión publicada con el comando siguiente y nuget.org como fuente. Si una versión beta aún no está disponible allí, añada el archivo revisado Kombine.Flex.Portal.Client.0.3.5.nupkg de la documentación API a una fuente NuGet local.
+Las versiones de producción se publican en [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Instale una versión publicada con el comando siguiente y nuget.org como fuente. Si una versión beta aún no está disponible allí, añada el archivo revisado Kombine.Flex.Portal.Client.0.4.0.nupkg de la documentación API a una fuente NuGet local.
 
 ```powershell
 dotnet nuget add source ./packages --name flex-local
@@ -79,6 +79,8 @@ CVR: 44637928
 [kombinetech.com](https://kombinetech.com/)
 
 ## Gestión automática de sesiones — 0.4.0 (sin publicar)
+
+`SendRequestAsync` también admite descargas, respuestas en streaming y operaciones añadidas después del contrato generado incluido. Comprueba que la solicitud permanezca dentro de la dirección fija de la API, conserva las cabeceras de la aplicación y nunca reintenta. El código que llama es responsable de la solicitud y la respuesta. Use `HttpCompletionOption.ResponseHeadersRead` para streaming. La aplicación puede utilizar sus propios modelos de respuesta; la API sigue aplicando los permisos.
 
 Mantenga una `PortalSession` por dirección API y cuenta/inicio de sesión. Los clientes creados a partir de ella renuevan al usarse poco antes de caducar; la autenticación simultánea se coordina. No hay temporizador en segundo plano. Dispose del cliente no cierra la sesión compartida; use `session.ClearSession()`. La autenticación pendiente no puede restaurar una sesión borrada. No registre tokens ni contraseñas.
 

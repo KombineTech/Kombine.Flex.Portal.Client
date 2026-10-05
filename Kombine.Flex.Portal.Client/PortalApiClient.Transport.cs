@@ -5,7 +5,7 @@ namespace Kombine.Flex.Portal.Client;
 public partial class PortalApiClient
 {
     /// <summary>Sends an endpoint-bound HTTP request, including downloads/streams and newer API operations. Does not retry. Caller owns the request and response.</summary>
-    /// <remarks>Preserves explicit per-request headers. A client token, when set, must agree with an explicit Authorization header. Never mutate shared HttpClient headers.</remarks>
+    /// <remarks>Preserves explicit per-request headers. An unmanaged client token must agree with an explicit Authorization header. Managed sessions supply the current bearer token on each use. Never mutates shared HttpClient headers.</remarks>
     public async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead, CancellationToken cancellationToken = default)
     {

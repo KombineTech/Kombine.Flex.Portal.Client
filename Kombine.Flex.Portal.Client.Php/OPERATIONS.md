@@ -1,6 +1,6 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `ea58f5968e327b3714708b395c474aa3f661f1ed309caf6553c57343907a537f`).
+Generated from the bundled public OpenAPI snapshot (SHA-256 `229b887c91da3e2ec6d74a7139eae9cbb57a1ff07081045dad91813ca8d11d1a`).
 112 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
