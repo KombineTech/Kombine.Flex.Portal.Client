@@ -118,7 +118,7 @@ for api in ('Portal',):
     write(project / 'src' / 'contract.json', json.dumps(dict(schemas={k: shape(v) for k, v in contract['components']['schemas'].items()}, operations=operations), ensure_ascii=False, indent=2) + '\n')
     write(project / 'autoload.php', f"<?php\ndeclare(strict_types=1);\nrequire_once __DIR__ . '/src/Runtime.php';\nrequire_once __DIR__ . '/src/{api}Client.php';\n")
     write(project / 'composer.json', json.dumps(dict(name=f'kombine/flex-{api.lower()}-client', description=f'Standalone HTTPS/JSON client for Kombine Flex {api}.',
-        type='library', version='0.4.3' if api == 'Portal' else '0.1.0', license='proprietary', require={'php': '^8.2', 'php-64bit': '^8.2', 'ext-curl': '*', 'ext-json': '*'},
+        type='library', version='0.4.4' if api == 'Portal' else '0.1.0', license='proprietary', require={'php': '^8.2', 'php-64bit': '^8.2', 'ext-curl': '*', 'ext-json': '*'},
         autoload={'classmap': ['src/']}), indent=2) + '\n')
     write(project / 'OPERATIONS.md', f'# {api} PHP operations\n\nGenerated from the bundled public OpenAPI snapshot (SHA-256 `{hashlib.sha256(raw).hexdigest()}`).\n{len(operations)} operations. Business permissions are enforced by the API.\n\n| PHP method | Stable operation ID | HTTP | Path | Access |\n| --- | --- | --- | --- | --- |\n' + '\n'.join(sorted(rows)) + '\n')
     write(project / 'MODELS.md', '# PHP wire models\n\nRequests and responses use associative arrays with exact JSON field names. Dates remain strings. All integer fields use 64-bit PHP integers; never convert them to floats. Null and absent values are preserved.\n\n' + '\n'.join(model_rows))

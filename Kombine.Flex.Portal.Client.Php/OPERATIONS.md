@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `b0c4739baf87d6c47a43962b4f9fd70a9ca90e5374cfd4352c47c2d9fc7fac1a`).
-114 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `008bd8523f58d8e318133350975badba798c6c2ed5b52cb92d0ba8dbf7372c53`).
+116 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -9,6 +9,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `b0c4739baf87d6c47a4
 | `changeMyManagerPassword` | `ChangeMyManagerPassword` | POST | `/api/v1/session/me/password` | Bearer |
 | `confirmMyManagerEmail` | `ConfirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` | Anonymous |
 | `createBankUser` | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` | Bearer |
+| `createManager` | `CreateManager` | POST | `/api/v1/managers` | Bearer |
 | `downloadBankSettlement` | `DownloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` | Bearer |
 | `downloadPortalWindowsAppInstaller` | `DownloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` | Anonymous |
 | `downloadPortalWindowsPackage` | `DownloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` | Anonymous |
@@ -68,6 +69,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `b0c4739baf87d6c47a4
 | `getLocationUnits` | `GetLocationUnits` | GET | `/api/v1/locations/{locationKid}/units` | Bearer |
 | `getLocations` | `GetLocations` | GET | `/api/v1/locations` | Bearer |
 | `getManager` | `GetManager` | GET | `/api/v1/managers/{managerKid}` | Bearer |
+| `getManagersWithSameEmail` | `GetManagersWithSameEmail` | GET | `/api/v1/managers/{managerKid}/same-email` | Bearer |
 | `getManagers` | `GetManagers` | GET | `/api/v1/managers` | Bearer |
 | `getMyManagerProfile` | `GetMyManagerProfile` | GET | `/api/v1/session/me/profile` | Bearer |
 | `getMyManagerTabs` | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` | Bearer |

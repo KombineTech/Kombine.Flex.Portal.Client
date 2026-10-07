@@ -6,6 +6,7 @@
 | `ChangeMyManagerPassword` | POST | `/api/v1/session/me/password` |
 | `ConfirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` |
 | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` |
+| `CreateManager` | POST | `/api/v1/managers` |
 | `DownloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
 | `DownloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` |
@@ -65,6 +66,7 @@
 | `GetLocationUnits` | GET | `/api/v1/locations/{locationKid}/units` |
 | `GetLocations` | GET | `/api/v1/locations` |
 | `GetManager` | GET | `/api/v1/managers/{managerKid}` |
+| `GetManagersWithSameEmail` | GET | `/api/v1/managers/{managerKid}/same-email` |
 | `GetManagers` | GET | `/api/v1/managers` |
 | `GetMyManagerProfile` | GET | `/api/v1/session/me/profile` |
 | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` |

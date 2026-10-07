@@ -1824,6 +1824,16 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>The canonical KID of the newly activated empty administrator.</summary>
+    public sealed class ManagerCreationResponse
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+    }
+
     /// <summary>Read-only metadata from current bank-zero Log7 settings. Describes the listed manager, never grants the caller permissions. No credentials are returned.</summary>
     public sealed class ManagerDirectoryItem
     {
@@ -1856,6 +1866,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         [JsonField("iconKid")]
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
         private string _IconKid;
+
+        /// <summary>Optional Gravatar image URL when Email is valid; preferred over the stored icon. Uses SHA256, 96px, G rating and d=404; fall back to IconKid on image failure. Browser requests disclose the email hash and client IP to Gravatar.</summary>
+        [JsonField("gravatarUrl")]
+        public string GravatarUrl { get { return _GravatarUrl; } set { _GravatarUrl = value; } }
+        private string _GravatarUrl;
 
         /// <summary>Decoded eSetting.Organisation, empty when absent.</summary>
         [JsonField("organisation")]
@@ -1956,6 +1971,31 @@ namespace Kombine.Flex.Portal.Client.Net45
         [JsonField("nextCursor")]
         public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
         private string _NextCursor;
+
+    }
+
+    /// <summary>Another visible administrator sharing the source email; KID is canonical and tenant-bound.</summary>
+    public sealed class ManagerEmailMatch
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>API-computed icon identity used when Gravatar is missing or unavailable.</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
+        /// <summary>Preferred optional Gravatar URL, with the same semantics as GetManager.</summary>
+        [JsonField("gravatarUrl")]
+        public string GravatarUrl { get { return _GravatarUrl; } set { _GravatarUrl = value; } }
+        private string _GravatarUrl;
 
     }
 
@@ -2242,6 +2282,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
         private string _IconKid;
 
+        /// <summary>Optional Gravatar fallback; same semantics as GetManager. Refresh after Email or Icon changes.</summary>
+        [JsonField("gravatarUrl")]
+        public string GravatarUrl { get { return _GravatarUrl; } set { _GravatarUrl = value; } }
+        private string _GravatarUrl;
+
         /// <summary>Person icon choices; the current display icon is first when it is outside that catalog.</summary>
         [JsonField("availableIcons")]
         public string[] AvailableIcons { get { return _AvailableIcons; } set { _AvailableIcons = value; } }
@@ -2327,6 +2372,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string Organisation { get { return _Organisation; } set { _Organisation = value; } }
         private string _Organisation;
 
+        /// <summary>Optional API-computed Gravatar URL from the current manager's email. Prefer over IconKid; fall back on image failure. Uses SHA256, 96px, G rating and d=404. Direct browser requests disclose the email hash and client IP to Gravatar.</summary>
+        [JsonField("gravatarUrl")]
+        public string GravatarUrl { get { return _GravatarUrl; } set { _GravatarUrl = value; } }
+        private string _GravatarUrl;
+
         /// <summary>Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing or invalid settings default to zero. Does not grant access or schedule physical deletion.</summary>
         [JsonField("retentionDays")]
         public int? RetentionDays { get { return _RetentionDays; } set { _RetentionDays = value; } }
@@ -2337,7 +2387,7 @@ namespace Kombine.Flex.Portal.Client.Net45
         public int? ThemeMode { get { return _ThemeMode; } set { _ThemeMode = value; } }
         private int? _ThemeMode;
 
-        /// <summary>Preferred icon set: g or line. Missing or unsupported stored values return g; this grants no permissions.</summary>
+        /// <summary>Preferred icon set: g or line. Missing or unsupported stored values return line; an explicit g is preserved. This grants no permissions.</summary>
         [JsonField("iconSet")]
         public string IconSet { get { return _IconSet; } set { _IconSet = value; } }
         private string _IconSet;

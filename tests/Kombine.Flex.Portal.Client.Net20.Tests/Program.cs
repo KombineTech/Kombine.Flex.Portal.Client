@@ -71,7 +71,7 @@ internal static class Program
     private static void Contracts()
     {
         string[] rows = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ContractCases.tsv"));
-        Equal(114, rows.Length, "Published operation count");
+        Equal(116, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });

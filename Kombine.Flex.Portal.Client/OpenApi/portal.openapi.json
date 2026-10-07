@@ -7112,6 +7112,404 @@
         ]
       }
     },
+    "/api/v1/managers": {
+      "post": {
+        "tags": [
+          "ManagerCreation"
+        ],
+        "summary": "Create an empty enabled administrator with a previously unused manager identity.",
+        "description": "Requires Managers1, independent Managers Read and Create, and whole-tenant scope.\r\nNo request body or client-selected tenant/UserId. Rechecks the actor account, credential stamp\r\nand access before allocation and again inside the write transaction, holding account and access locks through commit.\r\nNo password, email, tabs or scopes are assigned;\r\nno invitation is sent. Use GetManager and the existing editing operations after creation;\r\nprofile edits additionally require Managers Write.\r\nFinds the next unused manager identity and appends only Enabled=1. No Deleted setting is written.\r\nNo random marker, intentional delay or reservation verification. 15-second deadline.\r\nA tenant-specific MySQL advisory lock serializes allocation through commit (up to 5 seconds to acquire).\r\nAll creators must use the same lock on the same writer, including AMS and FRA. No table lock or schema change.\r\nIndependent writers will use modulo allocation by ServerId with a fixed common modulus (ADR 0015; not implemented).\r\nCreation is not idempotent; lock/storage failures return 503.\r\n401: login required. 403: missing-managers-tab/read/create or missing-tenant-access.\r\n409 manager-ids-exhausted: identity range exhausted.\r\n503 manager-creation-unavailable: outcome may be uncertain; inspect the directory before manual retry.\r\nNever automatically retry a timeout or lost response.",
+        "operationId": "CreateManager",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerCreationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerCreationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerCreationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Managers"
+        ],
+        "summary": "List administrators in the site's eUserId.Managers through ManagersLast range.",
+        "description": "### Access\r\n            \r\n- Requires an active manager session, **Managers1 (28)**, **PermissionManagers2 Read** and an explicit **tenant-wide KID grant**.\r\n- Bank/location-only grants are insufficient. Write does not imply Read; missing permission values default to Read.\r\n- Every request checks the current bounded session snapshot, at most **60 seconds** old.\r\n            \r\n### Returned metadata\r\n            \r\n- Reads `Log7`, bank zero, without reading credentials for listed managers. Disabled managers remain listed.\r\n- Deleted records follow the **caller's RetentionDays**.\r\n- Resource grants contain only this site's valid scopes. Tab grants are metadata, not proof of effective access.\r\n- `operationPermissions` and `retentionDays` describe the **listed manager**, never the caller.\r\n- **Service** comes from `PermissionService2` (3017) and has independent flags; it does not grant login or other categories' permissions.\r\n- The seven permission categories include **Installer** from `PermissionInstaller2`. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.\r\n- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing, invalid or negative `RetentionDays` becomes zero.\r\n- `isCurrentManager` identifies your own record. `canEditPermissions` requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use `SetManagerPermission` to save.\r\n            \r\n### Filtering and paging\r\n            \r\n- `filter` matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.\r\n- Pagination scans at most `pageSize` candidates. A page can be short or empty while `nextCursor` is non-null; **continue until null**.\r\n- Changing filter, sort, direction or page size requires restarting **without a cursor**.\r\n- Concurrent inserts and changes are not a frozen snapshot.\r\n            \r\n### Ordering\r\n            \r\n- Selectable ordering uses a shared **seven-setting index**, cached for at most **60 seconds**, then reads fresh page details.\r\n- `lastActiveAt` is the current Alive krumb's MS2000 converted to UTC, not its Text value. Missing/invalid times are null and sort first ascending, last descending. Reads do not update activity.\r\n- Identity ascending retains its bounded database scan. All modes reapply authorization and deletion retention per page.\r\n- Text ordering is ordinal and case-insensitive. Kids compare sorted, site-relative numeric bank/location scopes; empty lists come first.\r\n- Enabled orders **missing, false, true**. Deleted orders by deletion time, zero first. Descending reverses ties as well.\r\n            \r\n### Limits and errors\r\n            \r\n- At most **20,000 matching identities** in the index. Larger selections return **HTTP 503** with `manager-directory-too-large`; narrow the filter.\r\n- A missing continuation identity after index refresh returns **HTTP 400**, `invalid-cursor`; restart without a cursor.\r\n- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.",
+        "operationId": "GetManagers",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Candidate batch size, 1–100, default 50. Keep unchanged while following a cursor.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Opaque continuation returned by the previous request, scoped to this site and caller.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Optional name/email substring, at most 128 characters, trimmed. Empty lists all permitted managers.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "identity (default), name, email, organisation, kids, deleted, enabled or lastActive. Applied before pagination.",
+            "schema": {
+              "type": "string",
+              "default": "identity"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "description": "asc (default) or desc. Identity breaks ties in the same direction.",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerDirectoryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerDirectoryResponse"
+                },
+                "example": {
+                  "items": [
+                    {
+                      "kid": "A6Q46o3B9ACA01h",
+                      "name": "Example administrator",
+                      "iconKid": "user",
+                      "email": "admin@example.test",
+                      "organisation": "Example organisation",
+                      "enabled": true,
+                      "deleted": false,
+                      "deletedAt": null,
+                      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
+                      "retentionDays": 30,
+                      "canEditPermissions": true,
+                      "canEditTabs": true,
+                      "isCurrentManager": false,
+                      "canEditProfile": true,
+                      "profileRevision": "61461452DAE1676B1E2EA99320D987DF7FB1AB26219A5A0CD3C748F944013A51",
+                      "tabsRevision": "B8FB8869A5281D0DAD8A15E82DB9A7E6F1C6C89611DB79A276E557F7A6BDEA3E",
+                      "operationPermissions": [
+                        {
+                          "resource": "Managers",
+                          "level": "Read",
+                          "canRead": true,
+                          "canWrite": false,
+                          "canCreate": false,
+                          "flags": 1,
+                          "canDelete": false,
+                          "canRenameExternalId": false,
+                          "canRename": false
+                        },
+                        {
+                          "resource": "Bank",
+                          "level": "3",
+                          "canRead": true,
+                          "canWrite": true,
+                          "canCreate": false,
+                          "flags": 3,
+                          "canDelete": false,
+                          "canRenameExternalId": false,
+                          "canRename": false
+                        },
+                        {
+                          "resource": "Location",
+                          "level": "Read",
+                          "canRead": true,
+                          "canWrite": false,
+                          "canCreate": false,
+                          "flags": 1,
+                          "canDelete": false,
+                          "canRenameExternalId": false,
+                          "canRename": false
+                        },
+                        {
+                          "resource": "Unit",
+                          "level": "None",
+                          "canRead": false,
+                          "canWrite": false,
+                          "canCreate": false,
+                          "flags": 0,
+                          "canDelete": false,
+                          "canRenameExternalId": false,
+                          "canRename": false
+                        },
+                        {
+                          "resource": "User",
+                          "level": "48",
+                          "canRead": false,
+                          "canWrite": false,
+                          "canCreate": false,
+                          "flags": 48,
+                          "canDelete": false,
+                          "canRenameExternalId": true,
+                          "canRename": true
+                        },
+                        {
+                          "resource": "Installer",
+                          "level": "5",
+                          "canRead": true,
+                          "canWrite": false,
+                          "canCreate": true,
+                          "flags": 5,
+                          "canDelete": false,
+                          "canRenameExternalId": false,
+                          "canRename": false
+                        },
+                        {
+                          "resource": "Service",
+                          "level": "Read",
+                          "canRead": true,
+                          "canWrite": false,
+                          "canCreate": false,
+                          "flags": 1,
+                          "canDelete": false,
+                          "canRenameExternalId": false,
+                          "canRename": false
+                        }
+                      ],
+                      "resourceGrants": [
+                        {
+                          "kid": "A6Q14o7D0b",
+                          "scope": "Bank"
+                        }
+                      ],
+                      "tabs": [
+                        {
+                          "id": 28,
+                          "name": "Managers1",
+                          "iconKid": ""
+                        }
+                      ]
+                    }
+                  ],
+                  "nextCursor": null
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerDirectoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "example": {
+                  "status": 403,
+                  "title": "missing-tenant-access",
+                  "code": "missing-tenant-access"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/managers/{managerKid}/invitation": {
       "post": {
         "tags": [
@@ -8667,289 +9065,6 @@
         ]
       }
     },
-    "/api/v1/managers": {
-      "get": {
-        "tags": [
-          "Managers"
-        ],
-        "summary": "List administrators in the site's eUserId.Managers through ManagersLast range.",
-        "description": "### Access\r\n            \r\n- Requires an active manager session, **Managers1 (28)**, **PermissionManagers2 Read** and an explicit **tenant-wide KID grant**.\r\n- Bank/location-only grants are insufficient. Write does not imply Read; missing permission values default to Read.\r\n- Every request checks the current bounded session snapshot, at most **60 seconds** old.\r\n            \r\n### Returned metadata\r\n            \r\n- Reads `Log7`, bank zero, without reading credentials for listed managers. Disabled managers remain listed.\r\n- Deleted records follow the **caller's RetentionDays**.\r\n- Resource grants contain only this site's valid scopes. Tab grants are metadata, not proof of effective access.\r\n- `operationPermissions` and `retentionDays` describe the **listed manager**, never the caller.\r\n- **Service** comes from `PermissionService2` (3017) and has independent flags; it does not grant login or other categories' permissions.\r\n- The seven permission categories include **Installer** from `PermissionInstaller2`. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.\r\n- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing, invalid or negative `RetentionDays` becomes zero.\r\n- `isCurrentManager` identifies your own record. `canEditPermissions` requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use `SetManagerPermission` to save.\r\n            \r\n### Filtering and paging\r\n            \r\n- `filter` matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.\r\n- Pagination scans at most `pageSize` candidates. A page can be short or empty while `nextCursor` is non-null; **continue until null**.\r\n- Changing filter, sort, direction or page size requires restarting **without a cursor**.\r\n- Concurrent inserts and changes are not a frozen snapshot.\r\n            \r\n### Ordering\r\n            \r\n- Selectable ordering uses a shared **seven-setting index**, cached for at most **60 seconds**, then reads fresh page details.\r\n- `lastActiveAt` is the current Alive krumb's MS2000 converted to UTC, not its Text value. Missing/invalid times are null and sort first ascending, last descending. Reads do not update activity.\r\n- Identity ascending retains its bounded database scan. All modes reapply authorization and deletion retention per page.\r\n- Text ordering is ordinal and case-insensitive. Kids compare sorted, site-relative numeric bank/location scopes; empty lists come first.\r\n- Enabled orders **missing, false, true**. Deleted orders by deletion time, zero first. Descending reverses ties as well.\r\n            \r\n### Limits and errors\r\n            \r\n- At most **20,000 matching identities** in the index. Larger selections return **HTTP 503** with `manager-directory-too-large`; narrow the filter.\r\n- A missing continuation identity after index refresh returns **HTTP 400**, `invalid-cursor`; restart without a cursor.\r\n- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.",
-        "operationId": "GetManagers",
-        "parameters": [
-          {
-            "name": "pageSize",
-            "in": "query",
-            "description": "Candidate batch size, 1–100, default 50. Keep unchanged while following a cursor.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
-          },
-          {
-            "name": "cursor",
-            "in": "query",
-            "description": "Opaque continuation returned by the previous request, scoped to this site and caller.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "description": "Optional name/email substring, at most 128 characters, trimmed. Empty lists all permitted managers.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "description": "identity (default), name, email, organisation, kids, deleted, enabled or lastActive. Applied before pagination.",
-            "schema": {
-              "type": "string",
-              "default": "identity"
-            }
-          },
-          {
-            "name": "direction",
-            "in": "query",
-            "description": "asc (default) or desc. Identity breaks ties in the same direction.",
-            "schema": {
-              "type": "string",
-              "default": "asc"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ManagerDirectoryResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ManagerDirectoryResponse"
-                },
-                "example": {
-                  "items": [
-                    {
-                      "kid": "A6Q46o3B9ACA01h",
-                      "name": "Example administrator",
-                      "iconKid": "user",
-                      "email": "admin@example.test",
-                      "organisation": "Example organisation",
-                      "enabled": true,
-                      "deleted": false,
-                      "deletedAt": null,
-                      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
-                      "retentionDays": 30,
-                      "canEditPermissions": true,
-                      "canEditTabs": true,
-                      "isCurrentManager": false,
-                      "canEditProfile": true,
-                      "profileRevision": "61461452DAE1676B1E2EA99320D987DF7FB1AB26219A5A0CD3C748F944013A51",
-                      "tabsRevision": "B8FB8869A5281D0DAD8A15E82DB9A7E6F1C6C89611DB79A276E557F7A6BDEA3E",
-                      "operationPermissions": [
-                        {
-                          "resource": "Managers",
-                          "level": "Read",
-                          "canRead": true,
-                          "canWrite": false,
-                          "canCreate": false,
-                          "flags": 1,
-                          "canDelete": false,
-                          "canRenameExternalId": false,
-                          "canRename": false
-                        },
-                        {
-                          "resource": "Bank",
-                          "level": "3",
-                          "canRead": true,
-                          "canWrite": true,
-                          "canCreate": false,
-                          "flags": 3,
-                          "canDelete": false,
-                          "canRenameExternalId": false,
-                          "canRename": false
-                        },
-                        {
-                          "resource": "Location",
-                          "level": "Read",
-                          "canRead": true,
-                          "canWrite": false,
-                          "canCreate": false,
-                          "flags": 1,
-                          "canDelete": false,
-                          "canRenameExternalId": false,
-                          "canRename": false
-                        },
-                        {
-                          "resource": "Unit",
-                          "level": "None",
-                          "canRead": false,
-                          "canWrite": false,
-                          "canCreate": false,
-                          "flags": 0,
-                          "canDelete": false,
-                          "canRenameExternalId": false,
-                          "canRename": false
-                        },
-                        {
-                          "resource": "User",
-                          "level": "48",
-                          "canRead": false,
-                          "canWrite": false,
-                          "canCreate": false,
-                          "flags": 48,
-                          "canDelete": false,
-                          "canRenameExternalId": true,
-                          "canRename": true
-                        },
-                        {
-                          "resource": "Installer",
-                          "level": "5",
-                          "canRead": true,
-                          "canWrite": false,
-                          "canCreate": true,
-                          "flags": 5,
-                          "canDelete": false,
-                          "canRenameExternalId": false,
-                          "canRename": false
-                        },
-                        {
-                          "resource": "Service",
-                          "level": "Read",
-                          "canRead": true,
-                          "canWrite": false,
-                          "canCreate": false,
-                          "flags": 1,
-                          "canDelete": false,
-                          "canRenameExternalId": false,
-                          "canRename": false
-                        }
-                      ],
-                      "resourceGrants": [
-                        {
-                          "kid": "A6Q14o7D0b",
-                          "scope": "Bank"
-                        }
-                      ],
-                      "tabs": [
-                        {
-                          "id": 28,
-                          "name": "Managers1",
-                          "iconKid": ""
-                        }
-                      ]
-                    }
-                  ],
-                  "nextCursor": null
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ManagerDirectoryResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                },
-                "example": {
-                  "status": 403,
-                  "title": "missing-tenant-access",
-                  "code": "missing-tenant-access"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Service Unavailable",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "ManagerBearer": []
-          }
-        ]
-      }
-    },
     "/api/v1/managers/{managerKid}": {
       "get": {
         "tags": [
@@ -9630,6 +9745,162 @@
         ]
       }
     },
+    "/api/v1/managers/{managerKid}/same-email": {
+      "get": {
+        "tags": [
+          "Managers"
+        ],
+        "summary": "List other visible administrators with the same stored email as this manager.",
+        "description": "Same authorization as GetManager. Exact trimmed, ordinal case-insensitive matching within this tenant; excludes the source and empty email. Disabled accounts are included; caller deletion retention applies. Candidate index is at most 60 seconds old, bounded to 20,000 entries; at most 100 matching candidates are reread from current Log7 before returning. Larger matches return 503 manager-directory-too-large, never a partial list. 404 when source is absent or hidden. 12-second deadline. No credentials returned.",
+        "operationId": "GetManagersWithSameEmail",
+        "parameters": [
+          {
+            "name": "managerKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerEmailMatch"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerEmailMatch"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerEmailMatch"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/session/login": {
       "post": {
         "tags": [
@@ -9953,7 +10224,7 @@
           "ManagerSession"
         ],
         "summary": "Get your profile, permitted tabs, bank/location access, and operation permissions.",
-        "description": "### Profile and navigation\r\n            \r\n- Returns the manager information used by the portal's overview cards in **one request**. Reuse it for all cards and navigation on the current view.\r\n- Empty `tabs` means no permitted pages. `hasBankAccess=false` means no banks or locations on this site.\r\n- `Banks2` (tab 5) is included when granted, like other recognized tabs.\r\n- `tabs` and `tabDetails` follow `AttributeMetaSortOrder` on `eTab`, then numeric tab ID. Missing sort metadata has order zero.\r\n            \r\n### Permissions\r\n            \r\n- Missing permission settings default to **Read**. An invalid nonempty value yields `level=null` and all rights false.\r\n- Operation permissions and tab ordering never expand `resourceGrants` or grant additional pages.\r\n- No manager ID or tenant override is accepted.\r\n- `operationPermissions` also includes **Service**, from `PermissionService2` (3017). Its flags are independent and do not grant login or permissions in other categories.\r\n- `operationPermissions` includes **Installer**, from `PermissionInstaller2`, alongside Managers, Bank, Location, Unit and User. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; these flags grant no other category's permissions.\r\n            \r\n### Caching and database indicator\r\n            \r\n- Rights and account state are cached for at most **60 seconds** per API instance. Requests do not extend this; do not poll continuously.\r\n- `databaseAccess` is an informational Log7 read/append check shared for **10 minutes**, or **1 minute** when unknown.\r\n- The indicator grants no manager rights, executes no writes and does not verify every bank, trigger or operation.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 401:** expired/revoked token or inactive account.\r\n- **HTTP 503:** permission data is unavailable.",
+        "description": "### Profile and navigation\r\n            \r\n- Returns the manager information used by the portal's overview cards in **one request**. Reuse it for all cards and navigation on the current view.\r\n- Optional `gravatarUrl` is the preferred profile picture. Use `iconKid` when null or the image fails (including 404); it is a display hint, never an access grant.\r\n- Empty `tabs` means no permitted pages. `hasBankAccess=false` means no banks or locations on this site.\r\n- `Banks2` (tab 5) is included when granted, like other recognized tabs.\r\n- `tabs` and `tabDetails` follow `AttributeMetaSortOrder` on `eTab`, then numeric tab ID. Missing sort metadata has order zero.\r\n            \r\n### Permissions\r\n            \r\n- Missing permission settings default to **Read**. An invalid nonempty value yields `level=null` and all rights false.\r\n- Operation permissions and tab ordering never expand `resourceGrants` or grant additional pages.\r\n- No manager ID or tenant override is accepted.\r\n- `operationPermissions` also includes **Service**, from `PermissionService2` (3017). Its flags are independent and do not grant login or permissions in other categories.\r\n- `operationPermissions` includes **Installer**, from `PermissionInstaller2`, alongside Managers, Bank, Location, Unit and User. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; these flags grant no other category's permissions.\r\n            \r\n### Caching and database indicator\r\n            \r\n- Rights and account state are cached for at most **60 seconds** per API instance. Requests do not extend this; do not poll continuously.\r\n- `databaseAccess` is an informational Log7 read/append check shared for **10 minutes**, or **1 minute** when unknown.\r\n- The indicator grants no manager rights, executes no writes and does not verify every bank, trigger or operation.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 401:** expired/revoked token or inactive account.\r\n- **HTTP 503:** permission data is unavailable.",
         "operationId": "GetCurrentManager",
         "responses": {
           "200": {
@@ -10752,7 +11023,7 @@
           "PersonalManager"
         ],
         "summary": "Save one personal name, organisation, person icon, theme or deleted-record visibility preference.",
-        "description": "### Request\r\n- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays or IconSet. Other settings are rejected.\r\n- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.\r\n- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.\r\n- IconSet requires the exact JSON string \"g\" or \"line\". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as \"g\".\r\n- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.\r\n- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.\r\n### Response and errors\r\n- 200 returns the acknowledged profile and new revision. Repeating an identical stored value creates no history.\r\n- 400 invalid-profile; 401 stale/inactive session; 409 profile-conflict: reload before deciding whether to overwrite; 503 unavailable/uncertain storage.\r\n- Do not automatically retry an uncertain write. Cache invalidation is immediate on this instance; other instances refresh within 60 seconds.",
+        "description": "### Request\r\n- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays or IconSet. Other settings are rejected.\r\n- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.\r\n- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.\r\n- IconSet requires the exact JSON string \"g\" or \"line\". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as \"line\"; an explicit saved \"g\" is preserved.\r\n- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.\r\n- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.\r\n### Response and errors\r\n- 200 returns the acknowledged profile and new revision. Repeating an identical stored value creates no history.\r\n- 400 invalid-profile; 401 stale/inactive session; 409 profile-conflict: reload before deciding whether to overwrite; 503 unavailable/uncertain storage.\r\n- Do not automatically retry an uncertain write. Cache invalidation is immediate on this instance; other instances refresh within 60 seconds.",
         "operationId": "SetMyManagerProfileField",
         "parameters": [
           {
@@ -18420,6 +18691,17 @@
         "additionalProperties": false,
         "description": "An authorized location and its visible unit list."
       },
+      "ManagerCreationResponse": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The canonical KID of the newly activated empty administrator."
+      },
       "ManagerDirectoryItem": {
         "type": "object",
         "properties": {
@@ -18457,6 +18739,11 @@
           "iconKid": {
             "type": "string",
             "description": "API-computed icon identity; use unchanged in the icon image URL.",
+            "nullable": true
+          },
+          "gravatarUrl": {
+            "type": "string",
+            "description": "Optional Gravatar image URL when Email is valid; preferred over the stored icon. Uses SHA256, 96px, G rating and d=404; fall back to IconKid on image failure. Browser requests disclose the email hash and client IP to Gravatar.",
             "nullable": true
           },
           "organisation": {
@@ -18572,6 +18859,31 @@
         },
         "additionalProperties": false,
         "description": "One authorized page in the requested order. Follow NextCursor even when Items is empty."
+      },
+      "ManagerEmailMatch": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconKid": {
+            "type": "string",
+            "description": "API-computed icon identity used when Gravatar is missing or unavailable.",
+            "nullable": true
+          },
+          "gravatarUrl": {
+            "type": "string",
+            "description": "Preferred optional Gravatar URL, with the same semantics as GetManager.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Another visible administrator sharing the source email; KID is canonical and tenant-bound."
       },
       "ManagerForgotPasswordRequest": {
         "required": [
@@ -18924,6 +19236,11 @@
             "description": "Saved icon identifier. New assignments accept only eIcon names with eIconSubject.Person metadata.",
             "nullable": true
           },
+          "gravatarUrl": {
+            "type": "string",
+            "description": "Optional Gravatar fallback; same semantics as GetManager. Refresh after Email or Icon changes.",
+            "nullable": true
+          },
           "availableIcons": {
             "type": "array",
             "items": {
@@ -19017,6 +19334,11 @@
             "description": "Optional organisation display text. Empty when absent; never an access grant.",
             "nullable": true
           },
+          "gravatarUrl": {
+            "type": "string",
+            "description": "Optional API-computed Gravatar URL from the current manager's email. Prefer over IconKid; fall back on image failure. Uses SHA256, 96px, G rating and d=404. Direct browser requests disclose the email hash and client IP to Gravatar.",
+            "nullable": true
+          },
           "retentionDays": {
             "type": "integer",
             "description": "Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing or invalid settings default to zero. Does not grant access or schedule physical deletion.",
@@ -19027,7 +19349,7 @@
           },
           "iconSet": {
             "type": "string",
-            "description": "Preferred icon set: g or line. Missing or unsupported stored values return g; this grants no permissions.",
+            "description": "Preferred icon set: g or line. Missing or unsupported stored values return line; an explicit g is preserved. This grants no permissions.",
             "nullable": true
           },
           "tabDetails": {
@@ -21332,6 +21654,12 @@
       "name": "LocationUnits"
     },
     {
+      "name": "ManagerCreation"
+    },
+    {
+      "name": "Managers"
+    },
+    {
       "name": "ManagerInvitations"
     },
     {
@@ -21348,9 +21676,6 @@
     },
     {
       "name": "ManagerProfiles"
-    },
-    {
-      "name": "Managers"
     },
     {
       "name": "ManagerSession"

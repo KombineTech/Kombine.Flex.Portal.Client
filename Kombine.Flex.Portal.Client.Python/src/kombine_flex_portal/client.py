@@ -175,6 +175,14 @@ class PortalClient(BaseClient):
         'Read grouped opening hours, upcoming exceptions and the current opening status for a location.'
         return self._request('GetLocationOpeningHours', {'locationKid': location_kid, 'Accept-Language': accept_language}, None)
 
+    def create_manager(self) -> ManagerCreationResponse:
+        'Create an empty enabled administrator with a previously unused manager identity.'
+        return self._request('CreateManager', {}, None)
+
+    def get_managers(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None) -> ManagerDirectoryResponse:
+        "List administrators in the site's eUserId.Managers through ManagersLast range."
+        return self._request('GetManagers', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction}, None)
+
     def invite_manager(self, manager_kid: str, body: ManagerInvitationRequest) -> ManagerInvitationResponse:
         'Send an invitation allowing an existing manager to choose a password.'
         return self._request('InviteManager', {'managerKid': manager_kid}, body)
@@ -203,13 +211,13 @@ class PortalClient(BaseClient):
         'Change Name, Organisation, Enabled, Deleted, RetentionDays, Icon or Email on an administrator.'
         return self._request('SetManagerProfileField', {'managerKid': manager_kid, 'field': field}, body)
 
-    def get_managers(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None) -> ManagerDirectoryResponse:
-        "List administrators in the site's eUserId.Managers through ManagersLast range."
-        return self._request('GetManagers', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction}, None)
-
     def get_manager(self, manager_kid: str) -> ManagerDirectoryItem:
         'Read one administrator by canonical manager KID for a workspace shortcut.'
         return self._request('GetManager', {'managerKid': manager_kid}, None)
+
+    def get_managers_with_same_email(self, manager_kid: str) -> list[ManagerEmailMatch]:
+        'List other visible administrators with the same stored email as this manager.'
+        return self._request('GetManagersWithSameEmail', {'managerKid': manager_kid}, None)
 
     def login_manager(self, body: ManagerLoginRequest, *, x_portal_login_client_ip: str | None = None) -> ManagerSessionResponse:
         'Log in with a manager email and password.'

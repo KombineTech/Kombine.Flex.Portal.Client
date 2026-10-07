@@ -1210,6 +1210,84 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Create an empty enabled administrator with a previously unused manager identity.
+        /// </summary>
+        /// <remarks>
+        /// Requires Managers1, independent Managers Read and Create, and whole-tenant scope.
+        /// <br/>No request body or client-selected tenant/UserId. Rechecks the actor account, credential stamp
+        /// <br/>and access before allocation and again inside the write transaction, holding account and access locks through commit.
+        /// <br/>No password, email, tabs or scopes are assigned;
+        /// <br/>no invitation is sent. Use GetManager and the existing editing operations after creation;
+        /// <br/>profile edits additionally require Managers Write.
+        /// <br/>Finds the next unused manager identity and appends only Enabled=1. No Deleted setting is written.
+        /// <br/>No random marker, intentional delay or reservation verification. 15-second deadline.
+        /// <br/>A tenant-specific MySQL advisory lock serializes allocation through commit (up to 5 seconds to acquire).
+        /// <br/>All creators must use the same lock on the same writer, including AMS and FRA. No table lock or schema change.
+        /// <br/>Independent writers will use modulo allocation by ServerId with a fixed common modulus (ADR 0015; not implemented).
+        /// <br/>Creation is not idempotent; lock/storage failures return 503.
+        /// <br/>401: login required. 403: missing-managers-tab/read/create or missing-tenant-access.
+        /// <br/>409 manager-ids-exhausted: identity range exhausted.
+        /// <br/>503 manager-creation-unavailable: outcome may be uncertain; inspect the directory before manual retry.
+        /// <br/>Never automatically retry a timeout or lost response.
+        /// </remarks>
+        /// <returns>Created</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ManagerCreationResponse> CreateManagerAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List administrators in the site's eUserId.Managers through ManagersLast range.
+        /// </summary>
+        /// <remarks>
+        /// ### Access
+        /// <br/>
+        /// <br/>- Requires an active manager session, **Managers1 (28)**, **PermissionManagers2 Read** and an explicit **tenant-wide KID grant**.
+        /// <br/>- Bank/location-only grants are insufficient. Write does not imply Read; missing permission values default to Read.
+        /// <br/>- Every request checks the current bounded session snapshot, at most **60 seconds** old.
+        /// <br/>
+        /// <br/>### Returned metadata
+        /// <br/>
+        /// <br/>- Reads `Log7`, bank zero, without reading credentials for listed managers. Disabled managers remain listed.
+        /// <br/>- Deleted records follow the **caller's RetentionDays**.
+        /// <br/>- Resource grants contain only this site's valid scopes. Tab grants are metadata, not proof of effective access.
+        /// <br/>- `operationPermissions` and `retentionDays` describe the **listed manager**, never the caller.
+        /// <br/>- **Service** comes from `PermissionService2` (3017) and has independent flags; it does not grant login or other categories' permissions.
+        /// <br/>- The seven permission categories include **Installer** from `PermissionInstaller2`. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.
+        /// <br/>- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing, invalid or negative `RetentionDays` becomes zero.
+        /// <br/>- `isCurrentManager` identifies your own record. `canEditPermissions` requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use `SetManagerPermission` to save.
+        /// <br/>
+        /// <br/>### Filtering and paging
+        /// <br/>
+        /// <br/>- `filter` matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.
+        /// <br/>- Pagination scans at most `pageSize` candidates. A page can be short or empty while `nextCursor` is non-null; **continue until null**.
+        /// <br/>- Changing filter, sort, direction or page size requires restarting **without a cursor**.
+        /// <br/>- Concurrent inserts and changes are not a frozen snapshot.
+        /// <br/>
+        /// <br/>### Ordering
+        /// <br/>
+        /// <br/>- Selectable ordering uses a shared **seven-setting index**, cached for at most **60 seconds**, then reads fresh page details.
+        /// <br/>- `lastActiveAt` is the current Alive krumb's MS2000 converted to UTC, not its Text value. Missing/invalid times are null and sort first ascending, last descending. Reads do not update activity.
+        /// <br/>- Identity ascending retains its bounded database scan. All modes reapply authorization and deletion retention per page.
+        /// <br/>- Text ordering is ordinal and case-insensitive. Kids compare sorted, site-relative numeric bank/location scopes; empty lists come first.
+        /// <br/>- Enabled orders **missing, false, true**. Deleted orders by deletion time, zero first. Descending reverses ties as well.
+        /// <br/>
+        /// <br/>### Limits and errors
+        /// <br/>
+        /// <br/>- At most **20,000 matching identities** in the index. Larger selections return **HTTP 503** with `manager-directory-too-large`; narrow the filter.
+        /// <br/>- A missing continuation identity after index refresh returns **HTTP 400**, `invalid-cursor`; restart without a cursor.
+        /// <br/>- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.
+        /// </remarks>
+        /// <param name="pageSize">Candidate batch size, 1–100, default 50. Keep unchanged while following a cursor.</param>
+        /// <param name="cursor">Opaque continuation returned by the previous request, scoped to this site and caller.</param>
+        /// <param name="filter">Optional name/email substring, at most 128 characters, trimmed. Empty lists all permitted managers.</param>
+        /// <param name="sort">identity (default), name, email, organisation, kids, deleted, enabled or lastActive. Applied before pagination.</param>
+        /// <param name="direction">asc (default) or desc. Identity breaks ties in the same direction.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ManagerDirectoryResponse> GetManagersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Send an invitation allowing an existing manager to choose a password.
         /// </summary>
         /// <remarks>
@@ -1417,58 +1495,6 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// List administrators in the site's eUserId.Managers through ManagersLast range.
-        /// </summary>
-        /// <remarks>
-        /// ### Access
-        /// <br/>
-        /// <br/>- Requires an active manager session, **Managers1 (28)**, **PermissionManagers2 Read** and an explicit **tenant-wide KID grant**.
-        /// <br/>- Bank/location-only grants are insufficient. Write does not imply Read; missing permission values default to Read.
-        /// <br/>- Every request checks the current bounded session snapshot, at most **60 seconds** old.
-        /// <br/>
-        /// <br/>### Returned metadata
-        /// <br/>
-        /// <br/>- Reads `Log7`, bank zero, without reading credentials for listed managers. Disabled managers remain listed.
-        /// <br/>- Deleted records follow the **caller's RetentionDays**.
-        /// <br/>- Resource grants contain only this site's valid scopes. Tab grants are metadata, not proof of effective access.
-        /// <br/>- `operationPermissions` and `retentionDays` describe the **listed manager**, never the caller.
-        /// <br/>- **Service** comes from `PermissionService2` (3017) and has independent flags; it does not grant login or other categories' permissions.
-        /// <br/>- The seven permission categories include **Installer** from `PermissionInstaller2`. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.
-        /// <br/>- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing, invalid or negative `RetentionDays` becomes zero.
-        /// <br/>- `isCurrentManager` identifies your own record. `canEditPermissions` requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use `SetManagerPermission` to save.
-        /// <br/>
-        /// <br/>### Filtering and paging
-        /// <br/>
-        /// <br/>- `filter` matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.
-        /// <br/>- Pagination scans at most `pageSize` candidates. A page can be short or empty while `nextCursor` is non-null; **continue until null**.
-        /// <br/>- Changing filter, sort, direction or page size requires restarting **without a cursor**.
-        /// <br/>- Concurrent inserts and changes are not a frozen snapshot.
-        /// <br/>
-        /// <br/>### Ordering
-        /// <br/>
-        /// <br/>- Selectable ordering uses a shared **seven-setting index**, cached for at most **60 seconds**, then reads fresh page details.
-        /// <br/>- `lastActiveAt` is the current Alive krumb's MS2000 converted to UTC, not its Text value. Missing/invalid times are null and sort first ascending, last descending. Reads do not update activity.
-        /// <br/>- Identity ascending retains its bounded database scan. All modes reapply authorization and deletion retention per page.
-        /// <br/>- Text ordering is ordinal and case-insensitive. Kids compare sorted, site-relative numeric bank/location scopes; empty lists come first.
-        /// <br/>- Enabled orders **missing, false, true**. Deleted orders by deletion time, zero first. Descending reverses ties as well.
-        /// <br/>
-        /// <br/>### Limits and errors
-        /// <br/>
-        /// <br/>- At most **20,000 matching identities** in the index. Larger selections return **HTTP 503** with `manager-directory-too-large`; narrow the filter.
-        /// <br/>- A missing continuation identity after index refresh returns **HTTP 400**, `invalid-cursor`; restart without a cursor.
-        /// <br/>- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.
-        /// </remarks>
-        /// <param name="pageSize">Candidate batch size, 1–100, default 50. Keep unchanged while following a cursor.</param>
-        /// <param name="cursor">Opaque continuation returned by the previous request, scoped to this site and caller.</param>
-        /// <param name="filter">Optional name/email substring, at most 128 characters, trimmed. Empty lists all permitted managers.</param>
-        /// <param name="sort">identity (default), name, email, organisation, kids, deleted, enabled or lastActive. Applied before pagination.</param>
-        /// <param name="direction">asc (default) or desc. Identity breaks ties in the same direction.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ManagerDirectoryResponse> GetManagersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
         /// Read one administrator by canonical manager KID for a workspace shortcut.
         /// </summary>
         /// <remarks>
@@ -1494,6 +1520,17 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ManagerDirectoryItem> GetManagerAsync(string managerKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List other visible administrators with the same stored email as this manager.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization as GetManager. Exact trimmed, ordinal case-insensitive matching within this tenant; excludes the source and empty email. Disabled accounts are included; caller deletion retention applies. Candidate index is at most 60 seconds old, bounded to 20,000 entries; at most 100 matching candidates are reread from current Log7 before returning. Larger matches return 503 manager-directory-too-large, never a partial list. 404 when source is absent or hidden. 12-second deadline. No credentials returned.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ManagerEmailMatch>> GetManagersWithSameEmailAsync(string managerKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1557,6 +1594,7 @@ namespace Kombine.Flex.Portal.Client
         /// ### Profile and navigation
         /// <br/>
         /// <br/>- Returns the manager information used by the portal's overview cards in **one request**. Reuse it for all cards and navigation on the current view.
+        /// <br/>- Optional `gravatarUrl` is the preferred profile picture. Use `iconKid` when null or the image fails (including 404); it is a display hint, never an access grant.
         /// <br/>- Empty `tabs` means no permitted pages. `hasBankAccess=false` means no banks or locations on this site.
         /// <br/>- `Banks2` (tab 5) is included when granted, like other recognized tabs.
         /// <br/>- `tabs` and `tabDetails` follow `AttributeMetaSortOrder` on `eTab`, then numeric tab ID. Missing sort metadata has order zero.
@@ -1698,7 +1736,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays or IconSet. Other settings are rejected.
         /// <br/>- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.
         /// <br/>- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.
-        /// <br/>- IconSet requires the exact JSON string "g" or "line". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as "g".
+        /// <br/>- IconSet requires the exact JSON string "g" or "line". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as "line"; an explicit saved "g" is preserved.
         /// <br/>- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.
         /// <br/>- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.
         /// <br/>### Response and errors
@@ -9284,6 +9322,319 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Create an empty enabled administrator with a previously unused manager identity.
+        /// </summary>
+        /// <remarks>
+        /// Requires Managers1, independent Managers Read and Create, and whole-tenant scope.
+        /// <br/>No request body or client-selected tenant/UserId. Rechecks the actor account, credential stamp
+        /// <br/>and access before allocation and again inside the write transaction, holding account and access locks through commit.
+        /// <br/>No password, email, tabs or scopes are assigned;
+        /// <br/>no invitation is sent. Use GetManager and the existing editing operations after creation;
+        /// <br/>profile edits additionally require Managers Write.
+        /// <br/>Finds the next unused manager identity and appends only Enabled=1. No Deleted setting is written.
+        /// <br/>No random marker, intentional delay or reservation verification. 15-second deadline.
+        /// <br/>A tenant-specific MySQL advisory lock serializes allocation through commit (up to 5 seconds to acquire).
+        /// <br/>All creators must use the same lock on the same writer, including AMS and FRA. No table lock or schema change.
+        /// <br/>Independent writers will use modulo allocation by ServerId with a fixed common modulus (ADR 0015; not implemented).
+        /// <br/>Creation is not idempotent; lock/storage failures return 503.
+        /// <br/>401: login required. 403: missing-managers-tab/read/create or missing-tenant-access.
+        /// <br/>409 manager-ids-exhausted: identity range exhausted.
+        /// <br/>503 manager-creation-unavailable: outcome may be uncertain; inspect the directory before manual retry.
+        /// <br/>Never automatically retry a timeout or lost response.
+        /// </remarks>
+        /// <returns>Created</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ManagerCreationResponse> CreateManagerAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/managers"
+                    urlBuilder_.Append("api/v1/managers");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 201)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ManagerCreationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List administrators in the site's eUserId.Managers through ManagersLast range.
+        /// </summary>
+        /// <remarks>
+        /// ### Access
+        /// <br/>
+        /// <br/>- Requires an active manager session, **Managers1 (28)**, **PermissionManagers2 Read** and an explicit **tenant-wide KID grant**.
+        /// <br/>- Bank/location-only grants are insufficient. Write does not imply Read; missing permission values default to Read.
+        /// <br/>- Every request checks the current bounded session snapshot, at most **60 seconds** old.
+        /// <br/>
+        /// <br/>### Returned metadata
+        /// <br/>
+        /// <br/>- Reads `Log7`, bank zero, without reading credentials for listed managers. Disabled managers remain listed.
+        /// <br/>- Deleted records follow the **caller's RetentionDays**.
+        /// <br/>- Resource grants contain only this site's valid scopes. Tab grants are metadata, not proof of effective access.
+        /// <br/>- `operationPermissions` and `retentionDays` describe the **listed manager**, never the caller.
+        /// <br/>- **Service** comes from `PermissionService2` (3017) and has independent flags; it does not grant login or other categories' permissions.
+        /// <br/>- The seven permission categories include **Installer** from `PermissionInstaller2`. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.
+        /// <br/>- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing, invalid or negative `RetentionDays` becomes zero.
+        /// <br/>- `isCurrentManager` identifies your own record. `canEditPermissions` requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use `SetManagerPermission` to save.
+        /// <br/>
+        /// <br/>### Filtering and paging
+        /// <br/>
+        /// <br/>- `filter` matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.
+        /// <br/>- Pagination scans at most `pageSize` candidates. A page can be short or empty while `nextCursor` is non-null; **continue until null**.
+        /// <br/>- Changing filter, sort, direction or page size requires restarting **without a cursor**.
+        /// <br/>- Concurrent inserts and changes are not a frozen snapshot.
+        /// <br/>
+        /// <br/>### Ordering
+        /// <br/>
+        /// <br/>- Selectable ordering uses a shared **seven-setting index**, cached for at most **60 seconds**, then reads fresh page details.
+        /// <br/>- `lastActiveAt` is the current Alive krumb's MS2000 converted to UTC, not its Text value. Missing/invalid times are null and sort first ascending, last descending. Reads do not update activity.
+        /// <br/>- Identity ascending retains its bounded database scan. All modes reapply authorization and deletion retention per page.
+        /// <br/>- Text ordering is ordinal and case-insensitive. Kids compare sorted, site-relative numeric bank/location scopes; empty lists come first.
+        /// <br/>- Enabled orders **missing, false, true**. Deleted orders by deletion time, zero first. Descending reverses ties as well.
+        /// <br/>
+        /// <br/>### Limits and errors
+        /// <br/>
+        /// <br/>- At most **20,000 matching identities** in the index. Larger selections return **HTTP 503** with `manager-directory-too-large`; narrow the filter.
+        /// <br/>- A missing continuation identity after index refresh returns **HTTP 400**, `invalid-cursor`; restart without a cursor.
+        /// <br/>- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.
+        /// </remarks>
+        /// <param name="pageSize">Candidate batch size, 1–100, default 50. Keep unchanged while following a cursor.</param>
+        /// <param name="cursor">Opaque continuation returned by the previous request, scoped to this site and caller.</param>
+        /// <param name="filter">Optional name/email substring, at most 128 characters, trimmed. Empty lists all permitted managers.</param>
+        /// <param name="sort">identity (default), name, email, organisation, kids, deleted, enabled or lastActive. Applied before pagination.</param>
+        /// <param name="direction">asc (default) or desc. Identity breaks ties in the same direction.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ManagerDirectoryResponse> GetManagersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/managers"
+                    urlBuilder_.Append("api/v1/managers");
+                    urlBuilder_.Append('?');
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ManagerDirectoryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Send an invitation allowing an existing manager to choose a password.
         /// </summary>
         /// <remarks>
@@ -10376,186 +10727,6 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// List administrators in the site's eUserId.Managers through ManagersLast range.
-        /// </summary>
-        /// <remarks>
-        /// ### Access
-        /// <br/>
-        /// <br/>- Requires an active manager session, **Managers1 (28)**, **PermissionManagers2 Read** and an explicit **tenant-wide KID grant**.
-        /// <br/>- Bank/location-only grants are insufficient. Write does not imply Read; missing permission values default to Read.
-        /// <br/>- Every request checks the current bounded session snapshot, at most **60 seconds** old.
-        /// <br/>
-        /// <br/>### Returned metadata
-        /// <br/>
-        /// <br/>- Reads `Log7`, bank zero, without reading credentials for listed managers. Disabled managers remain listed.
-        /// <br/>- Deleted records follow the **caller's RetentionDays**.
-        /// <br/>- Resource grants contain only this site's valid scopes. Tab grants are metadata, not proof of effective access.
-        /// <br/>- `operationPermissions` and `retentionDays` describe the **listed manager**, never the caller.
-        /// <br/>- **Service** comes from `PermissionService2` (3017) and has independent flags; it does not grant login or other categories' permissions.
-        /// <br/>- The seven permission categories include **Installer** from `PermissionInstaller2`. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.
-        /// <br/>- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing, invalid or negative `RetentionDays` becomes zero.
-        /// <br/>- `isCurrentManager` identifies your own record. `canEditPermissions` requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use `SetManagerPermission` to save.
-        /// <br/>
-        /// <br/>### Filtering and paging
-        /// <br/>
-        /// <br/>- `filter` matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.
-        /// <br/>- Pagination scans at most `pageSize` candidates. A page can be short or empty while `nextCursor` is non-null; **continue until null**.
-        /// <br/>- Changing filter, sort, direction or page size requires restarting **without a cursor**.
-        /// <br/>- Concurrent inserts and changes are not a frozen snapshot.
-        /// <br/>
-        /// <br/>### Ordering
-        /// <br/>
-        /// <br/>- Selectable ordering uses a shared **seven-setting index**, cached for at most **60 seconds**, then reads fresh page details.
-        /// <br/>- `lastActiveAt` is the current Alive krumb's MS2000 converted to UTC, not its Text value. Missing/invalid times are null and sort first ascending, last descending. Reads do not update activity.
-        /// <br/>- Identity ascending retains its bounded database scan. All modes reapply authorization and deletion retention per page.
-        /// <br/>- Text ordering is ordinal and case-insensitive. Kids compare sorted, site-relative numeric bank/location scopes; empty lists come first.
-        /// <br/>- Enabled orders **missing, false, true**. Deleted orders by deletion time, zero first. Descending reverses ties as well.
-        /// <br/>
-        /// <br/>### Limits and errors
-        /// <br/>
-        /// <br/>- At most **20,000 matching identities** in the index. Larger selections return **HTTP 503** with `manager-directory-too-large`; narrow the filter.
-        /// <br/>- A missing continuation identity after index refresh returns **HTTP 400**, `invalid-cursor`; restart without a cursor.
-        /// <br/>- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.
-        /// </remarks>
-        /// <param name="pageSize">Candidate batch size, 1–100, default 50. Keep unchanged while following a cursor.</param>
-        /// <param name="cursor">Opaque continuation returned by the previous request, scoped to this site and caller.</param>
-        /// <param name="filter">Optional name/email substring, at most 128 characters, trimmed. Empty lists all permitted managers.</param>
-        /// <param name="sort">identity (default), name, email, organisation, kids, deleted, enabled or lastActive. Applied before pagination.</param>
-        /// <param name="direction">asc (default) or desc. Identity breaks ties in the same direction.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ManagerDirectoryResponse> GetManagersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-
-                    // Operation Path: "api/v1/managers"
-                    urlBuilder_.Append("api/v1/managers");
-                    urlBuilder_.Append('?');
-                    if (pageSize != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (cursor != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (filter != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (sort != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (direction != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    urlBuilder_.Length--;
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ManagerDirectoryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 401)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 403)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 503)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
         /// Read one administrator by canonical manager KID for a workspace shortcut.
         /// </summary>
         /// <remarks>
@@ -10626,6 +10797,138 @@ namespace Kombine.Flex.Portal.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ManagerDirectoryItem>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List other visible administrators with the same stored email as this manager.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization as GetManager. Exact trimmed, ordinal case-insensitive matching within this tenant; excludes the source and empty email. Disabled accounts are included; caller deletion retention applies. Candidate index is at most 60 seconds old, bounded to 20,000 entries; at most 100 matching candidates are reread from current Log7 before returning. Larger matches return 503 manager-directory-too-large, never a partial list. 404 when source is absent or hidden. 12-second deadline. No credentials returned.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ManagerEmailMatch>> GetManagersWithSameEmailAsync(string managerKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (managerKid == null)
+                throw new System.ArgumentNullException("managerKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/managers/{managerKid}/same-email"
+                    urlBuilder_.Append("api/v1/managers/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(managerKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/same-email");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ManagerEmailMatch>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -11004,6 +11307,7 @@ namespace Kombine.Flex.Portal.Client
         /// ### Profile and navigation
         /// <br/>
         /// <br/>- Returns the manager information used by the portal's overview cards in **one request**. Reuse it for all cards and navigation on the current view.
+        /// <br/>- Optional `gravatarUrl` is the preferred profile picture. Use `iconKid` when null or the image fails (including 404); it is a display hint, never an access grant.
         /// <br/>- Empty `tabs` means no permitted pages. `hasBankAccess=false` means no banks or locations on this site.
         /// <br/>- `Banks2` (tab 5) is included when granted, like other recognized tabs.
         /// <br/>- `tabs` and `tabDetails` follow `AttributeMetaSortOrder` on `eTab`, then numeric tab ID. Missing sort metadata has order zero.
@@ -11754,7 +12058,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays or IconSet. Other settings are rejected.
         /// <br/>- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.
         /// <br/>- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.
-        /// <br/>- IconSet requires the exact JSON string "g" or "line". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as "g".
+        /// <br/>- IconSet requires the exact JSON string "g" or "line". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as "line"; an explicit saved "g" is preserved.
         /// <br/>- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.
         /// <br/>- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.
         /// <br/>### Response and errors
@@ -20450,6 +20754,18 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// The canonical KID of the newly activated empty administrator.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ManagerCreationResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Read-only metadata from current bank-zero Log7 settings. Describes the listed manager, never grants the caller permissions. No credentials are returned.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -20491,6 +20807,12 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
         public string? IconKid { get; set; } = default!;
+
+        /// <summary>
+        /// Optional Gravatar image URL when Email is valid; preferred over the stored icon. Uses SHA256, 96px, G rating and d=404; fall back to IconKid on image failure. Browser requests disclose the email hash and client IP to Gravatar.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("gravatarUrl")]
+        public string? GravatarUrl { get; set; } = default!;
 
         /// <summary>
         /// Decoded eSetting.Organisation, empty when absent.
@@ -20614,6 +20936,33 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
         public string? NextCursor { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Another visible administrator sharing the source email; KID is canonical and tenant-bound.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ManagerEmailMatch
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// API-computed icon identity used when Gravatar is missing or unavailable.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+        /// <summary>
+        /// Preferred optional Gravatar URL, with the same semantics as GetManager.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("gravatarUrl")]
+        public string? GravatarUrl { get; set; } = default!;
 
     }
 
@@ -20985,6 +21334,12 @@ namespace Kombine.Flex.Portal.Client
         public string? IconKid { get; set; } = default!;
 
         /// <summary>
+        /// Optional Gravatar fallback; same semantics as GetManager. Refresh after Email or Icon changes.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("gravatarUrl")]
+        public string? GravatarUrl { get; set; } = default!;
+
+        /// <summary>
         /// Person icon choices; the current display icon is first when it is outside that catalog.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("availableIcons")]
@@ -21087,6 +21442,12 @@ namespace Kombine.Flex.Portal.Client
         public string? Organisation { get; set; } = default!;
 
         /// <summary>
+        /// Optional API-computed Gravatar URL from the current manager's email. Prefer over IconKid; fall back on image failure. Uses SHA256, 96px, G rating and d=404. Direct browser requests disclose the email hash and client IP to Gravatar.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("gravatarUrl")]
+        public string? GravatarUrl { get; set; } = default!;
+
+        /// <summary>
         /// Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing or invalid settings default to zero. Does not grant access or schedule physical deletion.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("retentionDays")]
@@ -21096,7 +21457,7 @@ namespace Kombine.Flex.Portal.Client
         public EThemeMode? ThemeMode { get; set; } = default!;
 
         /// <summary>
-        /// Preferred icon set: g or line. Missing or unsupported stored values return g; this grants no permissions.
+        /// Preferred icon set: g or line. Missing or unsupported stored values return line; an explicit g is preserved. This grants no permissions.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("iconSet")]
         public string? IconSet { get; set; } = default!;

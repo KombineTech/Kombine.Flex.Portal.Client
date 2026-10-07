@@ -213,6 +213,16 @@ export class PortalClient extends BaseClient {
     return this.send("GetLocationOpeningHours", {"locationKid": locationKid, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.LocationOpeningHoursResponse>;
   }
 
+  /** Create an empty enabled administrator with a previously unused manager identity. */
+  createManager(request: RequestOptions = {}): Promise<Models.ManagerCreationResponse> {
+    return this.send("CreateManager", {}, undefined, request) as Promise<Models.ManagerCreationResponse>;
+  }
+
+  /** List administrators in the site's eUserId.Managers through ManagersLast range. */
+  getManagers(options: Models.GetManagersOptions = {}, request: RequestOptions = {}): Promise<Models.ManagerDirectoryResponse> {
+    return this.send("GetManagers", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction}, undefined, request) as Promise<Models.ManagerDirectoryResponse>;
+  }
+
   /** Send an invitation allowing an existing manager to choose a password. */
   inviteManager(managerKid: string, body: Models.ManagerInvitationRequest, request: RequestOptions = {}): Promise<Models.ManagerInvitationResponse> {
     return this.send("InviteManager", {"managerKid": managerKid}, body, request) as Promise<Models.ManagerInvitationResponse>;
@@ -248,14 +258,14 @@ export class PortalClient extends BaseClient {
     return this.send("SetManagerProfileField", {"managerKid": managerKid, "field": field}, body, request) as Promise<Models.ManagerProfileChangeResponse>;
   }
 
-  /** List administrators in the site's eUserId.Managers through ManagersLast range. */
-  getManagers(options: Models.GetManagersOptions = {}, request: RequestOptions = {}): Promise<Models.ManagerDirectoryResponse> {
-    return this.send("GetManagers", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction}, undefined, request) as Promise<Models.ManagerDirectoryResponse>;
-  }
-
   /** Read one administrator by canonical manager KID for a workspace shortcut. */
   getManager(managerKid: string, request: RequestOptions = {}): Promise<Models.ManagerDirectoryItem> {
     return this.send("GetManager", {"managerKid": managerKid}, undefined, request) as Promise<Models.ManagerDirectoryItem>;
+  }
+
+  /** List other visible administrators with the same stored email as this manager. */
+  getManagersWithSameEmail(managerKid: string, request: RequestOptions = {}): Promise<Models.ManagerEmailMatch[]> {
+    return this.send("GetManagersWithSameEmail", {"managerKid": managerKid}, undefined, request) as Promise<Models.ManagerEmailMatch[]>;
   }
 
   /** Log in with a manager email and password. */

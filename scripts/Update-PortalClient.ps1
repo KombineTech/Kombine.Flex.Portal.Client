@@ -46,7 +46,15 @@ $generatedSource = Join-Path $project 'Generated/PortalApiClient.g.cs'
 $generatedText = [IO.File]::ReadAllText($generatedSource)
 $generatedText = $generatedText.Replace('client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken)', 'SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken)')
 $generatedText = [Text.RegularExpressions.Regex]::Replace($generatedText, '(?m)[ \t]+(?=\r?$)', '')
-[IO.File]::WriteAllText($generatedSource, $generatedText, [Text.UTF8Encoding]::new($false))
+for ($attempt = 0; ; $attempt++) {
+    try {
+        [IO.File]::WriteAllText($generatedSource, $generatedText, [Text.UTF8Encoding]::new($false))
+        break
+    } catch [IO.IOException] {
+        if ($attempt -ge 5) { throw }
+        Start-Sleep -Milliseconds 500
+    }
+}
 $contract = Get-Content $snapshot -Raw | ConvertFrom-Json -AsHashtable
 $rows = foreach ($path in $contract.paths.Keys) {
     foreach ($method in $contract.paths[$path].Keys) {

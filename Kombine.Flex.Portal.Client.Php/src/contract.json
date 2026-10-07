@@ -1704,6 +1704,16 @@
       },
       "additionalProperties": false
     },
+    "ManagerCreationResponse": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "ManagerDirectoryItem": {
       "type": "object",
       "properties": {
@@ -1734,6 +1744,10 @@
           "nullable": true
         },
         "iconKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "gravatarUrl": {
           "type": "string",
           "nullable": true
         },
@@ -1824,6 +1838,28 @@
           "nullable": true
         },
         "nextCursor": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ManagerEmailMatch": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "gravatarUrl": {
           "type": "string",
           "nullable": true
         }
@@ -2119,6 +2155,10 @@
           "type": "string",
           "nullable": true
         },
+        "gravatarUrl": {
+          "type": "string",
+          "nullable": true
+        },
         "availableIcons": {
           "type": "array",
           "items": {
@@ -2193,6 +2233,10 @@
           "nullable": true
         },
         "organisation": {
+          "type": "string",
+          "nullable": true
+        },
+        "gravatarUrl": {
           "type": "string",
           "nullable": true
         },
@@ -6082,6 +6126,76 @@
       },
       "binary": false
     },
+    "CreateManager": {
+      "method": "POST",
+      "path": "api/v1/managers",
+      "statuses": [
+        201
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/ManagerCreationResponse"
+      },
+      "binary": false
+    },
+    "GetManagers": {
+      "method": "GET",
+      "path": "api/v1/managers",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "pageSize",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "cursor",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/ManagerDirectoryResponse"
+      },
+      "binary": false
+    },
     "InviteManager": {
       "method": "POST",
       "path": "api/v1/managers/{managerKid}/invitation",
@@ -6255,62 +6369,6 @@
       },
       "binary": false
     },
-    "GetManagers": {
-      "method": "GET",
-      "path": "api/v1/managers",
-      "statuses": [
-        200
-      ],
-      "auth": true,
-      "parameters": [
-        {
-          "name": "pageSize",
-          "where": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        {
-          "name": "cursor",
-          "where": "query",
-          "required": false,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "filter",
-          "where": "query",
-          "required": false,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "sort",
-          "where": "query",
-          "required": false,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "direction",
-          "where": "query",
-          "required": false,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "body": null,
-      "response": {
-        "$ref": "#/components/schemas/ManagerDirectoryResponse"
-      },
-      "binary": false
-    },
     "GetManager": {
       "method": "GET",
       "path": "api/v1/managers/{managerKid}",
@@ -6331,6 +6389,32 @@
       "body": null,
       "response": {
         "$ref": "#/components/schemas/ManagerDirectoryItem"
+      },
+      "binary": false
+    },
+    "GetManagersWithSameEmail": {
+      "method": "GET",
+      "path": "api/v1/managers/{managerKid}/same-email",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "managerKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ManagerEmailMatch"
+        }
       },
       "binary": false
     },

@@ -44,6 +44,8 @@
 | `GetUnitIcons` | `get_unit_icons` | `getUnitIcons` | GET | `/api/v1/units/icons` |
 | `GetLocationIcons` | `get_location_icons` | `getLocationIcons` | GET | `/api/v1/locations/icons` |
 | `GetLocationOpeningHours` | `get_location_opening_hours` | `getLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` |
+| `CreateManager` | `create_manager` | `createManager` | POST | `/api/v1/managers` |
+| `GetManagers` | `get_managers` | `getManagers` | GET | `/api/v1/managers` |
 | `InviteManager` | `invite_manager` | `inviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `SetManagerKid` | `set_manager_kid` | `setManagerKid` | POST | `/api/v1/managers/{managerKid}/kids` |
 | `RequestManagerPasswordReset` | `request_manager_password_reset` | `requestManagerPasswordReset` | POST | `/api/v1/session/forgot-password` |
@@ -51,8 +53,8 @@
 | `SetManagerPermissionRole` | `set_manager_permission_role` | `setManagerPermissionRole` | POST | `/api/v1/managers/{managerKid}/permission-role` |
 | `SetManagerPermission` | `set_manager_permission` | `setManagerPermission` | POST | `/api/v1/managers/{managerKid}/permissions/{resource}` |
 | `SetManagerProfileField` | `set_manager_profile_field` | `setManagerProfileField` | POST | `/api/v1/managers/{managerKid}/profile/{field}` |
-| `GetManagers` | `get_managers` | `getManagers` | GET | `/api/v1/managers` |
 | `GetManager` | `get_manager` | `getManager` | GET | `/api/v1/managers/{managerKid}` |
+| `GetManagersWithSameEmail` | `get_managers_with_same_email` | `getManagersWithSameEmail` | GET | `/api/v1/managers/{managerKid}/same-email` |
 | `LoginManager` | `login_manager` | `loginManager` | POST | `/api/v1/session/login` |
 | `RenewManagerSession` | `renew_manager_session` | `renewManagerSession` | POST | `/api/v1/session/renew` |
 | `GetCurrentManager` | `get_current_manager` | `getCurrentManager` | GET | `/api/v1/session/me` |

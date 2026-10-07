@@ -344,16 +344,28 @@ array{'locationKid'?: string|null, 'timeZone'?: string|null, 'calculatedAt'?: st
 array{'location'?: BankLocationResponse, 'items'?: list<UnitOverviewResponse>|null}
 ```
 
+### ManagerCreationResponse
+
+```php
+array{'kid'?: string|null}
+```
+
 ### ManagerDirectoryItem
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'email'?: string|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'tabs'?: list<ManagerTabResponse>|null, 'iconKid'?: string|null, 'organisation'?: string|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedAt'?: string|null, 'lastActiveAt'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'retentionDays'?: int, 'isCurrentManager'?: bool, 'canEditPermissions'?: bool, 'canEditTabs'?: bool, 'canEditProfile'?: bool, 'profileRevision'?: string|null, 'tabsRevision'?: string|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool, 'availableTabs'?: list<ManagerTabResponse>|null, 'availableIcons'?: list<string>|null}
+array{'kid'?: string|null, 'name'?: string|null, 'email'?: string|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'tabs'?: list<ManagerTabResponse>|null, 'iconKid'?: string|null, 'gravatarUrl'?: string|null, 'organisation'?: string|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedAt'?: string|null, 'lastActiveAt'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'retentionDays'?: int, 'isCurrentManager'?: bool, 'canEditPermissions'?: bool, 'canEditTabs'?: bool, 'canEditProfile'?: bool, 'profileRevision'?: string|null, 'tabsRevision'?: string|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool, 'availableTabs'?: list<ManagerTabResponse>|null, 'availableIcons'?: list<string>|null}
 ```
 
 ### ManagerDirectoryResponse
 
 ```php
 array{'items'?: list<ManagerDirectoryItem>|null, 'nextCursor'?: string|null}
+```
+
+### ManagerEmailMatch
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'gravatarUrl'?: string|null}
 ```
 
 ### ManagerForgotPasswordRequest
@@ -437,13 +449,13 @@ array{'value': mixed, 'expectedRevision': string|null}
 ### ManagerProfileChangeResponse
 
 ```php
-array{'field': string|null, 'name': string|null, 'organisation': string|null, 'email': string|null, 'iconKid': string|null, 'availableIcons'?: list<string>|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedMs2000'?: int, 'deletedAt'?: string|null, 'retentionDays'?: int, 'profileRevision': string|null, 'canEditProfile'?: bool}
+array{'field': string|null, 'name': string|null, 'organisation': string|null, 'email': string|null, 'iconKid': string|null, 'gravatarUrl'?: string|null, 'availableIcons'?: list<string>|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedMs2000'?: int, 'deletedAt'?: string|null, 'retentionDays'?: int, 'profileRevision': string|null, 'canEditProfile'?: bool}
 ```
 
 ### ManagerProfileResponse
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
+array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
 ```
 
 ### ManagerResetPasswordRequest

@@ -841,6 +841,12 @@ export interface LocationUnitsResponse {
   "items"?: (UnitOverviewResponse)[] | null;
 }
 
+/** The canonical KID of the newly activated empty administrator. */
+export interface ManagerCreationResponse {
+  /** kid */
+  "kid"?: string | null;
+}
+
 /** Read-only metadata from current bank-zero Log7 settings. Describes the listed manager, never grants the caller permissions. No credentials are returned. */
 export interface ManagerDirectoryItem {
   /** Canonical manager KID belonging to the API site, bank zero. */
@@ -855,6 +861,8 @@ export interface ManagerDirectoryItem {
   "tabs"?: (ManagerTabResponse)[] | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
+  /** Optional Gravatar image URL when Email is valid; preferred over the stored icon. Uses SHA256, 96px, G rating and d=404; fall back to IconKid on image failure. Browser requests disclose the email hash and client IP to Gravatar. */
+  "gravatarUrl"?: string | null;
   /** Decoded eSetting.Organisation, empty when absent. */
   "organisation"?: string | null;
   /** True for Enabled=1, false for 0, null for absent or invalid settings. This field alone does not establish account usability. */
@@ -897,6 +905,18 @@ export interface ManagerDirectoryResponse {
   "items"?: (ManagerDirectoryItem)[] | null;
   /** Opaque continuation bound to caller, site, page size, filter, sort and direction, or null when finished. Never decode it. */
   "nextCursor"?: string | null;
+}
+
+/** Another visible administrator sharing the source email; KID is canonical and tenant-bound. */
+export interface ManagerEmailMatch {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** API-computed icon identity used when Gravatar is missing or unavailable. */
+  "iconKid"?: string | null;
+  /** Preferred optional Gravatar URL, with the same semantics as GetManager. */
+  "gravatarUrl"?: string | null;
 }
 
 /** Requests a recovery email on this API's tenant. Never log the body. */
@@ -1039,6 +1059,8 @@ export interface ManagerProfileChangeResponse {
   "email": string | null;
   /** Saved icon identifier. New assignments accept only eIcon names with eIconSubject.Person metadata. */
   "iconKid": string | null;
+  /** Optional Gravatar fallback; same semantics as GetManager. Refresh after Email or Icon changes. */
+  "gravatarUrl"?: string | null;
   /** Person icon choices; the current display icon is first when it is outside that catalog. */
   "availableIcons"?: (string)[] | null;
   /** Saved Enabled state; null for an unchanged absent/invalid value. */
@@ -1075,11 +1097,13 @@ export interface ManagerProfileResponse {
   "navigationBanks"?: (BankNavigationResponse)[] | null;
   /** Optional organisation display text. Empty when absent; never an access grant. */
   "organisation"?: string | null;
+  /** Optional API-computed Gravatar URL from the current manager's email. Prefer over IconKid; fall back on image failure. Uses SHA256, 96px, G rating and d=404. Direct browser requests disclose the email hash and client IP to Gravatar. */
+  "gravatarUrl"?: string | null;
   /** Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing or invalid settings default to zero. Does not grant access or schedule physical deletion. */
   "retentionDays"?: number;
   /** themeMode */
   "themeMode"?: EThemeMode;
-  /** Preferred icon set: g or line. Missing or unsupported stored values return g; this grants no permissions. */
+  /** Preferred icon set: g or line. Missing or unsupported stored values return line; an explicit g is preserved. This grants no permissions. */
   "iconSet"?: string | null;
   /** Names and IDs from the shared eTab enum, limited to the manager's recognized grants. */
   "tabDetails"?: (ManagerTabResponse)[] | null;

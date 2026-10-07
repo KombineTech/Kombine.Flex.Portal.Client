@@ -8,6 +8,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `ChangeMyManagerPasswordAsync` | POST | `/api/v1/session/me/password` |
 | `ConfirmMyManagerEmailAsync` | POST | `/api/v1/session/me/email-confirmation` |
 | `CreateBankUserAsync` | POST | `/api/v1/banks/{bankKid}/users` |
+| `CreateManagerAsync` | POST | `/api/v1/managers` |
 | `DownloadBankSettlementAsync` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
 | `DownloadPortalWindowsAppInstallerAsync` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackageAsync` | GET | `/download/windows/{architecture}/{fileName}` |
@@ -68,6 +69,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetLocationUnitsAsync` | GET | `/api/v1/locations/{locationKid}/units` |
 | `GetManagerAsync` | GET | `/api/v1/managers/{managerKid}` |
 | `GetManagersAsync` | GET | `/api/v1/managers` |
+| `GetManagersWithSameEmailAsync` | GET | `/api/v1/managers/{managerKid}/same-email` |
 | `GetMyManagerProfileAsync` | GET | `/api/v1/session/me/profile` |
 | `GetMyManagerTabsAsync` | GET | `/api/v1/session/me/tabs` |
 | `GetObjectAddressAsync` | GET | `/api/v1/addresses/{kid}` |

@@ -2530,6 +2530,199 @@
     "example": {}
   },
   {
+    "operation": "CreateManager",
+    "python": "create_manager",
+    "javascript": "createManager",
+    "method": "POST",
+    "path": "api/v1/managers",
+    "status": 201,
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/ManagerCreationResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetManagers",
+    "python": "get_managers",
+    "javascript": "getManagers",
+    "method": "GET",
+    "path": "api/v1/managers",
+    "status": 200,
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/ManagerDirectoryResponse"
+    },
+    "binary": false,
+    "example": {
+      "items": [
+        {
+          "kid": "A6Q46o3B9ACA01h",
+          "name": "Example administrator",
+          "iconKid": "user",
+          "email": "admin@example.test",
+          "organisation": "Example organisation",
+          "enabled": true,
+          "deleted": false,
+          "deletedAt": null,
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
+          "retentionDays": 30,
+          "canEditPermissions": true,
+          "canEditTabs": true,
+          "isCurrentManager": false,
+          "canEditProfile": true,
+          "profileRevision": "61461452DAE1676B1E2EA99320D987DF7FB1AB26219A5A0CD3C748F944013A51",
+          "tabsRevision": "B8FB8869A5281D0DAD8A15E82DB9A7E6F1C6C89611DB79A276E557F7A6BDEA3E",
+          "operationPermissions": [
+            {
+              "resource": "Managers",
+              "level": "Read",
+              "canRead": true,
+              "canWrite": false,
+              "canCreate": false,
+              "flags": 1,
+              "canDelete": false,
+              "canRenameExternalId": false,
+              "canRename": false
+            },
+            {
+              "resource": "Bank",
+              "level": "3",
+              "canRead": true,
+              "canWrite": true,
+              "canCreate": false,
+              "flags": 3,
+              "canDelete": false,
+              "canRenameExternalId": false,
+              "canRename": false
+            },
+            {
+              "resource": "Location",
+              "level": "Read",
+              "canRead": true,
+              "canWrite": false,
+              "canCreate": false,
+              "flags": 1,
+              "canDelete": false,
+              "canRenameExternalId": false,
+              "canRename": false
+            },
+            {
+              "resource": "Unit",
+              "level": "None",
+              "canRead": false,
+              "canWrite": false,
+              "canCreate": false,
+              "flags": 0,
+              "canDelete": false,
+              "canRenameExternalId": false,
+              "canRename": false
+            },
+            {
+              "resource": "User",
+              "level": "48",
+              "canRead": false,
+              "canWrite": false,
+              "canCreate": false,
+              "flags": 48,
+              "canDelete": false,
+              "canRenameExternalId": true,
+              "canRename": true
+            },
+            {
+              "resource": "Installer",
+              "level": "5",
+              "canRead": true,
+              "canWrite": false,
+              "canCreate": true,
+              "flags": 5,
+              "canDelete": false,
+              "canRenameExternalId": false,
+              "canRename": false
+            },
+            {
+              "resource": "Service",
+              "level": "Read",
+              "canRead": true,
+              "canWrite": false,
+              "canCreate": false,
+              "flags": 1,
+              "canDelete": false,
+              "canRenameExternalId": false,
+              "canRename": false
+            }
+          ],
+          "resourceGrants": [
+            {
+              "kid": "A6Q14o7D0b",
+              "scope": "Bank"
+            }
+          ],
+          "tabs": [
+            {
+              "id": 28,
+              "name": "Managers1",
+              "iconKid": ""
+            }
+          ]
+        }
+      ],
+      "nextCursor": null
+    }
+  },
+  {
     "operation": "InviteManager",
     "python": "invite_manager",
     "javascript": "inviteManager",
@@ -3066,183 +3259,6 @@
       ],
       "profileRevision": "BE70C7CEB4C321706DA4CAE5322405FFFE96E8AECB40662448DB47B67DED8FFD",
       "canEditProfile": true
-    }
-  },
-  {
-    "operation": "GetManagers",
-    "python": "get_managers",
-    "javascript": "getManagers",
-    "method": "GET",
-    "path": "api/v1/managers",
-    "status": 200,
-    "auth": true,
-    "parameters": [
-      {
-        "name": "pageSize",
-        "where": "query",
-        "py": "page_size",
-        "js": "pageSize",
-        "schema": {
-          "type": "integer",
-          "format": "int32"
-        }
-      },
-      {
-        "name": "cursor",
-        "where": "query",
-        "py": "cursor",
-        "js": "cursor",
-        "schema": {
-          "type": "string"
-        }
-      },
-      {
-        "name": "filter",
-        "where": "query",
-        "py": "filter",
-        "js": "filter",
-        "schema": {
-          "type": "string"
-        }
-      },
-      {
-        "name": "sort",
-        "where": "query",
-        "py": "sort",
-        "js": "sort",
-        "schema": {
-          "type": "string"
-        }
-      },
-      {
-        "name": "direction",
-        "where": "query",
-        "py": "direction",
-        "js": "direction",
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
-    "body": null,
-    "response": {
-      "$ref": "#/components/schemas/ManagerDirectoryResponse"
-    },
-    "binary": false,
-    "example": {
-      "items": [
-        {
-          "kid": "A6Q46o3B9ACA01h",
-          "name": "Example administrator",
-          "iconKid": "user",
-          "email": "admin@example.test",
-          "organisation": "Example organisation",
-          "enabled": true,
-          "deleted": false,
-          "deletedAt": null,
-          "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
-          "retentionDays": 30,
-          "canEditPermissions": true,
-          "canEditTabs": true,
-          "isCurrentManager": false,
-          "canEditProfile": true,
-          "profileRevision": "61461452DAE1676B1E2EA99320D987DF7FB1AB26219A5A0CD3C748F944013A51",
-          "tabsRevision": "B8FB8869A5281D0DAD8A15E82DB9A7E6F1C6C89611DB79A276E557F7A6BDEA3E",
-          "operationPermissions": [
-            {
-              "resource": "Managers",
-              "level": "Read",
-              "canRead": true,
-              "canWrite": false,
-              "canCreate": false,
-              "flags": 1,
-              "canDelete": false,
-              "canRenameExternalId": false,
-              "canRename": false
-            },
-            {
-              "resource": "Bank",
-              "level": "3",
-              "canRead": true,
-              "canWrite": true,
-              "canCreate": false,
-              "flags": 3,
-              "canDelete": false,
-              "canRenameExternalId": false,
-              "canRename": false
-            },
-            {
-              "resource": "Location",
-              "level": "Read",
-              "canRead": true,
-              "canWrite": false,
-              "canCreate": false,
-              "flags": 1,
-              "canDelete": false,
-              "canRenameExternalId": false,
-              "canRename": false
-            },
-            {
-              "resource": "Unit",
-              "level": "None",
-              "canRead": false,
-              "canWrite": false,
-              "canCreate": false,
-              "flags": 0,
-              "canDelete": false,
-              "canRenameExternalId": false,
-              "canRename": false
-            },
-            {
-              "resource": "User",
-              "level": "48",
-              "canRead": false,
-              "canWrite": false,
-              "canCreate": false,
-              "flags": 48,
-              "canDelete": false,
-              "canRenameExternalId": true,
-              "canRename": true
-            },
-            {
-              "resource": "Installer",
-              "level": "5",
-              "canRead": true,
-              "canWrite": false,
-              "canCreate": true,
-              "flags": 5,
-              "canDelete": false,
-              "canRenameExternalId": false,
-              "canRename": false
-            },
-            {
-              "resource": "Service",
-              "level": "Read",
-              "canRead": true,
-              "canWrite": false,
-              "canCreate": false,
-              "flags": 1,
-              "canDelete": false,
-              "canRenameExternalId": false,
-              "canRename": false
-            }
-          ],
-          "resourceGrants": [
-            {
-              "kid": "A6Q14o7D0b",
-              "scope": "Bank"
-            }
-          ],
-          "tabs": [
-            {
-              "id": 28,
-              "name": "Managers1",
-              "iconKid": ""
-            }
-          ]
-        }
-      ],
-      "nextCursor": null
     }
   },
   {
@@ -3791,6 +3807,35 @@
         }
       ]
     }
+  },
+  {
+    "operation": "GetManagersWithSameEmail",
+    "python": "get_managers_with_same_email",
+    "javascript": "getManagersWithSameEmail",
+    "method": "GET",
+    "path": "api/v1/managers/{managerKid}/same-email",
+    "status": 200,
+    "auth": true,
+    "parameters": [
+      {
+        "name": "managerKid",
+        "where": "path",
+        "py": "manager_kid",
+        "js": "managerKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ManagerEmailMatch"
+      }
+    },
+    "binary": false,
+    "example": []
   },
   {
     "operation": "LoginManager",

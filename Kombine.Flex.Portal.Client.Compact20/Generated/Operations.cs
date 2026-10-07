@@ -726,6 +726,36 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (LocationOpeningHoursResponse)SendJson("GET", path, null, headers, 200, typeof(LocationOpeningHoursResponse));
         }
 
+        /// <summary>Create an empty enabled administrator with a previously unused manager identity.</summary>
+        public ManagerCreationResponse CreateManager()
+        {
+            string path = "api/v1/managers";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ManagerCreationResponse)SendJson("POST", path, null, headers, 201, typeof(ManagerCreationResponse));
+        }
+
+        /// <summary>List administrators in the site's eUserId.Managers through ManagersLast range.</summary>
+        public ManagerDirectoryResponse GetManagers()
+        {
+            return GetManagers(null);
+        }
+
+        /// <summary>List administrators in the site's eUserId.Managers through ManagersLast range.</summary>
+        public ManagerDirectoryResponse GetManagers(GetManagersOptions options)
+        {
+            string path = "api/v1/managers";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+            }
+            return (ManagerDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(ManagerDirectoryResponse));
+        }
+
         /// <summary>Send an invitation allowing an existing manager to choose a password.</summary>
         public ManagerInvitationResponse InviteManager(string @managerKid, ManagerInvitationRequest body)
         {
@@ -789,28 +819,6 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (ManagerProfileChangeResponse)SendJson("POST", path, body, headers, 200, typeof(ManagerProfileChangeResponse));
         }
 
-        /// <summary>List administrators in the site's eUserId.Managers through ManagersLast range.</summary>
-        public ManagerDirectoryResponse GetManagers()
-        {
-            return GetManagers(null);
-        }
-
-        /// <summary>List administrators in the site's eUserId.Managers through ManagersLast range.</summary>
-        public ManagerDirectoryResponse GetManagers(GetManagersOptions options)
-        {
-            string path = "api/v1/managers";
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            if (options != null)
-            {
-                path = AddQuery(path, "pageSize", options.PageSize);
-                path = AddQuery(path, "cursor", options.Cursor);
-                path = AddQuery(path, "filter", options.Filter);
-                path = AddQuery(path, "sort", options.Sort);
-                path = AddQuery(path, "direction", options.Direction);
-            }
-            return (ManagerDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(ManagerDirectoryResponse));
-        }
-
         /// <summary>Read one administrator by canonical manager KID for a workspace shortcut.</summary>
         public ManagerDirectoryItem GetManager(string @managerKid)
         {
@@ -818,6 +826,15 @@ namespace Kombine.Flex.Portal.Client.Compact20
             path = path.Replace("{managerKid}", PathValue(@managerKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (ManagerDirectoryItem)SendJson("GET", path, null, headers, 200, typeof(ManagerDirectoryItem));
+        }
+
+        /// <summary>List other visible administrators with the same stored email as this manager.</summary>
+        public ManagerEmailMatch[] GetManagersWithSameEmail(string @managerKid)
+        {
+            string path = "api/v1/managers/{managerKid}/same-email";
+            path = path.Replace("{managerKid}", PathValue(@managerKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ManagerEmailMatch[])SendJson("GET", path, null, headers, 200, typeof(ManagerEmailMatch[]));
         }
 
         /// <summary>Log in with a manager email and password.</summary>

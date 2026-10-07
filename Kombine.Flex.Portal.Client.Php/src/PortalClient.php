@@ -62,8 +62,10 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type LocationIconsResponse array{'items'?: list<LocationIconResponse>|null}
  * @phpstan-type LocationOpeningHoursResponse array{'locationKid'?: string|null, 'timeZone'?: string|null, 'calculatedAt'?: string, 'groups'?: list<OpeningHoursGroup>|null}
  * @phpstan-type LocationUnitsResponse array{'location'?: BankLocationResponse, 'items'?: list<UnitOverviewResponse>|null}
- * @phpstan-type ManagerDirectoryItem array{'kid'?: string|null, 'name'?: string|null, 'email'?: string|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'tabs'?: list<ManagerTabResponse>|null, 'iconKid'?: string|null, 'organisation'?: string|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedAt'?: string|null, 'lastActiveAt'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'retentionDays'?: int, 'isCurrentManager'?: bool, 'canEditPermissions'?: bool, 'canEditTabs'?: bool, 'canEditProfile'?: bool, 'profileRevision'?: string|null, 'tabsRevision'?: string|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool, 'availableTabs'?: list<ManagerTabResponse>|null, 'availableIcons'?: list<string>|null}
+ * @phpstan-type ManagerCreationResponse array{'kid'?: string|null}
+ * @phpstan-type ManagerDirectoryItem array{'kid'?: string|null, 'name'?: string|null, 'email'?: string|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'tabs'?: list<ManagerTabResponse>|null, 'iconKid'?: string|null, 'gravatarUrl'?: string|null, 'organisation'?: string|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedAt'?: string|null, 'lastActiveAt'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'retentionDays'?: int, 'isCurrentManager'?: bool, 'canEditPermissions'?: bool, 'canEditTabs'?: bool, 'canEditProfile'?: bool, 'profileRevision'?: string|null, 'tabsRevision'?: string|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool, 'availableTabs'?: list<ManagerTabResponse>|null, 'availableIcons'?: list<string>|null}
  * @phpstan-type ManagerDirectoryResponse array{'items'?: list<ManagerDirectoryItem>|null, 'nextCursor'?: string|null}
+ * @phpstan-type ManagerEmailMatch array{'kid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'gravatarUrl'?: string|null}
  * @phpstan-type ManagerForgotPasswordRequest array{'email': string, 'language'?: string|null}
  * @phpstan-type ManagerInvitationRequest array{'expectedRevision': string, 'language'?: string|null}
  * @phpstan-type ManagerInvitationResponse array{'code'?: string|null}
@@ -77,8 +79,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ManagerPermissionRoleRequest array{'role': string|null, 'expectedFlags': array<string,mixed>|null, 'expectedTabsRevision'?: string|null}
  * @phpstan-type ManagerPermissionRoleResponse array{'role'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'canEditPermissions'?: bool, 'tabs'?: list<ManagerTabResponse>|null, 'tabsRevision'?: string|null, 'canEditTabs'?: bool}
  * @phpstan-type ManagerProfileChangeRequest array{'value': mixed, 'expectedRevision': string|null}
- * @phpstan-type ManagerProfileChangeResponse array{'field': string|null, 'name': string|null, 'organisation': string|null, 'email': string|null, 'iconKid': string|null, 'availableIcons'?: list<string>|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedMs2000'?: int, 'deletedAt'?: string|null, 'retentionDays'?: int, 'profileRevision': string|null, 'canEditProfile'?: bool}
- * @phpstan-type ManagerProfileResponse array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
+ * @phpstan-type ManagerProfileChangeResponse array{'field': string|null, 'name': string|null, 'organisation': string|null, 'email': string|null, 'iconKid': string|null, 'gravatarUrl'?: string|null, 'availableIcons'?: list<string>|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedMs2000'?: int, 'deletedAt'?: string|null, 'retentionDays'?: int, 'profileRevision': string|null, 'canEditProfile'?: bool}
+ * @phpstan-type ManagerProfileResponse array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
  * @phpstan-type ManagerResetPasswordRequest array{'token': string, 'password': string, 'confirmPassword': string}
  * @phpstan-type ManagerResourceGrantResponse array{'kid'?: string|null, 'scope'?: string|null}
  * @phpstan-type ManagerSessionResponse array{'accessToken'?: string|null, 'expiresIn'?: int, 'tokenType'?: string|null}
@@ -627,6 +629,25 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Create an empty enabled administrator with a previously unused manager identity.
+     * @return ManagerCreationResponse
+     */
+    public function createManager(): mixed
+    {
+        return $this->request('CreateManager', [], null);
+    }
+
+    /**
+     * List administrators in the site's eUserId.Managers through ManagersLast range.
+     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string} $options
+     * @return ManagerDirectoryResponse
+     */
+    public function getManagers(array $options = []): mixed
+    {
+        return $this->request('GetManagers', [] + $options, null);
+    }
+
+    /**
      * Send an invitation allowing an existing manager to choose a password.
      * @param string $managerKid
      * @param ManagerInvitationRequest $body
@@ -704,16 +725,6 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * List administrators in the site's eUserId.Managers through ManagersLast range.
-     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string} $options
-     * @return ManagerDirectoryResponse
-     */
-    public function getManagers(array $options = []): mixed
-    {
-        return $this->request('GetManagers', [] + $options, null);
-    }
-
-    /**
      * Read one administrator by canonical manager KID for a workspace shortcut.
      * @param string $managerKid
      * @return ManagerDirectoryItem
@@ -721,6 +732,16 @@ final class PortalClient extends BaseClient
     public function getManager(mixed $managerKid): mixed
     {
         return $this->request('GetManager', ['managerKid' => $managerKid], null);
+    }
+
+    /**
+     * List other visible administrators with the same stored email as this manager.
+     * @param string $managerKid
+     * @return list<ManagerEmailMatch>
+     */
+    public function getManagersWithSameEmail(mixed $managerKid): mixed
+    {
+        return $this->request('GetManagersWithSameEmail', ['managerKid' => $managerKid], null);
     }
 
     /**

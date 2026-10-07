@@ -480,6 +480,10 @@ LocationUnitsResponse = TypedDict('LocationUnitsResponse', {
     'items': 'list[UnitOverviewResponse] | None',
 }, total=False)
 
+ManagerCreationResponse = TypedDict('ManagerCreationResponse', {
+    'kid': 'str | None',
+}, total=False)
+
 ManagerDirectoryItem = TypedDict('ManagerDirectoryItem', {
     'kid': 'str | None',
     'name': 'str | None',
@@ -487,6 +491,7 @@ ManagerDirectoryItem = TypedDict('ManagerDirectoryItem', {
     'resourceGrants': 'list[ManagerResourceGrantResponse] | None',
     'tabs': 'list[ManagerTabResponse] | None',
     'iconKid': 'str | None',
+    'gravatarUrl': 'str | None',
     'organisation': 'str | None',
     'enabled': 'bool | None',
     'deleted': 'bool',
@@ -509,6 +514,13 @@ ManagerDirectoryItem = TypedDict('ManagerDirectoryItem', {
 ManagerDirectoryResponse = TypedDict('ManagerDirectoryResponse', {
     'items': 'list[ManagerDirectoryItem] | None',
     'nextCursor': 'str | None',
+}, total=False)
+
+ManagerEmailMatch = TypedDict('ManagerEmailMatch', {
+    'kid': 'str | None',
+    'name': 'str | None',
+    'iconKid': 'str | None',
+    'gravatarUrl': 'str | None',
 }, total=False)
 
 ManagerForgotPasswordRequest = TypedDict('ManagerForgotPasswordRequest', {
@@ -594,6 +606,7 @@ ManagerProfileChangeResponse = TypedDict('ManagerProfileChangeResponse', {
     'organisation': Required['str | None'],
     'email': Required['str | None'],
     'iconKid': Required['str | None'],
+    'gravatarUrl': 'str | None',
     'availableIcons': 'list[str] | None',
     'enabled': 'bool | None',
     'deleted': 'bool',
@@ -613,6 +626,7 @@ ManagerProfileResponse = TypedDict('ManagerProfileResponse', {
     'databaseAccess': 'DatabaseAccessResponse',
     'navigationBanks': 'list[BankNavigationResponse] | None',
     'organisation': 'str | None',
+    'gravatarUrl': 'str | None',
     'retentionDays': 'int',
     'themeMode': 'EThemeMode',
     'iconSet': 'str | None',
