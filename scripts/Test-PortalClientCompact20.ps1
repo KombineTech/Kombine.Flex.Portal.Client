@@ -11,7 +11,7 @@ try {
     & './tests/Kombine.Flex.Portal.Client.Compact20.Tests/bin/Desktop/Release/Kombine.Flex.Portal.Client.Compact20.Tests.exe'
     if ($LASTEXITCODE) { throw 'Desktop-hosted Compact client checks failed.' }
 
-    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Compact20.0.4.4.zip'
+    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Compact20.0.4.5.zip'
     $null = New-Item -ItemType Directory -Force (Split-Path $output)
     $stream = [IO.File]::Open($output, [IO.FileMode]::Create)
     $archive = [IO.Compression.ZipArchive]::new($stream, [IO.Compression.ZipArchiveMode]::Create)

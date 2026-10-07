@@ -279,6 +279,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Available reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,
         /// <br/>GetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not
         /// <br/>be interpreted as empty/healthy data. Generated answers can be wrong; verify the underlying records.
+        /// <br/>Business tools are discovered and called through the tenant API's MCP interface, using the current
+        /// <br/>manager bearer session. The host exposes only the eight approved read-only MCP tools and forwards
+        /// <br/>their JSON input schemas to the model; credentials stay in server-side HTTP headers. Activation-code
+        /// <br/>and Visma service-key fields are withheld from chat, including when the manager could view them in the portal.
         /// <br/>Reviewed AGENTS.md instructions and three named skills are packaged with the API. Skill loading uses
         /// <br/>the same model-turn budget and grants no extra permissions. The balance skill explains that balance
         /// <br/>and account-transaction reads are not currently in the approved chat catalogue.
@@ -1219,7 +1223,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>No password, email, tabs or scopes are assigned;
         /// <br/>no invitation is sent. Use GetManager and the existing editing operations after creation;
         /// <br/>profile edits additionally require Managers Write.
-        /// <br/>Finds the next unused manager identity and appends only Enabled=1. No Deleted setting is written.
+        /// <br/>Finds the next unused manager identity and appends Enabled=1 and Icon=businessperson atomically. No Deleted setting is written.
         /// <br/>No random marker, intentional delay or reservation verification. 15-second deadline.
         /// <br/>A tenant-specific MySQL advisory lock serializes allocation through commit (up to 5 seconds to acquire).
         /// <br/>All creators must use the same lock on the same writer, including AMS and FRA. No table lock or schema change.
@@ -4214,6 +4218,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Available reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,
         /// <br/>GetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not
         /// <br/>be interpreted as empty/healthy data. Generated answers can be wrong; verify the underlying records.
+        /// <br/>Business tools are discovered and called through the tenant API's MCP interface, using the current
+        /// <br/>manager bearer session. The host exposes only the eight approved read-only MCP tools and forwards
+        /// <br/>their JSON input schemas to the model; credentials stay in server-side HTTP headers. Activation-code
+        /// <br/>and Visma service-key fields are withheld from chat, including when the manager could view them in the portal.
         /// <br/>Reviewed AGENTS.md instructions and three named skills are packaged with the API. Skill loading uses
         /// <br/>the same model-turn budget and grants no extra permissions. The balance skill explains that balance
         /// <br/>and account-transaction reads are not currently in the approved chat catalogue.
@@ -9331,7 +9339,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>No password, email, tabs or scopes are assigned;
         /// <br/>no invitation is sent. Use GetManager and the existing editing operations after creation;
         /// <br/>profile edits additionally require Managers Write.
-        /// <br/>Finds the next unused manager identity and appends only Enabled=1. No Deleted setting is written.
+        /// <br/>Finds the next unused manager identity and appends Enabled=1 and Icon=businessperson atomically. No Deleted setting is written.
         /// <br/>No random marker, intentional delay or reservation verification. 15-second deadline.
         /// <br/>A tenant-specific MySQL advisory lock serializes allocation through commit (up to 5 seconds to acquire).
         /// <br/>All creators must use the same lock on the same writer, including AMS and FRA. No table lock or schema change.

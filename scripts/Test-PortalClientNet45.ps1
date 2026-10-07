@@ -28,7 +28,7 @@ try {
         & $test --status $StatusUrl.AbsoluteUri
         if ($LASTEXITCODE) { throw '.NET Framework HTTPS status check failed.' }
     }
-    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Net45.0.4.4.zip'
+    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Net45.0.4.5.zip'
     $null = New-Item -ItemType Directory -Force (Split-Path $output)
     # Build the ZIP directly from known files: no cleanup/deletion of another staging tree.
     Add-Type -AssemblyName System.IO.Compression
