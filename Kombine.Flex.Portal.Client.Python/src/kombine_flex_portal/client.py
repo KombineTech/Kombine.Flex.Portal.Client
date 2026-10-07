@@ -200,7 +200,7 @@ class PortalClient(BaseClient):
         return self._request('ResetManagerPassword', {}, body)
 
     def set_manager_permission_role(self, manager_kid: str, body: ManagerPermissionRoleRequest) -> ManagerPermissionRoleResponse:
-        'Replace all seven permission categories with a predefined administrator role.'
+        'Replace all nine permission categories with a predefined administrator role.'
         return self._request('SetManagerPermissionRole', {'managerKid': manager_kid}, body)
 
     def set_manager_permission(self, manager_kid: str, resource: str, body: ManagerPermissionChangeRequest) -> ManagerOperationPermissionResponse:
@@ -310,6 +310,10 @@ class PortalClient(BaseClient):
     def get_unit_document_svg(self, document_kid: str, *, states: str | None = None, settings: str | None = None, width: int | None = None) -> PortalDownload:
         "Render a document's numeric series as an SVG chart, caching completed documents privately."
         return self._request('GetUnitDocumentSvg', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'width': width}, None)
+
+    def get_units(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None) -> UnitDirectoryResponse:
+        'List authorized units, including child units, for Units1.'
+        return self._request('GetUnits', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates}, None)
 
     def set_unit_setting(self, unit_kid: str, group: str, setting: str, body: UnitSettingRequest) -> UnitSettingResponse:
         'Save one editable current-unit setting with revision protection.'
@@ -430,6 +434,18 @@ class PortalClient(BaseClient):
     def get_kombine_logo_with_background(self, color: str, background: str, width: int) -> PortalDownload:
         'Renders the Kombine symbol with an explicit background and width.'
         return self._request('GetKombineLogoWithBackground', {'color': color, 'background': background, 'width': width}, None)
+
+    def get_kombine_logo_parts(self, parts: str, color: str) -> PortalDownload:
+        'Renders selected parts of the Kombine symbol in its original square viewport.'
+        return self._request('GetKombineLogoParts', {'parts': parts, 'color': color}, None)
+
+    def get_kombine_logo_parts_sized(self, parts: str, color: str, width: int) -> PortalDownload:
+        'Renders selected Kombine symbol parts at the selected width.'
+        return self._request('GetKombineLogoPartsSized', {'parts': parts, 'color': color, 'width': width}, None)
+
+    def get_kombine_logo_parts_with_background(self, parts: str, color: str, background: str, width: int) -> PortalDownload:
+        'Renders selected Kombine symbol parts with an explicit background and width.'
+        return self._request('GetKombineLogoPartsWithBackground', {'parts': parts, 'color': color, 'background': background, 'width': width}, None)
 
     def get_kombine_text(self, color: str) -> PortalDownload:
         'Renders the Kombine name and registered mark, without the symbol.'

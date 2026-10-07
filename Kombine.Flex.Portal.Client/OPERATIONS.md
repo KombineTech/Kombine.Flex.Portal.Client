@@ -51,6 +51,9 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetInstallerAsync` | GET | `/api/v1/installers/{installerKid}` |
 | `GetInstallersAsync` | GET | `/api/v1/installers` |
 | `GetKombineLogoAsync` | GET | `/api/v1/logos/kombine/{color}.svg` |
+| `GetKombineLogoPartsAsync` | GET | `/api/v1/logos/kombine/{parts}/{color}.svg` |
+| `GetKombineLogoPartsSizedAsync` | GET | `/api/v1/logos/kombine/{parts}/{color}/{width}.svg` |
+| `GetKombineLogoPartsWithBackgroundAsync` | GET | `/api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg` |
 | `GetKombineLogoSizedAsync` | GET | `/api/v1/logos/kombine/{color}/{width}.svg` |
 | `GetKombineLogoTextAsync` | GET | `/api/v1/logos/kombine-logo-text/{color}.svg` |
 | `GetKombineLogoTextSizedAsync` | GET | `/api/v1/logos/kombine-logo-text/{color}/{width}.svg` |
@@ -89,6 +92,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetUnitGroupAsync` | GET | `/api/v1/units/{unitKid}/groups/{kind}/{group}` |
 | `GetUnitIconsAsync` | GET | `/api/v1/units/icons` |
 | `GetUnitOverviewAsync` | GET | `/api/v1/units/{unitKid}` |
+| `GetUnitsAsync` | GET | `/api/v1/units` |
 | `GetUnitSettingHistoryAsync` | GET | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history` |
 | `GetUserReceiptsAsync` | GET | `/api/v1/users/{userKid}/receipts` |
 | `InviteManagerAsync` | POST | `/api/v1/managers/{managerKid}/invitation` |

@@ -78,6 +78,7 @@
 | `GetUnitDocumentTable` | `get_unit_document_table` | `getUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` |
 | `GetUnitDocumentHtml` | `get_unit_document_html` | `getUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` |
 | `GetUnitDocumentSvg` | `get_unit_document_svg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
+| `GetUnits` | `get_units` | `getUnits` | GET | `/api/v1/units` |
 | `SetUnitSetting` | `set_unit_setting` | `setUnitSetting` | POST | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}` |
 | `GetBankUserBalances` | `get_bank_user_balances` | `getBankUserBalances` | POST | `/api/v1/banks/{bankKid}/users/balances` |
 | `GetBankUserNumberForNewUser` | `get_bank_user_number_for_new_user` | `getBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` |
@@ -108,6 +109,9 @@
 | `GetKombineLogo` | `get_kombine_logo` | `getKombineLogo` | GET | `/api/v1/logos/kombine/{color}.svg` |
 | `GetKombineLogoSized` | `get_kombine_logo_sized` | `getKombineLogoSized` | GET | `/api/v1/logos/kombine/{color}/{width}.svg` |
 | `GetKombineLogoWithBackground` | `get_kombine_logo_with_background` | `getKombineLogoWithBackground` | GET | `/api/v1/logos/kombine/{color}/{background}/{width}.svg` |
+| `GetKombineLogoParts` | `get_kombine_logo_parts` | `getKombineLogoParts` | GET | `/api/v1/logos/kombine/{parts}/{color}.svg` |
+| `GetKombineLogoPartsSized` | `get_kombine_logo_parts_sized` | `getKombineLogoPartsSized` | GET | `/api/v1/logos/kombine/{parts}/{color}/{width}.svg` |
+| `GetKombineLogoPartsWithBackground` | `get_kombine_logo_parts_with_background` | `getKombineLogoPartsWithBackground` | GET | `/api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg` |
 | `GetKombineText` | `get_kombine_text` | `getKombineText` | GET | `/api/v1/logos/kombine-text/{color}.svg` |
 | `GetKombineTextSized` | `get_kombine_text_sized` | `getKombineTextSized` | GET | `/api/v1/logos/kombine-text/{color}/{width}.svg` |
 | `GetKombineTextWithBackground` | `get_kombine_text_with_background` | `getKombineTextWithBackground` | GET | `/api/v1/logos/kombine-text/{color}/{background}/{width}.svg` |

@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `7cc5cdeae4f92a5241601c23d60706aa26f240449a52b22f5c3e75758fa57f17`).
-116 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `89f86a9eee01be4ec136f6fa7e30354cf165c0cdf653592e8e95c1c6e2a0157e`).
+120 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -51,6 +51,9 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `7cc5cdeae4f92a52416
 | `getIconPresentation` | `GetIconPresentation` | GET | `/api/v1/icon/presentation` | Anonymous |
 | `getInstaller` | `GetInstaller` | GET | `/api/v1/installers/{installerKid}` | Bearer |
 | `getInstallers` | `GetInstallers` | GET | `/api/v1/installers` | Bearer |
+| `getKombineLogoPartsSized` | `GetKombineLogoPartsSized` | GET | `/api/v1/logos/kombine/{parts}/{color}/{width}.svg` | Anonymous |
+| `getKombineLogoPartsWithBackground` | `GetKombineLogoPartsWithBackground` | GET | `/api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg` | Anonymous |
+| `getKombineLogoParts` | `GetKombineLogoParts` | GET | `/api/v1/logos/kombine/{parts}/{color}.svg` | Anonymous |
 | `getKombineLogoSized` | `GetKombineLogoSized` | GET | `/api/v1/logos/kombine/{color}/{width}.svg` | Anonymous |
 | `getKombineLogoTextSized` | `GetKombineLogoTextSized` | GET | `/api/v1/logos/kombine-logo-text/{color}/{width}.svg` | Anonymous |
 | `getKombineLogoTextWithBackground` | `GetKombineLogoTextWithBackground` | GET | `/api/v1/logos/kombine-logo-text/{color}/{background}/{width}.svg` | Anonymous |
@@ -91,6 +94,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `7cc5cdeae4f92a52416
 | `getUnitIcons` | `GetUnitIcons` | GET | `/api/v1/units/icons` | Bearer |
 | `getUnitOverview` | `GetUnitOverview` | GET | `/api/v1/units/{unitKid}` | Bearer |
 | `getUnitSettingHistory` | `GetUnitSettingHistory` | GET | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history` | Bearer |
+| `getUnits` | `GetUnits` | GET | `/api/v1/units` | Bearer |
 | `getUserReceipts` | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` | Bearer |
 | `inviteManager` | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` | Bearer |
 | `loginManager` | `LoginManager` | POST | `/api/v1/session/login` | Anonymous |

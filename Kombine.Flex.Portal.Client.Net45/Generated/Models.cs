@@ -1902,7 +1902,7 @@ namespace Kombine.Flex.Portal.Client.Net45
         public ManagerOperationPermissionResponse[] OperationPermissions { get { return _OperationPermissions; } set { _OperationPermissions = value; } }
         private ManagerOperationPermissionResponse[] _OperationPermissions;
 
-        /// <summary>The listed manager's RetentionDays: days of visibility after deletion for otherwise authorized records. Missing, invalid or negative values become zero. Does not alter the caller's retention or schedule deletion.</summary>
+        /// <summary>The listed manager's RetentionDays: days of visibility after deletion for otherwise authorized records. Missing values default to 10; invalid or negative values become zero. Explicit zero is preserved. Does not alter the caller's retention or schedule deletion.</summary>
         [JsonField("retentionDays")]
         public int? RetentionDays { get { return _RetentionDays; } set { _RetentionDays = value; } }
         private int? _RetentionDays;
@@ -2107,7 +2107,7 @@ namespace Kombine.Flex.Portal.Client.Net45
     /// <summary>A resource category's independent ePermission2 flags.</summary>
     public sealed class ManagerOperationPermissionResponse
     {
-        /// <summary>Managers, Bank, Location, Unit, User, Installer or Service. Match by resource name, not array position.</summary>
+        /// <summary>Managers, Bank, Location, Unit, User, Installer, Service, Tabs or Kids. Match by resource name, not array position.</summary>
         [JsonField("resource")]
         public string Resource { get { return _Resource; } set { _Resource = value; } }
         private string _Resource;
@@ -2192,7 +2192,7 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string Role { get { return _Role; } set { _Role = value; } }
         private string _Role;
 
-        /// <summary>Exactly Managers, Installer, Service, Bank, Location, Unit and User with last displayed flags. Explicit null represents an invalid stored mask.</summary>
+        /// <summary>Exactly Managers, Installer, Service, Bank, Location, Unit, User, Tabs and Kids with last displayed flags. Explicit null represents an invalid stored mask.</summary>
         [JsonField("expectedFlags")]
         public Dictionary<string, int> ExpectedFlags { get { return _ExpectedFlags; } set { _ExpectedFlags = value; } }
         private Dictionary<string, int> _ExpectedFlags;
@@ -2212,7 +2212,7 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string Role { get { return _Role; } set { _Role = value; } }
         private string _Role;
 
-        /// <summary>All seven authoritative permission categories.</summary>
+        /// <summary>All nine authoritative permission categories.</summary>
         [JsonField("operationPermissions")]
         public ManagerOperationPermissionResponse[] OperationPermissions { get { return _OperationPermissions; } set { _OperationPermissions = value; } }
         private ManagerOperationPermissionResponse[] _OperationPermissions;
@@ -2377,7 +2377,7 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string GravatarUrl { get { return _GravatarUrl; } set { _GravatarUrl = value; } }
         private string _GravatarUrl;
 
-        /// <summary>Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing or invalid settings default to zero. Does not grant access or schedule physical deletion.</summary>
+        /// <summary>Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing settings default to 10 days; invalid settings default to zero. Does not grant access or schedule physical deletion.</summary>
         [JsonField("retentionDays")]
         public int? RetentionDays { get { return _RetentionDays; } set { _RetentionDays = value; } }
         private int? _RetentionDays;
@@ -2402,7 +2402,7 @@ namespace Kombine.Flex.Portal.Client.Net45
         public ManagerResourceGrantResponse[] ResourceGrants { get { return _ResourceGrants; } set { _ResourceGrants = value; } }
         private ManagerResourceGrantResponse[] _ResourceGrants;
 
-        /// <summary>Independent operation permissions for Managers, Bank, Location, Unit, User, Installer and Service; missing stored values default to Read.</summary>
+        /// <summary>Independent operation permissions for Managers, Bank, Location, Unit, User, Installer, Service, Tabs and Kids; missing stored values default to Read.</summary>
         [JsonField("operationPermissions")]
         public ManagerOperationPermissionResponse[] OperationPermissions { get { return _OperationPermissions; } set { _OperationPermissions = value; } }
         private ManagerOperationPermissionResponse[] _OperationPermissions;
@@ -3454,6 +3454,121 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>Unit and parent identities, display names/icons, activation/deletion state and requested unit columns.</summary>
+    public sealed class UnitDirectoryItem
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>bankKid</summary>
+        [JsonField("bankKid")]
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
+
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>iconKid</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
+        /// <summary>bankName</summary>
+        [JsonField("bankName")]
+        public string BankName { get { return _BankName; } set { _BankName = value; } }
+        private string _BankName;
+
+        /// <summary>bankIconKid</summary>
+        [JsonField("bankIconKid")]
+        public string BankIconKid { get { return _BankIconKid; } set { _BankIconKid = value; } }
+        private string _BankIconKid;
+
+        /// <summary>locationName</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>locationIconKid</summary>
+        [JsonField("locationIconKid")]
+        public string LocationIconKid { get { return _LocationIconKid; } set { _LocationIconKid = value; } }
+        private string _LocationIconKid;
+
+        /// <summary>enabled</summary>
+        [JsonField("enabled")]
+        public bool? Enabled { get { return _Enabled; } set { _Enabled = value; } }
+        private bool? _Enabled;
+
+        /// <summary>deleted</summary>
+        [JsonField("deleted")]
+        public bool? Deleted { get { return _Deleted; } set { _Deleted = value; } }
+        private bool? _Deleted;
+
+        /// <summary>deletedAt ISO 8601 text, sent unchanged.</summary>
+        [JsonField("deletedAt")]
+        public string DeletedAt { get { return _DeletedAt; } set { _DeletedAt = value; } }
+        private string _DeletedAt;
+
+        /// <summary>unitType</summary>
+        [JsonField("unitType")]
+        public string UnitType { get { return _UnitType; } set { _UnitType = value; } }
+        private string _UnitType;
+
+        /// <summary>washDocId</summary>
+        [JsonField("washDocId")]
+        public string WashDocId { get { return _WashDocId; } set { _WashDocId = value; } }
+        private string _WashDocId;
+
+        /// <summary>outOfOrder</summary>
+        [JsonField("outOfOrder")]
+        public string OutOfOrder { get { return _OutOfOrder; } set { _OutOfOrder = value; } }
+        private string _OutOfOrder;
+
+        /// <summary>latitude</summary>
+        [JsonField("latitude")]
+        public double? Latitude { get { return _Latitude; } set { _Latitude = value; } }
+        private double? _Latitude;
+
+        /// <summary>longitude</summary>
+        [JsonField("longitude")]
+        public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
+        private double? _Longitude;
+
+    }
+
+    /// <summary>A scoped Units1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location.</summary>
+    public sealed class UnitDirectoryResponse
+    {
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public UnitDirectoryItem[] Items { get { return _Items; } set { _Items = value; } }
+        private UnitDirectoryItem[] _Items;
+
+        /// <summary>nextCursor</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+        /// <summary>hasAllBanksAccess</summary>
+        [JsonField("hasAllBanksAccess")]
+        public bool? HasAllBanksAccess { get { return _HasAllBanksAccess; } set { _HasAllBanksAccess = value; } }
+        private bool? _HasAllBanksAccess;
+
+        /// <summary>fields</summary>
+        [JsonField("fields")]
+        public string[] Fields { get { return _Fields; } set { _Fields = value; } }
+        private string[] _Fields;
+
+    }
+
     /// <summary>Stored current-unit value, or an explicit absence/scope/redaction status. MS2000 is the source krumb timestamp.</summary>
     public sealed class UnitGroupFieldResponse
     {
@@ -4469,6 +4584,26 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>Total revenue at a coordinate across all retained purchases, independent of the coin limit.</summary>
+    public sealed class PurchaseHeatmapPoint
+    {
+        /// <summary>latitude</summary>
+        [JsonField("latitude")]
+        public double? Latitude { get { return _Latitude; } set { _Latitude = value; } }
+        private double? _Latitude;
+
+        /// <summary>longitude</summary>
+        [JsonField("longitude")]
+        public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
+        private double? _Longitude;
+
+        /// <summary>amount</summary>
+        [JsonField("amount")]
+        public double? Amount { get { return _Amount; } set { _Amount = value; } }
+        private double? _Amount;
+
+    }
+
     /// <summary>Canonical transaction KID and UTC display time (original MS2000 without an offset). Amount is positive major units; currencies are not converted.</summary>
     public sealed class PurchaseMapPoint
     {
@@ -4516,6 +4651,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         [JsonField("items")]
         public PurchaseMapPoint[] Items { get { return _Items; } set { _Items = value; } }
         private PurchaseMapPoint[] _Items;
+
+        /// <summary>Complete retained purchase revenue grouped by coordinates; never limited by the animated coin count.</summary>
+        [JsonField("heatmap")]
+        public PurchaseHeatmapPoint[] Heatmap { get { return _Heatmap; } set { _Heatmap = value; } }
+        private PurchaseHeatmapPoint[] _Heatmap;
 
     }
 
@@ -5244,6 +5384,43 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>width</summary>
         public int? Width { get { return _Width; } set { _Width = value; } }
         private int? _Width;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUnits. Null values use API defaults.</summary>
+    public sealed class GetUnitsOptions
+    {
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
+
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>enabledOnly</summary>
+        public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
+        private bool? _EnabledOnly;
+
+        /// <summary>fields</summary>
+        public string Fields { get { return _Fields; } set { _Fields = value; } }
+        private string _Fields;
+
+        /// <summary>includeCoordinates</summary>
+        public bool? IncludeCoordinates { get { return _IncludeCoordinates; } set { _IncludeCoordinates = value; } }
+        private bool? _IncludeCoordinates;
 
     }
 

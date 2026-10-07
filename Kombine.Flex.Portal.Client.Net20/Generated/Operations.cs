@@ -790,7 +790,7 @@ namespace Kombine.Flex.Portal.Client.Net20
             return (ManagerPasswordResetResponse)SendJson("POST", path, body, headers, 200, typeof(ManagerPasswordResetResponse));
         }
 
-        /// <summary>Replace all seven permission categories with a predefined administrator role.</summary>
+        /// <summary>Replace all nine permission categories with a predefined administrator role.</summary>
         public ManagerPermissionRoleResponse SetManagerPermissionRole(string @managerKid, ManagerPermissionRoleRequest body)
         {
             string path = "api/v1/managers/{managerKid}/permission-role";
@@ -1122,6 +1122,31 @@ namespace Kombine.Flex.Portal.Client.Net20
                 path = AddQuery(path, "width", options.Width);
             }
             return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>List authorized units, including child units, for Units1.</summary>
+        public UnitDirectoryResponse GetUnits()
+        {
+            return GetUnits(null);
+        }
+
+        /// <summary>List authorized units, including child units, for Units1.</summary>
+        public UnitDirectoryResponse GetUnits(GetUnitsOptions options)
+        {
+            string path = "api/v1/units";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+                path = AddQuery(path, "fields", options.Fields);
+                path = AddQuery(path, "includeCoordinates", options.IncludeCoordinates);
+            }
+            return (UnitDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(UnitDirectoryResponse));
         }
 
         /// <summary>Save one editable current-unit setting with revision protection.</summary>
@@ -1479,6 +1504,39 @@ namespace Kombine.Flex.Portal.Client.Net20
         public PortalDownload GetKombineLogoWithBackground(string @color, string @background, int @width)
         {
             string path = "api/v1/logos/kombine/{color}/{background}/{width}.svg";
+            path = path.Replace("{color}", PathValue(@color));
+            path = path.Replace("{background}", PathValue(@background));
+            path = path.Replace("{width}", PathValue(@width));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Renders selected parts of the Kombine symbol in its original square viewport.</summary>
+        public PortalDownload GetKombineLogoParts(string @parts, string @color)
+        {
+            string path = "api/v1/logos/kombine/{parts}/{color}.svg";
+            path = path.Replace("{parts}", PathValue(@parts));
+            path = path.Replace("{color}", PathValue(@color));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Renders selected Kombine symbol parts at the selected width.</summary>
+        public PortalDownload GetKombineLogoPartsSized(string @parts, string @color, int @width)
+        {
+            string path = "api/v1/logos/kombine/{parts}/{color}/{width}.svg";
+            path = path.Replace("{parts}", PathValue(@parts));
+            path = path.Replace("{color}", PathValue(@color));
+            path = path.Replace("{width}", PathValue(@width));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Renders selected Kombine symbol parts with an explicit background and width.</summary>
+        public PortalDownload GetKombineLogoPartsWithBackground(string @parts, string @color, string @background, int @width)
+        {
+            string path = "api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg";
+            path = path.Replace("{parts}", PathValue(@parts));
             path = path.Replace("{color}", PathValue(@color));
             path = path.Replace("{background}", PathValue(@background));
             path = path.Replace("{width}", PathValue(@width));

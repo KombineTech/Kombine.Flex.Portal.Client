@@ -123,6 +123,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type TenantStatusResponse array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'sources'?: list<TenantStatusSourceResult>|null, 'items'?: list<TenantStatusItem>|null}
  * @phpstan-type TenantStatusSourceResult array{'kind'?: string|null, 'count'?: int, 'hasMore'?: bool, 'errorCode'?: string|null}
  * @phpstan-type UnitDetailsResponse array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'descriptorAvailable'?: bool, 'settingGroups'?: list<string>|null, 'stateGroups'?: list<string>|null}
+ * @phpstan-type UnitDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
+ * @phpstan-type UnitDirectoryResponse array{'items'?: list<UnitDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
  * @phpstan-type UnitGroupFieldResponse array{'name'?: string|null, 'valueType'?: string|null, 'scope'?: string|null, 'valueStatus'?: string|null, 'value'?: string|null, 'ms2000'?: int|null, 'canEdit'?: bool, 'revision'?: string|null, 'required'?: bool, 'minimum'?: int|null, 'maximum'?: int|null, 'options'?: list<UnitSettingOption>|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse, 'canReadHistory'?: bool, 'hasHistory'?: bool}
  * @phpstan-type UnitGroupResponse array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'kind'?: string|null, 'group'?: string|null, 'items'?: list<UnitGroupFieldResponse>|null}
  * @phpstan-type UnitIconResponse array{'kid'?: string|null, 'iconKid'?: string|null, 'offline'?: bool|null, 'status'?: int}
@@ -157,8 +159,9 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ActiveUsersResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackDays'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string}
  * @phpstan-type ApiStatusResponse array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|null}
  * @phpstan-type IconPresentationResponse array{'iconKid'?: string|null}
+ * @phpstan-type PurchaseHeatmapPoint array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
  * @phpstan-type PurchaseMapPoint array{'kid'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float, 'timestampUtc'?: string, 'amount'?: int|float}
- * @phpstan-type PurchaseMapSnapshot array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PurchaseMapPoint>|null}
+ * @phpstan-type PurchaseMapSnapshot array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PurchaseMapPoint>|null, 'heatmap'?: list<PurchaseHeatmapPoint>|null}
  * @phpstan-type PurchasesResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string, 'amount'?: int|float, 'currency'?: string|null}
  */
 final class PortalClient extends BaseClient
@@ -690,7 +693,7 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * Replace all seven permission categories with a predefined administrator role.
+     * Replace all nine permission categories with a predefined administrator role.
      * @param string $managerKid
      * @param ManagerPermissionRoleRequest $body
      * @return ManagerPermissionRoleResponse
@@ -983,6 +986,16 @@ final class PortalClient extends BaseClient
     public function getUnitDocumentSvg(mixed $documentKid, mixed $destination, array $options = []): mixed
     {
         return $this->request('GetUnitDocumentSvg', ['documentKid' => $documentKid] + $options, null, $destination);
+    }
+
+    /**
+     * List authorized units, including child units, for Units1.
+     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'includeCoordinates'?: bool} $options
+     * @return UnitDirectoryResponse
+     */
+    public function getUnits(array $options = []): mixed
+    {
+        return $this->request('GetUnits', [] + $options, null);
     }
 
     /**
@@ -1336,6 +1349,45 @@ final class PortalClient extends BaseClient
     public function getKombineLogoWithBackground(mixed $color, mixed $background, mixed $width, mixed $destination): mixed
     {
         return $this->request('GetKombineLogoWithBackground', ['color' => $color, 'background' => $background, 'width' => $width], null, $destination);
+    }
+
+    /**
+     * Renders selected parts of the Kombine symbol in its original square viewport.
+     * @param string $parts
+     * @param string $color
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getKombineLogoParts(mixed $parts, mixed $color, mixed $destination): mixed
+    {
+        return $this->request('GetKombineLogoParts', ['parts' => $parts, 'color' => $color], null, $destination);
+    }
+
+    /**
+     * Renders selected Kombine symbol parts at the selected width.
+     * @param string $parts
+     * @param string $color
+     * @param int $width
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getKombineLogoPartsSized(mixed $parts, mixed $color, mixed $width, mixed $destination): mixed
+    {
+        return $this->request('GetKombineLogoPartsSized', ['parts' => $parts, 'color' => $color, 'width' => $width], null, $destination);
+    }
+
+    /**
+     * Renders selected Kombine symbol parts with an explicit background and width.
+     * @param string $parts
+     * @param string $color
+     * @param string $background
+     * @param int $width
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getKombineLogoPartsWithBackground(mixed $parts, mixed $color, mixed $background, mixed $width, mixed $destination): mixed
+    {
+        return $this->request('GetKombineLogoPartsWithBackground', ['parts' => $parts, 'color' => $color, 'background' => $background, 'width' => $width], null, $destination);
     }
 
     /**

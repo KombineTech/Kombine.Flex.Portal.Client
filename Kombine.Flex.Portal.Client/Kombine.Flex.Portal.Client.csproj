@@ -6,7 +6,7 @@
     <RestoreConfigFile>$(MSBuildThisFileDirectory)..\NuGet.Client.Config</RestoreConfigFile>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.4.5</Version>
+    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.5.2</Version>
     <IsPackable>true</IsPackable><PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Kombine Technology ApS</Authors><Company>Kombine Technology ApS</Company>
     <Copyright>Kombine Technology ApS</Copyright>

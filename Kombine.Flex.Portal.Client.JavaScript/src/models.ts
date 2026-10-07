@@ -875,7 +875,7 @@ export interface ManagerDirectoryItem {
   "lastActiveAt"?: string | null;
   /** The listed manager's six independent Permission*2 masks, including Installer, with the same semantics as GetCurrentManager. Missing/empty values default to Read; malformed values grant nothing. Combine with account state, Tabs and resource grants. */
   "operationPermissions"?: (ManagerOperationPermissionResponse)[] | null;
-  /** The listed manager's RetentionDays: days of visibility after deletion for otherwise authorized records. Missing, invalid or negative values become zero. Does not alter the caller's retention or schedule deletion. */
+  /** The listed manager's RetentionDays: days of visibility after deletion for otherwise authorized records. Missing values default to 10; invalid or negative values become zero. Explicit zero is preserved. Does not alter the caller's retention or schedule deletion. */
   "retentionDays"?: number;
   /** Whether this record belongs to the caller. Own permission edits require the sole active tenant-wide manager exception. */
   "isCurrentManager"?: boolean;
@@ -977,7 +977,7 @@ export interface ManagerLoginRequest {
 
 /** A resource category's independent ePermission2 flags. */
 export interface ManagerOperationPermissionResponse {
-  /** Managers, Bank, Location, Unit, User, Installer or Service. Match by resource name, not array position. */
+  /** Managers, Bank, Location, Unit, User, Installer, Service, Tabs or Kids. Match by resource name, not array position. */
   "resource"?: string | null;
   /** Enum text (possibly numeric for combinations), or null for invalid values. Use flags and capability booleans; missing values become Read. */
   "level"?: string | null;
@@ -1017,7 +1017,7 @@ export interface ManagerPermissionChangeRequest {
 export interface ManagerPermissionRoleRequest {
   /** accounting, caretaker or operator; case-sensitive, required. */
   "role": string | null;
-  /** Exactly Managers, Installer, Service, Bank, Location, Unit and User with last displayed flags. Explicit null represents an invalid stored mask. */
+  /** Exactly Managers, Installer, Service, Bank, Location, Unit, User, Tabs and Kids with last displayed flags. Explicit null represents an invalid stored mask. */
   "expectedFlags": Record<string, number | null> | null;
   /** Required for accounting: tabsRevision from GetManager or the last acknowledged edit. Other roles keep tabs unchanged. */
   "expectedTabsRevision"?: string | null;
@@ -1027,7 +1027,7 @@ export interface ManagerPermissionRoleRequest {
 export interface ManagerPermissionRoleResponse {
   /** The applied preset identity. */
   "role"?: string | null;
-  /** All seven authoritative permission categories. */
+  /** All nine authoritative permission categories. */
   "operationPermissions"?: (ManagerOperationPermissionResponse)[] | null;
   /** False when applying the role to yourself removes the required Managers permissions. */
   "canEditPermissions"?: boolean;
@@ -1099,7 +1099,7 @@ export interface ManagerProfileResponse {
   "organisation"?: string | null;
   /** Optional API-computed Gravatar URL from the current manager's email. Prefer over IconKid; fall back on image failure. Uses SHA256, 96px, G rating and d=404. Direct browser requests disclose the email hash and client IP to Gravatar. */
   "gravatarUrl"?: string | null;
-  /** Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing or invalid settings default to zero. Does not grant access or schedule physical deletion. */
+  /** Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing settings default to 10 days; invalid settings default to zero. Does not grant access or schedule physical deletion. */
   "retentionDays"?: number;
   /** themeMode */
   "themeMode"?: EThemeMode;
@@ -1109,7 +1109,7 @@ export interface ManagerProfileResponse {
   "tabDetails"?: (ManagerTabResponse)[] | null;
   /** Decoded bank/location scopes belonging only to this site. Empty means no bank/location access. */
   "resourceGrants"?: (ManagerResourceGrantResponse)[] | null;
-  /** Independent operation permissions for Managers, Bank, Location, Unit, User, Installer and Service; missing stored values default to Read. */
+  /** Independent operation permissions for Managers, Bank, Location, Unit, User, Installer, Service, Tabs and Kids; missing stored values default to Read. */
   "operationPermissions"?: (ManagerOperationPermissionResponse)[] | null;
 }
 
@@ -1615,6 +1615,56 @@ export interface UnitDetailsResponse {
   "stateGroups"?: (string)[] | null;
 }
 
+/** Unit and parent identities, display names/icons, activation/deletion state and requested unit columns. */
+export interface UnitDirectoryItem {
+  /** kid */
+  "kid"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** iconKid */
+  "iconKid"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** bankIconKid */
+  "bankIconKid"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** locationIconKid */
+  "locationIconKid"?: string | null;
+  /** enabled */
+  "enabled"?: boolean;
+  /** deleted */
+  "deleted"?: boolean | null;
+  /** deletedAt */
+  "deletedAt"?: string | null;
+  /** unitType */
+  "unitType"?: string | null;
+  /** washDocId */
+  "washDocId"?: string | null;
+  /** outOfOrder */
+  "outOfOrder"?: string | null;
+  /** latitude */
+  "latitude"?: number | null;
+  /** longitude */
+  "longitude"?: number | null;
+}
+
+/** A scoped Units1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location. */
+export interface UnitDirectoryResponse {
+  /** items */
+  "items"?: (UnitDirectoryItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** hasAllBanksAccess */
+  "hasAllBanksAccess"?: boolean;
+  /** fields */
+  "fields"?: (string)[] | null;
+}
+
 /** Stored current-unit value, or an explicit absence/scope/redaction status. MS2000 is the source krumb timestamp. */
 export interface UnitGroupFieldResponse {
   /** name */
@@ -2090,6 +2140,16 @@ export interface IconPresentationResponse {
   "iconKid"?: string | null;
 }
 
+/** Total revenue at a coordinate across all retained purchases, independent of the coin limit. */
+export interface PurchaseHeatmapPoint {
+  /** latitude */
+  "latitude"?: number;
+  /** longitude */
+  "longitude"?: number;
+  /** amount */
+  "amount"?: number;
+}
+
 /** Canonical transaction KID and UTC display time (original MS2000 without an offset). Amount is positive major units; currencies are not converted. */
 export interface PurchaseMapPoint {
   /** kid */
@@ -2112,6 +2172,8 @@ export interface PurchaseMapSnapshot {
   "refreshAfterSeconds"?: number;
   /** items */
   "items"?: (PurchaseMapPoint)[] | null;
+  /** Complete retained purchase revenue grouped by coordinates; never limited by the animated coin count. */
+  "heatmap"?: (PurchaseHeatmapPoint)[] | null;
 }
 
 /** Public purchase aggregate in Log1Hour, cached for up to one minute. */
@@ -2365,6 +2427,17 @@ export interface GetUnitDocumentSvgOptions {
   states?: string;
   settings?: string;
   width?: number;
+}
+
+export interface GetUnitsOptions {
+  pageSize?: number;
+  cursor?: string;
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+  fields?: string;
+  includeCoordinates?: boolean;
 }
 
 export interface GetBankNextUserNumberOptions {

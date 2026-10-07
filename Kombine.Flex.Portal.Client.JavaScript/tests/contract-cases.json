@@ -2702,6 +2702,28 @@
               "canDelete": false,
               "canRenameExternalId": false,
               "canRename": false
+            },
+            {
+              "resource": "Tabs",
+              "level": "Read",
+              "canRead": true,
+              "canWrite": false,
+              "canCreate": false,
+              "flags": 1,
+              "canDelete": false,
+              "canRenameExternalId": false,
+              "canRename": false
+            },
+            {
+              "resource": "Kids",
+              "level": "Read",
+              "canRead": true,
+              "canWrite": false,
+              "canCreate": false,
+              "flags": 1,
+              "canDelete": false,
+              "canRenameExternalId": false,
+              "canRename": false
             }
           ],
           "resourceGrants": [
@@ -2901,6 +2923,28 @@
           "canWrite": false,
           "canCreate": false,
           "flags": 0,
+          "canDelete": false,
+          "canRenameExternalId": false,
+          "canRename": false
+        },
+        {
+          "resource": "Tabs",
+          "level": "Read",
+          "canRead": true,
+          "canWrite": false,
+          "canCreate": false,
+          "flags": 1,
+          "canDelete": false,
+          "canRenameExternalId": false,
+          "canRename": false
+        },
+        {
+          "resource": "Kids",
+          "level": "Read",
+          "canRead": true,
+          "canWrite": false,
+          "canCreate": false,
+          "flags": 1,
           "canDelete": false,
           "canRenameExternalId": false,
           "canRename": false
@@ -3371,6 +3415,28 @@
         },
         {
           "resource": "Service",
+          "level": "Read",
+          "canRead": true,
+          "canWrite": false,
+          "canCreate": false,
+          "flags": 1,
+          "canDelete": false,
+          "canRenameExternalId": false,
+          "canRename": false
+        },
+        {
+          "resource": "Tabs",
+          "level": "Read",
+          "canRead": true,
+          "canWrite": false,
+          "canCreate": false,
+          "flags": 1,
+          "canDelete": false,
+          "canRenameExternalId": false,
+          "canRename": false
+        },
+        {
+          "resource": "Kids",
           "level": "Read",
           "canRead": true,
           "canWrite": false,
@@ -4696,6 +4762,96 @@
     "example": {}
   },
   {
+    "operation": "GetUnits",
+    "python": "get_units",
+    "javascript": "getUnits",
+    "method": "GET",
+    "path": "api/v1/units",
+    "status": 200,
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeCoordinates",
+        "where": "query",
+        "py": "include_coordinates",
+        "js": "includeCoordinates",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "SetUnitSetting",
     "python": "set_unit_setting",
     "javascript": "setUnitSetting",
@@ -5851,6 +6007,143 @@
     "status": 200,
     "auth": false,
     "parameters": [
+      {
+        "name": "color",
+        "where": "path",
+        "py": "color",
+        "js": "color",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "background",
+        "where": "path",
+        "py": "background",
+        "js": "background",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "width",
+        "where": "path",
+        "py": "width",
+        "js": "width",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetKombineLogoParts",
+    "python": "get_kombine_logo_parts",
+    "javascript": "getKombineLogoParts",
+    "method": "GET",
+    "path": "api/v1/logos/kombine/{parts}/{color}.svg",
+    "status": 200,
+    "auth": false,
+    "parameters": [
+      {
+        "name": "parts",
+        "where": "path",
+        "py": "parts",
+        "js": "parts",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "color",
+        "where": "path",
+        "py": "color",
+        "js": "color",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetKombineLogoPartsSized",
+    "python": "get_kombine_logo_parts_sized",
+    "javascript": "getKombineLogoPartsSized",
+    "method": "GET",
+    "path": "api/v1/logos/kombine/{parts}/{color}/{width}.svg",
+    "status": 200,
+    "auth": false,
+    "parameters": [
+      {
+        "name": "parts",
+        "where": "path",
+        "py": "parts",
+        "js": "parts",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "color",
+        "where": "path",
+        "py": "color",
+        "js": "color",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "width",
+        "where": "path",
+        "py": "width",
+        "js": "width",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetKombineLogoPartsWithBackground",
+    "python": "get_kombine_logo_parts_with_background",
+    "javascript": "getKombineLogoPartsWithBackground",
+    "method": "GET",
+    "path": "api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg",
+    "status": 200,
+    "auth": false,
+    "parameters": [
+      {
+        "name": "parts",
+        "where": "path",
+        "py": "parts",
+        "js": "parts",
+        "schema": {
+          "type": "string"
+        }
+      },
       {
         "name": "color",
         "where": "path",

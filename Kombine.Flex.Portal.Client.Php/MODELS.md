@@ -710,6 +710,18 @@ array{'kind'?: string|null, 'count'?: int, 'hasMore'?: bool, 'errorCode'?: strin
 array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'descriptorAvailable'?: bool, 'settingGroups'?: list<string>|null, 'stateGroups'?: list<string>|null}
 ```
 
+### UnitDirectoryItem
+
+```php
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
+```
+
+### UnitDirectoryResponse
+
+```php
+array{'items'?: list<UnitDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
+```
+
 ### UnitGroupFieldResponse
 
 ```php
@@ -914,6 +926,12 @@ array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|nul
 array{'iconKid'?: string|null}
 ```
 
+### PurchaseHeatmapPoint
+
+```php
+array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
+```
+
 ### PurchaseMapPoint
 
 ```php
@@ -923,7 +941,7 @@ array{'kid'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float, 'tim
 ### PurchaseMapSnapshot
 
 ```php
-array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PurchaseMapPoint>|null}
+array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PurchaseMapPoint>|null, 'heatmap'?: list<PurchaseHeatmapPoint>|null}
 ```
 
 ### PurchasesResponse

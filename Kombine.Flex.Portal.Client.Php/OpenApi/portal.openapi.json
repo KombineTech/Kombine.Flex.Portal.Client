@@ -1964,7 +1964,7 @@
           "BankIcons"
         ],
         "summary": "Resolve up to eight bank icons with their authorized units\u0027 combined status.",
-        "description": "Repeat kid with canonical bank KIDs from this site. Requires an active manager, assigned Tab,\r\nBank Read, Location Read, Unit Read and a matching resource grant. A location-only grant includes only that location.\r\nLocation and unit RetentionDays visibility applies; disabled locations require access to all banks.\r\nAny included Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.error. A nonempty set entirely\r\nknown Offline=0 sets offline=false and eIcon.check. Empty/incomplete status is null unless some unit is offline.\r\nUnits are discovered in Log24; orphan Alive rows do not contribute. No writes.\r\nPer-item 403/503 returns no icon/status; 400 invalid/foreign/oversized input, 401 expired session, 503 session storage failure.\r\nThe API returns opaque iconKid, preserving primary icon and bank number text. Use it unchanged with GetIconFromSet.\r\nRead visible banks only, deduplicate and refresh at most every ten seconds, pausing hidden pages.\r\nStatus is cached ten seconds per authorized location set, location/label metadata sixty seconds. HTTP is no-store.\r\nBounded to 65,536 units per bank and 128 locations per SQL batch; oversized or ambiguous data fails, never partial online.",
+        "description": "Repeat kid with canonical bank KIDs from this site. Requires an active manager, assigned Tab,\r\nBank Read, Location Read, Unit Read and a matching resource grant. A location-only grant includes only that location.\r\nLocation and unit RetentionDays visibility applies; disabled locations require access to all banks.\r\nAny included Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.close. A nonempty set entirely\r\nknown Offline=0 sets offline=false and eIcon.check. Empty/incomplete status is null unless some unit is offline.\r\nUnits are discovered in Log24; orphan Alive rows do not contribute. No writes.\r\nPer-item 403/503 returns no icon/status; 400 invalid/foreign/oversized input, 401 expired session, 503 session storage failure.\r\nThe API returns opaque iconKid, preserving primary icon and bank number text. Use it unchanged with GetIconFromSet.\r\nRead visible banks only, deduplicate and refresh at most every ten seconds, pausing hidden pages.\r\nStatus is cached ten seconds per authorized location set, location/label metadata sixty seconds. HTTP is no-store.\r\nBounded to 65,536 units per bank and 128 locations per SQL batch; oversized or ambiguous data fails, never partial online.",
         "operationId": "GetBankIcons",
         "parameters": [
           {
@@ -6786,7 +6786,7 @@
           "LocationUnits"
         ],
         "summary": "Resolve up to 32 visible unit icons, adding the online/offline under-icon on demand.",
-        "description": "Repeat the kid query parameter with canonical unit KIDs from this site. Requires the same active\r\nmanager, assigned Tab, location scope, Location Read, Unit Read and RetentionDays visibility as GetLocationUnits.\r\nOnly after authorization, reads this site\u0027s Alive rows by exact bank/location (cached up to 10 seconds).\r\nOffline=1 sets Kid.Icons[1] to eIcon.error; Offline=0 sets it to eIcon.check.\r\nMissing rows, null and other Offline values retain the configured icon without a status decoration.\r\nUnitId text, primary icon and other presentation fields are preserved. Never infers offline from Cycle or MainId.\r\nReturns items with kid, opaque iconKid, nullable offline (null for missing/unknown Alive), and status.\r\nPer-item 403/404/503 has null iconKid/ offline; never interpret a failed lookup as online.\r\nInvalid/foreign/bulk input returns 400, expired sessions 401. Response is no-store. No writes.\r\nFetch only displayed icons, batch duplicate KIDs, poll at most every 10 seconds and pause hidden pages.\r\nUse iconKid unchanged with GetIconFromSet. The public image endpoint itself never looks up Alive.",
+        "description": "Repeat the kid query parameter with canonical unit KIDs from this site. Requires the same active\r\nmanager, assigned Tab, location scope, Location Read, Unit Read and RetentionDays visibility as GetLocationUnits.\r\nOnly after authorization, reads this site\u0027s Alive rows by exact bank/location (cached up to 10 seconds).\r\nOffline=1 sets Kid.Icons[1] to eIcon.close; Offline=0 sets it to eIcon.check.\r\nMissing rows, null and other Offline values retain the configured icon without a status decoration.\r\nUnitId text, primary icon and other presentation fields are preserved. Never infers offline from Cycle or MainId.\r\nReturns items with kid, opaque iconKid, nullable offline (null for missing/unknown Alive), and status.\r\nPer-item 403/404/503 has null iconKid/ offline; never interpret a failed lookup as online.\r\nInvalid/foreign/bulk input returns 400, expired sessions 401. Response is no-store. No writes.\r\nFetch only displayed icons, batch duplicate KIDs, poll at most every 10 seconds and pause hidden pages.\r\nUse iconKid unchanged with GetIconFromSet. The public image endpoint itself never looks up Alive.",
         "operationId": "GetUnitIcons",
         "parameters": [
           {
@@ -6875,7 +6875,7 @@
           "LocationUnits"
         ],
         "summary": "Resolve up to 32 visible location icons with their units\u0027 combined online/offline status.",
-        "description": "Repeat kid with canonical location KIDs from this site. Requires the same active manager, assigned\r\nTab, location scope, Location Read, Unit Read and RetentionDays visibility as GetLocationUnits.\r\nOnly the units returned by that authorized overview contribute; hidden units and orphan Alive rows do not.\r\nAny included unit with Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.error.\r\nA nonempty set whose every unit has Alive.Offline=0 sets offline=false and Kid.Icons[1]=eIcon.check.\r\nOtherwise offline=null: empty locations or incomplete/unknown Alive data do not claim to be online.\r\nMissing status never overrides a confirmed offline unit. Primary icon, LocationId text and other fields stay intact.\r\nItems contain kid, opaque iconKid, nullable offline and status. Per-item 403/404/503 returns no icon/status.\r\nInvalid/foreign/oversized input returns 400, expired sessions 401. A failed lookup never means online.\r\nRead only visible icons, batch/deduplicate and refresh at most every 10 seconds; pause hidden pages.\r\nAlive reads share the bounded ten-second cache with GetUnitIcons. HTTP is no-store. No writes.\r\nUse iconKid unchanged with GetIconFromSet; the anonymous image endpoint never queries Alive.",
+        "description": "Repeat kid with canonical location KIDs from this site. Requires the same active manager, assigned\r\nTab, location scope, Location Read, Unit Read and RetentionDays visibility as GetLocationUnits.\r\nOnly the units returned by that authorized overview contribute; hidden units and orphan Alive rows do not.\r\nAny included unit with Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.close.\r\nA nonempty set whose every unit has Alive.Offline=0 sets offline=false and Kid.Icons[1]=eIcon.check.\r\nOtherwise offline=null: empty locations or incomplete/unknown Alive data do not claim to be online.\r\nMissing status never overrides a confirmed offline unit. Primary icon, LocationId text and other fields stay intact.\r\nItems contain kid, opaque iconKid, nullable offline and status. Per-item 403/404/503 returns no icon/status.\r\nInvalid/foreign/oversized input returns 400, expired sessions 401. A failed lookup never means online.\r\nRead only visible icons, batch/deduplicate and refresh at most every 10 seconds; pause hidden pages.\r\nAlive reads share the bounded ten-second cache with GetUnitIcons. HTTP is no-store. No writes.\r\nUse iconKid unchanged with GetIconFromSet; the anonymous image endpoint never queries Alive.",
         "operationId": "GetLocationIcons",
         "parameters": [
           {
@@ -7233,7 +7233,7 @@
           "Managers"
         ],
         "summary": "List administrators in the site\u0027s eUserId.Managers through ManagersLast range.",
-        "description": "### Access\r\n            \r\n- Requires an active manager session, **Managers1 (28)**, **PermissionManagers2 Read** and an explicit **tenant-wide KID grant**.\r\n- Bank/location-only grants are insufficient. Write does not imply Read; missing permission values default to Read.\r\n- Every request checks the current bounded session snapshot, at most **60 seconds** old.\r\n            \r\n### Returned metadata\r\n            \r\n- Reads \u0060Log7\u0060, bank zero, without reading credentials for listed managers. Disabled managers remain listed.\r\n- Deleted records follow the **caller\u0027s RetentionDays**.\r\n- Resource grants contain only this site\u0027s valid scopes. Tab grants are metadata, not proof of effective access.\r\n- \u0060operationPermissions\u0060 and \u0060retentionDays\u0060 describe the **listed manager**, never the caller.\r\n- **Service** comes from \u0060PermissionService2\u0060 (3017) and has independent flags; it does not grant login or other categories\u0027 permissions.\r\n- The seven permission categories include **Installer** from \u0060PermissionInstaller2\u0060. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.\r\n- Missing \u0060Permission*2\u0060 settings default to Read; malformed settings grant nothing. Missing, invalid or negative \u0060RetentionDays\u0060 becomes zero.\r\n- \u0060isCurrentManager\u0060 identifies your own record. \u0060canEditPermissions\u0060 requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use \u0060SetManagerPermission\u0060 to save.\r\n            \r\n### Filtering and paging\r\n            \r\n- \u0060filter\u0060 matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.\r\n- Pagination scans at most \u0060pageSize\u0060 candidates. A page can be short or empty while \u0060nextCursor\u0060 is non-null; **continue until null**.\r\n- Changing filter, sort, direction or page size requires restarting **without a cursor**.\r\n- Concurrent inserts and changes are not a frozen snapshot.\r\n            \r\n### Ordering\r\n            \r\n- Selectable ordering uses a shared **seven-setting index**, cached for at most **60 seconds**, then reads fresh page details.\r\n- \u0060lastActiveAt\u0060 is the current Alive krumb\u0027s MS2000 converted to UTC, not its Text value. Missing/invalid times are null and sort first ascending, last descending. Reads do not update activity.\r\n- Identity ascending retains its bounded database scan. All modes reapply authorization and deletion retention per page.\r\n- Text ordering is ordinal and case-insensitive. Kids compare sorted, site-relative numeric bank/location scopes; empty lists come first.\r\n- Enabled orders **missing, false, true**. Deleted orders by deletion time, zero first. Descending reverses ties as well.\r\n            \r\n### Limits and errors\r\n            \r\n- At most **20,000 matching identities** in the index. Larger selections return **HTTP 503** with \u0060manager-directory-too-large\u0060; narrow the filter.\r\n- A missing continuation identity after index refresh returns **HTTP 400**, \u0060invalid-cursor\u0060; restart without a cursor.\r\n- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.",
+        "description": "### Access\r\n            \r\n- Requires an active manager session, **Managers1 (28)**, **PermissionManagers2 Read** and an explicit **tenant-wide KID grant**.\r\n- Bank/location-only grants are insufficient. Write does not imply Read; missing permission values default to Read.\r\n- Every request checks the current bounded session snapshot, at most **60 seconds** old.\r\n            \r\n### Returned metadata\r\n            \r\n- Reads \u0060Log7\u0060, bank zero, without reading credentials for listed managers. Disabled managers remain listed.\r\n- Deleted records follow the **caller\u0027s RetentionDays**.\r\n- Resource grants contain only this site\u0027s valid scopes. Tab grants are metadata, not proof of effective access.\r\n- \u0060operationPermissions\u0060 and \u0060retentionDays\u0060 describe the **listed manager**, never the caller.\r\n- **Service** comes from \u0060PermissionService2\u0060 (3017) and has independent flags; it does not grant login or other categories\u0027 permissions.\r\n- The seven permission categories include **Installer** from \u0060PermissionInstaller2\u0060. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.\r\n- Missing \u0060Permission*2\u0060 settings default to Read; malformed settings grant nothing. Missing \u0060RetentionDays\u0060 defaults to 10 days; invalid or negative values become zero. Explicit zero is preserved.\r\n- \u0060isCurrentManager\u0060 identifies your own record. \u0060canEditPermissions\u0060 requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use \u0060SetManagerPermission\u0060 to save.\r\n            \r\n### Filtering and paging\r\n            \r\n- \u0060filter\u0060 matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.\r\n- Pagination scans at most \u0060pageSize\u0060 candidates. A page can be short or empty while \u0060nextCursor\u0060 is non-null; **continue until null**.\r\n- Changing filter, sort, direction or page size requires restarting **without a cursor**.\r\n- Concurrent inserts and changes are not a frozen snapshot.\r\n            \r\n### Ordering\r\n            \r\n- Selectable ordering uses a shared **seven-setting index**, cached for at most **60 seconds**, then reads fresh page details.\r\n- \u0060lastActiveAt\u0060 is the current Alive krumb\u0027s MS2000 converted to UTC, not its Text value. Missing/invalid times are null and sort first ascending, last descending. Reads do not update activity.\r\n- Identity ascending retains its bounded database scan. All modes reapply authorization and deletion retention per page.\r\n- Text ordering is ordinal and case-insensitive. Kids compare sorted, site-relative numeric bank/location scopes; empty lists come first.\r\n- Enabled orders **missing, false, true**. Deleted orders by deletion time, zero first. Descending reverses ties as well.\r\n            \r\n### Limits and errors\r\n            \r\n- At most **20,000 matching identities** in the index. Larger selections return **HTTP 503** with \u0060manager-directory-too-large\u0060; narrow the filter.\r\n- A missing continuation identity after index refresh returns **HTTP 400**, \u0060invalid-cursor\u0060; restart without a cursor.\r\n- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.",
         "operationId": "GetManagers",
         "parameters": [
           {
@@ -7382,6 +7382,28 @@
                         },
                         {
                           "resource": "Service",
+                          "level": "Read",
+                          "canRead": true,
+                          "canWrite": false,
+                          "canCreate": false,
+                          "flags": 1,
+                          "canDelete": false,
+                          "canRenameExternalId": false,
+                          "canRename": false
+                        },
+                        {
+                          "resource": "Tabs",
+                          "level": "Read",
+                          "canRead": true,
+                          "canWrite": false,
+                          "canCreate": false,
+                          "flags": 1,
+                          "canDelete": false,
+                          "canRenameExternalId": false,
+                          "canRename": false
+                        },
+                        {
+                          "resource": "Kids",
                           "level": "Read",
                           "canRead": true,
                           "canWrite": false,
@@ -7722,7 +7744,7 @@
           "ManagerKids"
         ],
         "summary": "Add or remove a tenant, whole-bank or single-location grant on an administrator.",
-        "description": "### Access\r\n            \r\n- Requires an active manager, Managers1 (28), independent Managers Read and Write and explicit whole-tenant access.\r\n- Own edits require being the sole active tenant-wide manager. All checks use the locked current Log7 snapshot, as for SetManagerPermission.\r\n- The site supplies the tenant. Rejects foreign/noncanonical KIDs and resident, unit, tab or transaction identities.\r\n            \r\n### Selection\r\n            \r\n- Use SearchBanks and SearchLocations to discover choices; their existing Read, scope and retention checks still apply.\r\n- Adding a Bank grants the entire bank and replaces its narrower location entries. A Location grants only that location.\r\n- Adding the site\u0027s Tenant KID selects all banks and replaces all narrower grants on this site. Already covered additions are no-ops.\r\n- Removing a grant removes only that exact scope. Removing all-banks does not restore previously replaced narrower entries.\r\n- Stored site-relative grants are resolved against this site. Unrelated foreign stored entries are preserved but grant no access here.\r\n- Adding a bank/location requires an existing exact Settings scope in this site\u0027s Log24, checked inside the transaction. Removing a stale grant is allowed.\r\n- Kids do not grant tabs or operation flags. No account, profile, tab or permission settings are changed.\r\n            \r\n### Saving and concurrency\r\n            \r\n- Send kidsRevision as expectedRevision. One bank-zero Log7 history transaction reauthorizes, checks the revision, appends only changed values with the caller as actor and verifies the current-table trigger.\r\n- Update the whole Kids display only after a valid 200 response. The response returns canonical site resourceGrants and the next kidsRevision.\r\n- Removing your own whole-tenant access returns canEditKids=false; lock all editor controls. Actor/target sessions and directory indexes are invalidated even on uncertain outcomes.\r\n- Existing session read caches on other API instances can live for up to 60 seconds; every write reauthorizes. The 12-second write deadline and sole-manager scan bound apply.\r\n            \r\n### Errors\r\n            \r\n- 400 invalid-manager-kid or invalid-kid-change: malformed/foreign identity, unsupported scope or missing/invalid boolean/revision.\r\n- 401 requires login; 403 uses the SetManagerPermission access codes. 404 manager-not-found includes retention-hidden managers; resource-not-found means the selected bank/location no longer exists.\r\n- 409 kids-conflict: reread and review. invalid-stored-kids: malformed stored grants are not overwritten. kids-limit: adding would exceed 1,000 grants; removals and broader replacements remain allowed.\r\n- 503 manager-kids-unavailable or timeout: keep the previous display and reread before a manual retry. Never automatically retry an uncertain commit.",
+        "description": "Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.\r\n            ### Access\r\n           \r\n            - Requires an active manager, Managers1 (28), independent Managers Read and Write and explicit whole-tenant access.\r\n            - Own edits require being the sole active tenant-wide manager. All checks use the locked current Log7 snapshot, as for SetManagerPermission.\r\n            - The site supplies the tenant. Rejects foreign/noncanonical KIDs and resident, unit, tab or transaction identities.\r\n           \r\n            ### Selection\r\n           \r\n            - Use SearchBanks and SearchLocations to discover choices; their existing Read, scope and retention checks still apply.\r\n            - Adding a Bank grants the entire bank and replaces its narrower location entries. A Location grants only that location.\r\n            - Adding the site\u0027s Tenant KID selects all banks and replaces all narrower grants on this site. Already covered additions are no-ops.\r\n            - Removing a grant removes only that exact scope. Removing all-banks does not restore previously replaced narrower entries.\r\n            - Stored site-relative grants are resolved against this site. Unrelated foreign stored entries are preserved but grant no access here.\r\n            - Adding a bank/location requires an existing exact Settings scope in this site\u0027s Log24, checked inside the transaction. Removing a stale grant is allowed.\r\n            - Kids do not grant tabs or operation flags. No account, profile, tab or permission settings are changed.\r\n           \r\n            ### Saving and concurrency\r\n           \r\n            - Send kidsRevision as expectedRevision. One bank-zero Log7 history transaction reauthorizes, checks the revision, appends only changed values with the caller as actor and verifies the current-table trigger.\r\n            - Update the whole Kids display only after a valid 200 response. The response returns canonical site resourceGrants and the next kidsRevision.\r\n            - Removing your own whole-tenant access returns canEditKids=false; lock all editor controls. Actor/target sessions and directory indexes are invalidated even on uncertain outcomes.\r\n            - Existing session read caches on other API instances can live for up to 60 seconds; every write reauthorizes. The 12-second write deadline and sole-manager scan bound apply.\r\n           \r\n            ### Errors\r\n           \r\n            - 400 invalid-manager-kid or invalid-kid-change: malformed/foreign identity, unsupported scope or missing/invalid boolean/revision.\r\n            - 401 requires login; 403 uses the SetManagerPermission access codes. 404 manager-not-found includes retention-hidden managers; resource-not-found means the selected bank/location no longer exists.\r\n            - 409 kids-conflict: reread and review. invalid-stored-kids: malformed stored grants are not overwritten. kids-limit: adding would exceed 1,000 grants; removals and broader replacements remain allowed.\r\n            - 503 manager-kids-unavailable or timeout: keep the previous display and reread before a manual retry. Never automatically retry an uncertain commit.",
         "operationId": "SetManagerKid",
         "parameters": [
           {
@@ -8115,8 +8137,8 @@
         "tags": [
           "ManagerPermissionRoles"
         ],
-        "summary": "Replace all seven permission categories with a predefined administrator role.",
-        "description": "### Access\r\n            \r\n- Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.\r\n- Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.\r\n            \r\n### Presets\r\n            \r\n| role | Bank | Location / Unit / User | Managers / Installer / Service |\r\n| --- | --- | --- | --- |\r\n| accounting (Regnskab) | Read (1) | Read (1) | None (0) |\r\n| caretaker (Varmemester) | Read (1) | Read \u002B Write (3) | None (0) |\r\n| operator (Operat\u00F8r) | All six flags (63) | All six flags (63) | All six flags (63) |\r\n            \r\n- Replaces the whole matrix, including clearing existing extra flags. Accounting also replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40), removing every other ID, including unknown stored IDs. Other roles preserve Tabs.\r\n- Kids, account state and profile fields are unchanged.\r\n- A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.\r\n- Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 42 checkboxes and retains Managers access.\r\n            \r\n### Concurrency and storage\r\n            \r\n- Read GetManager first. Send expectedFlags for all seven categories, using explicit null for invalid stored values. Accounting additionally requires expectedTabsRevision copied from tabsRevision; older clients must send this property before applying accounting.\r\n- Requests must contain all seven categories, including Service. Incomplete category sets are rejected.\r\n- One serializable Log7 transaction validates every expected mask and the Tabs revision before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab updates.\r\n- Every role response includes tabs, tabsRevision, canEditTabs and canEditPermissions. Validate all returned permissions and tabs before changing the display; use the new tabsRevision for the next edit.\r\n- Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.\r\n            \r\n### Errors\r\n            \r\n- 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid expectedTabsRevision for accounting. Invalid tenant/KID returns invalid-manager-kid.\r\n- 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.\r\n- 409 permission-conflict or tabs-conflict: reload and review; nothing is partially saved. Accounting returns invalid-stored-tabs for malformed stored JSON/non-integer tab IDs without overwriting it.\r\n- 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.",
+        "summary": "Replace all nine permission categories with a predefined administrator role.",
+        "description": "Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.\r\n            ### Access\r\n           \r\n            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.\r\n            - Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.\r\n           \r\n            The additional technical-support and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.\r\n           \r\n            ### Presets\r\n           \r\n            | role | Bank | Location / Unit / User | Managers / Installer / Service |\r\n            | --- | --- | --- | --- |\r\n            | accounting (Regnskab) | Read (1) | Read (1) | None (0) |\r\n            | caretaker (Varmemester) | Read (1) | Read \u002B Write (3) | None (0) |\r\n            | operator (Operat\u00F8r) | All six flags (63) | All six flags (63) | All six flags (63) |\r\n           \r\n            - Replaces the whole matrix, including clearing existing extra flags. Accounting also replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40), removing every other ID, including unknown stored IDs. Other roles preserve Tabs.\r\n            - Kids, account state and profile fields are unchanged.\r\n            - A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.\r\n            - Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 54 checkboxes and retains Managers access.\r\n           \r\n            ### Concurrency and storage\r\n           \r\n            - Read GetManager first. Send expectedFlags for all nine categories, using explicit null for invalid stored values. Accounting additionally requires expectedTabsRevision copied from tabsRevision; older clients must send this property before applying accounting.\r\n            - Requests must contain all nine categories, including Service, Tabs and Kids. Incomplete category sets are rejected.\r\n            - One serializable Log7 transaction validates every expected mask and the Tabs revision before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab updates.\r\n            - Every role response includes tabs, tabsRevision, canEditTabs and canEditPermissions. Validate all returned permissions and tabs before changing the display; use the new tabsRevision for the next edit.\r\n            - Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.\r\n           \r\n            ### Errors\r\n           \r\n            - 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid expectedTabsRevision for accounting. Invalid tenant/KID returns invalid-manager-kid.\r\n            - 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.\r\n            - 409 permission-conflict or tabs-conflict: reload and review; nothing is partially saved. Accounting returns invalid-stored-tabs for malformed stored JSON/non-integer tab IDs without overwriting it.\r\n            - 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.",
         "operationId": "SetManagerPermissionRole",
         "parameters": [
           {
@@ -8144,7 +8166,9 @@
                   "Bank": 1,
                   "Location": 1,
                   "Unit": 1,
-                  "User": 1
+                  "User": 1,
+                  "Tabs": 1,
+                  "Kids": 1
                 }
               }
             },
@@ -8225,6 +8249,28 @@
                       "canWrite": false,
                       "canCreate": false,
                       "flags": 0,
+                      "canDelete": false,
+                      "canRenameExternalId": false,
+                      "canRename": false
+                    },
+                    {
+                      "resource": "Tabs",
+                      "level": "Read",
+                      "canRead": true,
+                      "canWrite": false,
+                      "canCreate": false,
+                      "flags": 1,
+                      "canDelete": false,
+                      "canRenameExternalId": false,
+                      "canRename": false
+                    },
+                    {
+                      "resource": "Kids",
+                      "level": "Read",
+                      "canRead": true,
+                      "canWrite": false,
+                      "canCreate": false,
+                      "flags": 1,
                       "canDelete": false,
                       "canRenameExternalId": false,
                       "canRename": false
@@ -9183,6 +9229,28 @@
                     },
                     {
                       "resource": "Service",
+                      "level": "Read",
+                      "canRead": true,
+                      "canWrite": false,
+                      "canCreate": false,
+                      "flags": 1,
+                      "canDelete": false,
+                      "canRenameExternalId": false,
+                      "canRename": false
+                    },
+                    {
+                      "resource": "Tabs",
+                      "level": "Read",
+                      "canRead": true,
+                      "canWrite": false,
+                      "canCreate": false,
+                      "flags": 1,
+                      "canDelete": false,
+                      "canRenameExternalId": false,
+                      "canRename": false
+                    },
+                    {
+                      "resource": "Kids",
                       "level": "Read",
                       "canRead": true,
                       "canWrite": false,
@@ -10410,7 +10478,7 @@
           "ManagerTabs"
         ],
         "summary": "Assign or remove one available eTab on an administrator.",
-        "description": "### Access and choices\r\n            \r\n- Requires an active account, Managers1 (28), independent Managers Read and Write and a whole-tenant KID grant. Every check uses the locked current actor snapshot in the write transaction.\r\n- Own edits require the sole active tenant-wide manager exception; otherwise 403 own-manager-permissions. This is the same policy as SetManagerPermission.\r\n- GetManager returns availableTabs: all recognized numeric eTab values except None/Length, aliases deduplicated. Labels/names derive from enum metadata; existing and unimplemented pages are included.\r\n- Tabs grant page access only. Kids, operation permissions and account status are unchanged.\r\n            \r\n### Saving and concurrency\r\n            \r\n- Send enabled plus the exact tabsRevision as expectedRevision. A stale revision returns 409 tabs-conflict; reread and review before trying again.\r\n- Only the requested tab changes. Unknown numeric IDs and unrelated values are preserved. Malformed JSON or non-integer values return 409 invalid-stored-tabs without overwriting the setting.\r\n- Writes use one serializable bank-zero Log7 history append with the caller as actor and verified current-table trigger. A no-op appends nothing. No writes to legacy tables.\r\n- Update selected icons only after a valid successful response. Removing your own Managers1 grant returns canEditTabs=false and canEditPermissions=false; lock all editor controls.\r\n- Actor/target session caches are invalidated even on uncertain outcomes; other instances may retain read snapshots for up to 60 seconds. Every write rechecks fresh authorization. The existing 12-second deadline and sole-manager scan bound apply.\r\n            \r\n### Errors\r\n            \r\n- 400 invalid-manager-kid or invalid-tab-change covers foreign/malformed identities, unavailable IDs and missing inputs. 401 requires login.\r\n- 403 uses the same access codes as SetManagerPermission. 404 manager-not-found covers absent or retention-hidden targets.\r\n- 503 manager-tabs-unavailable or timeout: keep the previous selection; reread before a manual retry because a lost response may follow commit. Never automatically retry.",
+        "description": "Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.\r\n            ### Access and choices\r\n           \r\n            - Requires an active account, Managers1 (28), independent Managers Read and Write and a whole-tenant KID grant. Every check uses the locked current actor snapshot in the write transaction.\r\n            - Own edits require the sole active tenant-wide manager exception; otherwise 403 own-manager-permissions. This is the same policy as SetManagerPermission.\r\n            - GetManager returns availableTabs: all recognized numeric eTab values except None/Length, aliases deduplicated. Labels/names derive from enum metadata; existing and unimplemented pages are included.\r\n            - Tabs grant page access only. Kids, operation permissions and account status are unchanged.\r\n           \r\n            ### Saving and concurrency\r\n           \r\n            - Send enabled plus the exact tabsRevision as expectedRevision. A stale revision returns 409 tabs-conflict; reread and review before trying again.\r\n            - Only the requested tab changes. Unknown numeric IDs and unrelated values are preserved. Malformed JSON or non-integer values return 409 invalid-stored-tabs without overwriting the setting.\r\n            - Writes use one serializable bank-zero Log7 history append with the caller as actor and verified current-table trigger. A no-op appends nothing. No writes to legacy tables.\r\n            - Update selected icons only after a valid successful response. Removing your own Managers1 grant returns canEditTabs=false and canEditPermissions=false; lock all editor controls.\r\n            - Actor/target session caches are invalidated even on uncertain outcomes; other instances may retain read snapshots for up to 60 seconds. Every write rechecks fresh authorization. The existing 12-second deadline and sole-manager scan bound apply.\r\n           \r\n            ### Errors\r\n           \r\n            - 400 invalid-manager-kid or invalid-tab-change covers foreign/malformed identities, unavailable IDs and missing inputs. 401 requires login.\r\n            - 403 uses the same access codes as SetManagerPermission. 404 manager-not-found covers absent or retention-hidden targets.\r\n            - 503 manager-tabs-unavailable or timeout: keep the previous selection; reread before a manual retry because a lost response may follow commit. Never automatically retry.",
         "operationId": "SetManagerTab",
         "parameters": [
           {
@@ -11626,7 +11694,7 @@
           "Services"
         ],
         "summary": "Read one predefined service, editable metadata and its icon catalog.",
-        "description": "### Access and identity\r\n- Same active-manager, Services1, Service Read and tenant-wide grant as GetServices.\r\n- serviceKid must be a canonical bank-zero Manager KID for a concrete service enum value on this site.\r\n- A service exists by enum definition, including before its first settings write. No identity is allocated.\r\n### Editing metadata\r\n- CanEdit additionally requires Service Write. Only these callers receive ApiKeyHash; readers receive null and HasApiKeyHash.\r\n- ProfileRevision covers raw Name, Icon and Password, including row presence. It is not authorization.\r\n- AvailableIcons contains known eIcon names; a safe legacy current icon appears first for display only.\r\n- Hash values are opaque existing hashes, not plaintext keys. This operation does not implement service login.\r\n### Errors\r\n- 400 invalid-service-kid; 401/403 as GetServices; 503 services-unavailable. No-store, 12-second deadline.",
+        "description": "### Access and identity\r\n- Same active-manager, Services1, Service Read and tenant-wide grant as GetServices.\r\n- serviceKid must be a canonical bank-zero Manager KID for a concrete service enum value on this site.\r\n- A service exists by enum definition, including before its first settings write. No identity is allocated.\r\n### Editing metadata\r\n- CanEdit additionally requires Service Write. Only these callers receive ApiKeyHash; readers receive null and HasApiKeyHash.\r\n- ProfileRevision covers raw Name, Icon and Password, including row presence. It is not authorization.\r\n- AvailableIcons contains known eIcon names; a safe legacy current icon appears first for display only.\r\n- Hash values are opaque existing hashes, not plaintext keys. This operation does not implement service login.\r\n- Service accounts have no permission matrix, assigned KID scopes or tabs. No access object is returned.\r\n- Each business endpoint explicitly authorizes the authenticated eUserId; synchronization requires ServiceSync.\r\n- Stored access settings are preserved but ignored for service authorization. Account state, key and tenant checks remain.\r\n### Errors\r\n- 400 invalid-service-kid; 401/403 as GetServices; 503 services-unavailable. No-store, 12-second deadline.",
         "operationId": "GetService",
         "parameters": [
           {
@@ -13157,6 +13225,187 @@
             "description": "Service Unavailable",
             "content": {
               "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/units": {
+      "get": {
+        "tags": [
+          "UnitsDirectory"
+        ],
+        "summary": "List authorized units, including child units, for Units1.",
+        "description": "Requires Units1 (50), Bank/Location/Unit Read and current resource grants. Every page rechecks the active manager.\r\nReads tenant Log24 only, BankId \u003E=1000. Limited grants require an enabled location and bank/location/unit deletion\r\nwithin RetentionDays; missing Deleted means zero, malformed/future values are hidden. Site-wide grants can inspect all states.\r\nenabledOnly=true requires unit Enabled exactly 1. No request can select another tenant.\r\npageSize 1\u2013100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,\r\nor an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.\r\nsort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.\r\nUnit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.\r\nfields: bankName, locationName, unitType, washDocId, outOfOrder. Core parent names/icons remain populated.\r\nOptional unit fields are null unless selected, empty if missing. UnitType2 takes precedence over decoded legacy UnitType.\r\nincludeCoordinates=true adds parent-location coordinates in decimal degrees, null if absent/invalid, for map presentation.\r\nFollow nextCursor until null. Protected cursors expire after 15 minutes and bind manager, tenant, grants, retention and all query options.\r\nRestart paging after changing options. Concurrent edits may move rows; pages are not a frozen snapshot.\r\n400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-units-tab, missing-bank-read,\r\nmissing-location-read, missing-unit-read or missing-resource-access; 503 units-unavailable (retry manually). No-store.",
+        "operationId": "GetUnits",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "name"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "enabledOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeCoordinates",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDirectoryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDirectoryResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDirectoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -16019,7 +16268,7 @@
           "Logos"
         ],
         "summary": "Renders a responsive Kombine symbol that fits its viewport without stretching.",
-        "description": "### Local artwork and access\r\n- Public; no login, business KID, Tab, permission or database access.\r\n- Original KombineLogo1 geometry, serialized with .NET XML; no graphics packages or external resources.\r\n- The unsized SVG uses only a viewBox and \u0060preserveAspectRatio=\u0022xMidYMid meet\u0022\u0060: it fills the available viewport as far as possible without cropping or stretching. The background is transparent.\r\n- No fixed width/height attributes are emitted. Use the width-specific route or set dimensions on the embedding element when a fixed pixel size is needed.\r\n- \u0060color\u0060 accepts 3/6-digit RGB hex without #, exact eColor names, standard color names or transparent, case-insensitively.\r\n- Unknown colors return **400** with code \u0060invalid-logo-parameters\u0060; no substring or index guesses.\r\n### Format and cache\r\n- SVG only. All parameters are path segments, and the URL ends in .svg. No raster fallback.\r\n- First request renders to a private disk cache; subsequent requests reuse it. All logo inputs are fixed, complete presentation data.\r\n- Maximum 512 variants/32 MiB, 24-hour lifetime. Cache I/O failure falls back to fresh rendering.\r\n- Public browser cache: 600 seconds; ETag/If-None-Match supports **304**.\r\n- **429** means the limit of 16 simultaneous logo requests was reached; retry with backoff.",
+        "description": "### Local artwork and access\r\n- Public; no login, business KID, Tab, permission or database access.\r\n- Original KombineLogo1 geometry, serialized with .NET XML; no graphics packages or external resources.\r\n- The unsized SVG uses only a viewBox and \u0060preserveAspectRatio=\u0022xMidYMid meet\u0022\u0060: it fills the available viewport as far as possible without cropping or stretching. The background is transparent.\r\n- No fixed width/height attributes are emitted. Use the width-specific route or set dimensions on the embedding element when a fixed pixel size is needed.\r\n- \u0060color\u0060 accepts 3/6-digit RGB hex without #, exact eColor names, standard color names or transparent, case-insensitively.\r\n- Unknown colors return **400** with code \u0060invalid-logo-parameters\u0060; no substring or index guesses.\r\n- Select individual parts with \u0060/kombine/{parts}/{color}.svg\u0060: 1\u20134 letters N/E/S/W, case-insensitive (for example \u0060/kombine/W/black.svg\u0060 or \u0060/kombine/WE/black.svg\u0060). These standard routes return the complete symbol. N/S select the vertical bars; W/E each select a horizontal bar and curved path. The original square viewBox and positions are preserved. Invalid selections return 400 with code \u0060invalid-logo-parameters\u0060.\r\n### Format and cache\r\n- SVG only. All parameters are path segments, and the URL ends in .svg. No raster fallback.\r\n- First request renders to a private disk cache; subsequent requests reuse it. All logo inputs are fixed, complete presentation data.\r\n- Maximum 512 variants/32 MiB, 24-hour lifetime. Cache I/O failure falls back to fresh rendering.\r\n- Public browser cache: 600 seconds; ETag/If-None-Match supports **304**.\r\n- **429** means the limit of 16 simultaneous logo requests was reached; retry with backoff.",
         "operationId": "GetKombineLogo",
         "parameters": [
           {
@@ -16148,6 +16397,240 @@
         "description": "Same rules as GetKombineLogoSized. Background accepts the same colors as the foreground and is painted into the SVG. Use transparent to omit it.",
         "operationId": "GetKombineLogoWithBackground",
         "parameters": [
+          {
+            "name": "color",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "white"
+          },
+          {
+            "name": "background",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "174d61"
+          },
+          {
+            "name": "width",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maximum": 4096,
+              "minimum": 16,
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 512
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not Modified"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logos/kombine/{parts}/{color}.svg": {
+      "get": {
+        "tags": [
+          "Logos"
+        ],
+        "summary": "Renders selected parts of the Kombine symbol in its original square viewport.",
+        "description": "Parts: 1\u20134 letters N/E/S/W, case-insensitive; combinations such as WE are supported. N/S select vertical bars; W/E each select a horizontal bar and curved path. Example: /api/v1/logos/kombine/W/black.svg. All parameters are path segments. Same colors, public access and cache as GetKombineLogo. Invalid parts return 400 with code invalid-logo-parameters.",
+        "operationId": "GetKombineLogoParts",
+        "parameters": [
+          {
+            "name": "parts",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^[nNeEsSwW]\u002B$",
+              "type": "string"
+            },
+            "example": "W"
+          },
+          {
+            "name": "color",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "white"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not Modified"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logos/kombine/{parts}/{color}/{width}.svg": {
+      "get": {
+        "tags": [
+          "Logos"
+        ],
+        "summary": "Renders selected Kombine symbol parts at the selected width.",
+        "description": "Same parts, colors, public access and cache as GetKombineLogoParts. Width: integer 16\u20134096 pixels; height equals width. Invalid width returns 400. Example: /api/v1/logos/kombine/WE/black/128.svg.",
+        "operationId": "GetKombineLogoPartsSized",
+        "parameters": [
+          {
+            "name": "parts",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^[nNeEsSwW]\u002B$",
+              "type": "string"
+            },
+            "example": "W"
+          },
+          {
+            "name": "color",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "white"
+          },
+          {
+            "name": "width",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maximum": 4096,
+              "minimum": 16,
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 512
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not Modified"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg": {
+      "get": {
+        "tags": [
+          "Logos"
+        ],
+        "summary": "Renders selected Kombine symbol parts with an explicit background and width.",
+        "description": "Same rules as GetKombineLogoPartsSized. Background accepts the same colors as the foreground; transparent omits it. Example: /api/v1/logos/kombine/WE/white/174d61/128.svg.",
+        "operationId": "GetKombineLogoPartsWithBackground",
+        "parameters": [
+          {
+            "name": "parts",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^[nNeEsSwW]\u002B$",
+              "type": "string"
+            },
+            "example": "W"
+          },
           {
             "name": "color",
             "in": "path",
@@ -16631,7 +17114,7 @@
           "Public"
         ],
         "summary": "Shows recent purchases as coin markers on a map. No login required.",
-        "description": "### Public scope and selection\r\n            \r\n- **No login required.** No tenant, bank or time-window override is supported.\r\n- Returns a newest-first sample of purchases retained in **Log1Hour**, without a timestamp filter.\r\n- \u0060limit\u0060: **1\u2013200**, default **100**.\r\n- This is a **visual sample**, not accounting data; missing coordinates can omit purchases.\r\n            \r\n### Amounts and identifiers\r\n            \r\n- Amounts are positive major currency units; currencies are not converted.\r\n- Transfers and rows whose Text ends in \u0060E\u0060 are excluded.\r\n- \u0060timestampUtc\u0060 is the original MS2000 converted directly to UTC.\r\n- \u0060kid\u0060 is a canonical transaction KID with the original timestamp. Use it to suppress duplicate animations.\r\n- KIDs identify the tenant/bank/location/unit event, grant no permissions and contain no user ID.\r\n- No names, tags or transaction text are returned.\r\n            \r\n### Refresh and errors\r\n            \r\n- One shared **10-second cache** per API instance. \u0060refreshAfterSeconds\u0060 is always **10** on success.\r\n- Failures use a **30-second backoff**. On **HTTP 503**, retry after **30 seconds**.",
+        "description": "### Public scope and selection\r\n            \r\n- **No login required.** No tenant, bank or time-window override is supported.\r\n- Returns a newest-first sample of purchases retained in **Log1Hour**, without a timestamp filter.\r\n- \u0060limit\u0060: **1\u2013200**, default **100**.\r\n- \u0060heatmap\u0060 contains all retained qualifying purchases grouped by latitude/longitude, with summed major-unit \u0060amount\u0060.\r\n  It is independent of \u0060limit\u0060 and displayed immediately, not on coin landing. Both arrays refresh together every ten seconds.\r\n- The database maintains Log1Hour as the recent-hour table; no additional timestamp filter or row limit is applied to the heatmap.\r\n- This is a **visual sample**, not accounting data; missing coordinates can omit purchases.\r\n            \r\n### Amounts and identifiers\r\n            \r\n- Amounts are positive major currency units; currencies are not converted.\r\n- Transfers and rows whose Text ends in \u0060E\u0060 are excluded.\r\n- \u0060timestampUtc\u0060 is the original MS2000 converted directly to UTC.\r\n- \u0060kid\u0060 is a canonical transaction KID with the original timestamp. Use it to suppress duplicate animations.\r\n- KIDs identify the tenant/bank/location/unit event, grant no permissions and contain no user ID.\r\n- No names, tags or transaction text are returned.\r\n            \r\n### Refresh and errors\r\n            \r\n- One shared **10-second cache** per API instance. \u0060refreshAfterSeconds\u0060 is always **10** on success.\r\n- Failures use a **30-second backoff**. On **HTTP 503**, retry after **30 seconds**.",
         "operationId": "GetPublicDisp73",
         "parameters": [
           {
@@ -18782,7 +19265,7 @@
           },
           "retentionDays": {
             "type": "integer",
-            "description": "The listed manager\u0027s RetentionDays: days of visibility after deletion for otherwise authorized records. Missing, invalid or negative values become zero. Does not alter the caller\u0027s retention or schedule deletion.",
+            "description": "The listed manager\u0027s RetentionDays: days of visibility after deletion for otherwise authorized records. Missing values default to 10; invalid or negative values become zero. Explicit zero is preserved. Does not alter the caller\u0027s retention or schedule deletion.",
             "format": "int32"
           },
           "isCurrentManager": {
@@ -19029,7 +19512,7 @@
         "properties": {
           "resource": {
             "type": "string",
-            "description": "Managers, Bank, Location, Unit, User, Installer or Service. Match by resource name, not array position.",
+            "description": "Managers, Bank, Location, Unit, User, Installer, Service, Tabs or Kids. Match by resource name, not array position.",
             "nullable": true
           },
           "level": {
@@ -19128,7 +19611,7 @@
               "format": "int32",
               "nullable": true
             },
-            "description": "Exactly Managers, Installer, Service, Bank, Location, Unit and User with last displayed flags. Explicit null represents an invalid stored mask.",
+            "description": "Exactly Managers, Installer, Service, Bank, Location, Unit, User, Tabs and Kids with last displayed flags. Explicit null represents an invalid stored mask.",
             "nullable": true
           },
           "expectedTabsRevision": {
@@ -19153,7 +19636,7 @@
             "items": {
               "$ref": "#/components/schemas/ManagerOperationPermissionResponse"
             },
-            "description": "All seven authoritative permission categories.",
+            "description": "All nine authoritative permission categories.",
             "nullable": true
           },
           "canEditPermissions": {
@@ -19341,7 +19824,7 @@
           },
           "retentionDays": {
             "type": "integer",
-            "description": "Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing or invalid settings default to zero. Does not grant access or schedule physical deletion.",
+            "description": "Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing settings default to 10 days; invalid settings default to zero. Does not grant access or schedule physical deletion.",
             "format": "int32"
           },
           "themeMode": {
@@ -19373,7 +19856,7 @@
             "items": {
               "$ref": "#/components/schemas/ManagerOperationPermissionResponse"
             },
-            "description": "Independent operation permissions for Managers, Bank, Location, Unit, User, Installer and Service; missing stored values default to Read.",
+            "description": "Independent operation permissions for Managers, Bank, Location, Unit, User, Installer, Service, Tabs and Kids; missing stored values default to Read.",
             "nullable": true
           }
         },
@@ -20484,6 +20967,111 @@
         "additionalProperties": false,
         "description": "Authorized unit with the declared groups for its resolved type. No setting/state values or write permissions are returned."
       },
+      "UnitDirectoryItem": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankIconKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationIconKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "deleted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "unitType": {
+            "type": "string",
+            "nullable": true
+          },
+          "washDocId": {
+            "type": "string",
+            "nullable": true
+          },
+          "outOfOrder": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Unit and parent identities, display names/icons, activation/deletion state and requested unit columns."
+      },
+      "UnitDirectoryResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnitDirectoryItem"
+            },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasAllBanksAccess": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A scoped Units1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location."
+      },
       "UnitGroupFieldResponse": {
         "type": "object",
         "properties": {
@@ -21495,6 +22083,25 @@
         "additionalProperties": false,
         "description": "Opaque image identity: eIcon name for an icon alone, otherwise canonical Kid.ToString()."
       },
+      "PurchaseHeatmapPoint": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Total revenue at a coordinate across all retained purchases, independent of the coin limit."
+      },
       "PurchaseMapPoint": {
         "type": "object",
         "properties": {
@@ -21538,6 +22145,14 @@
             "items": {
               "$ref": "#/components/schemas/PurchaseMapPoint"
             },
+            "nullable": true
+          },
+          "heatmap": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PurchaseHeatmapPoint"
+            },
+            "description": "Complete retained purchase revenue grouped by coordinates; never limited by the animated coin count.",
             "nullable": true
           }
         },
@@ -21700,6 +22315,9 @@
     },
     {
       "name": "UnitDocuments"
+    },
+    {
+      "name": "UnitsDirectory"
     },
     {
       "name": "UnitSettings"

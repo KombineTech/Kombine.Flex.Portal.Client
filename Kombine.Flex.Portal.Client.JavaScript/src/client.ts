@@ -243,7 +243,7 @@ export class PortalClient extends BaseClient {
     return this.send("ResetManagerPassword", {}, body, request) as Promise<Models.ManagerPasswordResetResponse>;
   }
 
-  /** Replace all seven permission categories with a predefined administrator role. */
+  /** Replace all nine permission categories with a predefined administrator role. */
   setManagerPermissionRole(managerKid: string, body: Models.ManagerPermissionRoleRequest, request: RequestOptions = {}): Promise<Models.ManagerPermissionRoleResponse> {
     return this.send("SetManagerPermissionRole", {"managerKid": managerKid}, body, request) as Promise<Models.ManagerPermissionRoleResponse>;
   }
@@ -381,6 +381,11 @@ export class PortalClient extends BaseClient {
   /** Render a document's numeric series as an SVG chart, caching completed documents privately. */
   getUnitDocumentSvg(documentKid: string, options: Models.GetUnitDocumentSvgOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("GetUnitDocumentSvg", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "width": options.width}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** List authorized units, including child units, for Units1. */
+  getUnits(options: Models.GetUnitsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDirectoryResponse> {
+    return this.send("GetUnits", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
   }
 
   /** Save one editable current-unit setting with revision protection. */
@@ -531,6 +536,21 @@ export class PortalClient extends BaseClient {
   /** Renders the Kombine symbol with an explicit background and width. */
   getKombineLogoWithBackground(color: string, background: string, width: number, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("GetKombineLogoWithBackground", {"color": color, "background": background, "width": width}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Renders selected parts of the Kombine symbol in its original square viewport. */
+  getKombineLogoParts(parts: string, color: string, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetKombineLogoParts", {"parts": parts, "color": color}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Renders selected Kombine symbol parts at the selected width. */
+  getKombineLogoPartsSized(parts: string, color: string, width: number, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetKombineLogoPartsSized", {"parts": parts, "color": color, "width": width}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Renders selected Kombine symbol parts with an explicit background and width. */
+  getKombineLogoPartsWithBackground(parts: string, color: string, background: string, width: number, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetKombineLogoPartsWithBackground", {"parts": parts, "color": color, "background": background, "width": width}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Renders the Kombine name and registered mark, without the symbol. */

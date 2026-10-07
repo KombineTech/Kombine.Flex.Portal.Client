@@ -3289,6 +3289,109 @@
       },
       "additionalProperties": false
     },
+    "UnitDirectoryItem": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankName": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankIconKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationName": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationIconKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "deleted": {
+          "type": "boolean",
+          "nullable": true
+        },
+        "deletedAt": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "unitType": {
+          "type": "string",
+          "nullable": true
+        },
+        "washDocId": {
+          "type": "string",
+          "nullable": true
+        },
+        "outOfOrder": {
+          "type": "string",
+          "nullable": true
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "UnitDirectoryResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/UnitDirectoryItem"
+          },
+          "nullable": true
+        },
+        "nextCursor": {
+          "type": "string",
+          "nullable": true
+        },
+        "hasAllBanksAccess": {
+          "type": "boolean"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "UnitGroupFieldResponse": {
       "type": "object",
       "properties": {
@@ -4235,6 +4338,24 @@
       },
       "additionalProperties": false
     },
+    "PurchaseHeatmapPoint": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "additionalProperties": false
+    },
     "PurchaseMapPoint": {
       "type": "object",
       "properties": {
@@ -4276,6 +4397,13 @@
           "type": "array",
           "items": {
             "$ref": "#/components/schemas/PurchaseMapPoint"
+          },
+          "nullable": true
+        },
+        "heatmap": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/PurchaseHeatmapPoint"
           },
           "nullable": true
         }
@@ -7033,6 +7161,86 @@
       },
       "binary": true
     },
+    "GetUnits": {
+      "method": "GET",
+      "path": "api/v1/units",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "pageSize",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "cursor",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "enabledOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "fields",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "includeCoordinates",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/UnitDirectoryResponse"
+      },
+      "binary": false
+    },
     "SetUnitSetting": {
       "method": "POST",
       "path": "api/v1/units/{unitKid}/groups/settings/{group}/{setting}",
@@ -8039,6 +8247,128 @@
       ],
       "auth": false,
       "parameters": [
+        {
+          "name": "color",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "background",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "width",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
+    "GetKombineLogoParts": {
+      "method": "GET",
+      "path": "api/v1/logos/kombine/{parts}/{color}.svg",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "parts",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "color",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
+    "GetKombineLogoPartsSized": {
+      "method": "GET",
+      "path": "api/v1/logos/kombine/{parts}/{color}/{width}.svg",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "parts",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "color",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "width",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
+    "GetKombineLogoPartsWithBackground": {
+      "method": "GET",
+      "path": "api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "parts",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
         {
           "name": "color",
           "where": "path",

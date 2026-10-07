@@ -48,6 +48,9 @@
 | `GetIconPresentation` | GET | `/api/v1/icon/presentation` |
 | `GetInstaller` | GET | `/api/v1/installers/{installerKid}` |
 | `GetInstallers` | GET | `/api/v1/installers` |
+| `GetKombineLogoPartsSized` | GET | `/api/v1/logos/kombine/{parts}/{color}/{width}.svg` |
+| `GetKombineLogoPartsWithBackground` | GET | `/api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg` |
+| `GetKombineLogoParts` | GET | `/api/v1/logos/kombine/{parts}/{color}.svg` |
 | `GetKombineLogoSized` | GET | `/api/v1/logos/kombine/{color}/{width}.svg` |
 | `GetKombineLogoTextSized` | GET | `/api/v1/logos/kombine-logo-text/{color}/{width}.svg` |
 | `GetKombineLogoTextWithBackground` | GET | `/api/v1/logos/kombine-logo-text/{color}/{background}/{width}.svg` |
@@ -88,6 +91,7 @@
 | `GetUnitIcons` | GET | `/api/v1/units/icons` |
 | `GetUnitOverview` | GET | `/api/v1/units/{unitKid}` |
 | `GetUnitSettingHistory` | GET | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history` |
+| `GetUnits` | GET | `/api/v1/units` |
 | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
 | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `LoginManager` | POST | `/api/v1/session/login` |

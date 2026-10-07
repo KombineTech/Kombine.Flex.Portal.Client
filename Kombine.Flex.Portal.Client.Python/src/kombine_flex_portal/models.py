@@ -928,6 +928,33 @@ UnitDetailsResponse = TypedDict('UnitDetailsResponse', {
     'stateGroups': 'list[str] | None',
 }, total=False)
 
+UnitDirectoryItem = TypedDict('UnitDirectoryItem', {
+    'kid': 'str | None',
+    'bankKid': 'str | None',
+    'locationKid': 'str | None',
+    'name': 'str | None',
+    'iconKid': 'str | None',
+    'bankName': 'str | None',
+    'bankIconKid': 'str | None',
+    'locationName': 'str | None',
+    'locationIconKid': 'str | None',
+    'enabled': 'bool',
+    'deleted': 'bool | None',
+    'deletedAt': 'str | None',
+    'unitType': 'str | None',
+    'washDocId': 'str | None',
+    'outOfOrder': 'str | None',
+    'latitude': 'float | None',
+    'longitude': 'float | None',
+}, total=False)
+
+UnitDirectoryResponse = TypedDict('UnitDirectoryResponse', {
+    'items': 'list[UnitDirectoryItem] | None',
+    'nextCursor': 'str | None',
+    'hasAllBanksAccess': 'bool',
+    'fields': 'list[str] | None',
+}, total=False)
+
 UnitGroupFieldResponse = TypedDict('UnitGroupFieldResponse', {
     'name': 'str | None',
     'valueType': 'str | None',
@@ -1199,6 +1226,12 @@ IconPresentationResponse = TypedDict('IconPresentationResponse', {
     'iconKid': 'str | None',
 }, total=False)
 
+PurchaseHeatmapPoint = TypedDict('PurchaseHeatmapPoint', {
+    'latitude': 'float',
+    'longitude': 'float',
+    'amount': 'float',
+}, total=False)
+
 PurchaseMapPoint = TypedDict('PurchaseMapPoint', {
     'kid': 'str | None',
     'latitude': 'float',
@@ -1211,6 +1244,7 @@ PurchaseMapSnapshot = TypedDict('PurchaseMapSnapshot', {
     'measuredAtUtc': 'str',
     'refreshAfterSeconds': 'int',
     'items': 'list[PurchaseMapPoint] | None',
+    'heatmap': 'list[PurchaseHeatmapPoint] | None',
 }, total=False)
 
 PurchasesResponse = TypedDict('PurchasesResponse', {

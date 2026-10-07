@@ -333,7 +333,7 @@ namespace Kombine.Flex.Portal.Client
         /// Repeat kid with canonical bank KIDs from this site. Requires an active manager, assigned Tab,
         /// <br/>Bank Read, Location Read, Unit Read and a matching resource grant. A location-only grant includes only that location.
         /// <br/>Location and unit RetentionDays visibility applies; disabled locations require access to all banks.
-        /// <br/>Any included Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.error. A nonempty set entirely
+        /// <br/>Any included Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.close. A nonempty set entirely
         /// <br/>known Offline=0 sets offline=false and eIcon.check. Empty/incomplete status is null unless some unit is offline.
         /// <br/>Units are discovered in Log24; orphan Alive rows do not contribute. No writes.
         /// <br/>Per-item 403/503 returns no icon/status; 400 invalid/foreign/oversized input, 401 expired session, 503 session storage failure.
@@ -1143,7 +1143,7 @@ namespace Kombine.Flex.Portal.Client
         /// Repeat the kid query parameter with canonical unit KIDs from this site. Requires the same active
         /// <br/>manager, assigned Tab, location scope, Location Read, Unit Read and RetentionDays visibility as GetLocationUnits.
         /// <br/>Only after authorization, reads this site's Alive rows by exact bank/location (cached up to 10 seconds).
-        /// <br/>Offline=1 sets Kid.Icons[1] to eIcon.error; Offline=0 sets it to eIcon.check.
+        /// <br/>Offline=1 sets Kid.Icons[1] to eIcon.close; Offline=0 sets it to eIcon.check.
         /// <br/>Missing rows, null and other Offline values retain the configured icon without a status decoration.
         /// <br/>UnitId text, primary icon and other presentation fields are preserved. Never infers offline from Cycle or MainId.
         /// <br/>Returns items with kid, opaque iconKid, nullable offline (null for missing/unknown Alive), and status.
@@ -1164,7 +1164,7 @@ namespace Kombine.Flex.Portal.Client
         /// Repeat kid with canonical location KIDs from this site. Requires the same active manager, assigned
         /// <br/>Tab, location scope, Location Read, Unit Read and RetentionDays visibility as GetLocationUnits.
         /// <br/>Only the units returned by that authorized overview contribute; hidden units and orphan Alive rows do not.
-        /// <br/>Any included unit with Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.error.
+        /// <br/>Any included unit with Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.close.
         /// <br/>A nonempty set whose every unit has Alive.Offline=0 sets offline=false and Kid.Icons[1]=eIcon.check.
         /// <br/>Otherwise offline=null: empty locations or incomplete/unknown Alive data do not claim to be online.
         /// <br/>Missing status never overrides a confirmed offline unit. Primary icon, LocationId text and other fields stay intact.
@@ -1257,7 +1257,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- `operationPermissions` and `retentionDays` describe the **listed manager**, never the caller.
         /// <br/>- **Service** comes from `PermissionService2` (3017) and has independent flags; it does not grant login or other categories' permissions.
         /// <br/>- The seven permission categories include **Installer** from `PermissionInstaller2`. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.
-        /// <br/>- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing, invalid or negative `RetentionDays` becomes zero.
+        /// <br/>- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing `RetentionDays` defaults to 10 days; invalid or negative values become zero. Explicit zero is preserved.
         /// <br/>- `isCurrentManager` identifies your own record. `canEditPermissions` requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use `SetManagerPermission` to save.
         /// <br/>
         /// <br/>### Filtering and paging
@@ -1320,35 +1320,36 @@ namespace Kombine.Flex.Portal.Client
         /// Add or remove a tenant, whole-bank or single-location grant on an administrator.
         /// </summary>
         /// <remarks>
-        /// ### Access
+        /// Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
+        /// <br/>            ### Access
         /// <br/>
-        /// <br/>- Requires an active manager, Managers1 (28), independent Managers Read and Write and explicit whole-tenant access.
-        /// <br/>- Own edits require being the sole active tenant-wide manager. All checks use the locked current Log7 snapshot, as for SetManagerPermission.
-        /// <br/>- The site supplies the tenant. Rejects foreign/noncanonical KIDs and resident, unit, tab or transaction identities.
+        /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write and explicit whole-tenant access.
+        /// <br/>            - Own edits require being the sole active tenant-wide manager. All checks use the locked current Log7 snapshot, as for SetManagerPermission.
+        /// <br/>            - The site supplies the tenant. Rejects foreign/noncanonical KIDs and resident, unit, tab or transaction identities.
         /// <br/>
-        /// <br/>### Selection
+        /// <br/>            ### Selection
         /// <br/>
-        /// <br/>- Use SearchBanks and SearchLocations to discover choices; their existing Read, scope and retention checks still apply.
-        /// <br/>- Adding a Bank grants the entire bank and replaces its narrower location entries. A Location grants only that location.
-        /// <br/>- Adding the site's Tenant KID selects all banks and replaces all narrower grants on this site. Already covered additions are no-ops.
-        /// <br/>- Removing a grant removes only that exact scope. Removing all-banks does not restore previously replaced narrower entries.
-        /// <br/>- Stored site-relative grants are resolved against this site. Unrelated foreign stored entries are preserved but grant no access here.
-        /// <br/>- Adding a bank/location requires an existing exact Settings scope in this site's Log24, checked inside the transaction. Removing a stale grant is allowed.
-        /// <br/>- Kids do not grant tabs or operation flags. No account, profile, tab or permission settings are changed.
+        /// <br/>            - Use SearchBanks and SearchLocations to discover choices; their existing Read, scope and retention checks still apply.
+        /// <br/>            - Adding a Bank grants the entire bank and replaces its narrower location entries. A Location grants only that location.
+        /// <br/>            - Adding the site's Tenant KID selects all banks and replaces all narrower grants on this site. Already covered additions are no-ops.
+        /// <br/>            - Removing a grant removes only that exact scope. Removing all-banks does not restore previously replaced narrower entries.
+        /// <br/>            - Stored site-relative grants are resolved against this site. Unrelated foreign stored entries are preserved but grant no access here.
+        /// <br/>            - Adding a bank/location requires an existing exact Settings scope in this site's Log24, checked inside the transaction. Removing a stale grant is allowed.
+        /// <br/>            - Kids do not grant tabs or operation flags. No account, profile, tab or permission settings are changed.
         /// <br/>
-        /// <br/>### Saving and concurrency
+        /// <br/>            ### Saving and concurrency
         /// <br/>
-        /// <br/>- Send kidsRevision as expectedRevision. One bank-zero Log7 history transaction reauthorizes, checks the revision, appends only changed values with the caller as actor and verifies the current-table trigger.
-        /// <br/>- Update the whole Kids display only after a valid 200 response. The response returns canonical site resourceGrants and the next kidsRevision.
-        /// <br/>- Removing your own whole-tenant access returns canEditKids=false; lock all editor controls. Actor/target sessions and directory indexes are invalidated even on uncertain outcomes.
-        /// <br/>- Existing session read caches on other API instances can live for up to 60 seconds; every write reauthorizes. The 12-second write deadline and sole-manager scan bound apply.
+        /// <br/>            - Send kidsRevision as expectedRevision. One bank-zero Log7 history transaction reauthorizes, checks the revision, appends only changed values with the caller as actor and verifies the current-table trigger.
+        /// <br/>            - Update the whole Kids display only after a valid 200 response. The response returns canonical site resourceGrants and the next kidsRevision.
+        /// <br/>            - Removing your own whole-tenant access returns canEditKids=false; lock all editor controls. Actor/target sessions and directory indexes are invalidated even on uncertain outcomes.
+        /// <br/>            - Existing session read caches on other API instances can live for up to 60 seconds; every write reauthorizes. The 12-second write deadline and sole-manager scan bound apply.
         /// <br/>
-        /// <br/>### Errors
+        /// <br/>            ### Errors
         /// <br/>
-        /// <br/>- 400 invalid-manager-kid or invalid-kid-change: malformed/foreign identity, unsupported scope or missing/invalid boolean/revision.
-        /// <br/>- 401 requires login; 403 uses the SetManagerPermission access codes. 404 manager-not-found includes retention-hidden managers; resource-not-found means the selected bank/location no longer exists.
-        /// <br/>- 409 kids-conflict: reread and review. invalid-stored-kids: malformed stored grants are not overwritten. kids-limit: adding would exceed 1,000 grants; removals and broader replacements remain allowed.
-        /// <br/>- 503 manager-kids-unavailable or timeout: keep the previous display and reread before a manual retry. Never automatically retry an uncertain commit.
+        /// <br/>            - 400 invalid-manager-kid or invalid-kid-change: malformed/foreign identity, unsupported scope or missing/invalid boolean/revision.
+        /// <br/>            - 401 requires login; 403 uses the SetManagerPermission access codes. 404 manager-not-found includes retention-hidden managers; resource-not-found means the selected bank/location no longer exists.
+        /// <br/>            - 409 kids-conflict: reread and review. invalid-stored-kids: malformed stored grants are not overwritten. kids-limit: adding would exceed 1,000 grants; removals and broader replacements remain allowed.
+        /// <br/>            - 503 manager-kids-unavailable or timeout: keep the previous display and reread before a manual retry. Never automatically retry an uncertain commit.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -1395,41 +1396,44 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Replace all seven permission categories with a predefined administrator role.
+        /// Replace all nine permission categories with a predefined administrator role.
         /// </summary>
         /// <remarks>
-        /// ### Access
+        /// Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
+        /// <br/>            ### Access
         /// <br/>
-        /// <br/>- Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
-        /// <br/>- Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.
+        /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
+        /// <br/>            - Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.
         /// <br/>
-        /// <br/>### Presets
+        /// <br/>            The additional technical-support and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
         /// <br/>
-        /// <br/>| role | Bank | Location / Unit / User | Managers / Installer / Service |
-        /// <br/>| --- | --- | --- | --- |
-        /// <br/>| accounting (Regnskab) | Read (1) | Read (1) | None (0) |
-        /// <br/>| caretaker (Varmemester) | Read (1) | Read + Write (3) | None (0) |
-        /// <br/>| operator (Operatør) | All six flags (63) | All six flags (63) | All six flags (63) |
+        /// <br/>            ### Presets
         /// <br/>
-        /// <br/>- Replaces the whole matrix, including clearing existing extra flags. Accounting also replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40), removing every other ID, including unknown stored IDs. Other roles preserve Tabs.
-        /// <br/>- Kids, account state and profile fields are unchanged.
-        /// <br/>- A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.
-        /// <br/>- Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 42 checkboxes and retains Managers access.
+        /// <br/>            | role | Bank | Location / Unit / User | Managers / Installer / Service |
+        /// <br/>            | --- | --- | --- | --- |
+        /// <br/>            | accounting (Regnskab) | Read (1) | Read (1) | None (0) |
+        /// <br/>            | caretaker (Varmemester) | Read (1) | Read + Write (3) | None (0) |
+        /// <br/>            | operator (Operatør) | All six flags (63) | All six flags (63) | All six flags (63) |
         /// <br/>
-        /// <br/>### Concurrency and storage
+        /// <br/>            - Replaces the whole matrix, including clearing existing extra flags. Accounting also replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40), removing every other ID, including unknown stored IDs. Other roles preserve Tabs.
+        /// <br/>            - Kids, account state and profile fields are unchanged.
+        /// <br/>            - A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.
+        /// <br/>            - Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 54 checkboxes and retains Managers access.
         /// <br/>
-        /// <br/>- Read GetManager first. Send expectedFlags for all seven categories, using explicit null for invalid stored values. Accounting additionally requires expectedTabsRevision copied from tabsRevision; older clients must send this property before applying accounting.
-        /// <br/>- Requests must contain all seven categories, including Service. Incomplete category sets are rejected.
-        /// <br/>- One serializable Log7 transaction validates every expected mask and the Tabs revision before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab updates.
-        /// <br/>- Every role response includes tabs, tabsRevision, canEditTabs and canEditPermissions. Validate all returned permissions and tabs before changing the display; use the new tabsRevision for the next edit.
-        /// <br/>- Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.
+        /// <br/>            ### Concurrency and storage
         /// <br/>
-        /// <br/>### Errors
+        /// <br/>            - Read GetManager first. Send expectedFlags for all nine categories, using explicit null for invalid stored values. Accounting additionally requires expectedTabsRevision copied from tabsRevision; older clients must send this property before applying accounting.
+        /// <br/>            - Requests must contain all nine categories, including Service, Tabs and Kids. Incomplete category sets are rejected.
+        /// <br/>            - One serializable Log7 transaction validates every expected mask and the Tabs revision before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab updates.
+        /// <br/>            - Every role response includes tabs, tabsRevision, canEditTabs and canEditPermissions. Validate all returned permissions and tabs before changing the display; use the new tabsRevision for the next edit.
+        /// <br/>            - Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.
         /// <br/>
-        /// <br/>- 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid expectedTabsRevision for accounting. Invalid tenant/KID returns invalid-manager-kid.
-        /// <br/>- 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.
-        /// <br/>- 409 permission-conflict or tabs-conflict: reload and review; nothing is partially saved. Accounting returns invalid-stored-tabs for malformed stored JSON/non-integer tab IDs without overwriting it.
-        /// <br/>- 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.
+        /// <br/>            ### Errors
+        /// <br/>
+        /// <br/>            - 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid expectedTabsRevision for accounting. Invalid tenant/KID returns invalid-manager-kid.
+        /// <br/>            - 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.
+        /// <br/>            - 409 permission-conflict or tabs-conflict: reload and review; nothing is partially saved. Accounting returns invalid-stored-tabs for malformed stored JSON/non-integer tab IDs without overwriting it.
+        /// <br/>            - 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -1631,26 +1635,27 @@ namespace Kombine.Flex.Portal.Client
         /// Assign or remove one available eTab on an administrator.
         /// </summary>
         /// <remarks>
-        /// ### Access and choices
+        /// Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
+        /// <br/>            ### Access and choices
         /// <br/>
-        /// <br/>- Requires an active account, Managers1 (28), independent Managers Read and Write and a whole-tenant KID grant. Every check uses the locked current actor snapshot in the write transaction.
-        /// <br/>- Own edits require the sole active tenant-wide manager exception; otherwise 403 own-manager-permissions. This is the same policy as SetManagerPermission.
-        /// <br/>- GetManager returns availableTabs: all recognized numeric eTab values except None/Length, aliases deduplicated. Labels/names derive from enum metadata; existing and unimplemented pages are included.
-        /// <br/>- Tabs grant page access only. Kids, operation permissions and account status are unchanged.
+        /// <br/>            - Requires an active account, Managers1 (28), independent Managers Read and Write and a whole-tenant KID grant. Every check uses the locked current actor snapshot in the write transaction.
+        /// <br/>            - Own edits require the sole active tenant-wide manager exception; otherwise 403 own-manager-permissions. This is the same policy as SetManagerPermission.
+        /// <br/>            - GetManager returns availableTabs: all recognized numeric eTab values except None/Length, aliases deduplicated. Labels/names derive from enum metadata; existing and unimplemented pages are included.
+        /// <br/>            - Tabs grant page access only. Kids, operation permissions and account status are unchanged.
         /// <br/>
-        /// <br/>### Saving and concurrency
+        /// <br/>            ### Saving and concurrency
         /// <br/>
-        /// <br/>- Send enabled plus the exact tabsRevision as expectedRevision. A stale revision returns 409 tabs-conflict; reread and review before trying again.
-        /// <br/>- Only the requested tab changes. Unknown numeric IDs and unrelated values are preserved. Malformed JSON or non-integer values return 409 invalid-stored-tabs without overwriting the setting.
-        /// <br/>- Writes use one serializable bank-zero Log7 history append with the caller as actor and verified current-table trigger. A no-op appends nothing. No writes to legacy tables.
-        /// <br/>- Update selected icons only after a valid successful response. Removing your own Managers1 grant returns canEditTabs=false and canEditPermissions=false; lock all editor controls.
-        /// <br/>- Actor/target session caches are invalidated even on uncertain outcomes; other instances may retain read snapshots for up to 60 seconds. Every write rechecks fresh authorization. The existing 12-second deadline and sole-manager scan bound apply.
+        /// <br/>            - Send enabled plus the exact tabsRevision as expectedRevision. A stale revision returns 409 tabs-conflict; reread and review before trying again.
+        /// <br/>            - Only the requested tab changes. Unknown numeric IDs and unrelated values are preserved. Malformed JSON or non-integer values return 409 invalid-stored-tabs without overwriting the setting.
+        /// <br/>            - Writes use one serializable bank-zero Log7 history append with the caller as actor and verified current-table trigger. A no-op appends nothing. No writes to legacy tables.
+        /// <br/>            - Update selected icons only after a valid successful response. Removing your own Managers1 grant returns canEditTabs=false and canEditPermissions=false; lock all editor controls.
+        /// <br/>            - Actor/target session caches are invalidated even on uncertain outcomes; other instances may retain read snapshots for up to 60 seconds. Every write rechecks fresh authorization. The existing 12-second deadline and sole-manager scan bound apply.
         /// <br/>
-        /// <br/>### Errors
+        /// <br/>            ### Errors
         /// <br/>
-        /// <br/>- 400 invalid-manager-kid or invalid-tab-change covers foreign/malformed identities, unavailable IDs and missing inputs. 401 requires login.
-        /// <br/>- 403 uses the same access codes as SetManagerPermission. 404 manager-not-found covers absent or retention-hidden targets.
-        /// <br/>- 503 manager-tabs-unavailable or timeout: keep the previous selection; reread before a manual retry because a lost response may follow commit. Never automatically retry.
+        /// <br/>            - 400 invalid-manager-kid or invalid-tab-change covers foreign/malformed identities, unavailable IDs and missing inputs. 401 requires login.
+        /// <br/>            - 403 uses the same access codes as SetManagerPermission. 404 manager-not-found covers absent or retention-hidden targets.
+        /// <br/>            - 503 manager-tabs-unavailable or timeout: keep the previous selection; reread before a manual retry because a lost response may follow commit. Never automatically retry.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -1846,6 +1851,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- ProfileRevision covers raw Name, Icon and Password, including row presence. It is not authorization.
         /// <br/>- AvailableIcons contains known eIcon names; a safe legacy current icon appears first for display only.
         /// <br/>- Hash values are opaque existing hashes, not plaintext keys. This operation does not implement service login.
+        /// <br/>- Service accounts have no permission matrix, assigned KID scopes or tabs. No access object is returned.
+        /// <br/>- Each business endpoint explicitly authorizes the authenticated eUserId; synchronization requires ServiceSync.
+        /// <br/>- Stored access settings are preserved but ignored for service authorization. Account state, key and tenant checks remain.
         /// <br/>### Errors
         /// <br/>- 400 invalid-service-kid; 401/403 as GetServices; 503 services-unavailable. No-store, 12-second deadline.
         /// </remarks>
@@ -2064,6 +2072,31 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvgAsync(string documentKid, string? states = null, string? settings = null, int? width = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized units, including child units, for Units1.
+        /// </summary>
+        /// <remarks>
+        /// Requires Units1 (50), Bank/Location/Unit Read and current resource grants. Every page rechecks the active manager.
+        /// <br/>Reads tenant Log24 only, BankId &gt;=1000. Limited grants require an enabled location and bank/location/unit deletion
+        /// <br/>within RetentionDays; missing Deleted means zero, malformed/future values are hidden. Site-wide grants can inspect all states.
+        /// <br/>enabledOnly=true requires unit Enabled exactly 1. No request can select another tenant.
+        /// <br/>pageSize 1–100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,
+        /// <br/>or an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.
+        /// <br/>sort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.
+        /// <br/>Unit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.
+        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder. Core parent names/icons remain populated.
+        /// <br/>Optional unit fields are null unless selected, empty if missing. UnitType2 takes precedence over decoded legacy UnitType.
+        /// <br/>includeCoordinates=true adds parent-location coordinates in decimal degrees, null if absent/invalid, for map presentation.
+        /// <br/>Follow nextCursor until null. Protected cursors expire after 15 minutes and bind manager, tenant, grants, retention and all query options.
+        /// <br/>Restart paging after changing options. Concurrent edits may move rows; pages are not a frozen snapshot.
+        /// <br/>400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-units-tab, missing-bank-read,
+        /// <br/>missing-location-read, missing-unit-read or missing-resource-access; 503 units-unavailable (retry manually). No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitDirectoryResponse> GetUnitsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2598,6 +2631,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- No fixed width/height attributes are emitted. Use the width-specific route or set dimensions on the embedding element when a fixed pixel size is needed.
         /// <br/>- `color` accepts 3/6-digit RGB hex without #, exact eColor names, standard color names or transparent, case-insensitively.
         /// <br/>- Unknown colors return **400** with code `invalid-logo-parameters`; no substring or index guesses.
+        /// <br/>- Select individual parts with `/kombine/{parts}/{color}.svg`: 1–4 letters N/E/S/W, case-insensitive (for example `/kombine/W/black.svg` or `/kombine/WE/black.svg`). These standard routes return the complete symbol. N/S select the vertical bars; W/E each select a horizontal bar and curved path. The original square viewBox and positions are preserved. Invalid selections return 400 with code `invalid-logo-parameters`.
         /// <br/>### Format and cache
         /// <br/>- SVG only. All parameters are path segments, and the URL ends in .svg. No raster fallback.
         /// <br/>- First request renders to a private disk cache; subsequent requests reuse it. All logo inputs are fixed, complete presentation data.
@@ -2630,6 +2664,39 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<FileResponse> GetKombineLogoWithBackgroundAsync(string color, string background, int width, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Renders selected parts of the Kombine symbol in its original square viewport.
+        /// </summary>
+        /// <remarks>
+        /// Parts: 1–4 letters N/E/S/W, case-insensitive; combinations such as WE are supported. N/S select vertical bars; W/E each select a horizontal bar and curved path. Example: /api/v1/logos/kombine/W/black.svg. All parameters are path segments. Same colors, public access and cache as GetKombineLogo. Invalid parts return 400 with code invalid-logo-parameters.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetKombineLogoPartsAsync(string parts, string color, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Renders selected Kombine symbol parts at the selected width.
+        /// </summary>
+        /// <remarks>
+        /// Same parts, colors, public access and cache as GetKombineLogoParts. Width: integer 16–4096 pixels; height equals width. Invalid width returns 400. Example: /api/v1/logos/kombine/WE/black/128.svg.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetKombineLogoPartsSizedAsync(string parts, string color, int width, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Renders selected Kombine symbol parts with an explicit background and width.
+        /// </summary>
+        /// <remarks>
+        /// Same rules as GetKombineLogoPartsSized. Background accepts the same colors as the foreground; transparent omits it. Example: /api/v1/logos/kombine/WE/white/174d61/128.svg.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetKombineLogoPartsWithBackgroundAsync(string parts, string color, string background, int width, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2707,6 +2774,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- **No login required.** No tenant, bank or time-window override is supported.
         /// <br/>- Returns a newest-first sample of purchases retained in **Log1Hour**, without a timestamp filter.
         /// <br/>- `limit`: **1–200**, default **100**.
+        /// <br/>- `heatmap` contains all retained qualifying purchases grouped by latitude/longitude, with summed major-unit `amount`.
+        /// <br/>  It is independent of `limit` and displayed immediately, not on coin landing. Both arrays refresh together every ten seconds.
+        /// <br/>- The database maintains Log1Hour as the recent-hour table; no additional timestamp filter or row limit is applied to the heatmap.
         /// <br/>- This is a **visual sample**, not accounting data; missing coordinates can omit purchases.
         /// <br/>
         /// <br/>### Amounts and identifiers
@@ -4549,7 +4619,7 @@ namespace Kombine.Flex.Portal.Client
         /// Repeat kid with canonical bank KIDs from this site. Requires an active manager, assigned Tab,
         /// <br/>Bank Read, Location Read, Unit Read and a matching resource grant. A location-only grant includes only that location.
         /// <br/>Location and unit RetentionDays visibility applies; disabled locations require access to all banks.
-        /// <br/>Any included Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.error. A nonempty set entirely
+        /// <br/>Any included Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.close. A nonempty set entirely
         /// <br/>known Offline=0 sets offline=false and eIcon.check. Empty/incomplete status is null unless some unit is offline.
         /// <br/>Units are discovered in Log24; orphan Alive rows do not contribute. No writes.
         /// <br/>Per-item 403/503 returns no icon/status; 400 invalid/foreign/oversized input, 401 expired session, 503 session storage failure.
@@ -8951,7 +9021,7 @@ namespace Kombine.Flex.Portal.Client
         /// Repeat the kid query parameter with canonical unit KIDs from this site. Requires the same active
         /// <br/>manager, assigned Tab, location scope, Location Read, Unit Read and RetentionDays visibility as GetLocationUnits.
         /// <br/>Only after authorization, reads this site's Alive rows by exact bank/location (cached up to 10 seconds).
-        /// <br/>Offline=1 sets Kid.Icons[1] to eIcon.error; Offline=0 sets it to eIcon.check.
+        /// <br/>Offline=1 sets Kid.Icons[1] to eIcon.close; Offline=0 sets it to eIcon.check.
         /// <br/>Missing rows, null and other Offline values retain the configured icon without a status decoration.
         /// <br/>UnitId text, primary icon and other presentation fields are preserved. Never infers offline from Cycle or MainId.
         /// <br/>Returns items with kid, opaque iconKid, nullable offline (null for missing/unknown Alive), and status.
@@ -9064,7 +9134,7 @@ namespace Kombine.Flex.Portal.Client
         /// Repeat kid with canonical location KIDs from this site. Requires the same active manager, assigned
         /// <br/>Tab, location scope, Location Read, Unit Read and RetentionDays visibility as GetLocationUnits.
         /// <br/>Only the units returned by that authorized overview contribute; hidden units and orphan Alive rows do not.
-        /// <br/>Any included unit with Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.error.
+        /// <br/>Any included unit with Alive.Offline=1 sets offline=true and Kid.Icons[1]=eIcon.close.
         /// <br/>A nonempty set whose every unit has Alive.Offline=0 sets offline=false and Kid.Icons[1]=eIcon.check.
         /// <br/>Otherwise offline=null: empty locations or incomplete/unknown Alive data do not claim to be online.
         /// <br/>Missing status never overrides a confirmed offline unit. Primary icon, LocationId text and other fields stay intact.
@@ -9480,7 +9550,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- `operationPermissions` and `retentionDays` describe the **listed manager**, never the caller.
         /// <br/>- **Service** comes from `PermissionService2` (3017) and has independent flags; it does not grant login or other categories' permissions.
         /// <br/>- The seven permission categories include **Installer** from `PermissionInstaller2`. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; its flags do not authorize other resource categories.
-        /// <br/>- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing, invalid or negative `RetentionDays` becomes zero.
+        /// <br/>- Missing `Permission*2` settings default to Read; malformed settings grant nothing. Missing `RetentionDays` defaults to 10 days; invalid or negative values become zero. Explicit zero is preserved.
         /// <br/>- `isCurrentManager` identifies your own record. `canEditPermissions` requires Managers Write; on your own record it additionally requires that no other active manager has a whole-tenant KID grant. Use `SetManagerPermission` to save.
         /// <br/>
         /// <br/>### Filtering and paging
@@ -9816,35 +9886,36 @@ namespace Kombine.Flex.Portal.Client
         /// Add or remove a tenant, whole-bank or single-location grant on an administrator.
         /// </summary>
         /// <remarks>
-        /// ### Access
+        /// Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
+        /// <br/>            ### Access
         /// <br/>
-        /// <br/>- Requires an active manager, Managers1 (28), independent Managers Read and Write and explicit whole-tenant access.
-        /// <br/>- Own edits require being the sole active tenant-wide manager. All checks use the locked current Log7 snapshot, as for SetManagerPermission.
-        /// <br/>- The site supplies the tenant. Rejects foreign/noncanonical KIDs and resident, unit, tab or transaction identities.
+        /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write and explicit whole-tenant access.
+        /// <br/>            - Own edits require being the sole active tenant-wide manager. All checks use the locked current Log7 snapshot, as for SetManagerPermission.
+        /// <br/>            - The site supplies the tenant. Rejects foreign/noncanonical KIDs and resident, unit, tab or transaction identities.
         /// <br/>
-        /// <br/>### Selection
+        /// <br/>            ### Selection
         /// <br/>
-        /// <br/>- Use SearchBanks and SearchLocations to discover choices; their existing Read, scope and retention checks still apply.
-        /// <br/>- Adding a Bank grants the entire bank and replaces its narrower location entries. A Location grants only that location.
-        /// <br/>- Adding the site's Tenant KID selects all banks and replaces all narrower grants on this site. Already covered additions are no-ops.
-        /// <br/>- Removing a grant removes only that exact scope. Removing all-banks does not restore previously replaced narrower entries.
-        /// <br/>- Stored site-relative grants are resolved against this site. Unrelated foreign stored entries are preserved but grant no access here.
-        /// <br/>- Adding a bank/location requires an existing exact Settings scope in this site's Log24, checked inside the transaction. Removing a stale grant is allowed.
-        /// <br/>- Kids do not grant tabs or operation flags. No account, profile, tab or permission settings are changed.
+        /// <br/>            - Use SearchBanks and SearchLocations to discover choices; their existing Read, scope and retention checks still apply.
+        /// <br/>            - Adding a Bank grants the entire bank and replaces its narrower location entries. A Location grants only that location.
+        /// <br/>            - Adding the site's Tenant KID selects all banks and replaces all narrower grants on this site. Already covered additions are no-ops.
+        /// <br/>            - Removing a grant removes only that exact scope. Removing all-banks does not restore previously replaced narrower entries.
+        /// <br/>            - Stored site-relative grants are resolved against this site. Unrelated foreign stored entries are preserved but grant no access here.
+        /// <br/>            - Adding a bank/location requires an existing exact Settings scope in this site's Log24, checked inside the transaction. Removing a stale grant is allowed.
+        /// <br/>            - Kids do not grant tabs or operation flags. No account, profile, tab or permission settings are changed.
         /// <br/>
-        /// <br/>### Saving and concurrency
+        /// <br/>            ### Saving and concurrency
         /// <br/>
-        /// <br/>- Send kidsRevision as expectedRevision. One bank-zero Log7 history transaction reauthorizes, checks the revision, appends only changed values with the caller as actor and verifies the current-table trigger.
-        /// <br/>- Update the whole Kids display only after a valid 200 response. The response returns canonical site resourceGrants and the next kidsRevision.
-        /// <br/>- Removing your own whole-tenant access returns canEditKids=false; lock all editor controls. Actor/target sessions and directory indexes are invalidated even on uncertain outcomes.
-        /// <br/>- Existing session read caches on other API instances can live for up to 60 seconds; every write reauthorizes. The 12-second write deadline and sole-manager scan bound apply.
+        /// <br/>            - Send kidsRevision as expectedRevision. One bank-zero Log7 history transaction reauthorizes, checks the revision, appends only changed values with the caller as actor and verifies the current-table trigger.
+        /// <br/>            - Update the whole Kids display only after a valid 200 response. The response returns canonical site resourceGrants and the next kidsRevision.
+        /// <br/>            - Removing your own whole-tenant access returns canEditKids=false; lock all editor controls. Actor/target sessions and directory indexes are invalidated even on uncertain outcomes.
+        /// <br/>            - Existing session read caches on other API instances can live for up to 60 seconds; every write reauthorizes. The 12-second write deadline and sole-manager scan bound apply.
         /// <br/>
-        /// <br/>### Errors
+        /// <br/>            ### Errors
         /// <br/>
-        /// <br/>- 400 invalid-manager-kid or invalid-kid-change: malformed/foreign identity, unsupported scope or missing/invalid boolean/revision.
-        /// <br/>- 401 requires login; 403 uses the SetManagerPermission access codes. 404 manager-not-found includes retention-hidden managers; resource-not-found means the selected bank/location no longer exists.
-        /// <br/>- 409 kids-conflict: reread and review. invalid-stored-kids: malformed stored grants are not overwritten. kids-limit: adding would exceed 1,000 grants; removals and broader replacements remain allowed.
-        /// <br/>- 503 manager-kids-unavailable or timeout: keep the previous display and reread before a manual retry. Never automatically retry an uncertain commit.
+        /// <br/>            - 400 invalid-manager-kid or invalid-kid-change: malformed/foreign identity, unsupported scope or missing/invalid boolean/revision.
+        /// <br/>            - 401 requires login; 403 uses the SetManagerPermission access codes. 404 manager-not-found includes retention-hidden managers; resource-not-found means the selected bank/location no longer exists.
+        /// <br/>            - 409 kids-conflict: reread and review. invalid-stored-kids: malformed stored grants are not overwritten. kids-limit: adding would exceed 1,000 grants; removals and broader replacements remain allowed.
+        /// <br/>            - 503 manager-kids-unavailable or timeout: keep the previous display and reread before a manual retry. Never automatically retry an uncertain commit.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -10218,41 +10289,44 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Replace all seven permission categories with a predefined administrator role.
+        /// Replace all nine permission categories with a predefined administrator role.
         /// </summary>
         /// <remarks>
-        /// ### Access
+        /// Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
+        /// <br/>            ### Access
         /// <br/>
-        /// <br/>- Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
-        /// <br/>- Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.
+        /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
+        /// <br/>            - Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.
         /// <br/>
-        /// <br/>### Presets
+        /// <br/>            The additional technical-support and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
         /// <br/>
-        /// <br/>| role | Bank | Location / Unit / User | Managers / Installer / Service |
-        /// <br/>| --- | --- | --- | --- |
-        /// <br/>| accounting (Regnskab) | Read (1) | Read (1) | None (0) |
-        /// <br/>| caretaker (Varmemester) | Read (1) | Read + Write (3) | None (0) |
-        /// <br/>| operator (Operatør) | All six flags (63) | All six flags (63) | All six flags (63) |
+        /// <br/>            ### Presets
         /// <br/>
-        /// <br/>- Replaces the whole matrix, including clearing existing extra flags. Accounting also replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40), removing every other ID, including unknown stored IDs. Other roles preserve Tabs.
-        /// <br/>- Kids, account state and profile fields are unchanged.
-        /// <br/>- A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.
-        /// <br/>- Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 42 checkboxes and retains Managers access.
+        /// <br/>            | role | Bank | Location / Unit / User | Managers / Installer / Service |
+        /// <br/>            | --- | --- | --- | --- |
+        /// <br/>            | accounting (Regnskab) | Read (1) | Read (1) | None (0) |
+        /// <br/>            | caretaker (Varmemester) | Read (1) | Read + Write (3) | None (0) |
+        /// <br/>            | operator (Operatør) | All six flags (63) | All six flags (63) | All six flags (63) |
         /// <br/>
-        /// <br/>### Concurrency and storage
+        /// <br/>            - Replaces the whole matrix, including clearing existing extra flags. Accounting also replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40), removing every other ID, including unknown stored IDs. Other roles preserve Tabs.
+        /// <br/>            - Kids, account state and profile fields are unchanged.
+        /// <br/>            - A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.
+        /// <br/>            - Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 54 checkboxes and retains Managers access.
         /// <br/>
-        /// <br/>- Read GetManager first. Send expectedFlags for all seven categories, using explicit null for invalid stored values. Accounting additionally requires expectedTabsRevision copied from tabsRevision; older clients must send this property before applying accounting.
-        /// <br/>- Requests must contain all seven categories, including Service. Incomplete category sets are rejected.
-        /// <br/>- One serializable Log7 transaction validates every expected mask and the Tabs revision before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab updates.
-        /// <br/>- Every role response includes tabs, tabsRevision, canEditTabs and canEditPermissions. Validate all returned permissions and tabs before changing the display; use the new tabsRevision for the next edit.
-        /// <br/>- Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.
+        /// <br/>            ### Concurrency and storage
         /// <br/>
-        /// <br/>### Errors
+        /// <br/>            - Read GetManager first. Send expectedFlags for all nine categories, using explicit null for invalid stored values. Accounting additionally requires expectedTabsRevision copied from tabsRevision; older clients must send this property before applying accounting.
+        /// <br/>            - Requests must contain all nine categories, including Service, Tabs and Kids. Incomplete category sets are rejected.
+        /// <br/>            - One serializable Log7 transaction validates every expected mask and the Tabs revision before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab updates.
+        /// <br/>            - Every role response includes tabs, tabsRevision, canEditTabs and canEditPermissions. Validate all returned permissions and tabs before changing the display; use the new tabsRevision for the next edit.
+        /// <br/>            - Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.
         /// <br/>
-        /// <br/>- 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid expectedTabsRevision for accounting. Invalid tenant/KID returns invalid-manager-kid.
-        /// <br/>- 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.
-        /// <br/>- 409 permission-conflict or tabs-conflict: reload and review; nothing is partially saved. Accounting returns invalid-stored-tabs for malformed stored JSON/non-integer tab IDs without overwriting it.
-        /// <br/>- 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.
+        /// <br/>            ### Errors
+        /// <br/>
+        /// <br/>            - 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid expectedTabsRevision for accounting. Invalid tenant/KID returns invalid-manager-kid.
+        /// <br/>            - 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.
+        /// <br/>            - 409 permission-conflict or tabs-conflict: reload and review; nothing is partially saved. Accounting returns invalid-stored-tabs for malformed stored JSON/non-integer tab IDs without overwriting it.
+        /// <br/>            - 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -11434,26 +11508,27 @@ namespace Kombine.Flex.Portal.Client
         /// Assign or remove one available eTab on an administrator.
         /// </summary>
         /// <remarks>
-        /// ### Access and choices
+        /// Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
+        /// <br/>            ### Access and choices
         /// <br/>
-        /// <br/>- Requires an active account, Managers1 (28), independent Managers Read and Write and a whole-tenant KID grant. Every check uses the locked current actor snapshot in the write transaction.
-        /// <br/>- Own edits require the sole active tenant-wide manager exception; otherwise 403 own-manager-permissions. This is the same policy as SetManagerPermission.
-        /// <br/>- GetManager returns availableTabs: all recognized numeric eTab values except None/Length, aliases deduplicated. Labels/names derive from enum metadata; existing and unimplemented pages are included.
-        /// <br/>- Tabs grant page access only. Kids, operation permissions and account status are unchanged.
+        /// <br/>            - Requires an active account, Managers1 (28), independent Managers Read and Write and a whole-tenant KID grant. Every check uses the locked current actor snapshot in the write transaction.
+        /// <br/>            - Own edits require the sole active tenant-wide manager exception; otherwise 403 own-manager-permissions. This is the same policy as SetManagerPermission.
+        /// <br/>            - GetManager returns availableTabs: all recognized numeric eTab values except None/Length, aliases deduplicated. Labels/names derive from enum metadata; existing and unimplemented pages are included.
+        /// <br/>            - Tabs grant page access only. Kids, operation permissions and account status are unchanged.
         /// <br/>
-        /// <br/>### Saving and concurrency
+        /// <br/>            ### Saving and concurrency
         /// <br/>
-        /// <br/>- Send enabled plus the exact tabsRevision as expectedRevision. A stale revision returns 409 tabs-conflict; reread and review before trying again.
-        /// <br/>- Only the requested tab changes. Unknown numeric IDs and unrelated values are preserved. Malformed JSON or non-integer values return 409 invalid-stored-tabs without overwriting the setting.
-        /// <br/>- Writes use one serializable bank-zero Log7 history append with the caller as actor and verified current-table trigger. A no-op appends nothing. No writes to legacy tables.
-        /// <br/>- Update selected icons only after a valid successful response. Removing your own Managers1 grant returns canEditTabs=false and canEditPermissions=false; lock all editor controls.
-        /// <br/>- Actor/target session caches are invalidated even on uncertain outcomes; other instances may retain read snapshots for up to 60 seconds. Every write rechecks fresh authorization. The existing 12-second deadline and sole-manager scan bound apply.
+        /// <br/>            - Send enabled plus the exact tabsRevision as expectedRevision. A stale revision returns 409 tabs-conflict; reread and review before trying again.
+        /// <br/>            - Only the requested tab changes. Unknown numeric IDs and unrelated values are preserved. Malformed JSON or non-integer values return 409 invalid-stored-tabs without overwriting the setting.
+        /// <br/>            - Writes use one serializable bank-zero Log7 history append with the caller as actor and verified current-table trigger. A no-op appends nothing. No writes to legacy tables.
+        /// <br/>            - Update selected icons only after a valid successful response. Removing your own Managers1 grant returns canEditTabs=false and canEditPermissions=false; lock all editor controls.
+        /// <br/>            - Actor/target session caches are invalidated even on uncertain outcomes; other instances may retain read snapshots for up to 60 seconds. Every write rechecks fresh authorization. The existing 12-second deadline and sole-manager scan bound apply.
         /// <br/>
-        /// <br/>### Errors
+        /// <br/>            ### Errors
         /// <br/>
-        /// <br/>- 400 invalid-manager-kid or invalid-tab-change covers foreign/malformed identities, unavailable IDs and missing inputs. 401 requires login.
-        /// <br/>- 403 uses the same access codes as SetManagerPermission. 404 manager-not-found covers absent or retention-hidden targets.
-        /// <br/>- 503 manager-tabs-unavailable or timeout: keep the previous selection; reread before a manual retry because a lost response may follow commit. Never automatically retry.
+        /// <br/>            - 400 invalid-manager-kid or invalid-tab-change covers foreign/malformed identities, unavailable IDs and missing inputs. 401 requires login.
+        /// <br/>            - 403 uses the same access codes as SetManagerPermission. 404 manager-not-found covers absent or retention-hidden targets.
+        /// <br/>            - 503 manager-tabs-unavailable or timeout: keep the previous selection; reread before a manual retry because a lost response may follow commit. Never automatically retry.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -12710,6 +12785,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- ProfileRevision covers raw Name, Icon and Password, including row presence. It is not authorization.
         /// <br/>- AvailableIcons contains known eIcon names; a safe legacy current icon appears first for display only.
         /// <br/>- Hash values are opaque existing hashes, not plaintext keys. This operation does not implement service login.
+        /// <br/>- Service accounts have no permission matrix, assigned KID scopes or tabs. No access object is returned.
+        /// <br/>- Each business endpoint explicitly authorizes the authenticated eUserId; synchronization requires ServiceSync.
+        /// <br/>- Stored access settings are preserved but ignored for service authorization. Account state, key and tenant checks remain.
         /// <br/>### Errors
         /// <br/>- 400 invalid-service-kid; 401/403 as GetServices; 503 services-unavailable. No-store, 12-second deadline.
         /// </remarks>
@@ -14193,6 +14271,171 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized units, including child units, for Units1.
+        /// </summary>
+        /// <remarks>
+        /// Requires Units1 (50), Bank/Location/Unit Read and current resource grants. Every page rechecks the active manager.
+        /// <br/>Reads tenant Log24 only, BankId &gt;=1000. Limited grants require an enabled location and bank/location/unit deletion
+        /// <br/>within RetentionDays; missing Deleted means zero, malformed/future values are hidden. Site-wide grants can inspect all states.
+        /// <br/>enabledOnly=true requires unit Enabled exactly 1. No request can select another tenant.
+        /// <br/>pageSize 1–100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,
+        /// <br/>or an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.
+        /// <br/>sort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.
+        /// <br/>Unit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.
+        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder. Core parent names/icons remain populated.
+        /// <br/>Optional unit fields are null unless selected, empty if missing. UnitType2 takes precedence over decoded legacy UnitType.
+        /// <br/>includeCoordinates=true adds parent-location coordinates in decimal degrees, null if absent/invalid, for map presentation.
+        /// <br/>Follow nextCursor until null. Protected cursors expire after 15 minutes and bind manager, tenant, grants, retention and all query options.
+        /// <br/>Restart paging after changing options. Concurrent edits may move rows; pages are not a frozen snapshot.
+        /// <br/>400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-units-tab, missing-bank-read,
+        /// <br/>missing-location-read, missing-unit-read or missing-resource-access; 503 units-unavailable (retry manually). No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitDirectoryResponse> GetUnitsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/units"
+                    urlBuilder_.Append("api/v1/units");
+                    urlBuilder_.Append('?');
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (enabledOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (fields != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fields")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(fields, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (includeCoordinates != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("includeCoordinates")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeCoordinates, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitDirectoryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -17570,6 +17813,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- No fixed width/height attributes are emitted. Use the width-specific route or set dimensions on the embedding element when a fixed pixel size is needed.
         /// <br/>- `color` accepts 3/6-digit RGB hex without #, exact eColor names, standard color names or transparent, case-insensitively.
         /// <br/>- Unknown colors return **400** with code `invalid-logo-parameters`; no substring or index guesses.
+        /// <br/>- Select individual parts with `/kombine/{parts}/{color}.svg`: 1–4 letters N/E/S/W, case-insensitive (for example `/kombine/W/black.svg` or `/kombine/WE/black.svg`). These standard routes return the complete symbol. N/S select the vertical bars; W/E each select a horizontal bar and curved path. The original square viewBox and positions are preserved. Invalid selections return 400 with code `invalid-logo-parameters`.
         /// <br/>### Format and cache
         /// <br/>- SVG only. All parameters are path segments, and the URL ends in .svg. No raster fallback.
         /// <br/>- First request renders to a private disk cache; subsequent requests reuse it. All logo inputs are fixed, complete presentation data.
@@ -17820,6 +18064,354 @@ namespace Kombine.Flex.Portal.Client
 
                     // Operation Path: "api/v1/logos/kombine/{color}/{background}/{width}.svg"
                     urlBuilder_.Append("api/v1/logos/kombine/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(color, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(background, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(width, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(".svg");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 304)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Not Modified", status_, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Renders selected parts of the Kombine symbol in its original square viewport.
+        /// </summary>
+        /// <remarks>
+        /// Parts: 1–4 letters N/E/S/W, case-insensitive; combinations such as WE are supported. N/S select vertical bars; W/E each select a horizontal bar and curved path. Example: /api/v1/logos/kombine/W/black.svg. All parameters are path segments. Same colors, public access and cache as GetKombineLogo. Invalid parts return 400 with code invalid-logo-parameters.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetKombineLogoPartsAsync(string parts, string color, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (parts == null)
+                throw new System.ArgumentNullException("parts");
+
+            if (color == null)
+                throw new System.ArgumentNullException("color");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("image/svg+xml"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/logos/kombine/{parts}/{color}.svg"
+                    urlBuilder_.Append("api/v1/logos/kombine/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(parts, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(color, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(".svg");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 304)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Not Modified", status_, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Renders selected Kombine symbol parts at the selected width.
+        /// </summary>
+        /// <remarks>
+        /// Same parts, colors, public access and cache as GetKombineLogoParts. Width: integer 16–4096 pixels; height equals width. Invalid width returns 400. Example: /api/v1/logos/kombine/WE/black/128.svg.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetKombineLogoPartsSizedAsync(string parts, string color, int width, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (parts == null)
+                throw new System.ArgumentNullException("parts");
+
+            if (color == null)
+                throw new System.ArgumentNullException("color");
+
+            if (width == null)
+                throw new System.ArgumentNullException("width");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("image/svg+xml"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/logos/kombine/{parts}/{color}/{width}.svg"
+                    urlBuilder_.Append("api/v1/logos/kombine/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(parts, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(color, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(width, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(".svg");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 304)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Not Modified", status_, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Renders selected Kombine symbol parts with an explicit background and width.
+        /// </summary>
+        /// <remarks>
+        /// Same rules as GetKombineLogoPartsSized. Background accepts the same colors as the foreground; transparent omits it. Example: /api/v1/logos/kombine/WE/white/174d61/128.svg.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetKombineLogoPartsWithBackgroundAsync(string parts, string color, string background, int width, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (parts == null)
+                throw new System.ArgumentNullException("parts");
+
+            if (color == null)
+                throw new System.ArgumentNullException("color");
+
+            if (background == null)
+                throw new System.ArgumentNullException("background");
+
+            if (width == null)
+                throw new System.ArgumentNullException("width");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("image/svg+xml"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg"
+                    urlBuilder_.Append("api/v1/logos/kombine/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(parts, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(color, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(background, System.Globalization.CultureInfo.InvariantCulture)));
@@ -18579,6 +19171,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- **No login required.** No tenant, bank or time-window override is supported.
         /// <br/>- Returns a newest-first sample of purchases retained in **Log1Hour**, without a timestamp filter.
         /// <br/>- `limit`: **1–200**, default **100**.
+        /// <br/>- `heatmap` contains all retained qualifying purchases grouped by latitude/longitude, with summed major-unit `amount`.
+        /// <br/>  It is independent of `limit` and displayed immediately, not on coin landing. Both arrays refresh together every ten seconds.
+        /// <br/>- The database maintains Log1Hour as the recent-hour table; no additional timestamp filter or row limit is applied to the heatmap.
         /// <br/>- This is a **visual sample**, not accounting data; missing coordinates can omit purchases.
         /// <br/>
         /// <br/>### Amounts and identifiers
@@ -20859,7 +21454,7 @@ namespace Kombine.Flex.Portal.Client
         public System.Collections.Generic.ICollection<ManagerOperationPermissionResponse>? OperationPermissions { get; set; } = default!;
 
         /// <summary>
-        /// The listed manager's RetentionDays: days of visibility after deletion for otherwise authorized records. Missing, invalid or negative values become zero. Does not alter the caller's retention or schedule deletion.
+        /// The listed manager's RetentionDays: days of visibility after deletion for otherwise authorized records. Missing values default to 10; invalid or negative values become zero. Explicit zero is preserved. Does not alter the caller's retention or schedule deletion.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("retentionDays")]
         public int? RetentionDays { get; set; } = default!;
@@ -21117,7 +21712,7 @@ namespace Kombine.Flex.Portal.Client
     {
 
         /// <summary>
-        /// Managers, Bank, Location, Unit, User, Installer or Service. Match by resource name, not array position.
+        /// Managers, Bank, Location, Unit, User, Installer, Service, Tabs or Kids. Match by resource name, not array position.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("resource")]
         public string? Resource { get; set; } = default!;
@@ -21225,7 +21820,7 @@ namespace Kombine.Flex.Portal.Client
         public string? Role { get; set; } = default!;
 
         /// <summary>
-        /// Exactly Managers, Installer, Service, Bank, Location, Unit and User with last displayed flags. Explicit null represents an invalid stored mask.
+        /// Exactly Managers, Installer, Service, Bank, Location, Unit, User, Tabs and Kids with last displayed flags. Explicit null represents an invalid stored mask.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("expectedFlags")]
         public System.Collections.Generic.IDictionary<string, int?>? ExpectedFlags { get; set; } = default!;
@@ -21252,7 +21847,7 @@ namespace Kombine.Flex.Portal.Client
         public string? Role { get; set; } = default!;
 
         /// <summary>
-        /// All seven authoritative permission categories.
+        /// All nine authoritative permission categories.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("operationPermissions")]
         public System.Collections.Generic.ICollection<ManagerOperationPermissionResponse>? OperationPermissions { get; set; } = default!;
@@ -21456,7 +22051,7 @@ namespace Kombine.Flex.Portal.Client
         public string? GravatarUrl { get; set; } = default!;
 
         /// <summary>
-        /// Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing or invalid settings default to zero. Does not grant access or schedule physical deletion.
+        /// Days after deletion that an otherwise authorized bank, location, unit, user or reservation remains visible. Zero hides deleted objects; missing settings default to 10 days; invalid settings default to zero. Does not grant access or schedule physical deletion.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("retentionDays")]
         public int? RetentionDays { get; set; } = default!;
@@ -21483,7 +22078,7 @@ namespace Kombine.Flex.Portal.Client
         public System.Collections.Generic.ICollection<ManagerResourceGrantResponse>? ResourceGrants { get; set; } = default!;
 
         /// <summary>
-        /// Independent operation permissions for Managers, Bank, Location, Unit, User, Installer and Service; missing stored values default to Read.
+        /// Independent operation permissions for Managers, Bank, Location, Unit, User, Installer, Service, Tabs and Kids; missing stored values default to Read.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("operationPermissions")]
         public System.Collections.Generic.ICollection<ManagerOperationPermissionResponse>? OperationPermissions { get; set; } = default!;
@@ -22512,6 +23107,87 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Unit and parent identities, display names/icons, activation/deletion state and requested unit columns.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitDirectoryItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankKid")]
+        public string? BankKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationKid")]
+        public string? LocationKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankName")]
+        public string? BankName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankIconKid")]
+        public string? BankIconKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
+        public string? LocationName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationIconKid")]
+        public string? LocationIconKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("enabled")]
+        public bool? Enabled { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("deleted")]
+        public bool? Deleted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("deletedAt")]
+        public System.DateTimeOffset? DeletedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitType")]
+        public string? UnitType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("washDocId")]
+        public string? WashDocId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("outOfOrder")]
+        public string? OutOfOrder { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("latitude")]
+        public double? Latitude { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("longitude")]
+        public double? Longitude { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// A scoped Units1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitDirectoryResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<UnitDirectoryItem>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
+        public string? NextCursor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasAllBanksAccess")]
+        public bool? HasAllBanksAccess { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fields")]
+        public System.Collections.Generic.ICollection<string>? Fields { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Stored current-unit value, or an explicit absence/scope/redaction status. MS2000 is the source krumb timestamp.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -23416,6 +24092,24 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Total revenue at a coordinate across all retained purchases, independent of the coin limit.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PurchaseHeatmapPoint
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("latitude")]
+        public double? Latitude { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("longitude")]
+        public double? Longitude { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("amount")]
+        public double? Amount { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Canonical transaction KID and UTC display time (original MS2000 without an offset). Amount is positive major units; currencies are not converted.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -23454,6 +24148,12 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
         public System.Collections.Generic.ICollection<PurchaseMapPoint>? Items { get; set; } = default!;
+
+        /// <summary>
+        /// Complete retained purchase revenue grouped by coordinates; never limited by the animated coin count.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("heatmap")]
+        public System.Collections.Generic.ICollection<PurchaseHeatmapPoint>? Heatmap { get; set; } = default!;
 
     }
 
