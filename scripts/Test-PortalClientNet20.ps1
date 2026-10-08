@@ -15,7 +15,7 @@ try {
         & $test --status $StatusUrl.AbsoluteUri
         if ($LASTEXITCODE) { throw 'Legacy HTTPS status check failed.' }
     }
-    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Net20.0.5.2.zip'
+    $output = Join-Path $root 'artifacts/packages/Kombine.Flex.Portal.Client.Net20.0.5.3.zip'
     $null = New-Item -ItemType Directory -Force (Split-Path $output)
     # Build the ZIP directly from known files: no cleanup/deletion of another staging tree.
     Add-Type -AssemblyName System.IO.Compression

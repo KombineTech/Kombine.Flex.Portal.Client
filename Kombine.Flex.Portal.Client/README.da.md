@@ -1,8 +1,10 @@
-Version 0.5.2 omfatter 120 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; håndter deres særskilte læse-/skriverettigheder og 403-svar. Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
+Alle administratorrolleskift kræver Læs og Skriv på både Tabs og Kids. Håndter missing-tabs-read, missing-tabs-write, missing-kids-read og missing-kids-write (HTTP 403).
 
-Version 0.5.2: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
+Version 0.5.3 omfatter 120 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; håndter deres særskilte læse-/skriverettigheder og 403-svar. Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
 
-Version 0.5.2 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
+Version 0.5.3: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
+
+Version 0.5.3 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
 
 Version 0.3.3 bruger det [officielle Kombine-logo](https://static.kombine.services/kombinelogotext1/black.svg), bevaret som logo.svg og gengivet som icon.png til NuGet. API-kontrakter og klientens funktion er uændrede.
 
@@ -26,17 +28,17 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 Typet HTTPS/JSON-klient til alle 110 offentlige API-operationer. Ingen afhængigheder til andre Kombine-pakker, databaseadgang eller forretningslogik. Den primære, detaljerede reference er [den engelske vejledning](README.md); alle operationer fremgår af [OPERATIONS.md](OPERATIONS.md).
 
-Version 0.5.2 følger den aktuelle API-kontrakt (120 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
+Version 0.5.3 følger den aktuelle API-kontrakt (120 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
 
 Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser.
 
 ## Installation og platforme
 
-Produktionsudgaver publiceres på [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Installér den publicerede version med kommandoen nedenfor og nuget.org som pakkekilde. Hvis en beta-version endnu ikke findes dér, lægges den kontrollerede Kombine.Flex.Portal.Client.0.5.2.nupkg fra API-dokumentationen i en lokal NuGet-kilde.
+Produktionsudgaver publiceres på [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Installér den publicerede version med kommandoen nedenfor og nuget.org som pakkekilde. Hvis en beta-version endnu ikke findes dér, lægges den kontrollerede Kombine.Flex.Portal.Client.0.5.3.nupkg fra API-dokumentationen i en lokal NuGet-kilde.
 
 ```powershell
 dotnet nuget add source ./packages --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.5.2
+dotnet add package Kombine.Flex.Portal.Client --version 0.5.3
 ```
 
 .NET Framework 4.7.2/4.8/4.8.1 bruger netstandard2.0 med Microsoft System.Text.Json 10.0.12 og dets afhængigheder. .NET 8/9 bruger net8.0; .NET 10 bruger net10.0 uden ekstra pakker. Behold nuget.org eller en godkendt mirror til Microsoft-afhængigheder. Framework-programmer kan have brug for automatiske binding redirects og System.Net.Http-reference ved egen HttpClient. Framework-tests er bygget mod 4.7.2/4.8 og kørt på installeret 4.8.1; en oprindelig 4.7.2-installation er ikke afprøvet.
@@ -84,7 +86,7 @@ CVR: 44637928
 [support@kombinetech.com](mailto:support@kombinetech.com)  
 [kombinetech.com](https://kombinetech.com/)
 
-## Automatisk sessionshåndtering — 0.5.2 (ikke udgivet)
+## Automatisk sessionshåndtering — 0.5.3 (ikke udgivet)
 
 `SendRequestAsync` understøtter også downloads, streaming og operationer tilføjet efter den medfølgende genererede kontrakt. Den kontrollerer, at kaldet holder sig til klientens faste API-adresse, bevarer applikationens headers og gentager aldrig kald. Den kaldende kode ejer request og response. Brug `HttpCompletionOption.ResponseHeadersRead` til streaming. Applikationen kan bruge egne svarmodeller med denne transport; API'et håndhæver fortsat rettighederne.
 

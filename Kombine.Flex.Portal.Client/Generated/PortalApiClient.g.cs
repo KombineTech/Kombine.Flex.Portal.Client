@@ -1399,7 +1399,7 @@ namespace Kombine.Flex.Portal.Client
         /// Replace all nine permission categories with a predefined administrator role.
         /// </summary>
         /// <remarks>
-        /// Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
+        /// Every role replacement requires independent Read and Write on both Tabs and Kids in the caller snapshot, rechecked inside the transaction, because every preset replaces both permission masks. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
         /// <br/>            ### Access
         /// <br/>
         /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
@@ -10292,7 +10292,7 @@ namespace Kombine.Flex.Portal.Client
         /// Replace all nine permission categories with a predefined administrator role.
         /// </summary>
         /// <remarks>
-        /// Editing Tabs or Kids additionally requires independent Read and Write on that category in the caller snapshot, rechecked inside the transaction; accounting also requires Tabs Read/Write. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
+        /// Every role replacement requires independent Read and Write on both Tabs and Kids in the caller snapshot, rechecked inside the transaction, because every preset replaces both permission masks. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.
         /// <br/>            ### Access
         /// <br/>
         /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
