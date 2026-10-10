@@ -121,6 +121,20 @@
       },
       "additionalProperties": false
     },
+    "AccountIconResponse": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "nullable": true
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "AccountResponse": {
       "type": "object",
       "properties": {
@@ -245,7 +259,35 @@
       },
       "additionalProperties": false
     },
+    "ActiveBankCountResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "ActiveLocationCountResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ActiveUnitCountResponse": {
       "type": "object",
       "properties": {
         "count": {
@@ -338,6 +380,71 @@
             "$ref": "#/components/schemas/AssistantLink"
           },
           "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "BankDirectoryItem": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "deleted": {
+          "type": "boolean",
+          "nullable": true
+        },
+        "deletedAt": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "nullable": true
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "BankDirectoryResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/BankDirectoryItem"
+          },
+          "nullable": true
+        },
+        "nextCursor": {
+          "type": "string",
+          "nullable": true
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true
+        },
+        "canReadBankActivationCode": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false
@@ -1130,6 +1237,10 @@
         "lastActiveAt": {
           "type": "string",
           "format": "date-time",
+          "nullable": true
+        },
+        "activationCode": {
+          "type": "string",
           "nullable": true
         },
         "iconKid": {
@@ -2071,6 +2182,10 @@
         "expectedTabsRevision": {
           "type": "string",
           "nullable": true
+        },
+        "expectedKidsRevision": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -2104,6 +2219,20 @@
           "nullable": true
         },
         "canEditTabs": {
+          "type": "boolean"
+        },
+        "resourceGrants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ManagerResourceGrantResponse"
+          },
+          "nullable": true
+        },
+        "kidsRevision": {
+          "type": "string",
+          "nullable": true
+        },
+        "canEditKids": {
           "type": "boolean"
         }
       },
@@ -2545,6 +2674,20 @@
           "nullable": true
         },
         "name": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PeopleDirectoryCount": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "iconKid": {
           "type": "string",
           "nullable": true
         }
@@ -3361,6 +3504,37 @@
           "type": "number",
           "format": "double",
           "nullable": true
+        },
+        "versionMinor": {
+          "type": "string",
+          "nullable": true
+        },
+        "bootReason": {
+          "type": "string",
+          "nullable": true
+        },
+        "booted": {
+          "type": "string",
+          "nullable": true
+        },
+        "firmware": {
+          "type": "string",
+          "nullable": true
+        },
+        "storageCardSerialNumber": {
+          "type": "string",
+          "nullable": true
+        },
+        "page": {
+          "type": "string",
+          "nullable": true
+        },
+        "backLight": {
+          "type": "string",
+          "nullable": true
+        },
+        "terminal": {
+          "$ref": "#/components/schemas/UnitTerminalResponse"
         }
       },
       "additionalProperties": false
@@ -3564,6 +3738,9 @@
         },
         "progress": {
           "$ref": "#/components/schemas/UnitProgressResponse"
+        },
+        "terminal": {
+          "$ref": "#/components/schemas/UnitTerminalResponse"
         }
       },
       "additionalProperties": false
@@ -3732,6 +3909,24 @@
         },
         "changedBy": {
           "$ref": "#/components/schemas/UnitSettingEditorResponse"
+        }
+      },
+      "additionalProperties": false
+    },
+    "UnitTerminalResponse": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -3965,6 +4160,57 @@
           "nullable": true
         },
         "previousPeriodIsProvisional": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "UserDirectoryItem": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "number": {
+          "type": "string",
+          "nullable": true
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "deletedAt": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "UserDirectoryResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/UserDirectoryItem"
+          },
+          "nullable": true
+        },
+        "nextCursor": {
+          "type": "string",
+          "nullable": true
+        },
+        "scanLimitReached": {
           "type": "boolean"
         }
       },
@@ -4446,6 +4692,29 @@
     }
   },
   "operations": {
+    "GetBankAccountIcon": {
+      "method": "GET",
+      "path": "api/v1/banks/{bankKid}/account/icon",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "bankKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/AccountIconResponse"
+      },
+      "binary": false
+    },
     "GetBankAccount": {
       "method": "GET",
       "path": "api/v1/banks/{bankKid}/account",
@@ -4877,6 +5146,100 @@
       },
       "response": {
         "$ref": "#/components/schemas/AssistantResponse"
+      },
+      "binary": false
+    },
+    "GetBanks": {
+      "method": "GET",
+      "path": "api/v1/banks",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "pageSize",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "cursor",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "enabledOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "fields",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bankType",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/BankDirectoryResponse"
+      },
+      "binary": false
+    },
+    "GetActiveBankCount": {
+      "method": "GET",
+      "path": "api/v1/banks/active-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/ActiveBankCountResponse"
       },
       "binary": false
     },
@@ -5789,6 +6152,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "name": "includeActivationCode",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
         }
       ],
       "body": null,
@@ -5841,7 +6212,16 @@
         200
       ],
       "auth": true,
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "bankKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "body": null,
       "response": {
         "$ref": "#/components/schemas/ActiveLocationCountResponse"
@@ -5919,6 +6299,14 @@
           "required": false,
           "schema": {
             "type": "boolean"
+          }
+        },
+        {
+          "name": "bankKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
           }
         }
       ],
@@ -6649,6 +7037,34 @@
       },
       "binary": false
     },
+    "GetManagerCount": {
+      "method": "GET",
+      "path": "api/v1/managers/count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/PeopleDirectoryCount"
+      },
+      "binary": false
+    },
+    "GetInstallerCount": {
+      "method": "GET",
+      "path": "api/v1/installers/count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/PeopleDirectoryCount"
+      },
+      "binary": false
+    },
     "GetMyManagerProfile": {
       "method": "GET",
       "path": "api/v1/session/me/profile",
@@ -6812,6 +7228,20 @@
       "body": null,
       "response": {
         "$ref": "#/components/schemas/ServiceDirectoryResponse"
+      },
+      "binary": false
+    },
+    "GetServiceCount": {
+      "method": "GET",
+      "path": "api/v1/services/count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/PeopleDirectoryCount"
       },
       "binary": false
     },
@@ -7161,6 +7591,34 @@
       },
       "binary": true
     },
+    "GetActiveUnitCount": {
+      "method": "GET",
+      "path": "api/v1/units/active-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/ActiveUnitCountResponse"
+      },
+      "binary": false
+    },
+    "GetActiveTerminalCount": {
+      "method": "GET",
+      "path": "api/v1/terminals/active-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/ActiveUnitCountResponse"
+      },
+      "binary": false
+    },
     "GetUnits": {
       "method": "GET",
       "path": "api/v1/units",
@@ -7232,6 +7690,118 @@
           "required": false,
           "schema": {
             "type": "boolean"
+          }
+        },
+        {
+          "name": "locationKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "terminalKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/UnitDirectoryResponse"
+      },
+      "binary": false
+    },
+    "GetTerminals": {
+      "method": "GET",
+      "path": "api/v1/terminals",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "pageSize",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "cursor",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "enabledOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "fields",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "includeCoordinates",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "locationKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "terminalKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
           }
         }
       ],
@@ -7453,6 +8023,84 @@
       },
       "response": {
         "$ref": "#/components/schemas/UserWorkspaceResponse"
+      },
+      "binary": false
+    },
+    "GetUsers": {
+      "method": "GET",
+      "path": "api/v1/users",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "pageSize",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "cursor",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "enabledOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/UserDirectoryResponse"
+      },
+      "binary": false
+    },
+    "GetUserCount": {
+      "method": "GET",
+      "path": "api/v1/users/count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/PeopleDirectoryCount"
       },
       "binary": false
     },

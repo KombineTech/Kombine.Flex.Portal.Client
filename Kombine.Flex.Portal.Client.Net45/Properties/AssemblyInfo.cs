@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("Kombine Flex Portal Client for Visual Studio 2012")]
 [assembly: AssemblyCopyright("Kombine Technology ApS")]
 // Authors: Codex - prompted by Jens Aage Arendt
-[assembly: AssemblyVersion("0.5.3.0")]
-[assembly: AssemblyFileVersion("0.5.3.0")]
+[assembly: AssemblyVersion("0.6.1.0")]
+[assembly: AssemblyFileVersion("0.6.1.0")]
 [assembly: ComVisible(false)]
 [assembly: InternalsVisibleTo("Kombine.Flex.Portal.Client.Net45.Tests")]

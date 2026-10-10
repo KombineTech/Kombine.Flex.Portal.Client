@@ -1,6 +1,6 @@
 Version 0.4.3: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
 
-Version 0.5.3 omfatter 120 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; alle rolleskift kræver Læs og Skriv på både Tabs og Kids; håndter missing-tabs-read, missing-tabs-write, missing-kids-read og missing-kids-write (HTTP 403). Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
+Version 0.6.1 omfatter 131 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; alle rolleskift kræver Læs og Skriv på både Tabs og Kids; håndter missing-tabs-read, missing-tabs-write, missing-kids-read og missing-kids-write (HTTP 403). Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
 
 [English](README.md) · [Dansk](README.da.md) · [Español](README.es.md)
 
@@ -8,7 +8,7 @@ Version 0.5.3 omfatter 120 API-operationer. GetUnits tilføjer en autoriseret en
 
 [API-kontraktens changelog](https://api.team.kombine.technology/docs#changelog) — brug `/docs#changelog` på samme tenant-API og miljø som klienten. Changelog er kun på engelsk.
 
-Version **0.5.3**, klargjort lokalt; ikke deployet eller udgivet på Packagist. Indeholder 120 offentlige operationer fra den medfølgende OpenAPI-kontrakt. Kræver **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS og betroede CA-certifikater. Ingen ekstra PHP-biblioteker eller interne Kombine-DLL'er kræves. Transporten understøtter Windows, Linux og macOS; denne version er testet med Windows CLI. Brug en PHP-version, der fortsat understøttes.
+Version **0.6.1**, klargjort lokalt; ikke deployet eller udgivet på Packagist. Indeholder 131 offentlige operationer fra den medfølgende OpenAPI-kontrakt. Kræver **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS og betroede CA-certifikater. Ingen ekstra PHP-biblioteker eller interne Kombine-DLL'er kræves. Transporten understøtter Windows, Linux og macOS; denne version er testet med Windows CLI. Brug en PHP-version, der fortsat understøttes.
 
 Version 0.3.1 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer. Version 0.2.5 tilføjer de valgfrie felter latestPostingMs2000 og hasActiveSubscription til GetBankUserBalances. Posteringstidspunktet er et 64-bit antal UTC-millisekunder siden 2000-01-01; nul betyder ingen posteringer. Null eller et manglende felt betyder ukendt, og manglende eller skjulte beboere giver null. Abonnementsstatus bekræfter ikke en betaling. Bevar eksisterende saldohåndtering og rettigheder; se /docs#user-balances. Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser. Version 0.2.5 tilføjer GetUserReceipts og GetHostingMetrics til API-releases, som tilbyder disse operationer. Indlæs kvitteringer efter behov fra offset 0. Fortsæt med nextOffset og samme revision; ved HTTP 409 (receipts-changed) skal tidligere sider kasseres, og indlæsningen genstartes ved offset 0. Hold valutaer adskilt og beløb som 64-bit heltal i mindste valutaenhed. Se /docs#user-receipts og /docs#hosting for rettigheder og grænser.
 
@@ -16,11 +16,11 @@ Til denne beta-kandidat skal svarfelterne icon/bankIcon/unitIcon ændres til ico
 
 ## Installation
 
-Hent `kombine-flex-portal-client-php-0.5.3.zip` fra API-vejledningens PHP-afsnit. Med Composer lægges ZIP-filen i applikationens `packages/`-mappe:
+Hent `kombine-flex-portal-client-php-0.6.1.zip` fra API-vejledningens PHP-afsnit. Med Composer lægges ZIP-filen i applikationens `packages/`-mappe:
 
 ```sh
 composer config repositories.kombine artifact ./packages
-composer require kombine/flex-portal-client:0.5.3
+composer require kombine/flex-portal-client:0.6.1
 ```
 
 Composers artifact-kilde kræver `ext-zip` under installationen. Uden Composer udpakkes ZIP-filen i `flex-portal-client/`; erstat autoload-linjen nedenfor med `require __DIR__ . '/flex-portal-client/autoload.php';`. Behold hele `src/`, inklusive `contract.json`. Begge pakker kan indlæses sammen.
@@ -96,3 +96,6 @@ Standardgrænser: 30 sekunder for hele kaldet, højst 10 sekunder til forbindels
 ## Bygning og kontrol
 
 Til vedligeholdere: `scripts/Update-PhpClients.ps1` eksporterer metadata fra den aktuelle API-kode uden at starte API-jobs eller tilgå databaser og genererer derefter PHP. `scripts/Test-PhpClients.ps1` kontrollerer generering, tester alle operationer mod lokale HTTP-fixtures, bygger deterministiske ZIP-filer, tester de udpakkede pakker og kopierer kun PHP-downloads til begge API'er. De øvrige klienter beholder deres egne udgivelseskontrakter. Der udføres ingen publicering eller deployment.
+
+
+GetTerminals bruger rapporteret ComputerName til navn, filtrering og sortering; manglende navne er tomme. Bed om fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight for terminaldata. Værdier er strenge, null ved fravalg og tomme ved manglende data. Behold fields under sideskift, og genstart gamle cursors. Lokationsnavne følger altid med. Se /docs#changelog for alle migreringskrav.

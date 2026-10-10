@@ -74,3 +74,6 @@ Límites predeterminados: 30 segundos por llamada completa, hasta 10 segundos de
 ## Compilación y verificación
 
 Para mantenedores: `scripts/Update-PhpClients.ps1` exporta metadatos del código API actual sin iniciar trabajos ni acceder a bases de datos y genera PHP. `scripts/Test-PhpClients.ps1` comprueba la generación, prueba todas las operaciones con fixtures HTTP locales, crea ZIP deterministas, prueba los paquetes extraídos y copia únicamente las descargas PHP a ambas API. Los demás clientes conservan sus propios contratos de versión. No se publica en registros ni se despliega.
+
+
+GetTerminals usa el ComputerName comunicado para el nombre, el filtro y la ordenación; los nombres ausentes están vacíos. Solicite fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight para los datos del terminal. Son cadenas, null si no se seleccionan y vacías si faltan. Mantenga fields al paginar y reinicie los cursores anteriores. Cada fila incluye el nombre de la ubicación. Consulte /docs#changelog para todos los requisitos de migración.

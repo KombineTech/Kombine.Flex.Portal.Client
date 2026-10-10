@@ -59,6 +59,14 @@ export interface AccountEntryResponse {
   "paymentKind"?: string | null;
 }
 
+/** Most frequent authorized currency and the ready-to-render Forbrug icon. */
+export interface AccountIconResponse {
+  /** currency */
+  "currency"?: string | null;
+  /** iconKid */
+  "iconKid"?: string | null;
+}
+
 /** Filtered postings, full-selection totals and server-resolved query defaults. No computed resident balance is implied. */
 export interface AccountResponse {
   /** items */
@@ -117,11 +125,27 @@ export interface AccountUnitResponse {
   "name"?: string | null;
 }
 
+/** Accessible bank count for Enabled=1 and Deleted=0. */
+export interface ActiveBankCountResponse {
+  /** count */
+  "count"?: bigint;
+  /** Tab icon containing the authorized count. */
+  "iconKid"?: string | null;
+}
+
 /** Number of accessible locations with Enabled=1 and Deleted=0, independent of search and paging. */
 export interface ActiveLocationCountResponse {
   /** count */
   "count"?: bigint;
-  /** Ready-to-render Banks2 icon with Count in Kid.Count. */
+  /** Ready-to-render Locations1 icon with Count in Kid.Count. */
+  "iconKid"?: string | null;
+}
+
+/** Accessible active units or terminals, independent of search and paging, with a ready-to-render navigation icon. */
+export interface ActiveUnitCountResponse {
+  /** count */
+  "count"?: bigint;
+  /** iconKid */
   "iconKid"?: string | null;
 }
 
@@ -163,6 +187,36 @@ export interface AssistantResponse {
   "operations"?: (string)[] | null;
   /** links */
   "links"?: (AssistantLink)[] | null;
+}
+
+/** Canonical bank identity, display metadata and stored state. */
+export interface BankDirectoryItem {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** iconKid */
+  "iconKid"?: string | null;
+  /** enabled */
+  "enabled"?: boolean;
+  /** deleted */
+  "deleted"?: boolean | null;
+  /** deletedAt */
+  "deletedAt"?: string | null;
+  /** Requested bank-level settings; null when scope does not authorize their disclosure. bankActivationCode additionally requires whole-tenant access and Bank Create. */
+  "fields"?: Record<string, string | null> | null;
+}
+
+/** A bounded bank page and optional protected continuation. */
+export interface BankDirectoryResponse {
+  /** items */
+  "items"?: (BankDirectoryItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** Selected optional field keys. Keep the same selection when following the cursor. */
+  "fields"?: (string)[] | null;
+  /** Whether this caller may display, search and sort bank activation codes. */
+  "canReadBankActivationCode"?: boolean;
 }
 
 /** One document identity with authorized display metadata and the latest matching Cycle time. */
@@ -541,7 +595,7 @@ export interface InstallerDetailsResponse {
   "availableIcons"?: (string)[] | null;
 }
 
-/** Installer metadata from the site's Log7 with BankId=TenantId. Kid is canonical with type Installer; clients can derive the display UserId from it. Missing Enabled is null. DeletedAt and LastActiveAt are UTC; LastActiveAt is the Alive krumb's MS2000, not its Text. No credentials are returned. */
+/** Installer metadata from the site's Log7 with BankId=TenantId. Kid is canonical with type Installer; clients can derive the display UserId from it. Missing Enabled is null. DeletedAt and LastActiveAt are UTC; LastActiveAt is the Alive krumb's MS2000, not its Text. Passwords are never returned. */
 export interface InstallerDirectoryItem {
   /** kid */
   "kid"?: string | null;
@@ -561,6 +615,8 @@ export interface InstallerDirectoryItem {
   "enabled"?: boolean | null;
   /** lastActiveAt */
   "lastActiveAt"?: string | null;
+  /** User activation code, only when explicitly requested with Installer Create permission. */
+  "activationCode"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
 }
@@ -1015,12 +1071,14 @@ export interface ManagerPermissionChangeRequest {
 
 /** Apply a server-defined role to the complete permission matrix. */
 export interface ManagerPermissionRoleRequest {
-  /** accounting, caretaker or operator; case-sensitive, required. */
+  /** accounting, caretaker, operator, technical-support, tenant-accounting or combine; case-sensitive, required. */
   "role": string | null;
   /** Exactly Managers, Installer, Service, Bank, Location, Unit, User, Tabs and Kids with last displayed flags. Explicit null represents an invalid stored mask. */
   "expectedFlags": Record<string, number | null> | null;
-  /** Required for accounting: tabsRevision from GetManager or the last acknowledged edit. Other roles keep tabs unchanged. */
+  /** Required for accounting and combine: tabsRevision from GetManager or the last acknowledged edit. */
   "expectedTabsRevision"?: string | null;
+  /** Required for combine: kidsRevision from GetManager or the last acknowledged edit. */
+  "expectedKidsRevision"?: string | null;
 }
 
 /** The acknowledged preset and complete persisted permission matrix. */
@@ -1037,6 +1095,12 @@ export interface ManagerPermissionRoleResponse {
   "tabsRevision"?: string | null;
   /** False when the change removes your required Managers access. */
   "canEditTabs"?: boolean;
+  /** Authoritative resource grants after the role assignment. */
+  "resourceGrants"?: (ManagerResourceGrantResponse)[] | null;
+  /** Revision for the next resource-grant edit. */
+  "kidsRevision"?: string | null;
+  /** Whether the caller retains permission to edit resource grants. */
+  "canEditKids"?: boolean;
 }
 
 /** One desired profile value plus the profile revision last shown to the caller. */
@@ -1249,6 +1313,14 @@ export interface OpeningHoursUnit {
   "kid"?: string | null;
   /** name */
   "name"?: string | null;
+}
+
+/** Authorized count and red badge icon; each operation documents its cache age and precision. */
+export interface PeopleDirectoryCount {
+  /** count */
+  "count"?: bigint;
+  /** iconKid */
+  "iconKid"?: string | null;
 }
 
 /** Stable success/error code, containing no secrets. */
@@ -1651,9 +1723,25 @@ export interface UnitDirectoryItem {
   "latitude"?: number | null;
   /** longitude */
   "longitude"?: number | null;
+  /** Requested terminal eState.VersionMinor as decoded text; null unless selected, empty when absent. */
+  "versionMinor"?: string | null;
+  /** Requested terminal eState.BootReason as decoded text; null unless selected, empty when absent. */
+  "bootReason"?: string | null;
+  /** Requested terminal eSetting.Booted as decoded text; null unless selected, empty when absent. */
+  "booted"?: string | null;
+  /** Requested terminal eState.Firmware as decoded text; null unless selected, empty when absent. */
+  "firmware"?: string | null;
+  /** Requested terminal eState.StorageCardSerialNumber as decoded text; null unless selected, empty when absent. */
+  "storageCardSerialNumber"?: string | null;
+  /** Requested terminal eState.Page as decoded text; null unless selected, empty when absent. */
+  "page"?: string | null;
+  /** Requested terminal eState.BackLight as decoded text; null unless selected, empty when absent. */
+  "backLight"?: string | null;
+  /** terminal */
+  "terminal"?: UnitTerminalResponse;
 }
 
-/** A scoped Units1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location. */
+/** A scoped Units1 or Terminals1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location. */
 export interface UnitDirectoryResponse {
   /** items */
   "items"?: (UnitDirectoryItem)[] | null;
@@ -1753,6 +1841,8 @@ export interface UnitOverviewResponse {
   "iconKid"?: string | null;
   /** progress */
   "progress"?: UnitProgressResponse;
+  /** terminal */
+  "terminal"?: UnitTerminalResponse;
 }
 
 /** API-calculated progress. Percent and remaining time are estimates, not hardware completion signals. */
@@ -1839,6 +1929,16 @@ export interface UnitSettingResponse {
   "sync"?: number | null;
   /** changedBy */
   "changedBy"?: UnitSettingEditorResponse;
+}
+
+/** Visible authorized main terminal identified by a canonical unit KID; no extra access is granted. */
+export interface UnitTerminalResponse {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** API-computed main-unit icon identity, including its unit number. */
+  "iconKid"?: string | null;
 }
 
 /** Both address components and the last observed revision are required. */
@@ -1953,6 +2053,32 @@ export interface UserCurrencyBalanceItem {
   "previousPeriod"?: number | null;
   /** previousPeriodIsProvisional */
   "previousPeriodIsProvisional"?: boolean;
+}
+
+/** Resident and parent bank identities with display metadata only. */
+export interface UserDirectoryItem {
+  /** kid */
+  "kid"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** number */
+  "number"?: string | null;
+  /** iconKid */
+  "iconKid"?: string | null;
+  /** deletedAt */
+  "deletedAt"?: string | null;
+}
+
+/** Authorized resident page. A short page may still have a continuation. */
+export interface UserDirectoryResponse {
+  /** items */
+  "items"?: (UserDirectoryItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** scanLimitReached */
+  "scanLimitReached"?: boolean;
 }
 
 /** A location KID, Access/NoAccess state and eIcon name (default house), cached up to 60 seconds. Location-scoped managers see only their locations. */
@@ -2226,6 +2352,17 @@ export interface GetBankAccountRevisionOptions {
   limit?: number;
 }
 
+export interface GetBanksOptions {
+  pageSize?: number;
+  cursor?: string;
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+  fields?: string;
+  bankType?: string;
+}
+
 export interface GetBankDocumentsOptions {
   locationKid?: string;
   unitKid?: string;
@@ -2326,6 +2463,11 @@ export interface GetInstallersOptions {
   filter?: string;
   sort?: string;
   direction?: string;
+  includeActivationCode?: boolean;
+}
+
+export interface GetActiveLocationCountOptions {
+  bankKid?: string;
 }
 
 export interface GetLocationsOptions {
@@ -2337,6 +2479,7 @@ export interface GetLocationsOptions {
   enabledOnly?: boolean;
   fields?: string;
   includeCoordinates?: boolean;
+  bankKid?: string;
 }
 
 export interface SearchLocationsOptions {
@@ -2438,10 +2581,34 @@ export interface GetUnitsOptions {
   enabledOnly?: boolean;
   fields?: string;
   includeCoordinates?: boolean;
+  locationKid?: string;
+  terminalKid?: string;
+}
+
+export interface GetTerminalsOptions {
+  pageSize?: number;
+  cursor?: string;
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+  fields?: string;
+  includeCoordinates?: boolean;
+  locationKid?: string;
+  terminalKid?: string;
 }
 
 export interface GetBankNextUserNumberOptions {
   userNumber?: string;
+}
+
+export interface GetUsersOptions {
+  pageSize?: number;
+  cursor?: string;
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
 }
 
 export interface GetUserReceiptsOptions {

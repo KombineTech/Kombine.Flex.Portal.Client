@@ -3,6 +3,11 @@ import { BaseClient, PortalDownload, type RequestOptions } from "./runtime.js";
 import type * as Models from "./models.js";
 
 export class PortalClient extends BaseClient {
+  /** Resolve the Forbrug icon text from the most frequent authorized Log1 currency. */
+  getBankAccountIcon(bankKid: string, request: RequestOptions = {}): Promise<Models.AccountIconResponse> {
+    return this.send("GetBankAccountIcon", {"bankKid": bankKid}, undefined, request) as Promise<Models.AccountIconResponse>;
+  }
+
   /** Lists Account2 postings with full-selection totals per currency. */
   getBankAccount(bankKid: string, options: Models.GetBankAccountOptions = {}, request: RequestOptions = {}): Promise<Models.AccountResponse> {
     return this.send("GetBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountResponse>;
@@ -46,6 +51,16 @@ export class PortalClient extends BaseClient {
   /** Ask the portal assistant to discover and combine approved read operations. */
   askPortalAssistant(body: Models.AssistantRequest, request: RequestOptions = {}): Promise<Models.AssistantResponse> {
     return this.send("AskPortalAssistant", {}, body, request) as Promise<Models.AssistantResponse>;
+  }
+
+  /** List authorized bank identities for Banks2 with selected metadata and stable global ordering. */
+  getBanks(options: Models.GetBanksOptions = {}, request: RequestOptions = {}): Promise<Models.BankDirectoryResponse> {
+    return this.send("GetBanks", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "bankType": options.bankType}, undefined, request) as Promise<Models.BankDirectoryResponse>;
+  }
+
+  /** Count accessible active banks for the Banks2 navigation icon. */
+  getActiveBankCount(request: RequestOptions = {}): Promise<Models.ActiveBankCountResponse> {
+    return this.send("GetActiveBankCount", {}, undefined, request) as Promise<Models.ActiveBankCountResponse>;
   }
 
   /** Search WashDoc document identities by location, unit and time without loading measurements. */
@@ -140,7 +155,7 @@ export class PortalClient extends BaseClient {
 
   /** List installers with locations, tags, account state and last activity. */
   getInstallers(options: Models.GetInstallersOptions = {}, request: RequestOptions = {}): Promise<Models.InstallerDirectoryResponse> {
-    return this.send("GetInstallers", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction}, undefined, request) as Promise<Models.InstallerDirectoryResponse>;
+    return this.send("GetInstallers", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "includeActivationCode": options.includeActivationCode}, undefined, request) as Promise<Models.InstallerDirectoryResponse>;
   }
 
   /** Read one installer and the same Person icon catalog used for administrators. */
@@ -153,14 +168,14 @@ export class PortalClient extends BaseClient {
     return this.send("GetLiveLogs", {}, undefined, request) as Promise<Models.LiveLogsResponse>;
   }
 
-  /** Count accessible active locations for the Banks2 navigation icon. */
-  getActiveLocationCount(request: RequestOptions = {}): Promise<Models.ActiveLocationCountResponse> {
-    return this.send("GetActiveLocationCount", {}, undefined, request) as Promise<Models.ActiveLocationCountResponse>;
+  /** Count accessible active locations for the Locations1 navigation icon. */
+  getActiveLocationCount(options: Models.GetActiveLocationCountOptions = {}, request: RequestOptions = {}): Promise<Models.ActiveLocationCountResponse> {
+    return this.send("GetActiveLocationCount", {"bankKid": options.bankKid}, undefined, request) as Promise<Models.ActiveLocationCountResponse>;
   }
 
   /** List accessible locations with parent banks, Visma customer numbers and authorized activation codes. */
   getLocations(options: Models.GetLocationsOptions = {}, request: RequestOptions = {}): Promise<Models.LocationDirectoryResponse> {
-    return this.send("GetLocations", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates}, undefined, request) as Promise<Models.LocationDirectoryResponse>;
+    return this.send("GetLocations", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "bankKid": options.bankKid}, undefined, request) as Promise<Models.LocationDirectoryResponse>;
   }
 
   /** Search location Name, Bank (alternative bank name), Zip, Address, VismaCustNo and TeltonikaSMS in Log24. */
@@ -293,6 +308,16 @@ export class PortalClient extends BaseClient {
     return this.send("SetCurrentManagerTheme", {}, body, request) as Promise<Models.ManagerThemeResponse>;
   }
 
+  /** Count all visible administrators, independently of the current page/filter. */
+  getManagerCount(request: RequestOptions = {}): Promise<Models.PeopleDirectoryCount> {
+    return this.send("GetManagerCount", {}, undefined, request) as Promise<Models.PeopleDirectoryCount>;
+  }
+
+  /** Count all visible installers, independently of the current page/filter. */
+  getInstallerCount(request: RequestOptions = {}): Promise<Models.PeopleDirectoryCount> {
+    return this.send("GetInstallerCount", {}, undefined, request) as Promise<Models.PeopleDirectoryCount>;
+  }
+
   /** Read your own personal settings and available person icons. */
   getMyManagerProfile(request: RequestOptions = {}): Promise<Models.PersonalManagerProfile> {
     return this.send("GetMyManagerProfile", {}, undefined, request) as Promise<Models.PersonalManagerProfile>;
@@ -331,6 +356,11 @@ export class PortalClient extends BaseClient {
   /** List concrete service enum identities, including services without saved settings. */
   getServices(options: Models.GetServicesOptions = {}, request: RequestOptions = {}): Promise<Models.ServiceDirectoryResponse> {
     return this.send("GetServices", {"filter": options.filter, "sort": options.sort, "direction": options.direction}, undefined, request) as Promise<Models.ServiceDirectoryResponse>;
+  }
+
+  /** Count the predefined service identities without reading service settings. */
+  getServiceCount(request: RequestOptions = {}): Promise<Models.PeopleDirectoryCount> {
+    return this.send("GetServiceCount", {}, undefined, request) as Promise<Models.PeopleDirectoryCount>;
   }
 
   /** Read one predefined service, editable metadata and its icon catalog. */
@@ -383,9 +413,24 @@ export class PortalClient extends BaseClient {
     return this.send("GetUnitDocumentSvg", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "width": options.width}, undefined, request) as Promise<PortalDownload>;
   }
 
+  /** Count accessible active units for the Units1 navigation icon. */
+  getActiveUnitCount(request: RequestOptions = {}): Promise<Models.ActiveUnitCountResponse> {
+    return this.send("GetActiveUnitCount", {}, undefined, request) as Promise<Models.ActiveUnitCountResponse>;
+  }
+
+  /** Count accessible active terminals for the Terminals1 navigation icon. */
+  getActiveTerminalCount(request: RequestOptions = {}): Promise<Models.ActiveUnitCountResponse> {
+    return this.send("GetActiveTerminalCount", {}, undefined, request) as Promise<Models.ActiveUnitCountResponse>;
+  }
+
   /** List authorized units, including child units, for Units1. */
   getUnits(options: Models.GetUnitsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDirectoryResponse> {
-    return this.send("GetUnits", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
+    return this.send("GetUnits", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "locationKid": options.locationKid, "terminalKid": options.terminalKid}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
+  }
+
+  /** List authorized main units for Terminals1. */
+  getTerminals(options: Models.GetTerminalsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDirectoryResponse> {
+    return this.send("GetTerminals", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "locationKid": options.locationKid, "terminalKid": options.terminalKid}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
   }
 
   /** Save one editable current-unit setting with revision protection. */
@@ -421,6 +466,16 @@ export class PortalClient extends BaseClient {
   /** Execute profile, icon, attributes, tag, location, delete, restore or replace with the revision from GetBankUserWorkspace. */
   executeBankUserCommand(bankKid: string, userKid: string, body: Models.UserCommandRequest, request: RequestOptions = {}): Promise<Models.UserWorkspaceResponse> {
     return this.send("ExecuteBankUserCommand", {"bankKid": bankKid, "userKid": userKid}, body, request) as Promise<Models.UserWorkspaceResponse>;
+  }
+
+  /** List authorized residents for UserFinder1 (77). */
+  getUsers(options: Models.GetUsersOptions = {}, request: RequestOptions = {}): Promise<Models.UserDirectoryResponse> {
+    return this.send("GetUsers", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly}, undefined, request) as Promise<Models.UserDirectoryResponse>;
+  }
+
+  /** Count active authorized residents for the UserFinder1 badge. */
+  getUserCount(request: RequestOptions = {}): Promise<Models.PeopleDirectoryCount> {
+    return this.send("GetUserCount", {}, undefined, request) as Promise<Models.PeopleDirectoryCount>;
   }
 
   /** Read complete receipts for one resident, newest first, twenty receipts at a time. */

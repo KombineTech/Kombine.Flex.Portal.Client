@@ -14,6 +14,12 @@ array{'key'?: string|null, 'docId'?: int|null, 'lines'?: list<AccountEntryRespon
 array{'kid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'userKid'?: string|null, 'recordedAtUtc'?: string, 'amountMinor'?: int, 'currency'?: string|null, 'description'?: string|null, 'transactionType'?: string|null, 'period'?: int, 'reversed'?: bool, 'reversalOfKid'?: string|null, 'userName'?: string|null, 'userNumber'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'canReverse'?: bool, 'unitIconKid'?: string|null, 'documentKey'?: string|null, 'documentId'?: int|null, 'isAnonymized'?: bool, 'paymentKind'?: string|null}
 ```
 
+### AccountIconResponse
+
+```php
+array{'currency'?: string|null, 'iconKid'?: string|null}
+```
+
 ### AccountResponse
 
 ```php
@@ -38,7 +44,19 @@ array{'currency'?: string|null, 'entries'?: int, 'amountMinor'?: int}
 array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: string|null, 'name'?: string|null}
 ```
 
+### ActiveBankCountResponse
+
+```php
+array{'count'?: int, 'iconKid'?: string|null}
+```
+
 ### ActiveLocationCountResponse
+
+```php
+array{'count'?: int, 'iconKid'?: string|null}
+```
+
+### ActiveUnitCountResponse
 
 ```php
 array{'count'?: int, 'iconKid'?: string|null}
@@ -66,6 +84,18 @@ array{'question': string, 'history'?: list<AssistantMessage>|null}
 
 ```php
 array{'answer'?: string|null, 'operations'?: list<string>|null, 'links'?: list<AssistantLink>|null}
+```
+
+### BankDirectoryItem
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'fields'?: array<string,mixed>|null}
+```
+
+### BankDirectoryResponse
+
+```php
+array{'items'?: list<BankDirectoryItem>|null, 'nextCursor'?: string|null, 'fields'?: list<string>|null, 'canReadBankActivationCode'?: bool}
 ```
 
 ### BankDocumentItem
@@ -233,7 +263,7 @@ array{'installer'?: InstallerDirectoryItem, 'canEditIcon'?: bool, 'iconRevision'
 ### InstallerDirectoryItem
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'email'?: string|null, 'locations'?: list<InstallerLocationResponse>|null, 'tags'?: list<InstallerTagResponse>|null, 'deleted'?: bool, 'deletedAt'?: string|null, 'enabled'?: bool|null, 'lastActiveAt'?: string|null, 'iconKid'?: string|null}
+array{'kid'?: string|null, 'name'?: string|null, 'email'?: string|null, 'locations'?: list<InstallerLocationResponse>|null, 'tags'?: list<InstallerTagResponse>|null, 'deleted'?: bool, 'deletedAt'?: string|null, 'enabled'?: bool|null, 'lastActiveAt'?: string|null, 'activationCode'?: string|null, 'iconKid'?: string|null}
 ```
 
 ### InstallerDirectoryResponse
@@ -431,13 +461,13 @@ array{'flag'?: int|null, 'enabled'?: bool|null, 'expectedFlags': int|null}
 ### ManagerPermissionRoleRequest
 
 ```php
-array{'role': string|null, 'expectedFlags': array<string,mixed>|null, 'expectedTabsRevision'?: string|null}
+array{'role': string|null, 'expectedFlags': array<string,mixed>|null, 'expectedTabsRevision'?: string|null, 'expectedKidsRevision'?: string|null}
 ```
 
 ### ManagerPermissionRoleResponse
 
 ```php
-array{'role'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'canEditPermissions'?: bool, 'tabs'?: list<ManagerTabResponse>|null, 'tabsRevision'?: string|null, 'canEditTabs'?: bool}
+array{'role'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'canEditPermissions'?: bool, 'tabs'?: list<ManagerTabResponse>|null, 'tabsRevision'?: string|null, 'canEditTabs'?: bool, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool}
 ```
 
 ### ManagerProfileChangeRequest
@@ -534,6 +564,12 @@ array{'label'?: string|null, 'status'?: string|null, 'opens'?: string|null, 'clo
 
 ```php
 array{'kid'?: string|null, 'name'?: string|null}
+```
+
+### PeopleDirectoryCount
+
+```php
+array{'count'?: int, 'iconKid'?: string|null}
 ```
 
 ### PersonalAccountResult
@@ -713,7 +749,7 @@ array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'descrip
 ### UnitDirectoryItem
 
 ```php
-array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null, 'versionMinor'?: string|null, 'bootReason'?: string|null, 'booted'?: string|null, 'firmware'?: string|null, 'storageCardSerialNumber'?: string|null, 'page'?: string|null, 'backLight'?: string|null, 'terminal'?: UnitTerminalResponse}
 ```
 
 ### UnitDirectoryResponse
@@ -749,7 +785,7 @@ array{'items'?: list<UnitIconResponse>|null}
 ### UnitOverviewResponse
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'cycle'?: string|null, 'cycleText'?: string|null, 'unitType'?: int|null, 'unitTypeName'?: string|null, 'unitTypeSource'?: string|null, 'iconKid'?: string|null, 'progress'?: UnitProgressResponse}
+array{'kid'?: string|null, 'name'?: string|null, 'cycle'?: string|null, 'cycleText'?: string|null, 'unitType'?: int|null, 'unitTypeName'?: string|null, 'unitTypeSource'?: string|null, 'iconKid'?: string|null, 'progress'?: UnitProgressResponse, 'terminal'?: UnitTerminalResponse}
 ```
 
 ### UnitProgressResponse
@@ -792,6 +828,12 @@ array{'value': string|null, 'expectedRevision': string|null}
 
 ```php
 array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, 'value'?: string|null, 'ms2000'?: int, 'revision'?: string|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse}
+```
+
+### UnitTerminalResponse
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
 ```
 
 ### UpdateObjectAddressRequest
@@ -846,6 +888,18 @@ array{'action'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'n
 
 ```php
 array{'currency'?: string|null, 'currentBalanceMinor'?: int, 'previousBalanceMinor'?: int|null, 'previousPeriod'?: int|null, 'previousPeriodIsProvisional'?: bool}
+```
+
+### UserDirectoryItem
+
+```php
+array{'kid'?: string|null, 'bankKid'?: string|null, 'name'?: string|null, 'number'?: string|null, 'iconKid'?: string|null, 'deletedAt'?: string|null}
+```
+
+### UserDirectoryResponse
+
+```php
+array{'items'?: list<UserDirectoryItem>|null, 'nextCursor'?: string|null, 'scanLimitReached'?: bool}
 ```
 
 ### UserLocationResponse

@@ -2,6 +2,7 @@
 
 | Operation ID | Python | JavaScript/TypeScript | HTTP | Path |
 | --- | --- | --- | --- | --- |
+| `GetBankAccountIcon` | `get_bank_account_icon` | `getBankAccountIcon` | GET | `/api/v1/banks/{bankKid}/account/icon` |
 | `GetBankAccount` | `get_bank_account` | `getBankAccount` | GET | `/api/v1/banks/{bankKid}/account` |
 | `GetBankAccountRevision` | `get_bank_account_revision` | `getBankAccountRevision` | GET | `/api/v1/banks/{bankKid}/account/revision` |
 | `ReverseBankAccountEntry` | `reverse_bank_account_entry` | `reverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` |
@@ -11,6 +12,8 @@
 | `SetObjectCoordinates` | `set_object_coordinates` | `setObjectCoordinates` | PUT | `/api/v1/addresses/{kid}/coordinates` |
 | `SetObjectCoordinateProvenance` | `set_object_coordinate_provenance` | `setObjectCoordinateProvenance` | PUT | `/api/v1/addresses/{kid}/provenance` |
 | `AskPortalAssistant` | `ask_portal_assistant` | `askPortalAssistant` | POST | `/api/v1/assistant/query` |
+| `GetBanks` | `get_banks` | `getBanks` | GET | `/api/v1/banks` |
+| `GetActiveBankCount` | `get_active_bank_count` | `getActiveBankCount` | GET | `/api/v1/banks/active-count` |
 | `GetBankDocuments` | `get_bank_documents` | `getBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` |
 | `GetBankIcons` | `get_bank_icons` | `getBankIcons` | GET | `/api/v1/banks/icons` |
 | `GetBankLocations` | `get_bank_locations` | `getBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` |
@@ -60,6 +63,8 @@
 | `GetCurrentManager` | `get_current_manager` | `getCurrentManager` | GET | `/api/v1/session/me` |
 | `SetManagerTab` | `set_manager_tab` | `setManagerTab` | POST | `/api/v1/managers/{managerKid}/tabs/{tabId}` |
 | `SetCurrentManagerTheme` | `set_current_manager_theme` | `setCurrentManagerTheme` | POST | `/api/v1/session/me/theme` |
+| `GetManagerCount` | `get_manager_count` | `getManagerCount` | GET | `/api/v1/managers/count` |
+| `GetInstallerCount` | `get_installer_count` | `getInstallerCount` | GET | `/api/v1/installers/count` |
 | `GetMyManagerProfile` | `get_my_manager_profile` | `getMyManagerProfile` | GET | `/api/v1/session/me/profile` |
 | `GetMyManagerTabs` | `get_my_manager_tabs` | `getMyManagerTabs` | GET | `/api/v1/session/me/tabs` |
 | `SetMyManagerTab` | `set_my_manager_tab` | `setMyManagerTab` | POST | `/api/v1/session/me/tabs/{tabId}` |
@@ -68,6 +73,7 @@
 | `ConfirmMyManagerEmail` | `confirm_my_manager_email` | `confirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` |
 | `ChangeMyManagerPassword` | `change_my_manager_password` | `changeMyManagerPassword` | POST | `/api/v1/session/me/password` |
 | `GetServices` | `get_services` | `getServices` | GET | `/api/v1/services` |
+| `GetServiceCount` | `get_service_count` | `getServiceCount` | GET | `/api/v1/services/count` |
 | `GetService` | `get_service` | `getService` | GET | `/api/v1/services/{serviceKid}` |
 | `SetServiceProfileField` | `set_service_profile_field` | `setServiceProfileField` | POST | `/api/v1/services/{serviceKid}/profile/{field}` |
 | `GenerateServiceApiKey` | `generate_service_api_key` | `generateServiceApiKey` | POST | `/api/v1/services/{serviceKid}/api-key` |
@@ -78,7 +84,10 @@
 | `GetUnitDocumentTable` | `get_unit_document_table` | `getUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` |
 | `GetUnitDocumentHtml` | `get_unit_document_html` | `getUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` |
 | `GetUnitDocumentSvg` | `get_unit_document_svg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
+| `GetActiveUnitCount` | `get_active_unit_count` | `getActiveUnitCount` | GET | `/api/v1/units/active-count` |
+| `GetActiveTerminalCount` | `get_active_terminal_count` | `getActiveTerminalCount` | GET | `/api/v1/terminals/active-count` |
 | `GetUnits` | `get_units` | `getUnits` | GET | `/api/v1/units` |
+| `GetTerminals` | `get_terminals` | `getTerminals` | GET | `/api/v1/terminals` |
 | `SetUnitSetting` | `set_unit_setting` | `setUnitSetting` | POST | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}` |
 | `GetBankUserBalances` | `get_bank_user_balances` | `getBankUserBalances` | POST | `/api/v1/banks/{bankKid}/users/balances` |
 | `GetBankUserNumberForNewUser` | `get_bank_user_number_for_new_user` | `getBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` |
@@ -86,6 +95,8 @@
 | `GetBankUserWorkspace` | `get_bank_user_workspace` | `getBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
 | `GetBankUserActivation` | `get_bank_user_activation` | `getBankUserActivation` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` |
 | `ExecuteBankUserCommand` | `execute_bank_user_command` | `executeBankUserCommand` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` |
+| `GetUsers` | `get_users` | `getUsers` | GET | `/api/v1/users` |
+| `GetUserCount` | `get_user_count` | `getUserCount` | GET | `/api/v1/users/count` |
 | `GetUserReceipts` | `get_user_receipts` | `getUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
 | `SearchUsers` | `search_users` | `searchUsers` | GET | `/api/v1/search/users` |
 | `SearchUserSms` | `search_user_sms` | `searchUserSms` | GET | `/api/v1/search/user-sms` |

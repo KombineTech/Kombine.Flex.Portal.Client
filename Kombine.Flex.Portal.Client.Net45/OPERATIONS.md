@@ -17,7 +17,11 @@
 | `ExportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` |
 | `GenerateServiceApiKey` | POST | `/api/v1/services/{serviceKid}/api-key` |
+| `GetActiveBankCount` | GET | `/api/v1/banks/active-count` |
 | `GetActiveLocationCount` | GET | `/api/v1/locations/active-count` |
+| `GetActiveTerminalCount` | GET | `/api/v1/terminals/active-count` |
+| `GetActiveUnitCount` | GET | `/api/v1/units/active-count` |
+| `GetBankAccountIcon` | GET | `/api/v1/banks/{bankKid}/account/icon` |
 | `GetBankAccountRevision` | GET | `/api/v1/banks/{bankKid}/account/revision` |
 | `GetBankAccount` | GET | `/api/v1/banks/{bankKid}/account` |
 | `GetBankBookings` | GET | `/api/v1/banks/{bankKid}/bookings` |
@@ -32,6 +36,7 @@
 | `GetBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` |
 | `GetBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
 | `GetBankUsers` | GET | `/api/v1/banks/{bankKid}/users` |
+| `GetBanks` | GET | `/api/v1/banks` |
 | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` |
 | `GetCircleGradient` | GET | `/api/v1/circles/gradient/{colors}.svg` |
 | `GetCircleProgressSized` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg` |
@@ -46,6 +51,7 @@
 | `GetIconImageFromSet` | GET | `/api/v1/icon/{iconSet}/{kid}/{size}.{format}` |
 | `GetIconImageWithBackgroundFromSet` | GET | `/api/v1/icon/{iconSet}/{kid}/{backColor}/{size}.{format}` |
 | `GetIconPresentation` | GET | `/api/v1/icon/presentation` |
+| `GetInstallerCount` | GET | `/api/v1/installers/count` |
 | `GetInstaller` | GET | `/api/v1/installers/{installerKid}` |
 | `GetInstallers` | GET | `/api/v1/installers` |
 | `GetKombineLogoPartsSized` | GET | `/api/v1/logos/kombine/{parts}/{color}/{width}.svg` |
@@ -68,6 +74,7 @@
 | `GetLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` |
 | `GetLocationUnits` | GET | `/api/v1/locations/{locationKid}/units` |
 | `GetLocations` | GET | `/api/v1/locations` |
+| `GetManagerCount` | GET | `/api/v1/managers/count` |
 | `GetManager` | GET | `/api/v1/managers/{managerKid}` |
 | `GetManagersWithSameEmail` | GET | `/api/v1/managers/{managerKid}/same-email` |
 | `GetManagers` | GET | `/api/v1/managers` |
@@ -80,10 +87,12 @@
 | `GetPublicDisp73` | GET | `/api/v1/public/displays/Map1` |
 | `GetPublicPurchases` | GET | `/api/v1/public/statistics/purchases` |
 | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` |
+| `GetServiceCount` | GET | `/api/v1/services/count` |
 | `GetService` | GET | `/api/v1/services/{serviceKid}` |
 | `GetServices` | GET | `/api/v1/services` |
 | `GetTenantStatusPage` | GET | `/api/v1/tenant/status/page` |
 | `GetTenantStatus` | GET | `/api/v1/tenant/status` |
+| `GetTerminals` | GET | `/api/v1/terminals` |
 | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` |
 | `GetUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
 | `GetUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` |
@@ -92,7 +101,9 @@
 | `GetUnitOverview` | GET | `/api/v1/units/{unitKid}` |
 | `GetUnitSettingHistory` | GET | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history` |
 | `GetUnits` | GET | `/api/v1/units` |
+| `GetUserCount` | GET | `/api/v1/users/count` |
 | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
+| `GetUsers` | GET | `/api/v1/users` |
 | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `LoginManager` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` |
