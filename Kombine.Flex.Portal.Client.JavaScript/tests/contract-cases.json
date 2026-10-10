@@ -1,5 +1,31 @@
 [
   {
+    "operation": "GetBankAccountIcon",
+    "python": "get_bank_account_icon",
+    "javascript": "getBankAccountIcon",
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/account/icon",
+    "status": 200,
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/AccountIconResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetBankAccount",
     "python": "get_bank_account",
     "javascript": "getBankAccount",
@@ -484,6 +510,112 @@
     },
     "response": {
       "$ref": "#/components/schemas/AssistantResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetBanks",
+    "python": "get_banks",
+    "javascript": "getBanks",
+    "method": "GET",
+    "path": "api/v1/banks",
+    "status": 200,
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "bankType",
+        "where": "query",
+        "py": "bank_type",
+        "js": "bankType",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/BankDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetActiveBankCount",
+    "python": "get_active_bank_count",
+    "javascript": "getActiveBankCount",
+    "method": "GET",
+    "path": "api/v1/banks/active-count",
+    "status": 200,
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveBankCountResponse"
     },
     "binary": false,
     "example": {}
@@ -1742,6 +1874,15 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "includeActivationCode",
+        "where": "query",
+        "py": "include_activation_code",
+        "js": "includeActivationCode",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
@@ -2064,7 +2205,17 @@
     "path": "api/v1/locations/active-count",
     "status": 200,
     "auth": true,
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "query",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "body": null,
     "response": {
       "$ref": "#/components/schemas/ActiveLocationCountResponse"
@@ -2152,6 +2303,15 @@
         "js": "includeCoordinates",
         "schema": {
           "type": "boolean"
+        }
+      },
+      {
+        "name": "bankKid",
+        "where": "query",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
         }
       }
     ],
@@ -3462,16 +3622,6 @@
       ],
       "availableTabs": [
         {
-          "id": 5,
-          "name": "Banks2",
-          "iconKid": ""
-        },
-        {
-          "id": 60,
-          "name": "Services1",
-          "iconKid": ""
-        },
-        {
           "id": 1,
           "name": "Access1",
           "iconKid": ""
@@ -3707,11 +3857,6 @@
           "iconKid": ""
         },
         {
-          "id": 50,
-          "name": "Units1",
-          "iconKid": ""
-        },
-        {
           "id": 51,
           "name": "User2",
           "iconKid": ""
@@ -3777,16 +3922,6 @@
           "iconKid": ""
         },
         {
-          "id": 65,
-          "name": "Disp65",
-          "iconKid": ""
-        },
-        {
-          "id": 66,
-          "name": "Disp66",
-          "iconKid": ""
-        },
-        {
           "id": 67,
           "name": "GlobalInfo1",
           "iconKid": ""
@@ -3832,11 +3967,6 @@
           "iconKid": ""
         },
         {
-          "id": 77,
-          "name": "UserFinder1",
-          "iconKid": ""
-        },
-        {
           "id": 78,
           "name": "Log1",
           "iconKid": ""
@@ -3862,6 +3992,31 @@
           "iconKid": ""
         },
         {
+          "id": 5,
+          "name": "Banks2",
+          "iconKid": ""
+        },
+        {
+          "id": 65,
+          "name": "Locations1",
+          "iconKid": ""
+        },
+        {
+          "id": 66,
+          "name": "Terminals1",
+          "iconKid": ""
+        },
+        {
+          "id": 50,
+          "name": "Units1",
+          "iconKid": ""
+        },
+        {
+          "id": 60,
+          "name": "Services1",
+          "iconKid": ""
+        },
+        {
           "id": 28,
           "name": "Managers1",
           "iconKid": ""
@@ -3869,6 +4024,11 @@
         {
           "id": 68,
           "name": "Installers1",
+          "iconKid": ""
+        },
+        {
+          "id": 77,
+          "name": "UserFinder1",
           "iconKid": ""
         }
       ]
@@ -4154,6 +4314,38 @@
     }
   },
   {
+    "operation": "GetManagerCount",
+    "python": "get_manager_count",
+    "javascript": "getManagerCount",
+    "method": "GET",
+    "path": "api/v1/managers/count",
+    "status": 200,
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/PeopleDirectoryCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetInstallerCount",
+    "python": "get_installer_count",
+    "javascript": "getInstallerCount",
+    "method": "GET",
+    "path": "api/v1/installers/count",
+    "status": 200,
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/PeopleDirectoryCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetMyManagerProfile",
     "python": "get_my_manager_profile",
     "javascript": "getMyManagerProfile",
@@ -4336,6 +4528,22 @@
     "body": null,
     "response": {
       "$ref": "#/components/schemas/ServiceDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetServiceCount",
+    "python": "get_service_count",
+    "javascript": "getServiceCount",
+    "method": "GET",
+    "path": "api/v1/services/count",
+    "status": 200,
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/PeopleDirectoryCount"
     },
     "binary": false,
     "example": {}
@@ -4762,6 +4970,38 @@
     "example": {}
   },
   {
+    "operation": "GetActiveUnitCount",
+    "python": "get_active_unit_count",
+    "javascript": "getActiveUnitCount",
+    "method": "GET",
+    "path": "api/v1/units/active-count",
+    "status": 200,
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveUnitCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetActiveTerminalCount",
+    "python": "get_active_terminal_count",
+    "javascript": "getActiveTerminalCount",
+    "method": "GET",
+    "path": "api/v1/terminals/active-count",
+    "status": 200,
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveUnitCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetUnits",
     "python": "get_units",
     "javascript": "getUnits",
@@ -4841,6 +5081,132 @@
         "js": "includeCoordinates",
         "schema": {
           "type": "boolean"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "py": "terminal_kid",
+        "js": "terminalKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetTerminals",
+    "python": "get_terminals",
+    "javascript": "getTerminals",
+    "method": "GET",
+    "path": "api/v1/terminals",
+    "status": 200,
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeCoordinates",
+        "where": "query",
+        "py": "include_coordinates",
+        "js": "includeCoordinates",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "py": "terminal_kid",
+        "js": "terminalKid",
+        "schema": {
+          "type": "string"
         }
       }
     ],
@@ -5116,6 +5482,94 @@
     },
     "response": {
       "$ref": "#/components/schemas/UserWorkspaceResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUsers",
+    "python": "get_users",
+    "javascript": "getUsers",
+    "method": "GET",
+    "path": "api/v1/users",
+    "status": 200,
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/UserDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUserCount",
+    "python": "get_user_count",
+    "javascript": "getUserCount",
+    "method": "GET",
+    "path": "api/v1/users/count",
+    "status": 200,
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/PeopleDirectoryCount"
     },
     "binary": false,
     "example": {}

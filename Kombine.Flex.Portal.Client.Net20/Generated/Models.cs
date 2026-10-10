@@ -144,6 +144,21 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Most frequent authorized currency and the ready-to-render Forbrug icon.</summary>
+    public sealed class AccountIconResponse
+    {
+        /// <summary>currency</summary>
+        [JsonField("currency")]
+        public string Currency { get { return _Currency; } set { _Currency = value; } }
+        private string _Currency;
+
+        /// <summary>iconKid</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
+    }
+
     /// <summary>Filtered postings, full-selection totals and server-resolved query defaults. No computed resident balance is implied.</summary>
     public sealed class AccountResponse
     {
@@ -269,6 +284,21 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Accessible bank count for Enabled=1 and Deleted=0.</summary>
+    public sealed class ActiveBankCountResponse
+    {
+        /// <summary>count</summary>
+        [JsonField("count")]
+        public long? Count { get { return _Count; } set { _Count = value; } }
+        private long? _Count;
+
+        /// <summary>Tab icon containing the authorized count.</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
+    }
+
     /// <summary>Number of accessible locations with Enabled=1 and Deleted=0, independent of search and paging.</summary>
     public sealed class ActiveLocationCountResponse
     {
@@ -277,7 +307,22 @@ namespace Kombine.Flex.Portal.Client.Net20
         public long? Count { get { return _Count; } set { _Count = value; } }
         private long? _Count;
 
-        /// <summary>Ready-to-render Banks2 icon with Count in Kid.Count.</summary>
+        /// <summary>Ready-to-render Locations1 icon with Count in Kid.Count.</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
+    }
+
+    /// <summary>Accessible active units or terminals, independent of search and paging, with a ready-to-render navigation icon.</summary>
+    public sealed class ActiveUnitCountResponse
+    {
+        /// <summary>count</summary>
+        [JsonField("count")]
+        public long? Count { get { return _Count; } set { _Count = value; } }
+        private long? _Count;
+
+        /// <summary>iconKid</summary>
         [JsonField("iconKid")]
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
         private string _IconKid;
@@ -361,6 +406,71 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("links")]
         public AssistantLink[] Links { get { return _Links; } set { _Links = value; } }
         private AssistantLink[] _Links;
+
+    }
+
+    /// <summary>Canonical bank identity, display metadata and stored state.</summary>
+    public sealed class BankDirectoryItem
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>iconKid</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
+        /// <summary>enabled</summary>
+        [JsonField("enabled")]
+        public bool? Enabled { get { return _Enabled; } set { _Enabled = value; } }
+        private bool? _Enabled;
+
+        /// <summary>deleted</summary>
+        [JsonField("deleted")]
+        public bool? Deleted { get { return _Deleted; } set { _Deleted = value; } }
+        private bool? _Deleted;
+
+        /// <summary>deletedAt ISO 8601 text, sent unchanged.</summary>
+        [JsonField("deletedAt")]
+        public string DeletedAt { get { return _DeletedAt; } set { _DeletedAt = value; } }
+        private string _DeletedAt;
+
+        /// <summary>Requested bank-level settings; null when scope does not authorize their disclosure. bankActivationCode additionally requires whole-tenant access and Bank Create.</summary>
+        [JsonField("fields")]
+        public Dictionary<string, string> Fields { get { return _Fields; } set { _Fields = value; } }
+        private Dictionary<string, string> _Fields;
+
+    }
+
+    /// <summary>A bounded bank page and optional protected continuation.</summary>
+    public sealed class BankDirectoryResponse
+    {
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public BankDirectoryItem[] Items { get { return _Items; } set { _Items = value; } }
+        private BankDirectoryItem[] _Items;
+
+        /// <summary>nextCursor</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+        /// <summary>Selected optional field keys. Keep the same selection when following the cursor.</summary>
+        [JsonField("fields")]
+        public string[] Fields { get { return _Fields; } set { _Fields = value; } }
+        private string[] _Fields;
+
+        /// <summary>Whether this caller may display, search and sort bank activation codes.</summary>
+        [JsonField("canReadBankActivationCode")]
+        public bool? CanReadBankActivationCode { get { return _CanReadBankActivationCode; } set { _CanReadBankActivationCode = value; } }
+        private bool? _CanReadBankActivationCode;
 
     }
 
@@ -1169,7 +1279,7 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
-    /// <summary>Installer metadata from the site's Log7 with BankId=TenantId. Kid is canonical with type Installer; clients can derive the display UserId from it. Missing Enabled is null. DeletedAt and LastActiveAt are UTC; LastActiveAt is the Alive krumb's MS2000, not its Text. No credentials are returned.</summary>
+    /// <summary>Installer metadata from the site's Log7 with BankId=TenantId. Kid is canonical with type Installer; clients can derive the display UserId from it. Missing Enabled is null. DeletedAt and LastActiveAt are UTC; LastActiveAt is the Alive krumb's MS2000, not its Text. Passwords are never returned.</summary>
     public sealed class InstallerDirectoryItem
     {
         /// <summary>kid</summary>
@@ -1216,6 +1326,11 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("lastActiveAt")]
         public string LastActiveAt { get { return _LastActiveAt; } set { _LastActiveAt = value; } }
         private string _LastActiveAt;
+
+        /// <summary>User activation code, only when explicitly requested with Installer Create permission.</summary>
+        [JsonField("activationCode")]
+        public string ActivationCode { get { return _ActivationCode; } set { _ActivationCode = value; } }
+        private string _ActivationCode;
 
         /// <summary>API-computed icon identity; use unchanged in the icon image URL.</summary>
         [JsonField("iconKid")]
@@ -2187,7 +2302,7 @@ namespace Kombine.Flex.Portal.Client.Net20
     /// <summary>Apply a server-defined role to the complete permission matrix.</summary>
     public sealed class ManagerPermissionRoleRequest
     {
-        /// <summary>accounting, caretaker or operator; case-sensitive, required.</summary>
+        /// <summary>accounting, caretaker, operator, technical-support, tenant-accounting or combine; case-sensitive, required.</summary>
         [JsonField("role")]
         public string Role { get { return _Role; } set { _Role = value; } }
         private string _Role;
@@ -2197,10 +2312,15 @@ namespace Kombine.Flex.Portal.Client.Net20
         public Dictionary<string, int> ExpectedFlags { get { return _ExpectedFlags; } set { _ExpectedFlags = value; } }
         private Dictionary<string, int> _ExpectedFlags;
 
-        /// <summary>Required for accounting: tabsRevision from GetManager or the last acknowledged edit. Other roles keep tabs unchanged.</summary>
+        /// <summary>Required for accounting and combine: tabsRevision from GetManager or the last acknowledged edit.</summary>
         [JsonField("expectedTabsRevision")]
         public string ExpectedTabsRevision { get { return _ExpectedTabsRevision; } set { _ExpectedTabsRevision = value; } }
         private string _ExpectedTabsRevision;
+
+        /// <summary>Required for combine: kidsRevision from GetManager or the last acknowledged edit.</summary>
+        [JsonField("expectedKidsRevision")]
+        public string ExpectedKidsRevision { get { return _ExpectedKidsRevision; } set { _ExpectedKidsRevision = value; } }
+        private string _ExpectedKidsRevision;
 
     }
 
@@ -2236,6 +2356,21 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("canEditTabs")]
         public bool? CanEditTabs { get { return _CanEditTabs; } set { _CanEditTabs = value; } }
         private bool? _CanEditTabs;
+
+        /// <summary>Authoritative resource grants after the role assignment.</summary>
+        [JsonField("resourceGrants")]
+        public ManagerResourceGrantResponse[] ResourceGrants { get { return _ResourceGrants; } set { _ResourceGrants = value; } }
+        private ManagerResourceGrantResponse[] _ResourceGrants;
+
+        /// <summary>Revision for the next resource-grant edit.</summary>
+        [JsonField("kidsRevision")]
+        public string KidsRevision { get { return _KidsRevision; } set { _KidsRevision = value; } }
+        private string _KidsRevision;
+
+        /// <summary>Whether the caller retains permission to edit resource grants.</summary>
+        [JsonField("canEditKids")]
+        public bool? CanEditKids { get { return _CanEditKids; } set { _CanEditKids = value; } }
+        private bool? _CanEditKids;
 
     }
 
@@ -2686,6 +2821,21 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("name")]
         public string Name { get { return _Name; } set { _Name = value; } }
         private string _Name;
+
+    }
+
+    /// <summary>Authorized count and red badge icon; each operation documents its cache age and precision.</summary>
+    public sealed class PeopleDirectoryCount
+    {
+        /// <summary>count</summary>
+        [JsonField("count")]
+        public long? Count { get { return _Count; } set { _Count = value; } }
+        private long? _Count;
+
+        /// <summary>iconKid</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
 
     }
 
@@ -3542,9 +3692,49 @@ namespace Kombine.Flex.Portal.Client.Net20
         public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
         private double? _Longitude;
 
+        /// <summary>Requested terminal eState.VersionMinor as decoded text; null unless selected, empty when absent.</summary>
+        [JsonField("versionMinor")]
+        public string VersionMinor { get { return _VersionMinor; } set { _VersionMinor = value; } }
+        private string _VersionMinor;
+
+        /// <summary>Requested terminal eState.BootReason as decoded text; null unless selected, empty when absent.</summary>
+        [JsonField("bootReason")]
+        public string BootReason { get { return _BootReason; } set { _BootReason = value; } }
+        private string _BootReason;
+
+        /// <summary>Requested terminal eSetting.Booted as decoded text; null unless selected, empty when absent.</summary>
+        [JsonField("booted")]
+        public string Booted { get { return _Booted; } set { _Booted = value; } }
+        private string _Booted;
+
+        /// <summary>Requested terminal eState.Firmware as decoded text; null unless selected, empty when absent.</summary>
+        [JsonField("firmware")]
+        public string Firmware { get { return _Firmware; } set { _Firmware = value; } }
+        private string _Firmware;
+
+        /// <summary>Requested terminal eState.StorageCardSerialNumber as decoded text; null unless selected, empty when absent.</summary>
+        [JsonField("storageCardSerialNumber")]
+        public string StorageCardSerialNumber { get { return _StorageCardSerialNumber; } set { _StorageCardSerialNumber = value; } }
+        private string _StorageCardSerialNumber;
+
+        /// <summary>Requested terminal eState.Page as decoded text; null unless selected, empty when absent.</summary>
+        [JsonField("page")]
+        public string Page { get { return _Page; } set { _Page = value; } }
+        private string _Page;
+
+        /// <summary>Requested terminal eState.BackLight as decoded text; null unless selected, empty when absent.</summary>
+        [JsonField("backLight")]
+        public string BackLight { get { return _BackLight; } set { _BackLight = value; } }
+        private string _BackLight;
+
+        /// <summary>terminal</summary>
+        [JsonField("terminal")]
+        public UnitTerminalResponse Terminal { get { return _Terminal; } set { _Terminal = value; } }
+        private UnitTerminalResponse _Terminal;
+
     }
 
-    /// <summary>A scoped Units1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location.</summary>
+    /// <summary>A scoped Units1 or Terminals1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location.</summary>
     public sealed class UnitDirectoryResponse
     {
         /// <summary>items</summary>
@@ -3767,6 +3957,11 @@ namespace Kombine.Flex.Portal.Client.Net20
         public UnitProgressResponse Progress { get { return _Progress; } set { _Progress = value; } }
         private UnitProgressResponse _Progress;
 
+        /// <summary>terminal</summary>
+        [JsonField("terminal")]
+        public UnitTerminalResponse Terminal { get { return _Terminal; } set { _Terminal = value; } }
+        private UnitTerminalResponse _Terminal;
+
     }
 
     /// <summary>API-calculated progress. Percent and remaining time are estimates, not hardware completion signals.</summary>
@@ -3946,6 +4141,26 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("changedBy")]
         public UnitSettingEditorResponse ChangedBy { get { return _ChangedBy; } set { _ChangedBy = value; } }
         private UnitSettingEditorResponse _ChangedBy;
+
+    }
+
+    /// <summary>Visible authorized main terminal identified by a canonical unit KID; no extra access is granted.</summary>
+    public sealed class UnitTerminalResponse
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>API-computed main-unit icon identity, including its unit number.</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
 
     }
 
@@ -4186,6 +4401,61 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("previousPeriodIsProvisional")]
         public bool? PreviousPeriodIsProvisional { get { return _PreviousPeriodIsProvisional; } set { _PreviousPeriodIsProvisional = value; } }
         private bool? _PreviousPeriodIsProvisional;
+
+    }
+
+    /// <summary>Resident and parent bank identities with display metadata only.</summary>
+    public sealed class UserDirectoryItem
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>bankKid</summary>
+        [JsonField("bankKid")]
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>number</summary>
+        [JsonField("number")]
+        public string Number { get { return _Number; } set { _Number = value; } }
+        private string _Number;
+
+        /// <summary>iconKid</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
+        /// <summary>deletedAt ISO 8601 text, sent unchanged.</summary>
+        [JsonField("deletedAt")]
+        public string DeletedAt { get { return _DeletedAt; } set { _DeletedAt = value; } }
+        private string _DeletedAt;
+
+    }
+
+    /// <summary>Authorized resident page. A short page may still have a continuation.</summary>
+    public sealed class UserDirectoryResponse
+    {
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public UserDirectoryItem[] Items { get { return _Items; } set { _Items = value; } }
+        private UserDirectoryItem[] _Items;
+
+        /// <summary>nextCursor</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+        /// <summary>scanLimitReached</summary>
+        [JsonField("scanLimitReached")]
+        public bool? ScanLimitReached { get { return _ScanLimitReached; } set { _ScanLimitReached = value; } }
+        private bool? _ScanLimitReached;
 
     }
 
@@ -4813,6 +5083,43 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Optional query/header parameters for GetBanks. Null values use API defaults.</summary>
+    public sealed class GetBanksOptions
+    {
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
+
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>enabledOnly</summary>
+        public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
+        private bool? _EnabledOnly;
+
+        /// <summary>fields</summary>
+        public string Fields { get { return _Fields; } set { _Fields = value; } }
+        private string _Fields;
+
+        /// <summary>bankType</summary>
+        public string BankType { get { return _BankType; } set { _BankType = value; } }
+        private string _BankType;
+
+    }
+
     /// <summary>Optional query/header parameters for GetBankDocuments. Null values use API defaults.</summary>
     public sealed class GetBankDocumentsOptions
     {
@@ -5121,6 +5428,19 @@ namespace Kombine.Flex.Portal.Client.Net20
         public string Direction { get { return _Direction; } set { _Direction = value; } }
         private string _Direction;
 
+        /// <summary>includeActivationCode</summary>
+        public bool? IncludeActivationCode { get { return _IncludeActivationCode; } set { _IncludeActivationCode = value; } }
+        private bool? _IncludeActivationCode;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetActiveLocationCount. Null values use API defaults.</summary>
+    public sealed class GetActiveLocationCountOptions
+    {
+        /// <summary>bankKid</summary>
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
+
     }
 
     /// <summary>Optional query/header parameters for GetLocations. Null values use API defaults.</summary>
@@ -5157,6 +5477,10 @@ namespace Kombine.Flex.Portal.Client.Net20
         /// <summary>includeCoordinates</summary>
         public bool? IncludeCoordinates { get { return _IncludeCoordinates; } set { _IncludeCoordinates = value; } }
         private bool? _IncludeCoordinates;
+
+        /// <summary>bankKid</summary>
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
 
     }
 
@@ -5422,6 +5746,59 @@ namespace Kombine.Flex.Portal.Client.Net20
         public bool? IncludeCoordinates { get { return _IncludeCoordinates; } set { _IncludeCoordinates = value; } }
         private bool? _IncludeCoordinates;
 
+        /// <summary>locationKid</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>terminalKid</summary>
+        public string TerminalKid { get { return _TerminalKid; } set { _TerminalKid = value; } }
+        private string _TerminalKid;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetTerminals. Null values use API defaults.</summary>
+    public sealed class GetTerminalsOptions
+    {
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
+
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>enabledOnly</summary>
+        public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
+        private bool? _EnabledOnly;
+
+        /// <summary>fields</summary>
+        public string Fields { get { return _Fields; } set { _Fields = value; } }
+        private string _Fields;
+
+        /// <summary>includeCoordinates</summary>
+        public bool? IncludeCoordinates { get { return _IncludeCoordinates; } set { _IncludeCoordinates = value; } }
+        private bool? _IncludeCoordinates;
+
+        /// <summary>locationKid</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>terminalKid</summary>
+        public string TerminalKid { get { return _TerminalKid; } set { _TerminalKid = value; } }
+        private string _TerminalKid;
+
     }
 
     /// <summary>Optional query/header parameters for GetBankNextUserNumber. Null values use API defaults.</summary>
@@ -5430,6 +5807,35 @@ namespace Kombine.Flex.Portal.Client.Net20
         /// <summary>userNumber</summary>
         public string UserNumber { get { return _UserNumber; } set { _UserNumber = value; } }
         private string _UserNumber;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUsers. Null values use API defaults.</summary>
+    public sealed class GetUsersOptions
+    {
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
+
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>enabledOnly</summary>
+        public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
+        private bool? _EnabledOnly;
 
     }
 

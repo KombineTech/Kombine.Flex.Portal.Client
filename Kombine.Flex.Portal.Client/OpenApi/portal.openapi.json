@@ -6,13 +6,140 @@
     "version": "v1"
   },
   "paths": {
+    "/api/v1/banks/{bankKid}/account/icon": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Resolve the Forbrug icon text from the most frequent authorized Log1 currency.",
+        "description": "Requires the same active manager, Account2 and Bank/Location/Unit/User Read permissions as GetBankAccount.\r\n            Counts rows across all periods and entry types, restricted to authorized locations. This is frequency, not amount.\r\n            Trimmed three-letter currencies are uppercased; blanks/malformed codes are ignored. Alphabetical code breaks ties.\r\n            Empty data returns currency=null and the base tab icon without text. No-store; no ledger details are returned.\r\n            400 invalid bank, 401 expired session, 403 denied, 503 storage unavailable.",
+        "operationId": "GetBankAccountIcon",
+        "parameters": [
+          {
+            "name": "bankKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountIconResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountIconResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountIconResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/banks/{bankKid}/account": {
       "get": {
         "tags": [
           "Accounts"
         ],
         "summary": "Lists Account2 postings with full-selection totals per currency.",
-        "description": "### Access\r\n            \r\n- Requires **Account2** and **Bank, Location, Unit and User Read**.\r\n- Location grants limit the rows, totals and available filter choices.\r\n- No business data is read when access is denied.\r\n            \r\n### Filters and paging\r\n            \r\n- Defaults to **today** in \u0060Europe/Copenhagen\u0060. Both dates are inclusive; the maximum interval is **367 days**.\r\n- An explicit \u0060period\u0060 replaces the date filter.\r\n- Sorted newest first, then by location and unit.\r\n- \u0060offset\u0060: **0\u2013100,000**. \u0060limit\u0060: **1\u2013200**, default **50**. Responses are not cached.\r\n            \r\n### Settlement periods\r\n            \r\n- The latest **100 closed period IDs** come from bank-level **LogA**.\r\n- With location-limited access, each offered period must also contain an authorized **Log1** posting.\r\n- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.\r\n            \r\n### Amounts and timestamps\r\n            \r\n- \u0060amountMinor\u0060 preserves the signed Log1 amount. Totals describe **filtered movements**, not an account balance.\r\n- \u0060MS2000\u0060 / \u0060recordedAtUtc\u0060 is the event time, not an insertion watermark. Older postings may arrive days later.\r\n            \r\n### Receipts and retention\r\n            \r\n- \u0060documents\u0060 groups this page only; merge further pages by \u0060documentKey\u0060. \u0060items\u0060, offsets and limits remain posting-based.\r\n- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.\r\n- \u0060LawAccountingYears\u0060 and \u0060LawSurveillanceDays\u0060 come from tenant Log24 with positive manager Log7 overrides.\r\n- Expired identities become the GDPR user KID with empty names/numbers, safe description and \u0060isAnonymized=true\u0060.\r\n- An explicit \u0060userKid\u0060 excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.\r\n- \u0060paymentKind\u0060 is Credit, ReserveRefund or Managed, or empty. Payment identifiers are never returned.\r\n- Payment-managed and expired entries cannot use ordinary reversal. No external payment workflow is invoked.\r\n            \r\n### Revisions and refresh\r\n            \r\n- \u0060revision\u0060 fingerprints the complete filtered posting set: identities, periods and monetary totals. It is independent of \u0060offset\u0060 and \u0060limit\u0060.\r\n- **Compare revisions across pages.** If they differ, discard the accumulated pages and reload them.\r\n- Use \u0060GetBankAccountRevision\u0060 for lightweight polling.\r\n- A revision is not a cursor, authorization token or frozen snapshot. Display labels may change independently.\r\n            \r\n### Errors\r\n            \r\n**HTTP 403** keeps code \u0060forbidden\u0060. After tab/resource authorization, the optional \u0060reason\u0060 identifies a missing Read permission:\r\n\u0060missing-bank-read\u0060, \u0060missing-location-read\u0060, \u0060missing-unit-read\u0060 or \u0060missing-user-read\u0060.\r\n            \r\n**HTTP 503** uses these codes:\r\n            \r\n- \u0060periods-timeout\u0060: period SQL exceeded its **10-second** limit.\r\n- \u0060storage-timeout\u0060: another SQL command timed out.\r\n- \u0060storage-text-comparison\u0060: a collation error occurred.\r\n            \r\nAvoid automatic retry loops.",
+        "description": "### Access\r\n            \r\n- Requires **Account2** and **Bank, Location, Unit and User Read**.\r\n- Location grants limit the rows, totals and available filter choices.\r\n- No business data is read when access is denied.\r\n            \r\n### Filters and paging\r\n            \r\n- Defaults to **today** in \u0060Europe/Copenhagen\u0060. Both dates are inclusive; the maximum interval is **367 days**.\r\n- An explicit \u0060period\u0060 replaces the date filter.\r\n- Sorted newest first, then by location and unit.\r\n- \u0060offset\u0060: **0\u2013100,000**. \u0060limit\u0060: **1\u2013200**, default **50**. Responses are not cached.\r\n            \r\n### Settlement periods\r\n            \r\n- The latest **100 closed period IDs** come from bank-level **LogA**.\r\n- With location-limited access, each offered period must also contain an authorized **Log1** posting.\r\n- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.\r\n            \r\n### Amounts and timestamps\r\n            \r\n- \u0060amountMinor\u0060 preserves the signed Log1 amount. Totals describe **filtered movements**, not an account balance.\r\n- \u0060MS2000\u0060 / \u0060recordedAtUtc\u0060 is the event time, not an insertion watermark. Older postings may arrive days later.\r\n            \r\n### Receipts and retention\r\n            \r\n- \u0060documents\u0060 groups this page only; merge further pages by \u0060documentKey\u0060. \u0060items\u0060, offsets and limits remain posting-based.\r\n- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.\r\n- \u0060description\u0060 uses decoded \u0060Kombine.Flex.FlexDto.KrumbValue.TransactionLine.ToString()\u0060 text, with numeric localization placeholders resolved by the API.\r\n- Safely displayable text-only legacy descriptions remain supported; absent DTO text uses a safe fallback. Raw JSON and payment identifiers are never exposed.\r\n- \u0060LawAccountingYears\u0060 and \u0060LawSurveillanceDays\u0060 come from tenant Log24 with positive manager Log7 overrides.\r\n- Expired identities become the GDPR user KID with empty names/numbers, safe description and \u0060isAnonymized=true\u0060.\r\n- An explicit \u0060userKid\u0060 excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.\r\n- \u0060paymentKind\u0060 is Credit, ReserveRefund or Managed, or empty. Payment identifiers are never returned.\r\n- Payment-managed and expired entries cannot use ordinary reversal. No external payment workflow is invoked.\r\n            \r\n### Revisions and refresh\r\n            \r\n- \u0060revision\u0060 fingerprints the complete filtered posting set: identities, periods and monetary totals. It is independent of \u0060offset\u0060 and \u0060limit\u0060.\r\n- **Compare revisions across pages.** If they differ, discard the accumulated pages and reload them.\r\n- Use \u0060GetBankAccountRevision\u0060 for lightweight polling.\r\n- A revision is not a cursor, authorization token or frozen snapshot. Display labels may change independently.\r\n            \r\n### Errors\r\n            \r\n**HTTP 403** keeps code \u0060forbidden\u0060. After tab/resource authorization, the optional \u0060reason\u0060 identifies a missing Read permission:\r\n\u0060missing-bank-read\u0060, \u0060missing-location-read\u0060, \u0060missing-unit-read\u0060 or \u0060missing-user-read\u0060.\r\n            \r\n**HTTP 503** uses these codes:\r\n            \r\n- \u0060periods-timeout\u0060: period SQL exceeded its **10-second** limit.\r\n- \u0060storage-timeout\u0060: another SQL command timed out.\r\n- \u0060storage-text-comparison\u0060: a collation error occurred.\r\n            \r\nAvoid automatic retry loops.",
         "operationId": "GetBankAccount",
         "parameters": [
           {
@@ -1591,7 +1718,7 @@
           "Assistant"
         ],
         "summary": "Ask the portal assistant to discover and combine approved read operations.",
-        "description": "Sends the question, supplied visible history and relevant authorized API results to OpenAI.\r\nWith Logz.io shipping enabled, the current question text is logged once after session revalidation,\r\nbefore model use. History, answers and bearer credentials are not included in this log event.\r\nRequires server-side configuration. The current manager session is revalidated before model use;\r\neach business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.\r\nquestion: 1\u20132000 characters. history: at most 12 user/assistant messages, 8000 characters each,\r\n20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects\r\nthe default answer language. Response answer is plain text. operations lists attempted business reads;\r\nlinks contains up to 20 bank/location links derived from successful authorized results.\r\nEach link includes kid/path, optional name, canonical parent bankKid and ready-to-render iconKid.\r\nThe portal uses this metadata to add the clicked object to the local workspace; access is rechecked on navigation.\r\nAt most 8 reads, pages capped at 50, 48000 bytes per result and 120 seconds per question.\r\nAvailable reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,\r\nGetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not\r\nbe interpreted as empty/healthy data. Generated answers can be wrong; verify the underlying records.\r\nBusiness tools are discovered and called through the tenant API\u0027s MCP interface, using the current\r\nmanager bearer session. The host exposes only the eight approved read-only MCP tools and forwards\r\ntheir JSON input schemas to the model; credentials stay in server-side HTTP headers. Activation-code\r\nand Visma service-key fields are withheld from chat, including when the manager could view them in the portal.\r\nReviewed AGENTS.md instructions and three named skills are packaged with the API. Skill loading uses\r\nthe same model-turn budget and grants no extra permissions. The balance skill explains that balance\r\nand account-transaction reads are not currently in the approved chat catalogue.\r\n400 invalid input; 401 invalid/revoked session; 403 session denied; 429 six questions/minute per manager\r\nor global capacity exhausted; 503 assistant-not-configured/provider unavailable/deadline. Assistant\r\nfailures have a code extension; middleware authentication, validation and throttling retain their normal\r\nerror format. No automatic retries. Responses application-state storage is disabled with store=false.",
+        "description": "Sends the question, supplied visible history and relevant authorized API results to OpenAI.\r\nWith live diagnostics enabled, the current question text is recorded once in the authorized\r\nprocess-local buffer after session revalidation, before model use. Questions are not sent to Logz.io.\r\nHistory, answers and bearer credentials are not included in this log event.\r\nRequires server-side configuration. The current manager session is revalidated before model use;\r\neach business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.\r\nquestion: 1\u20132000 characters. history: at most 12 user/assistant messages, 8000 characters each,\r\n20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects\r\nthe default answer language. Response answer is plain text. operations lists attempted business reads;\r\nlinks contains up to 20 bank/location links derived from successful authorized results.\r\nEach link includes kid/path, optional name, canonical parent bankKid and ready-to-render iconKid.\r\nThe portal uses this metadata to add the clicked object to the local workspace; access is rechecked on navigation.\r\nAt most 8 reads, pages capped at 50, 48000 bytes per result and 120 seconds per question.\r\nAvailable reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,\r\nGetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not\r\nbe interpreted as empty/healthy data. Generated answers can be wrong; verify the underlying records.\r\nBusiness tools are discovered and called through the tenant API\u0027s MCP interface, using the current\r\nmanager bearer session. The host exposes only the eight approved read-only MCP tools and forwards\r\ntheir JSON input schemas to the model; credentials stay in server-side HTTP headers. Activation-code\r\nand Visma service-key fields are withheld from chat, including when the manager could view them in the portal.\r\nReviewed AGENTS.md instructions and three named skills are packaged with the API. Skill loading uses\r\nthe same model-turn budget and grants no extra permissions. The balance skill explains that balance\r\nand account-transaction reads are not currently in the approved chat catalogue.\r\n400 invalid input; 401 invalid/revoked session; 403 session denied; 429 six questions/minute per manager\r\nor global capacity exhausted; 503 assistant-not-configured/provider unavailable/deadline. Assistant\r\nfailures have a code extension; middleware authentication, validation and throttling retain their normal\r\nerror format. No automatic retries. Responses application-state storage is disabled with store=false.",
         "operationId": "AskPortalAssistant",
         "requestBody": {
           "content": {
@@ -1695,6 +1822,283 @@
           },
           "429": {
             "description": "Too Many Requests",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/banks": {
+      "get": {
+        "tags": [
+          "BankDirectory"
+        ],
+        "summary": "List authorized bank identities for Banks2 with selected metadata and stable global ordering.",
+        "description": "Requires an active manager, Banks2 (5), Bank Read and site grants. Location grants reveal only\r\n            parent bank identity. Reads bank-level Log24 only. Site-wide managers can include disabled and deleted banks;\r\n            limited grants require Enabled=1 and deletions within RetentionDays. enabledOnly requires Enabled=1 and Deleted=0.\r\n            Missing Deleted means zero. Malformed states are excluded from active/limited views.\r\n            filter searches name/settings or an exact bank KID/code, at most 128 characters. bankType optionally adds an exact Credit/Cash match for localized UI searches.\r\n            fields selects bankType, bankActivationCode, exportFormat, settlementEmails, settlementDays, bankDays, cluster, hardware.\r\n            sort accepts name or any optional field; direction=asc or desc. Code ordering is numeric using the canonical codec.\r\n            pageSize is 1\u2013100. Keep all options unchanged with the protected, manager/scope-bound 15-minute cursor.\r\n            Concurrent edits may move rows between pages. 400 invalid query/cursor; 401 revoked session; 403 missing\r\n            tab/read/scope; 503 storage unavailable. No-store. Bank-wide fields require whole-bank scope.\r\n            Activation code display/search/sort additionally requires whole-tenant scope and Bank Create; unauthorized values are null.",
+        "operationId": "GetBanks",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "name"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "enabledOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bankType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankDirectoryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankDirectoryResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankDirectoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/banks/active-count": {
+      "get": {
+        "tags": [
+          "BankDirectory"
+        ],
+        "summary": "Count accessible active banks for the Banks2 navigation icon.",
+        "description": "Same session, tab and Bank Read requirements as GetBanks. Counts bank-level Log24 identities with\r\n            Enabled exactly 1 and Deleted zero (missing Deleted defaults to zero). Independent of filtering and paging.\r\n            Returns count and a ready-to-render iconKid. No-store. 401 invalid session, 403 denied, 503 unavailable.",
+        "operationId": "GetActiveBankCount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveBankCountResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveBankCountResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveBankCountResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2608,7 +3012,7 @@
           "BankUsers"
         ],
         "summary": "Read one page of users for a bank.",
-        "description": "### Access and visibility\r\n            \r\n- Requires **Users2 (53)**, **User Read** and a matching tenant/bank/location grant.\r\n- Location-only grants include **Access** and **NoAccess** associations; other locations are removed from the response.\r\n- Ordinary users only, including \u0060eUserId.UsersLast\u0060. Deleted users follow **RetentionDays**.\r\n- \u0060email\u0060 is the current Log7 \u0060eSetting.Email\u0060 (2800), decoded from JSON or legacy plain text.\r\n- \u0060sms\u0060 is the current Log7 \u0060eSetting.SMS\u0060 number, decoded without changing its format. Missing email/SMS values are empty.\r\n            \r\n### Paging\r\n            \r\n- \u0060pageSize\u0060: **1\u2013100**, default **25**. Copy \u0060previousCursor\u0060 or \u0060nextCursor\u0060 unchanged into \u0060cursor\u0060.\r\n- Cursors are shareable positions, not credentials.\r\n- Keep filters, sort and direction unchanged while using a cursor. Restart **without a cursor** when changing them.\r\n            \r\n### Ordering\r\n            \r\n- \u0060sort\u0060: \u0060identity\u0060 (legacy default, ascending only), \u0060number\u0060, \u0060name\u0060, \u0060location\u0060 or \u0060deleted\u0060.\r\n- \u0060direction\u0060: \u0060asc\u0060 or \u0060desc\u0060. User identity breaks ties.\r\n- Number orders numeric values before text. Text comparison is ordinal and case-insensitive.\r\n- Location uses the lowest permitted Access/NoAccess location. Missing values and not-deleted users sort first in ascending order.\r\n- Sorted mode uses a **four-setting index cached for one minute** and reads details only for the selected page.\r\n            \r\n### Text and identity filters\r\n            \r\n- \u0060filter\u0060: optional case-insensitive substring in **Number OR Name**, at most **200 characters**, with surrounding whitespace trimmed.\r\n- Wildcards: \u0060*\u0060 matches zero or more characters; \u0060?\u0060 matches one. Other symbols are literal.\r\n- Filtering precedes paging and uses the shared sorting index.\r\n- \u0060userKid\u0060 selects exactly one ordinary bank user and cannot be combined with \u0060filter\u0060 or \u0060cursor\u0060.\r\n- The same Tab, scope, operation and retention checks apply. Missing or inaccessible users return empty items.\r\n            \r\n### Location and deletion filters\r\n            \r\n- \u0060locationKid\u0060 filters an authorized location in the same bank, including Access and NoAccess associations.\r\n- \u0060deleted\u0060: \u0060all\u0060 (default), \u0060active\u0060, \u0060deleted\u0060 or \u0060no-access\u0060.\r\n- \u0060no-access\u0060 means no recorded Access in any manager-visible location. Empty lists and NoAccess-only lists match; hidden locations do not affect the result.\r\n- Existing visibility and deletion retention still apply. \u0060locationKid\u0060 remains an additional association filter.\r\n            \r\n### Cache and scan limits\r\n            \r\n- Every request rechecks access. Data may be cached for **60 seconds**. No total count is queried.\r\n- Legacy identity mode examines at most **1,000 candidates**. \u0060scanLimitReached\u0060 may accompany an empty or short page; follow \u0060nextCursor\u0060 to continue.\r\n- Concurrent changes are not a transactionally frozen snapshot.",
+        "description": "### Access and visibility\r\n            \r\n- Requires **Users2 (53)**, **User Read** and a matching tenant/bank/location grant.\r\n- An exact **userKid** lookup also accepts **UserFinder1 (77)** instead of Users2; bulk lists still require Users2.\r\n- Location-only grants include **Access** and **NoAccess** associations; other locations are removed from the response.\r\n- Ordinary users only, including \u0060eUserId.UsersLast\u0060. Deleted users follow **RetentionDays**.\r\n- \u0060email\u0060 is the current Log7 \u0060eSetting.Email\u0060 (2800), decoded from JSON or legacy plain text.\r\n- \u0060sms\u0060 is the current Log7 \u0060eSetting.SMS\u0060 number, decoded without changing its format. Missing email/SMS values are empty.\r\n            \r\n### Paging\r\n            \r\n- \u0060pageSize\u0060: **1\u2013100**, default **25**. Copy \u0060previousCursor\u0060 or \u0060nextCursor\u0060 unchanged into \u0060cursor\u0060.\r\n- Cursors are shareable positions, not credentials.\r\n- Keep filters, sort and direction unchanged while using a cursor. Restart **without a cursor** when changing them.\r\n            \r\n### Ordering\r\n            \r\n- \u0060sort\u0060: \u0060identity\u0060 (legacy default, ascending only), \u0060number\u0060, \u0060name\u0060, \u0060location\u0060 or \u0060deleted\u0060.\r\n- \u0060direction\u0060: \u0060asc\u0060 or \u0060desc\u0060. User identity breaks ties.\r\n- Number orders numeric values before text. Text comparison is ordinal and case-insensitive.\r\n- Location uses the lowest permitted Access/NoAccess location. Missing values and not-deleted users sort first in ascending order.\r\n- Sorted mode uses a **four-setting index cached for one minute** and reads details only for the selected page.\r\n            \r\n### Text and identity filters\r\n            \r\n- \u0060filter\u0060: optional case-insensitive substring in **Number OR Name**, at most **200 characters**, with surrounding whitespace trimmed.\r\n- Wildcards: \u0060*\u0060 matches zero or more characters; \u0060?\u0060 matches one. Other symbols are literal.\r\n- Filtering precedes paging and uses the shared sorting index.\r\n- \u0060userKid\u0060 selects exactly one ordinary bank user and cannot be combined with \u0060filter\u0060 or \u0060cursor\u0060.\r\n- The same Tab, scope, operation and retention checks apply. Missing or inaccessible users return empty items.\r\n            \r\n### Location and deletion filters\r\n            \r\n- \u0060locationKid\u0060 filters an authorized location in the same bank, including Access and NoAccess associations.\r\n- \u0060deleted\u0060: \u0060all\u0060 (default), \u0060active\u0060, \u0060deleted\u0060 or \u0060no-access\u0060.\r\n- \u0060no-access\u0060 means no recorded Access in any manager-visible location. Empty lists and NoAccess-only lists match; hidden locations do not affect the result.\r\n- Existing visibility and deletion retention still apply. \u0060locationKid\u0060 remains an additional association filter.\r\n            \r\n### Cache and scan limits\r\n            \r\n- Every request rechecks access. Data may be cached for **60 seconds**. No total count is queried.\r\n- Legacy identity mode examines at most **1,000 candidates**. \u0060scanLimitReached\u0060 may accompany an empty or short page; follow \u0060nextCursor\u0060 to continue.\r\n- Concurrent changes are not a transactionally frozen snapshot.",
         "operationId": "GetBankUsers",
         "parameters": [
           {
@@ -4737,7 +5141,7 @@
           "Installers"
         ],
         "summary": "List installers with locations, tags, account state and last activity.",
-        "description": "### Access and storage\r\n            \r\n- Requires an active manager, Installers1 (68), PermissionInstaller2 Read and a whole-tenant KID grant.\r\n- Bank/location-only grants and Write without Read are insufficient. Current account, credential stamp,\r\n  tab, permission and tenant scope are checked on every page through the bounded 60-second snapshot.\r\n- Reads only A{TenantId:D4}.Log7, BankId=TenantId and eUserId.Installeres through InstalleresLast (1\u2013999).\r\n  Tenant comes exclusively from trusted site configuration. Passwords and activation secrets are never selected.\r\n            \r\n### Returned data\r\n            \r\n- Object identifiers are canonical KIDs. Derive the displayed UserId from the installer KID.\r\n- Locations and tags use the same JSON/legacy decoding as residents. State is retained, including NoAccess\r\n  and locked/deleted/history tags. These are metadata, never additional permissions for the caller.\r\n- Disabled installers remain visible. Deleted installers follow the caller\u0027s RetentionDays; malformed/future\r\n  deletion values are hidden. LastActiveAt is the Alive row\u0027s MS2000 converted to UTC, never its Text value.\r\n- Missing/invalid Enabled and activity are null; missing Deleted is zero. Reads do not update activity.\r\n            \r\n### Paging, filtering and ordering\r\n            \r\n- pageSize is 1\u2013100 (default 50). Follow nextCursor until null; a page may be empty due to retention.\r\n- filter is a literal, case-insensitive Name/Email substring, at most 128 characters. Wildcards are escaped.\r\n- Sorts: identity, name, email, locations, tags, deleted, enabled, lastActive; direction asc or desc.\r\n- Sort applies before paging. Text is ordinal case-insensitive; location/tag lists compare sorted numeric\r\n  IDs and then states lexicographically, not their displayed text or count. Identity breaks ties in the same direction.\r\n- Null values sort first ascending, last descending. Deleted sorts by timestamp, Enabled by null/false/true.\r\n- Identity ascending uses bounded keyset reads. Other sorts use a tenant-local index, at most 999 identities,\r\n  cached for 60 seconds, then fresh page details with retention reapplied. No per-installer queries.\r\n- Cursors are bound to caller, tenant, filter, ordering and page size. Restart without a cursor when any changes.\r\n  Concurrent updates are not a frozen snapshot; a removed cursor anchor requires restarting.\r\n            \r\n### Errors and limits\r\n            \r\n- 400: invalid-page, invalid-filter, invalid-sort or invalid-cursor. 401: invalid/revoked session.\r\n- 403: missing-installers-tab, missing-installers-read or missing-tenant-access.\r\n- 503 installers-unavailable: database unavailable or the 12-second deadline elapsed; no partial sorted result.\r\n  Retry manually. All responses are no-store. No installer writes are provided by this operation.",
+        "description": "### Access and storage\r\n            \r\n- Requires an active manager, Installers1 (68), PermissionInstaller2 Read and a whole-tenant KID grant.\r\n- Bank/location-only grants and Write without Read are insufficient. Current account, credential stamp,\r\n  tab, permission and tenant scope are checked on every page through the bounded 60-second snapshot.\r\n- Reads only A{TenantId:D4}.Log7, BankId=TenantId and eUserId.Installeres through InstalleresLast (1\u2013999).\r\n  Tenant comes exclusively from trusted site configuration. Passwords and activation secrets are never selected.\r\n            \r\n### Returned data\r\n            \r\n- Object identifiers are canonical KIDs. Derive the displayed UserId from the installer KID.\r\n- Locations and tags use the same JSON/legacy decoding as residents. State is retained, including NoAccess\r\n  and locked/deleted/history tags. These are metadata, never additional permissions for the caller.\r\n- Disabled installers remain visible. Deleted installers follow the caller\u0027s RetentionDays; malformed/future\r\n  deletion values are hidden. LastActiveAt is the Alive row\u0027s MS2000 converted to UTC, never its Text value.\r\n- Missing/invalid Enabled and activity are null; missing Deleted is zero. Reads do not update activity.\r\n- includeActivationCode=true additionally requires Installer Create and returns each visible installer\u0027s\r\n  FlexActivation.User() activationCode using this site\u0027s tenant bank. Default false omits the code.\r\n  This is sensitive activation data; do not log/cache/share it. No password is returned.\r\n            \r\n### Paging, filtering and ordering\r\n            \r\n- pageSize is 1\u2013100 (default 50). Follow nextCursor until null; a page may be empty due to retention.\r\n- filter is a literal, case-insensitive Name/Email substring, at most 128 characters. Wildcards are escaped.\r\n- Sorts: identity, name, email, locations, tags, deleted, enabled, lastActive; direction asc or desc.\r\n- Sort applies before paging. Text is ordinal case-insensitive; location/tag lists compare sorted numeric\r\n  IDs and then states lexicographically, not their displayed text or count. Identity breaks ties in the same direction.\r\n- Null values sort first ascending, last descending. Deleted sorts by timestamp, Enabled by null/false/true.\r\n- Identity ascending uses bounded keyset reads. Other sorts use a tenant-local index, at most 999 identities,\r\n  cached for 60 seconds, then fresh page details with retention reapplied. No per-installer queries.\r\n- Cursors are bound to caller, tenant, filter, ordering and page size. Restart without a cursor when any changes.\r\n  Concurrent updates are not a frozen snapshot; a removed cursor anchor requires restarting.\r\n            \r\n### Errors and limits\r\n            \r\n- 400: invalid-page, invalid-filter, invalid-sort or invalid-cursor. 401: invalid/revoked session.\r\n- 403: missing-installers-tab, missing-installers-read, missing-installers-create (codes) or missing-tenant-access.\r\n- 503 installers-unavailable: database unavailable or the 12-second deadline elapsed; no partial sorted result.\r\n  Retry manually. All responses are no-store. No installer writes are provided by this operation.",
         "operationId": "GetInstallers",
         "parameters": [
           {
@@ -4777,6 +5181,14 @@
             "schema": {
               "type": "string",
               "default": "asc"
+            }
+          },
+          {
+            "name": "includeActivationCode",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -5423,9 +5835,18 @@
         "tags": [
           "Locations"
         ],
-        "summary": "Count accessible active locations for the Banks2 navigation icon.",
-        "description": "Requires an active manager, Banks2 (5), Bank Read, Location Read and current site/bank/location grants.\r\nCounts distinct Log24 locations (BankId at least 1000) with Enabled exactly 1 and Deleted zero;\r\nmissing Deleted means zero, missing/invalid Enabled or malformed Deleted are excluded.\r\nThese state rules also apply to all-bank managers. For limited grants the parent bank must remain\r\nvisible under RetentionDays. No search, paging or client-selected scope is accepted.\r\nReturns count and a ready-to-render iconKid containing Kid.Count. The aggregate is read afresh on each request; permission snapshots live at most 60 seconds.\r\n401: invalid/revoked session. 403: missing-banks-tab, missing-bank-read, missing-location-read or missing-resource-access.\r\n503 locations-unavailable: storage unavailable or the 12-second deadline elapsed; retry manually. No-store.",
+        "summary": "Count accessible active locations for the Locations1 navigation icon.",
+        "description": "Requires an active manager, Locations1 (65), Bank Read, Location Read and current site/bank/location grants.\r\nCounts distinct Log24 locations (BankId at least 1000) with Enabled exactly 1 and Deleted zero;\r\nmissing Deleted means zero, missing/invalid Enabled or malformed Deleted are excluded.\r\nThese state rules also apply to all-bank managers. For limited grants the parent bank must remain\r\nvisible under RetentionDays. Optional bankKid narrows the count to one canonical bank KID in this tenant, intersecting current grants. No search or paging is accepted.\r\nReturns count and a ready-to-render iconKid containing Kid.Count. The aggregate is read afresh on each request; permission snapshots live at most 60 seconds.\r\n401: invalid/revoked session. 403: missing-banks-tab, missing-bank-read, missing-location-read or missing-resource-access.\r\n503 locations-unavailable: storage unavailable or the 12-second deadline elapsed; retry manually. No-store.",
         "operationId": "GetActiveLocationCount",
+        "parameters": [
+          {
+            "name": "bankKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -5443,6 +5864,26 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ActiveLocationCountResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -5521,7 +5962,7 @@
           "Locations"
         ],
         "summary": "List accessible locations with parent banks, Visma customer numbers and authorized activation codes.",
-        "description": "### Authorization and data\r\nRequires an active manager, Banks2 (5), Bank Read, Location Read and site/bank/location grants.\r\nEvery page rechecks the current bounded manager snapshot. Location-only grants never reveal sibling locations.\r\nReads only the site\u0027s Log24; BankId must be at least 1000. Discovery requires Name, Icon, VismaCustNo, Enabled or Deleted.\r\nAn explicit site-wide grant lists all states, including disabled locations and deletions outside RetentionDays.\r\nLimited grants require the location\u0027s Enabled value to be exactly 1 (missing/other values are hidden).\r\nFor limited grants, both bank and location deletion follow RetentionDays: zero or an inclusive window ending now;\r\nmissing Deleted means zero, malformed/future values are hidden. All filtering precedes paging.\r\nEnabled is true only for stored 1. Deleted is null when malformed, otherwise indicates a positive MS2000 value.\r\nDeletedAt is the corresponding UTC timestamp, or null for zero, invalid or unrepresentable values.\r\nBankKid and Kid are canonical identifiers. Missing names/VismaCustNo are empty, invalid icons use bank_building/house.\r\nHasAllBanksAccess indicates an explicit site-wide grant. Both activation codes require this grant;\r\nBankActivationCode additionally requires Bank Create and LocationActivationCode requires Location Create.\r\nOtherwise the code is null. A displayed code never grants API permission.\r\n            \r\n### Optional columns\r\nfields: comma-separated vismaCustNo, bankActivationCode, locationActivationCode, address, zip, longitude, latitude,\r\nteltonikaSms, alternativeBankName, mask, timeZone, online, lastContactAt.\r\nText filtering also searches all selected stored columns before pagination; unselected extra columns do not match.\r\nDecimal coordinates and gift amounts accept dot/comma; date searches accept ISO or dd.MM.yyyy/dd-MM-yyyy, UTC for contacts.\r\nbankName is an optional selection marker for showing the bank name and bank icon together after the location in the portal. Core bank identity properties remain populated.\r\nBilling fields (also accepted as sort keys): vismaCrAcNo, vismaInvoiceVersion, vismaOrdre, vismaPNTurnover, vismaPNSettlement, vismaSettlement, vismaVAT, vismaServiceKey, vismaStart, vismaNote, hiddenNote, vismaGuaranteeMonth, vismaGuaranteeUnder, vismaGuarantee, vismaGuaranteeCustomer, vismaGuaranteeOver, gift, giftBegin, giftEnd, giftSplit, giftPN.\r\nGiftPN uses legacy location setting 1620 (the shared enum calls this identity DurationIsETA for units).\r\nBilling fields return location-owned stored text; omitted fields are null, selected missing fields are empty.\r\nTeltonikaSms, alternativeBankName, mask and timeZone are location-owned TeltonikaSMS, Bank, Access and TimeZone settings, returned as stored text without inheritance.\r\nMissing selected text is empty; unselected text is null. Preserve mask syntax, phone prefixes and legacy time-zone codes (100 means UTC\u002B1).\r\nOmitted/empty means core identifiers, status, names and icons only; unselected properties are null.\r\nAddress and Zip are location-owned settings without bank fallback. Coordinates are decimal degrees (stored microdegrees / 1,000,000), null when missing/invalid.\r\nOnly selected settings are joined, plus the sort setting and VismaCustNo when required for search. Codes retain all scope/Create checks.\r\nincludeCoordinates=true additionally returns latitude/longitude for map presentation without adding them to text search.\r\nDefaults to false; keep it unchanged across cursor requests. Authorization and coordinate null/degree rules are unchanged.\r\nThe response fields array names the requested columns. Keep fields unchanged across cursor requests; order and duplicates do not matter.\r\n            \r\nOnline and LastContactAt read the tenant-bound Alive table only when selected or sorted, for Log24-discovered visible main units (Alive.UnitId = Alive.MainId).\r\nOnline is false if any is offline, true only for a nonempty entirely known-online set, otherwise null.\r\nLastContactAt is the latest MS2000 in (0,now], returned as UTC ISO 8601; absent/invalid contacts are null.\r\nIt means last contact, not last machine run. Deleted units follow RetentionDays; orphan Alive rows do not contribute.\r\n            \r\n### Search, sorting and paging\r\npageSize: 1\u2013100, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,\r\nlocation name or VismaCustNo. Exact canonical/readable/site-relative bank and location KIDs are supported.\r\nComplete bank/location activation codes match only when the caller could view that code; bank codes include tenant,\r\nlocation codes use the trusted site tenant. No cross-tenant reads. Empty filter lists all accessible locations.\r\nsort: name (default), bankName, vismaCustNo, address, zip, longitude, latitude, teltonikaSms,\r\nalternativeBankName, mask, timeZone, online, lastContactAt, bankActivationCode or locationActivationCode;\r\ndirection: asc (default) or desc. MySQL utf8mb4_general_ci\r\ntext ordering precedes LIMIT. Coordinates (validated microdegrees) and legacy timeZone sort numerically;\r\nOnline sorts unknown/offline/online; lastContactAt sorts chronologically; missing/invalid numeric values sort first ascending and last descending. Gift, giftBegin and giftEnd also sort numerically; other settings sort as text.\r\nCodes sort numerically using FlexActivation: stream authorized matching rows and retain at most pageSize\u002B1 candidates.\r\nCode sorts may take longer on large result sets; narrow filter when needed. No full catalogue is retained in memory.\r\nSorting codes requires permission to see that code (otherwise 403 missing-code-access).\r\nNumeric bank/location identities break ties in the same direction for every sort.\r\nFollow nextCursor until null; cursors are protected, expire after 15 minutes and are bound to tenant, manager,\r\nresource grants, retention, filter, enabledOnly, sort, direction and page size. Restart without a cursor when these change.\r\nenabledOnly: false by default. When true, exclude locations whose Enabled is not exactly 1 before paging.\r\nThis narrows the authorized view only; deletion/retention rules and activation-code permissions remain unchanged.\r\nConcurrent edits are not a frozen snapshot; renamed rows may move. No count or full catalogue is returned.\r\n            \r\n### Errors\r\n400: invalid-page, invalid-filter, invalid-sort, invalid-fields, invalid-cursor. 401: invalid/revoked session.\r\n403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access, missing-code-access.\r\n503 locations-unavailable: storage unavailable or the 12-second deadline elapsed. Retry manually. No-store.",
+        "description": "### Authorization and data\r\nRequires an active manager, Locations1 (65), Bank Read, Location Read and site/bank/location grants.\r\nEvery page rechecks the current bounded manager snapshot. Location-only grants never reveal sibling locations.\r\nReads only the site\u0027s Log24; BankId must be at least 1000. Discovery requires Name, Icon, VismaCustNo, Enabled or Deleted.\r\nAn explicit site-wide grant lists all states, including disabled locations and deletions outside RetentionDays.\r\nLimited grants require the location\u0027s Enabled value to be exactly 1 (missing/other values are hidden).\r\nFor limited grants, both bank and location deletion follow RetentionDays: zero or an inclusive window ending now;\r\nmissing Deleted means zero, malformed/future values are hidden. All filtering precedes paging.\r\nEnabled is true only for stored 1. Deleted is null when malformed, otherwise indicates a positive MS2000 value.\r\nDeletedAt is the corresponding UTC timestamp, or null for zero, invalid or unrepresentable values.\r\nBankKid and Kid are canonical identifiers. Missing names/VismaCustNo are empty, invalid icons use bank_building/house.\r\nHasAllBanksAccess indicates an explicit site-wide grant. Both activation codes require this grant;\r\nBankActivationCode additionally requires Bank Create and LocationActivationCode requires Location Create.\r\nOtherwise the code is null. A displayed code never grants API permission.\r\n            \r\n### Optional columns\r\nfields: comma-separated vismaCustNo, bankActivationCode, locationActivationCode, address, zip, longitude, latitude,\r\nteltonikaSms, alternativeBankName, mask, timeZone, online, lastContactAt.\r\nText filtering also searches all selected stored columns before pagination; unselected extra columns do not match.\r\nDecimal coordinates and gift amounts accept dot/comma; date searches accept ISO or dd.MM.yyyy/dd-MM-yyyy, UTC for contacts.\r\nbankName is an optional selection marker for showing the bank name and bank icon together after the location in the portal. Core bank identity properties remain populated.\r\nBilling fields (also accepted as sort keys): vismaCrAcNo, vismaInvoiceVersion, vismaOrdre, vismaPNTurnover, vismaPNSettlement, vismaSettlement, vismaVAT, vismaServiceKey, vismaStart, vismaNote, hiddenNote, vismaGuaranteeMonth, vismaGuaranteeUnder, vismaGuarantee, vismaGuaranteeCustomer, vismaGuaranteeOver, gift, giftBegin, giftEnd, giftSplit, giftPN.\r\nGiftPN uses legacy location setting 1620 (the shared enum calls this identity DurationIsETA for units).\r\nBilling fields return location-owned stored text; omitted fields are null, selected missing fields are empty.\r\nTeltonikaSms, alternativeBankName, mask and timeZone are location-owned TeltonikaSMS, Bank, Access and TimeZone settings, returned as stored text without inheritance.\r\nMissing selected text is empty; unselected text is null. Preserve mask syntax, phone prefixes and legacy time-zone codes (100 means UTC\u002B1).\r\nOmitted/empty means core identifiers, status, names and icons only; unselected properties are null.\r\nAddress and Zip are location-owned settings without bank fallback. Coordinates are decimal degrees (stored microdegrees / 1,000,000), null when missing/invalid.\r\nOnly selected settings are joined, plus the sort setting and VismaCustNo when required for search. Codes retain all scope/Create checks.\r\nincludeCoordinates=true additionally returns latitude/longitude for map presentation without adding them to text search.\r\nDefaults to false; keep it unchanged across cursor requests. Authorization and coordinate null/degree rules are unchanged.\r\nThe response fields array names the requested columns. Keep fields unchanged across cursor requests; order and duplicates do not matter.\r\n            \r\nOnline and LastContactAt read the tenant-bound Alive table only when selected or sorted, for Log24-discovered visible main units (Alive.UnitId = Alive.MainId).\r\nOnline is false if any is offline, true only for a nonempty entirely known-online set, otherwise null.\r\nLastContactAt is the latest MS2000 in (0,now], returned as UTC ISO 8601; absent/invalid contacts are null.\r\nIt means last contact, not last machine run. Deleted units follow RetentionDays; orphan Alive rows do not contribute.\r\n            \r\n### Search, sorting and paging\r\nbankKid: optional canonical bank KID in this tenant; intersects current grants before filtering/paging.\r\nNever broadens access or changes all-bank privileges. Repeat it unchanged with cursors; invalid/wrong-tenant KIDs return 400 invalid-bank.\r\npageSize: 1\u2013100, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,\r\nlocation name or VismaCustNo. Exact canonical/readable/site-relative bank and location KIDs are supported.\r\nComplete bank/location activation codes match only when the caller could view that code; bank codes include tenant,\r\nlocation codes use the trusted site tenant. No cross-tenant reads. Empty filter lists all accessible locations.\r\nsort: name (default), bankName, vismaCustNo, address, zip, longitude, latitude, teltonikaSms,\r\nalternativeBankName, mask, timeZone, online, lastContactAt, bankActivationCode or locationActivationCode;\r\ndirection: asc (default) or desc. MySQL utf8mb4_general_ci\r\ntext ordering precedes LIMIT. Coordinates (validated microdegrees) and legacy timeZone sort numerically;\r\nOnline sorts unknown/offline/online; lastContactAt sorts chronologically; missing/invalid numeric values sort first ascending and last descending. Gift, giftBegin and giftEnd also sort numerically; other settings sort as text.\r\nCodes sort numerically using FlexActivation: stream authorized matching rows and retain at most pageSize\u002B1 candidates.\r\nCode sorts may take longer on large result sets; narrow filter when needed. No full catalogue is retained in memory.\r\nSorting codes requires permission to see that code (otherwise 403 missing-code-access).\r\nNumeric bank/location identities break ties in the same direction for every sort.\r\nFollow nextCursor until null; cursors are protected, expire after 15 minutes and are bound to tenant, manager,\r\nresource grants, retention, filter, enabledOnly, sort, direction and page size. Restart without a cursor when these change.\r\nenabledOnly: false by default. When true, exclude locations whose Enabled is not exactly 1 before paging.\r\nThis narrows the authorized view only; deletion/retention rules and activation-code permissions remain unchanged.\r\nConcurrent edits are not a frozen snapshot; renamed rows may move. No count or full catalogue is returned.\r\n            \r\n### Errors\r\n400: invalid-bank, invalid-page, invalid-filter, invalid-sort, invalid-fields, invalid-cursor. 401: invalid/revoked session.\r\n403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access, missing-code-access.\r\n503 locations-unavailable: storage unavailable or the 12-second deadline elapsed. Retry manually. No-store.",
         "operationId": "GetLocations",
         "parameters": [
           {
@@ -5584,6 +6025,13 @@
             "schema": {
               "type": "boolean",
               "default": false
+            }
+          },
+          {
+            "name": "bankKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -6128,7 +6576,7 @@
           "LocationUnits"
         ],
         "summary": "Get the location label and its units, ordered by unit number.",
-        "description": "### Access and visibility\r\n            \r\n- Requires an active manager, at least one assigned **Tab**, **Location Read**, **Unit Read** and matching tenant/bank/location access.\r\n- Send a canonical location KID on this site.\r\n- Location and unit deletion both follow **RetentionDays**; missing Deleted means zero.\r\n- Current unit settings, Cycle, Enabled, OutOfOrder, WashDocId, Connected, Started and Done come from **Log24**, in one bounded query.\r\n            \r\n### Names, icons and cycle\r\n            \r\n- Missing or invalid unit icons use \u0060object_cube\u0060; explicitly configured icons are preserved.\r\n- The API adds the unit number to \u0060iconKid.Text\u0060. The \u0060g/object_cube\u0060 asset prints it on the box face.\r\n- Unit names resolve \u0060[eLocalization numeric ID]\u0060 placeholders using \u0060Accept-Language\u0060 on each request, defaulting to \u0060en-GB\u0060. Unknown IDs remain unchanged.\r\n- Cycle uses the newest MS2000 from \u0060eSetting.Cycle\u0060 or \u0060eState.Cycle\u0060; state wins ties.\r\n- Absent or invalid cycle values return null. \u0060cycle\u0060 is an enum name; \u0060cycleText\u0060 is its localized label.\r\n- \u0060unitType\u0060 is the effective numeric type; \u0060unitTypeName\u0060 is the eUnitType name when defined; \u0060unitTypeSource\u0060 identifies the source setting.\r\n- A present UnitType2 takes precedence, including when malformed (null type, no legacy fallback). Otherwise UnitType is decoded using FlexOrm\u0027s \u0060(value \u003E\u003E 1) \u0026 63\u0060 rule.\r\n- Missing/invalid types return null, never an invented Type000. Unknown numeric types are retained without claiming metadata support.\r\n- \u0060progress\u0060 contains \u0060status\u0060, nullable \u0060percent\u0060/\u0060remainingSeconds\u0060 and \u0060calculatedAtUtc\u0060. The API recalculates from Started/Done at request time; clients need no MS2000 or KID calculations.\r\n- \u0060Estimated\u0060 is 0\u201399%; \u0060Complete\u0060 is 100% only for the actual DONE phase (excluding LinkOnline). Cycle substeps are not percentages. Disabled/out-of-order/disconnected/error states suppress estimates.\r\n- \u0060UnknownEndTime\u0060 covers missing/reset/invalid times, the unknown-end sentinel, mismatched sequence DocIds and fractional Connected quality. \u0060EstimateExpired\u0060 means wait for the actual cycle; it never means complete. Both have null percentages and remaining time.\r\n- Enabled must be exactly 1. Connected=0 blocks estimates; missing Connected is not assumed offline. Started/Done are JSON Text values; TagId is the sequence. No user identities are read for progress.\r\n            \r\n### Results and cache\r\n            \r\n- At most **255 units**, ordered by unit number. No paging or count query.\r\n- No visible units returns empty items.\r\n- Unit data is cached for up to **10 seconds** and location labels for up to **60 seconds**. Authorization is reapplied on every call.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 404:** missing or invisible location.\r\n- After tab/resource checks, **HTTP 403** may include \u0060reason\u0060 of \u0060missing-location-read\u0060 or \u0060missing-unit-read\u0060. No business storage is read on denial.",
+        "description": "### Access and visibility\r\n            \r\n- Requires an active manager, at least one assigned **Tab**, **Location Read**, **Unit Read** and matching tenant/bank/location access.\r\n- Send a canonical location KID on this site.\r\n- Location and unit deletion both follow **RetentionDays**; missing Deleted means zero.\r\n- Current unit settings, Cycle, Enabled, OutOfOrder, WashDocId, Connected, Started and Done come from **Log24**, in one bounded query.\r\n            \r\n### Names, icons and cycle\r\n            \r\n- Missing or invalid unit icons use \u0060object_cube\u0060; explicitly configured icons are preserved.\r\n- The API adds the unit number to \u0060iconKid.Text\u0060. The \u0060g/object_cube\u0060 asset prints it on the box face.\r\n- Unit names resolve \u0060[eLocalization numeric ID]\u0060 placeholders using \u0060Accept-Language\u0060 on each request, defaulting to \u0060en-GB\u0060. Unknown IDs remain unchanged.\r\n- Cycle uses the newest MS2000 from \u0060eSetting.Cycle\u0060 or \u0060eState.Cycle\u0060; state wins ties.\r\n- Absent or invalid cycle values return null. \u0060cycle\u0060 is an enum name; \u0060cycleText\u0060 is its localized label.\r\n- \u0060unitType\u0060 is the effective numeric type; \u0060unitTypeName\u0060 is the eUnitType name when defined; \u0060unitTypeSource\u0060 identifies the source setting.\r\n- A present UnitType2 takes precedence, including when malformed (null type, no legacy fallback). Otherwise UnitType is decoded using FlexOrm\u0027s \u0060(value \u003E\u003E 1) \u0026 63\u0060 rule.\r\n- Missing/invalid types return null, never an invented Type000. Unknown numeric types are retained without claiming metadata support.\r\n- \u0060progress\u0060 contains \u0060status\u0060, nullable \u0060percent\u0060/\u0060remainingSeconds\u0060 and \u0060calculatedAtUtc\u0060. The API recalculates from Started/Done at request time; clients need no MS2000 or KID calculations.\r\n- \u0060Estimated\u0060 is 0\u201399%; \u0060Complete\u0060 is 100% only for the actual DONE phase (excluding LinkOnline). Cycle substeps are not percentages. Disabled/out-of-order/disconnected/error states suppress estimates.\r\n- \u0060UnknownEndTime\u0060 covers missing/reset/invalid times, the unknown-end sentinel, mismatched sequence DocIds and fractional Connected quality. \u0060EstimateExpired\u0060 means wait for the actual cycle; it never means complete. Both have null percentages and remaining time.\r\n- Enabled must be exactly 1. Connected=0 blocks estimates; missing Connected is not assumed offline. Started/Done are JSON Text values; TagId is the sequence. No user identities are read for progress.\r\n- \u0060terminal\u0060 is an optional \u0060{kid,name,iconKid}\u0060 resolved from the trusted tenant\u0027s Alive.MainId for the exact visible unit set. The parent must be a visible Log24 unit in this location; an existing parent Alive row must map UnitId to itself. A missing parent Alive row is allowed when a visible child\u0027s MainId explicitly identifies it.\r\n- Missing, invalid, hidden, chained or unavailable hierarchy returns terminal=null; never guess a self-parent. Terminal names use Accept-Language and its iconKid includes the main unit number. Offline is independent.\r\n            \r\n### Results and cache\r\n            \r\n- At most **255 units**, ordered by unit number. No paging or count query.\r\n- No visible units returns empty items.\r\n- Unit data is cached for up to **10 seconds** and location labels for up to **60 seconds**. Authorization is reapplied on every call.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 404:** missing or invisible location.\r\n- After tab/resource checks, **HTTP 403** may include \u0060reason\u0060 of \u0060missing-location-read\u0060 or \u0060missing-unit-read\u0060. No business storage is read on denial.",
         "operationId": "GetLocationUnits",
         "parameters": [
           {
@@ -8138,7 +8586,7 @@
           "ManagerPermissionRoles"
         ],
         "summary": "Replace all nine permission categories with a predefined administrator role.",
-        "description": "Every role replacement requires independent Read and Write on both Tabs and Kids in the caller snapshot, rechecked inside the transaction, because every preset replaces both permission masks. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.\r\n            ### Access\r\n           \r\n            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.\r\n            - Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.\r\n           \r\n            The additional technical-support and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.\r\n           \r\n            ### Presets\r\n           \r\n            | role | Bank | Location / Unit / User | Managers / Installer / Service |\r\n            | --- | --- | --- | --- |\r\n            | accounting (Regnskab) | Read (1) | Read (1) | None (0) |\r\n            | caretaker (Varmemester) | Read (1) | Read \u002B Write (3) | None (0) |\r\n            | operator (Operat\u00F8r) | All six flags (63) | All six flags (63) | All six flags (63) |\r\n           \r\n            - Replaces the whole matrix, including clearing existing extra flags. Accounting also replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40), removing every other ID, including unknown stored IDs. Other roles preserve Tabs.\r\n            - Kids, account state and profile fields are unchanged.\r\n            - A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.\r\n            - Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 54 checkboxes and retains Managers access.\r\n           \r\n            ### Concurrency and storage\r\n           \r\n            - Read GetManager first. Send expectedFlags for all nine categories, using explicit null for invalid stored values. Accounting additionally requires expectedTabsRevision copied from tabsRevision; older clients must send this property before applying accounting.\r\n            - Requests must contain all nine categories, including Service, Tabs and Kids. Incomplete category sets are rejected.\r\n            - One serializable Log7 transaction validates every expected mask and the Tabs revision before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab updates.\r\n            - Every role response includes tabs, tabsRevision, canEditTabs and canEditPermissions. Validate all returned permissions and tabs before changing the display; use the new tabsRevision for the next edit.\r\n            - Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.\r\n           \r\n            ### Errors\r\n           \r\n            - 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid expectedTabsRevision for accounting. Invalid tenant/KID returns invalid-manager-kid.\r\n            - 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.\r\n            - 409 permission-conflict or tabs-conflict: reload and review; nothing is partially saved. Accounting returns invalid-stored-tabs for malformed stored JSON/non-integer tab IDs without overwriting it.\r\n            - 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.",
+        "description": "Every role replacement requires independent Read and Write on both Tabs and Kids in the caller snapshot, rechecked inside the transaction, because every preset replaces both permission masks. Missing stored flags default to Read. Extra Create/Delete/Rename flags are stored independently but do not replace Write for these assignment operations.\r\n            ### Access\r\n           \r\n            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.\r\n            - Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.\r\n           \r\n            The additional technical-support and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.\r\n           \r\n            ### Presets\r\n           \r\n            | role | Bank | Location / Unit / User | Managers / Installer / Service |\r\n            | --- | --- | --- | --- |\r\n            | accounting (Regnskab) | Read (1) | Read (1) | None (0) |\r\n            | caretaker (Varmemester) | Read (1) | Read \u002B Write (3) | None (0) |\r\n            | operator (Operat\u00F8r) | All six flags (63) | All six flags (63) | All six flags (63) |\r\n           \r\n            - Replaces the whole matrix, including clearing existing extra flags. Accounting replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40). Combine grants all six flags in all nine categories, selects every available tab (excluding None/Length), and grants the site\u0027s Tenant KID (all banks). Other roles preserve Tabs and Kids.\r\n            - Combine replaces narrower site grants, preserves unrelated foreign stored grants without granting access to them, and never changes account state or profile fields. Available tabs are selected once; future tabs are not automatically granted.\r\n            - A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.\r\n            - Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 54 checkboxes and retains Managers access.\r\n           \r\n            ### Concurrency and storage\r\n           \r\n            - Read GetManager first. Send expectedFlags for all nine categories, using explicit null for invalid stored values. Accounting and combine require expectedTabsRevision copied from tabsRevision; combine also requires expectedKidsRevision copied from kidsRevision.\r\n            - Requests must contain all nine categories, including Service, Tabs and Kids. Incomplete category sets are rejected.\r\n            - One serializable Log7 transaction validates every expected mask and applicable Tabs/Kids revisions before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab/resource updates.\r\n            - Every role response includes tabs, tabsRevision, canEditTabs, canEditPermissions, resourceGrants, kidsRevision and canEditKids. Validate the full response before changing the display; use the new revisions for the next edit.\r\n            - Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.\r\n           \r\n            ### Errors\r\n           \r\n            - 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid required revisions. Invalid tenant/KID returns invalid-manager-kid.\r\n            - 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.\r\n            - 409 permission-conflict, tabs-conflict or kids-conflict: reload and review; nothing is partially saved. Accounting/combine return invalid-stored-tabs for malformed tabs; combine returns invalid-stored-kids for malformed grants, without overwriting them.\r\n            - 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.",
         "operationId": "SetManagerPermissionRole",
         "parameters": [
           {
@@ -9276,16 +9724,6 @@
                   ],
                   "availableTabs": [
                     {
-                      "id": 5,
-                      "name": "Banks2",
-                      "iconKid": ""
-                    },
-                    {
-                      "id": 60,
-                      "name": "Services1",
-                      "iconKid": ""
-                    },
-                    {
                       "id": 1,
                       "name": "Access1",
                       "iconKid": ""
@@ -9521,11 +9959,6 @@
                       "iconKid": ""
                     },
                     {
-                      "id": 50,
-                      "name": "Units1",
-                      "iconKid": ""
-                    },
-                    {
                       "id": 51,
                       "name": "User2",
                       "iconKid": ""
@@ -9591,16 +10024,6 @@
                       "iconKid": ""
                     },
                     {
-                      "id": 65,
-                      "name": "Disp65",
-                      "iconKid": ""
-                    },
-                    {
-                      "id": 66,
-                      "name": "Disp66",
-                      "iconKid": ""
-                    },
-                    {
                       "id": 67,
                       "name": "GlobalInfo1",
                       "iconKid": ""
@@ -9646,11 +10069,6 @@
                       "iconKid": ""
                     },
                     {
-                      "id": 77,
-                      "name": "UserFinder1",
-                      "iconKid": ""
-                    },
-                    {
                       "id": 78,
                       "name": "Log1",
                       "iconKid": ""
@@ -9676,6 +10094,31 @@
                       "iconKid": ""
                     },
                     {
+                      "id": 5,
+                      "name": "Banks2",
+                      "iconKid": ""
+                    },
+                    {
+                      "id": 65,
+                      "name": "Locations1",
+                      "iconKid": ""
+                    },
+                    {
+                      "id": 66,
+                      "name": "Terminals1",
+                      "iconKid": ""
+                    },
+                    {
+                      "id": 50,
+                      "name": "Units1",
+                      "iconKid": ""
+                    },
+                    {
+                      "id": 60,
+                      "name": "Services1",
+                      "iconKid": ""
+                    },
+                    {
                       "id": 28,
                       "name": "Managers1",
                       "iconKid": ""
@@ -9683,6 +10126,11 @@
                     {
                       "id": 68,
                       "name": "Installers1",
+                      "iconKid": ""
+                    },
+                    {
+                      "id": 77,
+                      "name": "UserFinder1",
                       "iconKid": ""
                     }
                   ]
@@ -10815,6 +11263,166 @@
         ]
       }
     },
+    "/api/v1/managers/count": {
+      "get": {
+        "tags": [
+          "PeopleDirectoryCounts"
+        ],
+        "summary": "Count all visible administrators, independently of the current page/filter.",
+        "description": "Requires Managers1, Managers Read and whole-tenant access. Includes disabled accounts and\r\n            deletions within the caller\u0027s RetentionDays, like GetManagers. Reuses the 60-second, 20,000-identity\r\n            bounded directory index. No estimate is returned when that bound is exceeded. No-store.",
+        "operationId": "GetManagerCount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/installers/count": {
+      "get": {
+        "tags": [
+          "PeopleDirectoryCounts"
+        ],
+        "summary": "Count all visible installers, independently of the current page/filter.",
+        "description": "Requires Installers1, Installer Read and whole-tenant access. Includes disabled accounts and\r\n            deletions within the caller\u0027s RetentionDays, like GetInstallers. Reuses the existing 60-second,\r\n            at-most-999-identity directory index. No-store. Both counts recheck current session access.",
+        "operationId": "GetInstallerCount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/session/me/profile": {
       "get": {
         "tags": [
@@ -11616,6 +12224,103 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/services/count": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "summary": "Count the predefined service identities without reading service settings.",
+        "description": "Same active session, Services1, Service Read and whole-tenant scope as GetServices.\r\n            Uses the identical PortalServiceIds catalog (distinct concrete enum values, excluding range-end markers).\r\n            Independent of directory filtering. No service database read; the existing bounded session cache still\r\n            validates access. Returns count and the red-badge iconKid. 401/403 as GetServices; no-store.",
+        "operationId": "GetServiceCount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
                 }
               }
             }
@@ -13239,13 +13944,207 @@
         ]
       }
     },
+    "/api/v1/units/active-count": {
+      "get": {
+        "tags": [
+          "UnitsDirectory"
+        ],
+        "summary": "Count accessible active units for the Units1 navigation icon.",
+        "description": "Requires an active manager, Units1 (50), Bank/Location/Unit Read and current site/bank/location grants.\r\nCounts distinct Log24 units (BankId at least 1000) with Enabled exactly 1 and Deleted zero;\r\nmissing Deleted means zero, missing/invalid Enabled or malformed Deleted are excluded, including for site-wide grants.\r\nLimited grants also require an enabled parent location and Bank/Location deletion visible under RetentionDays.\r\nNo search, paging or client-selected scope is accepted. Returns count and iconKid containing Kid.Count.\r\nThe aggregate is read afresh; permission snapshots live at most 60 seconds. No request can select another tenant.\r\n401 invalid/revoked session; 403 missing-units-tab, missing-bank-read, missing-location-read,\r\nmissing-unit-read or missing-resource-access; 503 units-unavailable (storage unavailable or 12-second deadline).\r\nRetry unavailable requests manually. No-store.",
+        "operationId": "GetActiveUnitCount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveUnitCountResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveUnitCountResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveUnitCountResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/terminals/active-count": {
+      "get": {
+        "tags": [
+          "UnitsDirectory"
+        ],
+        "summary": "Count accessible active terminals for the Terminals1 navigation icon.",
+        "description": "Requires an active manager, Terminals1 (66), Bank/Location/Unit Read and current site/bank/location grants;\r\nUnits1 is not required. Uses the same active-only state and parent visibility rules as GetActiveUnitCount.\r\nOnly Log24 units whose ID appears as a positive MainId in the tenant-bound Alive table at the same bank and\r\nlocation qualify. Repeated Alive references count once; orphan Alive identities never count. Read-only classification.\r\nNo search, paging or client-selected scope is accepted. Returns count and iconKid containing Kid.Count.\r\nThe aggregate is read afresh; permission snapshots live at most 60 seconds. No request can select another tenant.\r\n401 invalid/revoked session; 403 missing-terminals-tab, missing-bank-read, missing-location-read,\r\nmissing-unit-read or missing-resource-access; 503 terminals-unavailable (storage unavailable or 12-second deadline).\r\nRetry unavailable requests manually. No-store.",
+        "operationId": "GetActiveTerminalCount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveUnitCountResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveUnitCountResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveUnitCountResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/units": {
       "get": {
         "tags": [
           "UnitsDirectory"
         ],
         "summary": "List authorized units, including child units, for Units1.",
-        "description": "Requires Units1 (50), Bank/Location/Unit Read and current resource grants. Every page rechecks the active manager.\r\nReads tenant Log24 only, BankId \u003E=1000. Limited grants require an enabled location and bank/location/unit deletion\r\nwithin RetentionDays; missing Deleted means zero, malformed/future values are hidden. Site-wide grants can inspect all states.\r\nenabledOnly=true requires unit Enabled exactly 1. No request can select another tenant.\r\npageSize 1\u2013100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,\r\nor an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.\r\nsort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.\r\nUnit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.\r\nfields: bankName, locationName, unitType, washDocId, outOfOrder. Core parent names/icons remain populated.\r\nOptional unit fields are null unless selected, empty if missing. UnitType2 takes precedence over decoded legacy UnitType.\r\nincludeCoordinates=true adds parent-location coordinates in decimal degrees, null if absent/invalid, for map presentation.\r\nFollow nextCursor until null. Protected cursors expire after 15 minutes and bind manager, tenant, grants, retention and all query options.\r\nRestart paging after changing options. Concurrent edits may move rows; pages are not a frozen snapshot.\r\n400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-units-tab, missing-bank-read,\r\nmissing-location-read, missing-unit-read or missing-resource-access; 503 units-unavailable (retry manually). No-store.",
+        "description": "Requires Units1 (50), Bank/Location/Unit Read and current resource grants. Every page rechecks the active manager.\r\nReads tenant Log24, BankId \u003E=1000, with optional bounded Alive.MainId terminal hierarchy. Limited grants require an enabled location and bank/location/unit deletion\r\nwithin RetentionDays; missing Deleted means zero, malformed/future values are hidden. Site-wide grants can inspect all states.\r\nenabledOnly=true requires unit Enabled exactly 1. No request can select another tenant.\r\npageSize 1\u2013100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,\r\nor an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.\r\nsort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.\r\nUnit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.\r\nfields: bankName, locationName, unitType, washDocId, outOfOrder. Core parent names/icons remain populated.\r\nOptional unit fields are null unless selected, empty if missing. UnitType2 takes precedence over decoded legacy UnitType.\r\nterminal is optional {kid,name,iconKid}; the same-location Log24 main unit must be authorized and retention-visible. A child Alive.MainId may identify it when its own Alive row is absent; an existing contradictory main mapping is rejected. Unknown, chained or unavailable hierarchy returns null without discarding the page. Offline is independent.\r\nincludeCoordinates=true adds parent-location coordinates in decimal degrees, null if absent/invalid, for map presentation.\r\nFollow nextCursor until null. Protected cursors expire after 15 minutes and bind manager, tenant, grants, retention and all query options.\r\nRestart paging after changing options. Concurrent edits may move rows; pages are not a frozen snapshot.\r\nterminalKid on GetUnits restricts results to child units whose same-location Alive.MainId identifies that terminal.\r\nThe terminal itself is excluded. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.\r\nA missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.\r\nInvalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.\r\nOptional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.\r\nRepeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.\r\n400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-units-tab, missing-bank-read,\r\nmissing-location-read, missing-unit-read or missing-resource-access; 503 units-unavailable (retry manually). No-store.",
         "operationId": "GetUnits",
         "parameters": [
           {
@@ -13308,6 +14207,215 @@
             "schema": {
               "type": "boolean",
               "default": false
+            }
+          },
+          {
+            "name": "locationKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "terminalKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDirectoryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDirectoryResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDirectoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/terminals": {
+      "get": {
+        "tags": [
+          "UnitsDirectory"
+        ],
+        "summary": "List authorized main units for Terminals1.",
+        "description": "Requires Terminals1 (66), Bank/Location/Unit Read and current site-bound resource grants; Units1 is not required.\r\nEach row\u0027s iconKid is the fixed terminal icon, independent of eSetting.Icon, with UnitId in its Text field.\r\nUses the same Log24 unit directory, visibility and RetentionDays as GetUnits. Name is eState.ComputerName, without fallback to eSetting.Name.\r\nTerminal fields/sorts: versionMinor, bootReason, booted, firmware, storageCardSerialNumber, page, backLight.\r\nBooted comes from eSetting.Booted; other terminal columns come from eState. Values are decoded text, null unless selected.\r\nOnly units whose ID appears as a positive MainId in this tenant\u0027s Alive table for the same bank and location qualify.\r\nRepeated Alive references produce one unit; Alive identities absent from Log24 are omitted. This is a read-only classification.\r\npageSize 1\u2013100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,\r\nor an exact same-site bank/location/unit KID. enabledOnly=true requires unit Enabled exactly 1.\r\nsort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.\r\nfields: bankName, locationName, unitType, washDocId, outOfOrder. Optional unit fields are null unless selected.\r\nincludeCoordinates=true returns parent-location coordinates for the map, null when absent/invalid.\r\nFollow nextCursor until null; cursors expire after 15 minutes and bind this directory, manager, tenant, grants,\r\nretention and all query options. Main-unit filtering precedes paging. Concurrent changes may move rows.\r\nterminalKid on GetUnits restricts results to child units whose same-location Alive.MainId identifies that terminal.\r\nThe terminal itself is excluded. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.\r\nA missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.\r\nInvalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.\r\nOptional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.\r\nRepeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.\r\n400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-terminals-tab, missing-bank-read,\r\nmissing-location-read, missing-unit-read or missing-resource-access; 503 terminals-unavailable (retry manually). No-store.",
+        "operationId": "GetTerminals",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "name"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "enabledOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeCoordinates",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "locationKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "terminalKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -14182,6 +15290,252 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "tags": [
+          "UserDirectory"
+        ],
+        "summary": "List authorized residents for UserFinder1 (77).",
+        "description": "Requires UserFinder1, User Read and tenant-bound bank/location grants. Reads Log7 only.\r\n            Applies RetentionDays and existing resident location visibility. enabledOnly=true excludes deleted residents;\r\n            residents have no Enabled setting. filter (0\u2013128 characters) matches literal name/number substrings,\r\n            exact email/SMS or canonical/readable resident KID. sort=identity (default, numeric bank/user order), name or number; direction=asc or desc; pageSize=1\u2013100.\r\n            Cursor is protected, manager/scope/query-bound and expires after 15 minutes. Keep options unchanged.\r\n            Up to 1000 candidates per request; scanLimitReached may accompany a short/empty page. Follow nextCursor.\r\n            Concurrent edits can move rows. No total count. Bank KIDs provide identity, not additional bank metadata.\r\n            Existing GetBankUsers with an exact userKid can open a result under UserFinder1; bulk lists and mutations\r\n            retain Users2 requirements. 400 invalid query/cursor, 401 revoked session, 403 missing access, 503 unavailable.",
+        "operationId": "GetUsers",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "identity"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "enabledOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDirectoryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDirectoryResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDirectoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/count": {
+      "get": {
+        "tags": [
+          "UserDirectoryCount"
+        ],
+        "summary": "Count active authorized residents for the UserFinder1 badge.",
+        "description": "Requires current active manager, UserFinder1 and User Read. Applies the trusted tenant\u0027s bank/location\r\n            grants and the same resident location decoding as GetUsers. Counts only nondeleted residents, independently of\r\n            the current filter/page. The count is an approximate display value cached for up to 24 hours per exact resource\r\n            scope in this API process; restart/eviction causes a fresh count. Never use it for authorization or accounting.\r\n            Session/tab/permission/scope are rechecked before every cache access. Log7 only, no writes. First count has a\r\n            12-second deadline; 401 revoked session, 403 missing access, 503 unavailable, never a fabricated zero.",
+        "operationId": "GetUserCount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryCount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
           }
         },
         "security": [
@@ -17464,6 +18818,21 @@
         "additionalProperties": false,
         "description": "One posting, with its original sign/currency and an independently authorized reversal capability."
       },
+      "AccountIconResponse": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconKid": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Most frequent authorized currency and the ready-to-render Forbrug icon."
+      },
       "AccountResponse": {
         "type": "object",
         "properties": {
@@ -17593,6 +18962,22 @@
         "additionalProperties": false,
         "description": "Scoped choices for the location and machine filters."
       },
+      "ActiveBankCountResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "iconKid": {
+            "type": "string",
+            "description": "Tab icon containing the authorized count.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Accessible bank count for Enabled=1 and Deleted=0."
+      },
       "ActiveLocationCountResponse": {
         "type": "object",
         "properties": {
@@ -17602,12 +18987,27 @@
           },
           "iconKid": {
             "type": "string",
-            "description": "Ready-to-render Banks2 icon with Count in Kid.Count.",
+            "description": "Ready-to-render Locations1 icon with Count in Kid.Count.",
             "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Number of accessible locations with Enabled=1 and Deleted=0, independent of search and paging."
+      },
+      "ActiveUnitCountResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "iconKid": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Accessible active units or terminals, independent of search and paging, with a ready-to-render navigation icon."
       },
       "AssistantLink": {
         "type": "object",
@@ -17699,6 +19099,76 @@
         },
         "additionalProperties": false,
         "description": "Plain text answer, executed operation IDs and server-verified object links."
+      },
+      "BankDirectoryItem": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "deleted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": "Requested bank-level settings; null when scope does not authorize their disclosure.\r\n            bankActivationCode additionally requires whole-tenant access and Bank Create.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Canonical bank identity, display metadata and stored state."
+      },
+      "BankDirectoryResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankDirectoryItem"
+            },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Selected optional field keys. Keep the same selection when following the cursor.",
+            "nullable": true
+          },
+          "canReadBankActivationCode": {
+            "type": "boolean",
+            "description": "Whether this caller may display, search and sort bank activation codes."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A bounded bank page and optional protected continuation."
       },
       "BankDocumentItem": {
         "type": "object",
@@ -18559,6 +20029,11 @@
             "format": "date-time",
             "nullable": true
           },
+          "activationCode": {
+            "type": "string",
+            "description": "User activation code, only when explicitly requested with Installer Create permission.",
+            "nullable": true
+          },
           "iconKid": {
             "type": "string",
             "description": "API-computed icon identity; use unchanged in the icon image URL.",
@@ -18566,7 +20041,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Installer metadata from the site\u0027s Log7 with BankId=TenantId. Kid is canonical with type Installer;\r\n            clients can derive the display UserId from it. Missing Enabled is null. DeletedAt and LastActiveAt are UTC;\r\n            LastActiveAt is the Alive krumb\u0027s MS2000, not its Text. No credentials are returned."
+        "description": "Installer metadata from the site\u0027s Log7 with BankId=TenantId. Kid is canonical with type Installer;\r\n            clients can derive the display UserId from it. Missing Enabled is null. DeletedAt and LastActiveAt are UTC;\r\n            LastActiveAt is the Alive krumb\u0027s MS2000, not its Text. Passwords are never returned."
       },
       "InstallerDirectoryResponse": {
         "type": "object",
@@ -19601,7 +21076,7 @@
         "properties": {
           "role": {
             "type": "string",
-            "description": "accounting, caretaker or operator; case-sensitive, required.",
+            "description": "accounting, caretaker, operator, technical-support, tenant-accounting or combine; case-sensitive, required.",
             "nullable": true
           },
           "expectedFlags": {
@@ -19616,7 +21091,12 @@
           },
           "expectedTabsRevision": {
             "type": "string",
-            "description": "Required for accounting: tabsRevision from GetManager or the last acknowledged edit. Other roles keep tabs unchanged.",
+            "description": "Required for accounting and combine: tabsRevision from GetManager or the last acknowledged edit.",
+            "nullable": true
+          },
+          "expectedKidsRevision": {
+            "type": "string",
+            "description": "Required for combine: kidsRevision from GetManager or the last acknowledged edit.",
             "nullable": true
           }
         },
@@ -19659,6 +21139,23 @@
           "canEditTabs": {
             "type": "boolean",
             "description": "False when the change removes your required Managers access."
+          },
+          "resourceGrants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ManagerResourceGrantResponse"
+            },
+            "description": "Authoritative resource grants after the role assignment.",
+            "nullable": true
+          },
+          "kidsRevision": {
+            "type": "string",
+            "description": "Revision for the next resource-grant edit.",
+            "nullable": true
+          },
+          "canEditKids": {
+            "type": "boolean",
+            "description": "Whether the caller retains permission to edit resource grants."
           }
         },
         "additionalProperties": false,
@@ -20174,6 +21671,21 @@
         },
         "additionalProperties": false,
         "description": "An authorized unit identity and localized display name."
+      },
+      "PeopleDirectoryCount": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "iconKid": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Authorized count and red badge icon; each operation documents its cache age and precision."
       },
       "PersonalAccountResult": {
         "type": "object",
@@ -21039,6 +22551,44 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "versionMinor": {
+            "type": "string",
+            "description": "Requested terminal eState.VersionMinor as decoded text; null unless selected, empty when absent.",
+            "nullable": true
+          },
+          "bootReason": {
+            "type": "string",
+            "description": "Requested terminal eState.BootReason as decoded text; null unless selected, empty when absent.",
+            "nullable": true
+          },
+          "booted": {
+            "type": "string",
+            "description": "Requested terminal eSetting.Booted as decoded text; null unless selected, empty when absent.",
+            "nullable": true
+          },
+          "firmware": {
+            "type": "string",
+            "description": "Requested terminal eState.Firmware as decoded text; null unless selected, empty when absent.",
+            "nullable": true
+          },
+          "storageCardSerialNumber": {
+            "type": "string",
+            "description": "Requested terminal eState.StorageCardSerialNumber as decoded text; null unless selected, empty when absent.",
+            "nullable": true
+          },
+          "page": {
+            "type": "string",
+            "description": "Requested terminal eState.Page as decoded text; null unless selected, empty when absent.",
+            "nullable": true
+          },
+          "backLight": {
+            "type": "string",
+            "description": "Requested terminal eState.BackLight as decoded text; null unless selected, empty when absent.",
+            "nullable": true
+          },
+          "terminal": {
+            "$ref": "#/components/schemas/UnitTerminalResponse"
           }
         },
         "additionalProperties": false,
@@ -21070,7 +22620,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "A scoped Units1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location."
+        "description": "A scoped Units1 or Terminals1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location."
       },
       "UnitGroupFieldResponse": {
         "type": "object",
@@ -21249,6 +22799,9 @@
           },
           "progress": {
             "$ref": "#/components/schemas/UnitProgressResponse"
+          },
+          "terminal": {
+            "$ref": "#/components/schemas/UnitTerminalResponse"
           }
         },
         "additionalProperties": false,
@@ -21429,6 +22982,26 @@
         },
         "additionalProperties": false,
         "description": "Confirmed stored setting and a new revision for subsequent edits."
+      },
+      "UnitTerminalResponse": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconKid": {
+            "type": "string",
+            "description": "API-computed main-unit icon identity, including its unit number.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Visible authorized main terminal identified by a canonical unit KID; no extra access is granted."
       },
       "UpdateObjectAddressRequest": {
         "required": [
@@ -21686,6 +23259,59 @@
         },
         "additionalProperties": false,
         "description": "Signed legacy minor units per currency, with no conversion. Null Currency means no stored currency code. Discount applies to DKK only."
+      },
+      "UserDirectoryItem": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Resident and parent bank identities with display metadata only."
+      },
+      "UserDirectoryResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserDirectoryItem"
+            },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "scanLimitReached": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Authorized resident page. A short page may still have a continuation."
       },
       "UserLocationResponse": {
         "type": "object",
@@ -22221,6 +23847,9 @@
       "name": "Assistant"
     },
     {
+      "name": "BankDirectory"
+    },
+    {
       "name": "BankDocuments"
     },
     {
@@ -22302,6 +23931,9 @@
       "name": "ManagerTheme"
     },
     {
+      "name": "PeopleDirectoryCounts"
+    },
+    {
       "name": "PersonalManager"
     },
     {
@@ -22324,6 +23956,12 @@
     },
     {
       "name": "UserBalances"
+    },
+    {
+      "name": "UserDirectory"
+    },
+    {
+      "name": "UserDirectoryCount"
     },
     {
       "name": "UserReceipts"

@@ -7,6 +7,15 @@ namespace Kombine.Flex.Portal.Client.Compact20
     /// <summary>Synchronous public integration operations. Authorization and business rules remain in the API.</summary>
     public sealed partial class PortalApiClient
     {
+        /// <summary>Resolve the Forbrug icon text from the most frequent authorized Log1 currency.</summary>
+        public AccountIconResponse GetBankAccountIcon(string @bankKid)
+        {
+            string path = "api/v1/banks/{bankKid}/account/icon";
+            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (AccountIconResponse)SendJson("GET", path, null, headers, 200, typeof(AccountIconResponse));
+        }
+
         /// <summary>Lists Account2 postings with full-selection totals per currency.</summary>
         public AccountResponse GetBankAccount(string @bankKid)
         {
@@ -130,6 +139,39 @@ namespace Kombine.Flex.Portal.Client.Compact20
             string path = "api/v1/assistant/query";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (AssistantResponse)SendJson("POST", path, body, headers, 200, typeof(AssistantResponse));
+        }
+
+        /// <summary>List authorized bank identities for Banks2 with selected metadata and stable global ordering.</summary>
+        public BankDirectoryResponse GetBanks()
+        {
+            return GetBanks(null);
+        }
+
+        /// <summary>List authorized bank identities for Banks2 with selected metadata and stable global ordering.</summary>
+        public BankDirectoryResponse GetBanks(GetBanksOptions options)
+        {
+            string path = "api/v1/banks";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+                path = AddQuery(path, "fields", options.Fields);
+                path = AddQuery(path, "bankType", options.BankType);
+            }
+            return (BankDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(BankDirectoryResponse));
+        }
+
+        /// <summary>Count accessible active banks for the Banks2 navigation icon.</summary>
+        public ActiveBankCountResponse GetActiveBankCount()
+        {
+            string path = "api/v1/banks/active-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ActiveBankCountResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveBankCountResponse));
         }
 
         /// <summary>Search WashDoc document identities by location, unit and time without loading measurements.</summary>
@@ -481,6 +523,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "filter", options.Filter);
                 path = AddQuery(path, "sort", options.Sort);
                 path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "includeActivationCode", options.IncludeActivationCode);
             }
             return (InstallerDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(InstallerDirectoryResponse));
         }
@@ -502,11 +545,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (LiveLogsResponse)SendJson("GET", path, null, headers, 200, typeof(LiveLogsResponse));
         }
 
-        /// <summary>Count accessible active locations for the Banks2 navigation icon.</summary>
+        /// <summary>Count accessible active locations for the Locations1 navigation icon.</summary>
         public ActiveLocationCountResponse GetActiveLocationCount()
+        {
+            return GetActiveLocationCount(null);
+        }
+
+        /// <summary>Count accessible active locations for the Locations1 navigation icon.</summary>
+        public ActiveLocationCountResponse GetActiveLocationCount(GetActiveLocationCountOptions options)
         {
             string path = "api/v1/locations/active-count";
             Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "bankKid", options.BankKid);
+            }
             return (ActiveLocationCountResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveLocationCountResponse));
         }
 
@@ -531,6 +584,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "enabledOnly", options.EnabledOnly);
                 path = AddQuery(path, "fields", options.Fields);
                 path = AddQuery(path, "includeCoordinates", options.IncludeCoordinates);
+                path = AddQuery(path, "bankKid", options.BankKid);
             }
             return (LocationDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(LocationDirectoryResponse));
         }
@@ -889,6 +943,22 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (ManagerThemeResponse)SendJson("POST", path, body, headers, 200, typeof(ManagerThemeResponse));
         }
 
+        /// <summary>Count all visible administrators, independently of the current page/filter.</summary>
+        public PeopleDirectoryCount GetManagerCount()
+        {
+            string path = "api/v1/managers/count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PeopleDirectoryCount)SendJson("GET", path, null, headers, 200, typeof(PeopleDirectoryCount));
+        }
+
+        /// <summary>Count all visible installers, independently of the current page/filter.</summary>
+        public PeopleDirectoryCount GetInstallerCount()
+        {
+            string path = "api/v1/installers/count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PeopleDirectoryCount)SendJson("GET", path, null, headers, 200, typeof(PeopleDirectoryCount));
+        }
+
         /// <summary>Read your own personal settings and available person icons.</summary>
         public PersonalManagerProfile GetMyManagerProfile()
         {
@@ -965,6 +1035,14 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "direction", options.Direction);
             }
             return (ServiceDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(ServiceDirectoryResponse));
+        }
+
+        /// <summary>Count the predefined service identities without reading service settings.</summary>
+        public PeopleDirectoryCount GetServiceCount()
+        {
+            string path = "api/v1/services/count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PeopleDirectoryCount)SendJson("GET", path, null, headers, 200, typeof(PeopleDirectoryCount));
         }
 
         /// <summary>Read one predefined service, editable metadata and its icon catalog.</summary>
@@ -1124,6 +1202,22 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return SendDownload("GET", path, null, headers, 200);
         }
 
+        /// <summary>Count accessible active units for the Units1 navigation icon.</summary>
+        public ActiveUnitCountResponse GetActiveUnitCount()
+        {
+            string path = "api/v1/units/active-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ActiveUnitCountResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveUnitCountResponse));
+        }
+
+        /// <summary>Count accessible active terminals for the Terminals1 navigation icon.</summary>
+        public ActiveUnitCountResponse GetActiveTerminalCount()
+        {
+            string path = "api/v1/terminals/active-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ActiveUnitCountResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveUnitCountResponse));
+        }
+
         /// <summary>List authorized units, including child units, for Units1.</summary>
         public UnitDirectoryResponse GetUnits()
         {
@@ -1145,6 +1239,35 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "enabledOnly", options.EnabledOnly);
                 path = AddQuery(path, "fields", options.Fields);
                 path = AddQuery(path, "includeCoordinates", options.IncludeCoordinates);
+                path = AddQuery(path, "locationKid", options.LocationKid);
+                path = AddQuery(path, "terminalKid", options.TerminalKid);
+            }
+            return (UnitDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(UnitDirectoryResponse));
+        }
+
+        /// <summary>List authorized main units for Terminals1.</summary>
+        public UnitDirectoryResponse GetTerminals()
+        {
+            return GetTerminals(null);
+        }
+
+        /// <summary>List authorized main units for Terminals1.</summary>
+        public UnitDirectoryResponse GetTerminals(GetTerminalsOptions options)
+        {
+            string path = "api/v1/terminals";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+                path = AddQuery(path, "fields", options.Fields);
+                path = AddQuery(path, "includeCoordinates", options.IncludeCoordinates);
+                path = AddQuery(path, "locationKid", options.LocationKid);
+                path = AddQuery(path, "terminalKid", options.TerminalKid);
             }
             return (UnitDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(UnitDirectoryResponse));
         }
@@ -1225,6 +1348,37 @@ namespace Kombine.Flex.Portal.Client.Compact20
             path = path.Replace("{userKid}", PathValue(@userKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (UserWorkspaceResponse)SendJson("POST", path, body, headers, 200, typeof(UserWorkspaceResponse));
+        }
+
+        /// <summary>List authorized residents for UserFinder1 (77).</summary>
+        public UserDirectoryResponse GetUsers()
+        {
+            return GetUsers(null);
+        }
+
+        /// <summary>List authorized residents for UserFinder1 (77).</summary>
+        public UserDirectoryResponse GetUsers(GetUsersOptions options)
+        {
+            string path = "api/v1/users";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+            }
+            return (UserDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(UserDirectoryResponse));
+        }
+
+        /// <summary>Count active authorized residents for the UserFinder1 badge.</summary>
+        public PeopleDirectoryCount GetUserCount()
+        {
+            string path = "api/v1/users/count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PeopleDirectoryCount)SendJson("GET", path, null, headers, 200, typeof(PeopleDirectoryCount));
         }
 
         /// <summary>Read complete receipts for one resident, newest first, twenty receipts at a time.</summary>

@@ -34,6 +34,11 @@ AccountEntryResponse = TypedDict('AccountEntryResponse', {
     'paymentKind': 'str | None',
 }, total=False)
 
+AccountIconResponse = TypedDict('AccountIconResponse', {
+    'currency': 'str | None',
+    'iconKid': 'str | None',
+}, total=False)
+
 AccountResponse = TypedDict('AccountResponse', {
     'items': 'list[AccountEntryResponse] | None',
     'units': 'list[AccountUnitResponse] | None',
@@ -67,7 +72,17 @@ AccountUnitResponse = TypedDict('AccountUnitResponse', {
     'name': 'str | None',
 }, total=False)
 
+ActiveBankCountResponse = TypedDict('ActiveBankCountResponse', {
+    'count': 'int',
+    'iconKid': 'str | None',
+}, total=False)
+
 ActiveLocationCountResponse = TypedDict('ActiveLocationCountResponse', {
+    'count': 'int',
+    'iconKid': 'str | None',
+}, total=False)
+
+ActiveUnitCountResponse = TypedDict('ActiveUnitCountResponse', {
     'count': 'int',
     'iconKid': 'str | None',
 }, total=False)
@@ -94,6 +109,23 @@ AssistantResponse = TypedDict('AssistantResponse', {
     'answer': 'str | None',
     'operations': 'list[str] | None',
     'links': 'list[AssistantLink] | None',
+}, total=False)
+
+BankDirectoryItem = TypedDict('BankDirectoryItem', {
+    'kid': 'str | None',
+    'name': 'str | None',
+    'iconKid': 'str | None',
+    'enabled': 'bool',
+    'deleted': 'bool | None',
+    'deletedAt': 'str | None',
+    'fields': 'dict[str, str | None] | None',
+}, total=False)
+
+BankDirectoryResponse = TypedDict('BankDirectoryResponse', {
+    'items': 'list[BankDirectoryItem] | None',
+    'nextCursor': 'str | None',
+    'fields': 'list[str] | None',
+    'canReadBankActivationCode': 'bool',
 }, total=False)
 
 BankDocumentItem = TypedDict('BankDocumentItem', {
@@ -321,6 +353,7 @@ InstallerDirectoryItem = TypedDict('InstallerDirectoryItem', {
     'deletedAt': 'str | None',
     'enabled': 'bool | None',
     'lastActiveAt': 'str | None',
+    'activationCode': 'str | None',
     'iconKid': 'str | None',
 }, total=False)
 
@@ -584,6 +617,7 @@ ManagerPermissionRoleRequest = TypedDict('ManagerPermissionRoleRequest', {
     'role': Required['str | None'],
     'expectedFlags': Required['dict[str, int | None] | None'],
     'expectedTabsRevision': 'str | None',
+    'expectedKidsRevision': 'str | None',
 }, total=False)
 
 ManagerPermissionRoleResponse = TypedDict('ManagerPermissionRoleResponse', {
@@ -593,6 +627,9 @@ ManagerPermissionRoleResponse = TypedDict('ManagerPermissionRoleResponse', {
     'tabs': 'list[ManagerTabResponse] | None',
     'tabsRevision': 'str | None',
     'canEditTabs': 'bool',
+    'resourceGrants': 'list[ManagerResourceGrantResponse] | None',
+    'kidsRevision': 'str | None',
+    'canEditKids': 'bool',
 }, total=False)
 
 ManagerProfileChangeRequest = TypedDict('ManagerProfileChangeRequest', {
@@ -715,6 +752,11 @@ OpeningHoursLine = TypedDict('OpeningHoursLine', {
 OpeningHoursUnit = TypedDict('OpeningHoursUnit', {
     'kid': 'str | None',
     'name': 'str | None',
+}, total=False)
+
+PeopleDirectoryCount = TypedDict('PeopleDirectoryCount', {
+    'count': 'int',
+    'iconKid': 'str | None',
 }, total=False)
 
 PersonalAccountResult = TypedDict('PersonalAccountResult', {
@@ -946,6 +988,14 @@ UnitDirectoryItem = TypedDict('UnitDirectoryItem', {
     'outOfOrder': 'str | None',
     'latitude': 'float | None',
     'longitude': 'float | None',
+    'versionMinor': 'str | None',
+    'bootReason': 'str | None',
+    'booted': 'str | None',
+    'firmware': 'str | None',
+    'storageCardSerialNumber': 'str | None',
+    'page': 'str | None',
+    'backLight': 'str | None',
+    'terminal': 'UnitTerminalResponse',
 }, total=False)
 
 UnitDirectoryResponse = TypedDict('UnitDirectoryResponse', {
@@ -1003,6 +1053,7 @@ UnitOverviewResponse = TypedDict('UnitOverviewResponse', {
     'unitTypeSource': 'str | None',
     'iconKid': 'str | None',
     'progress': 'UnitProgressResponse',
+    'terminal': 'UnitTerminalResponse',
 }, total=False)
 
 UnitProgressResponse = TypedDict('UnitProgressResponse', {
@@ -1053,6 +1104,12 @@ UnitSettingResponse = TypedDict('UnitSettingResponse', {
     'revision': 'str | None',
     'sync': 'int | None',
     'changedBy': 'UnitSettingEditorResponse',
+}, total=False)
+
+UnitTerminalResponse = TypedDict('UnitTerminalResponse', {
+    'kid': 'str | None',
+    'name': 'str | None',
+    'iconKid': 'str | None',
 }, total=False)
 
 UpdateObjectAddressRequest = TypedDict('UpdateObjectAddressRequest', {
@@ -1119,6 +1176,21 @@ UserCurrencyBalanceItem = TypedDict('UserCurrencyBalanceItem', {
     'previousBalanceMinor': 'int | None',
     'previousPeriod': 'int | None',
     'previousPeriodIsProvisional': 'bool',
+}, total=False)
+
+UserDirectoryItem = TypedDict('UserDirectoryItem', {
+    'kid': 'str | None',
+    'bankKid': 'str | None',
+    'name': 'str | None',
+    'number': 'str | None',
+    'iconKid': 'str | None',
+    'deletedAt': 'str | None',
+}, total=False)
+
+UserDirectoryResponse = TypedDict('UserDirectoryResponse', {
+    'items': 'list[UserDirectoryItem] | None',
+    'nextCursor': 'str | None',
+    'scanLimitReached': 'bool',
 }, total=False)
 
 UserLocationResponse = TypedDict('UserLocationResponse', {

@@ -19,14 +19,19 @@ Generated from the checked-in public integration contract. All business rules ar
 | `ExportBankAccountAsync` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsersAsync` | GET | `/api/v1/banks/{bankKid}/users/export` |
 | `GenerateServiceApiKeyAsync` | POST | `/api/v1/services/{serviceKid}/api-key` |
+| `GetActiveBankCountAsync` | GET | `/api/v1/banks/active-count` |
 | `GetActiveLocationCountAsync` | GET | `/api/v1/locations/active-count` |
+| `GetActiveTerminalCountAsync` | GET | `/api/v1/terminals/active-count` |
+| `GetActiveUnitCountAsync` | GET | `/api/v1/units/active-count` |
 | `GetBankAccountAsync` | GET | `/api/v1/banks/{bankKid}/account` |
+| `GetBankAccountIconAsync` | GET | `/api/v1/banks/{bankKid}/account/icon` |
 | `GetBankAccountRevisionAsync` | GET | `/api/v1/banks/{bankKid}/account/revision` |
 | `GetBankBookingsAsync` | GET | `/api/v1/banks/{bankKid}/bookings` |
 | `GetBankDocumentsAsync` | GET | `/api/v1/banks/{bankKid}/documents` |
 | `GetBankIconsAsync` | GET | `/api/v1/banks/icons` |
 | `GetBankLocationsAsync` | GET | `/api/v1/banks/{bankKid}/locations` |
 | `GetBankNextUserNumberAsync` | GET | `/api/v1/banks/{bankKid}/users/next-number-after` |
+| `GetBanksAsync` | GET | `/api/v1/banks` |
 | `GetBankSettlementPeriodAsync` | GET | `/api/v1/banks/{bankKid}/settlements/{period}` |
 | `GetBankSettlementsAsync` | GET | `/api/v1/banks/{bankKid}/settlements` |
 | `GetBankUserActivationAsync` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` |
@@ -49,6 +54,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetIconImageWithBackgroundFromSetAsync` | GET | `/api/v1/icon/{iconSet}/{kid}/{backColor}/{size}.{format}` |
 | `GetIconPresentationAsync` | GET | `/api/v1/icon/presentation` |
 | `GetInstallerAsync` | GET | `/api/v1/installers/{installerKid}` |
+| `GetInstallerCountAsync` | GET | `/api/v1/installers/count` |
 | `GetInstallersAsync` | GET | `/api/v1/installers` |
 | `GetKombineLogoAsync` | GET | `/api/v1/logos/kombine/{color}.svg` |
 | `GetKombineLogoPartsAsync` | GET | `/api/v1/logos/kombine/{parts}/{color}.svg` |
@@ -71,6 +77,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetLocationsAsync` | GET | `/api/v1/locations` |
 | `GetLocationUnitsAsync` | GET | `/api/v1/locations/{locationKid}/units` |
 | `GetManagerAsync` | GET | `/api/v1/managers/{managerKid}` |
+| `GetManagerCountAsync` | GET | `/api/v1/managers/count` |
 | `GetManagersAsync` | GET | `/api/v1/managers` |
 | `GetManagersWithSameEmailAsync` | GET | `/api/v1/managers/{managerKid}/same-email` |
 | `GetMyManagerProfileAsync` | GET | `/api/v1/session/me/profile` |
@@ -83,9 +90,11 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetPublicPurchasesAsync` | GET | `/api/v1/public/statistics/purchases` |
 | `GetSearchBankAsync` | GET | `/api/v1/search/banks/{bankKid}` |
 | `GetServiceAsync` | GET | `/api/v1/services/{serviceKid}` |
+| `GetServiceCountAsync` | GET | `/api/v1/services/count` |
 | `GetServicesAsync` | GET | `/api/v1/services` |
 | `GetTenantStatusAsync` | GET | `/api/v1/tenant/status` |
 | `GetTenantStatusPageAsync` | GET | `/api/v1/tenant/status/page` |
+| `GetTerminalsAsync` | GET | `/api/v1/terminals` |
 | `GetUnitDocumentHtmlAsync` | GET | `/api/v1/documents/{documentKid}/table.html` |
 | `GetUnitDocumentSvgAsync` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
 | `GetUnitDocumentTableAsync` | GET | `/api/v1/documents/{documentKid}/table` |
@@ -94,7 +103,9 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetUnitOverviewAsync` | GET | `/api/v1/units/{unitKid}` |
 | `GetUnitsAsync` | GET | `/api/v1/units` |
 | `GetUnitSettingHistoryAsync` | GET | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history` |
+| `GetUserCountAsync` | GET | `/api/v1/users/count` |
 | `GetUserReceiptsAsync` | GET | `/api/v1/users/{userKid}/receipts` |
+| `GetUsersAsync` | GET | `/api/v1/users` |
 | `InviteManagerAsync` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `LoginManagerAsync` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinatesAsync` | POST | `/api/v1/addresses/{kid}/lookup` |

@@ -7,6 +7,10 @@ from ._runtime import BaseClient, PortalDownload
 
 class PortalClient(BaseClient):
 
+    def get_bank_account_icon(self, bank_kid: str) -> AccountIconResponse:
+        'Resolve the Forbrug icon text from the most frequent authorized Log1 currency.'
+        return self._request('GetBankAccountIcon', {'bankKid': bank_kid}, None)
+
     def get_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None) -> AccountResponse:
         'Lists Account2 postings with full-selection totals per currency.'
         return self._request('GetBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit}, None)
@@ -42,6 +46,14 @@ class PortalClient(BaseClient):
     def ask_portal_assistant(self, body: AssistantRequest) -> AssistantResponse:
         'Ask the portal assistant to discover and combine approved read operations.'
         return self._request('AskPortalAssistant', {}, body)
+
+    def get_banks(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, bank_type: str | None = None) -> BankDirectoryResponse:
+        'List authorized bank identities for Banks2 with selected metadata and stable global ordering.'
+        return self._request('GetBanks', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'bankType': bank_type}, None)
+
+    def get_active_bank_count(self) -> ActiveBankCountResponse:
+        'Count accessible active banks for the Banks2 navigation icon.'
+        return self._request('GetActiveBankCount', {}, None)
 
     def get_bank_documents(self, bank_kid: str, *, location_kid: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> BankDocumentPage:
         'Search WashDoc document identities by location, unit and time without loading measurements.'
@@ -115,9 +127,9 @@ class PortalClient(BaseClient):
         "Save an installer's selected Person icon."
         return self._request('SetInstallerIcon', {'installerKid': installer_kid}, body)
 
-    def get_installers(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None) -> InstallerDirectoryResponse:
+    def get_installers(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, include_activation_code: bool | None = None) -> InstallerDirectoryResponse:
         'List installers with locations, tags, account state and last activity.'
-        return self._request('GetInstallers', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction}, None)
+        return self._request('GetInstallers', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'includeActivationCode': include_activation_code}, None)
 
     def get_installer(self, installer_kid: str) -> InstallerDetailsResponse:
         'Read one installer and the same Person icon catalog used for administrators.'
@@ -127,13 +139,13 @@ class PortalClient(BaseClient):
         'Read recent live logs from Portal API, Equipment API and Portal Web.'
         return self._request('GetLiveLogs', {}, None)
 
-    def get_active_location_count(self) -> ActiveLocationCountResponse:
-        'Count accessible active locations for the Banks2 navigation icon.'
-        return self._request('GetActiveLocationCount', {}, None)
+    def get_active_location_count(self, *, bank_kid: str | None = None) -> ActiveLocationCountResponse:
+        'Count accessible active locations for the Locations1 navigation icon.'
+        return self._request('GetActiveLocationCount', {'bankKid': bank_kid}, None)
 
-    def get_locations(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None) -> LocationDirectoryResponse:
+    def get_locations(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None, bank_kid: str | None = None) -> LocationDirectoryResponse:
         'List accessible locations with parent banks, Visma customer numbers and authorized activation codes.'
-        return self._request('GetLocations', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates}, None)
+        return self._request('GetLocations', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates, 'bankKid': bank_kid}, None)
 
     def search_locations(self, *, q: str | None = None) -> SearchResults:
         'Search location Name, Bank (alternative bank name), Zip, Address, VismaCustNo and TeltonikaSMS in Log24.'
@@ -239,6 +251,14 @@ class PortalClient(BaseClient):
         'Save your own theme preference.'
         return self._request('SetCurrentManagerTheme', {}, body)
 
+    def get_manager_count(self) -> PeopleDirectoryCount:
+        'Count all visible administrators, independently of the current page/filter.'
+        return self._request('GetManagerCount', {}, None)
+
+    def get_installer_count(self) -> PeopleDirectoryCount:
+        'Count all visible installers, independently of the current page/filter.'
+        return self._request('GetInstallerCount', {}, None)
+
     def get_my_manager_profile(self) -> PersonalManagerProfile:
         'Read your own personal settings and available person icons.'
         return self._request('GetMyManagerProfile', {}, None)
@@ -270,6 +290,10 @@ class PortalClient(BaseClient):
     def get_services(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None) -> ServiceDirectoryResponse:
         'List concrete service enum identities, including services without saved settings.'
         return self._request('GetServices', {'filter': filter, 'sort': sort, 'direction': direction}, None)
+
+    def get_service_count(self) -> PeopleDirectoryCount:
+        'Count the predefined service identities without reading service settings.'
+        return self._request('GetServiceCount', {}, None)
 
     def get_service(self, service_kid: str) -> ServiceDetailsResponse:
         'Read one predefined service, editable metadata and its icon catalog.'
@@ -311,9 +335,21 @@ class PortalClient(BaseClient):
         "Render a document's numeric series as an SVG chart, caching completed documents privately."
         return self._request('GetUnitDocumentSvg', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'width': width}, None)
 
-    def get_units(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None) -> UnitDirectoryResponse:
+    def get_active_unit_count(self) -> ActiveUnitCountResponse:
+        'Count accessible active units for the Units1 navigation icon.'
+        return self._request('GetActiveUnitCount', {}, None)
+
+    def get_active_terminal_count(self) -> ActiveUnitCountResponse:
+        'Count accessible active terminals for the Terminals1 navigation icon.'
+        return self._request('GetActiveTerminalCount', {}, None)
+
+    def get_units(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None, location_kid: str | None = None, terminal_kid: str | None = None) -> UnitDirectoryResponse:
         'List authorized units, including child units, for Units1.'
-        return self._request('GetUnits', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates}, None)
+        return self._request('GetUnits', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates, 'locationKid': location_kid, 'terminalKid': terminal_kid}, None)
+
+    def get_terminals(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None, location_kid: str | None = None, terminal_kid: str | None = None) -> UnitDirectoryResponse:
+        'List authorized main units for Terminals1.'
+        return self._request('GetTerminals', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates, 'locationKid': location_kid, 'terminalKid': terminal_kid}, None)
 
     def set_unit_setting(self, unit_kid: str, group: str, setting: str, body: UnitSettingRequest) -> UnitSettingResponse:
         'Save one editable current-unit setting with revision protection.'
@@ -342,6 +378,14 @@ class PortalClient(BaseClient):
     def execute_bank_user_command(self, bank_kid: str, user_kid: str, body: UserCommandRequest) -> UserWorkspaceResponse:
         'Execute profile, icon, attributes, tag, location, delete, restore or replace with the revision from GetBankUserWorkspace.'
         return self._request('ExecuteBankUserCommand', {'bankKid': bank_kid, 'userKid': user_kid}, body)
+
+    def get_users(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None) -> UserDirectoryResponse:
+        'List authorized residents for UserFinder1 (77).'
+        return self._request('GetUsers', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only}, None)
+
+    def get_user_count(self) -> PeopleDirectoryCount:
+        'Count active authorized residents for the UserFinder1 badge.'
+        return self._request('GetUserCount', {}, None)
 
     def get_user_receipts(self, user_kid: str, *, offset: int | None = None, revision: str | None = None) -> UserReceiptsResponse:
         'Read complete receipts for one resident, newest first, twenty receipts at a time.'
