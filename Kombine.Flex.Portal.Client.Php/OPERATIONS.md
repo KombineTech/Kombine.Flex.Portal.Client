@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `b7687eb967ae2db2079c6b0fd5e3cde4cbc8c9a62b2d6fc720652d2e93e8f276`).
-131 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `ebd2f0244bfe719b9a22919ddc41f49b413575801d593380d46e9001a08248eb`).
+134 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -88,7 +88,10 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `b7687eb967ae2db2079
 | `getPortalStatus` | `GetPortalStatus` | GET | `/api/v1/status` | Anonymous |
 | `getPublicActiveUsers` | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` | Anonymous |
 | `getPublicDisp73` | `GetPublicDisp73` | GET | `/api/v1/public/displays/Map1` | Anonymous |
+| `getPublicLiveMachines` | `GetPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` | Anonymous |
 | `getPublicPurchases` | `GetPublicPurchases` | GET | `/api/v1/public/statistics/purchases` | Anonymous |
+| `getPublicReservations` | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` | Anonymous |
+| `getPublicRunningMachines` | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` | Anonymous |
 | `getSearchBank` | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` | Bearer |
 | `getServiceCount` | `GetServiceCount` | GET | `/api/v1/services/count` | Bearer |
 | `getService` | `GetService` | GET | `/api/v1/services/{serviceKid}` | Bearer |

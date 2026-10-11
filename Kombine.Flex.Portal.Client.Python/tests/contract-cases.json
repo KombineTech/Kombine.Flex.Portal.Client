@@ -3913,12 +3913,12 @@
         },
         {
           "id": 63,
-          "name": "Disp63",
+          "name": "Privacy1",
           "iconKid": ""
         },
         {
           "id": 64,
-          "name": "Disp64",
+          "name": "DocIdsCurrent1",
           "iconKid": ""
         },
         {
@@ -6856,6 +6856,25 @@
     "example": {}
   },
   {
+    "operation": "GetPublicLiveMachines",
+    "python": "get_public_live_machines",
+    "javascript": "getPublicLiveMachines",
+    "method": "GET",
+    "path": "api/v1/public/statistics/live-machines",
+    "status": 200,
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LiveMachineResponse"
+      }
+    },
+    "binary": false,
+    "example": []
+  },
+  {
     "operation": "GetPublicDisp73",
     "python": "get_public_disp73",
     "javascript": "getPublicDisp73",
@@ -6927,6 +6946,38 @@
       "sinceUtc": "2026-06-15T10:00:00+00:00",
       "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     }
+  },
+  {
+    "operation": "GetPublicReservations",
+    "python": "get_public_reservations",
+    "javascript": "getPublicReservations",
+    "method": "GET",
+    "path": "api/v1/public/statistics/reservations",
+    "status": 200,
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/ReservationsStatisticsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicRunningMachines",
+    "python": "get_public_running_machines",
+    "javascript": "getPublicRunningMachines",
+    "method": "GET",
+    "path": "api/v1/public/statistics/running-machines",
+    "status": 200,
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/RunningMachinesResponse"
+    },
+    "binary": false,
+    "example": {}
   },
   {
     "operation": "GetPortalStatus",

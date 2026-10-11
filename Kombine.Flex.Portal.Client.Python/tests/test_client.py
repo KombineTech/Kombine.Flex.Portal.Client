@@ -57,7 +57,7 @@ def sample(spec):
 
 class ContractTests(unittest.TestCase):
     def test_every_public_operation(self):
-        self.assertEqual(len(CASES), 131)
+        self.assertEqual(len(CASES), 134)
         for case in CASES:
             with self.subTest(operation=case['operation']):
                 response_data = b'PK\x00\xff' if case['binary'] else json.dumps(sample(case['response']), ensure_ascii=False).encode()

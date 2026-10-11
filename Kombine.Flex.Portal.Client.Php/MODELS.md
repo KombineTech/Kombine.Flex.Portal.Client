@@ -980,6 +980,12 @@ array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|nul
 array{'iconKid'?: string|null}
 ```
 
+### LiveMachineResponse
+
+```php
+array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'temperature'?: int|float|null}
+```
+
 ### PurchaseHeatmapPoint
 
 ```php
@@ -1002,4 +1008,16 @@ array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<Purc
 
 ```php
 array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string, 'amount'?: int|float, 'currency'?: string|null}
+```
+
+### ReservationsStatisticsResponse
+
+```php
+array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
+```
+
+### RunningMachinesResponse
+
+```php
+array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
 ```

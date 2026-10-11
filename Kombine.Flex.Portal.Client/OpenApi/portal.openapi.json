@@ -10015,12 +10015,12 @@
                     },
                     {
                       "id": 63,
-                      "name": "Disp63",
+                      "name": "Privacy1",
                       "iconKid": ""
                     },
                     {
                       "id": 64,
-                      "name": "Disp64",
+                      "name": "DocIdsCurrent1",
                       "iconKid": ""
                     },
                     {
@@ -18462,6 +18462,50 @@
         }
       }
     },
+    "/api/v1/public/statistics/live-machines": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Returns the site overview\u0027s running-machine pool, refreshed at most once a minute.",
+        "description": "Anonymous on each tenant site; data is restricted to the trusted configured tenant. No parameters. Current Log24 Started \u003C now \u003C Done, in UTC milliseconds since 2000. Names are eSetting.Name, temperature is optional eState.Temperature. Conflicting/missing lifecycle fields are excluded. Random sample of up to 1000 machines started within 100 hours and ending within 3 hours, from at most 100000 source rows; source overflow or unavailable storage returns 503. Clients choose distinct random machines, retain running selections and count down locally using end time. DoneAtUtc is null for out-of-range Done values: show unknown remaining time instead of a countdown. Up to 10000 metadata rows are read for the running-machine scope. Refresh every 60 seconds.",
+        "operationId": "GetPublicLiveMachines",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LiveMachineResponse"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LiveMachineResponse"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LiveMachineResponse"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
     "/api/v1/public/displays/Map1": {
       "get": {
         "tags": [
@@ -18646,6 +18690,76 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/public/statistics/reservations": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Counts noncancelled dated reservations that have not ended, including ongoing reservations.",
+        "description": "Anonymous tenant aggregate; trusted site configuration selects the tenant without request inputs.\r\nUses the current tenant Log5 snapshot keyed by start/bank/location/unit/type. Amount must be positive.\r\nEnd is local start minutes plus duration; location/bank Log24 time-zone settings are respected.\r\nWeekly templates and AUT/isy auxiliary entries are excluded. Invalid or ambiguous time-zone settings fail closed.\r\nNo resident or reservation identities are returned. Results and failures are cached for 60 seconds.\r\nMore than 100000 candidate rows, invalid time zones or unavailable storage return 503; retry after 60 seconds.",
+        "operationId": "GetPublicReservations",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationsStatisticsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationsStatisticsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationsStatisticsResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/public/statistics/running-machines": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Counts machines whose current Started is before now and Done is after now.",
+        "description": "No login required. The trusted site selects the tenant; no tenant, KID or filter inputs.\r\nReads only Log24 States for Started and Done. Text values are UTC milliseconds since 2000-01-01,\r\naccepting stored JSON strings or plain integers. Counts distinct BankId/LocationId/UnitId identities.\r\nLatest MS2000 revision wins per field; conflicting equal revisions, missing or invalid values do not qualify.\r\nStarted must be within the last 100 hours (inclusive), strictly before now, and Done strictly after now; this is a time-window estimate, not an online-status check.\r\nResults and failures are shared for 15 seconds per API instance. Poll every 15 seconds.\r\nA bounded read exceeding 100000 lifecycle rows or a storage failure returns 503, never a partial count or zero.\r\nNo machine identities or access permissions are returned. On 503 retry after 15 seconds.",
+        "operationId": "GetPublicRunningMachines",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunningMachinesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunningMachinesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunningMachinesResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
           }
         }
       }
@@ -23709,6 +23823,39 @@
         "additionalProperties": false,
         "description": "Opaque image identity: eIcon name for an icon alone, otherwise canonical Kid.ToString()."
       },
+      "LiveMachineResponse": {
+        "type": "object",
+        "properties": {
+          "unitKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitName": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "doneAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "temperature": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Minimal public site-tenant machine display, without resident or payment fields."
+      },
       "PurchaseHeatmapPoint": {
         "type": "object",
         "properties": {
@@ -23826,6 +23973,60 @@
         },
         "additionalProperties": false,
         "description": "Public purchase aggregate in Log1Hour, cached for up to one minute."
+      },
+      "ReservationsStatisticsResponse": {
+        "type": "object",
+        "properties": {
+          "tenantKid": {
+            "type": "string",
+            "description": "Configured site\u0027s canonical tenant KID.",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "description": "Qualifying reservations; zero only for a successful empty count.",
+            "format": "int64"
+          },
+          "measuredAtUtc": {
+            "type": "string",
+            "description": "UTC instant used for the strict reservation-end comparison.",
+            "format": "date-time"
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "description": "Recommended polling interval, 60 seconds.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Public count of reservations that have not ended."
+      },
+      "RunningMachinesResponse": {
+        "type": "object",
+        "properties": {
+          "tenantKid": {
+            "type": "string",
+            "description": "Configured site\u0027s canonical tenant KID.",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "description": "Distinct qualifying machines; zero only for a successful empty count.",
+            "format": "int64"
+          },
+          "measuredAtUtc": {
+            "type": "string",
+            "description": "UTC instant used for both strict time comparisons.",
+            "format": "date-time"
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "description": "Recommended polling interval, 15 seconds.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Public count of currently running machines."
       }
     },
     "securitySchemes": {

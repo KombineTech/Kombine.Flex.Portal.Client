@@ -515,6 +515,10 @@ class PortalClient(BaseClient):
         'Renders the combined Kombine logo with an explicit background and width.'
         return self._request('GetKombineLogoTextWithBackground', {'color': color, 'background': background, 'width': width}, None)
 
+    def get_public_live_machines(self) -> list[LiveMachineResponse]:
+        "Returns the site overview's running-machine pool, refreshed at most once a minute."
+        return self._request('GetPublicLiveMachines', {}, None)
+
     def get_public_disp73(self, *, limit: int | None = None) -> PurchaseMapSnapshot:
         'Shows recent purchases as coin markers on a map. No login required.'
         return self._request('GetPublicDisp73', {'limit': limit}, None)
@@ -526,6 +530,14 @@ class PortalClient(BaseClient):
     def get_public_active_users(self) -> ActiveUsersResponse:
         "Counts active users in the site's current Log7 during the last 100 days, without login."
         return self._request('GetPublicActiveUsers', {}, None)
+
+    def get_public_reservations(self) -> ReservationsStatisticsResponse:
+        'Counts noncancelled dated reservations that have not ended, including ongoing reservations.'
+        return self._request('GetPublicReservations', {}, None)
+
+    def get_public_running_machines(self) -> RunningMachinesResponse:
+        'Counts machines whose current Started is before now and Done is after now.'
+        return self._request('GetPublicRunningMachines', {}, None)
 
     def get_portal_status(self) -> ApiStatusResponse:
         'Gets public API availability. This does not check database readiness.'

@@ -2266,6 +2266,22 @@ export interface IconPresentationResponse {
   "iconKid"?: string | null;
 }
 
+/** Minimal public site-tenant machine display, without resident or payment fields. */
+export interface LiveMachineResponse {
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** startedAtUtc */
+  "startedAtUtc"?: string;
+  /** doneAtUtc */
+  "doneAtUtc"?: string | null;
+  /** temperature */
+  "temperature"?: number | null;
+}
+
 /** Total revenue at a coordinate across all retained purchases, independent of the coin limit. */
 export interface PurchaseHeatmapPoint {
   /** latitude */
@@ -2318,6 +2334,30 @@ export interface PurchasesResponse {
   "amount"?: number;
   /** MAX(Currency), or null for no matches. No currency conversion. */
   "currency"?: string | null;
+}
+
+/** Public count of reservations that have not ended. */
+export interface ReservationsStatisticsResponse {
+  /** Configured site's canonical tenant KID. */
+  "tenantKid"?: string | null;
+  /** Qualifying reservations; zero only for a successful empty count. */
+  "count"?: bigint;
+  /** UTC instant used for the strict reservation-end comparison. */
+  "measuredAtUtc"?: string;
+  /** Recommended polling interval, 60 seconds. */
+  "refreshAfterSeconds"?: number;
+}
+
+/** Public count of currently running machines. */
+export interface RunningMachinesResponse {
+  /** Configured site's canonical tenant KID. */
+  "tenantKid"?: string | null;
+  /** Distinct qualifying machines; zero only for a successful empty count. */
+  "count"?: bigint;
+  /** UTC instant used for both strict time comparisons. */
+  "measuredAtUtc"?: string;
+  /** Recommended polling interval, 15 seconds. */
+  "refreshAfterSeconds"?: number;
 }
 
 export interface GetBankAccountOptions {

@@ -4584,6 +4584,38 @@
       },
       "additionalProperties": false
     },
+    "LiveMachineResponse": {
+      "type": "object",
+      "properties": {
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitName": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationName": {
+          "type": "string",
+          "nullable": true
+        },
+        "startedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "doneAtUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "temperature": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "PurchaseHeatmapPoint": {
       "type": "object",
       "properties": {
@@ -4686,6 +4718,50 @@
         "currency": {
           "type": "string",
           "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ReservationsStatisticsResponse": {
+      "type": "object",
+      "properties": {
+        "tenantKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "measuredAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
+    "RunningMachinesResponse": {
+      "type": "object",
+      "properties": {
+        "tenantKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "measuredAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "additionalProperties": false
@@ -9246,6 +9322,23 @@
       },
       "binary": true
     },
+    "GetPublicLiveMachines": {
+      "method": "GET",
+      "path": "api/v1/public/statistics/live-machines",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/LiveMachineResponse"
+        }
+      },
+      "binary": false
+    },
     "GetPublicDisp73": {
       "method": "GET",
       "path": "api/v1/public/displays/Map1",
@@ -9295,6 +9388,34 @@
       "body": null,
       "response": {
         "$ref": "#/components/schemas/ActiveUsersResponse"
+      },
+      "binary": false
+    },
+    "GetPublicReservations": {
+      "method": "GET",
+      "path": "api/v1/public/statistics/reservations",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/ReservationsStatisticsResponse"
+      },
+      "binary": false
+    },
+    "GetPublicRunningMachines": {
+      "method": "GET",
+      "path": "api/v1/public/statistics/running-machines",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [],
+      "body": null,
+      "response": {
+        "$ref": "#/components/schemas/RunningMachinesResponse"
       },
       "binary": false
     },
