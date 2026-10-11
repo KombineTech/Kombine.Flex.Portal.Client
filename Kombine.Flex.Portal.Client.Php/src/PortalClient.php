@@ -168,10 +168,13 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ActiveUsersResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackDays'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string}
  * @phpstan-type ApiStatusResponse array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|null}
  * @phpstan-type IconPresentationResponse array{'iconKid'?: string|null}
+ * @phpstan-type LiveMachineResponse array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'temperature'?: int|float|null}
  * @phpstan-type PurchaseHeatmapPoint array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
  * @phpstan-type PurchaseMapPoint array{'kid'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float, 'timestampUtc'?: string, 'amount'?: int|float}
  * @phpstan-type PurchaseMapSnapshot array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PurchaseMapPoint>|null, 'heatmap'?: list<PurchaseHeatmapPoint>|null}
  * @phpstan-type PurchasesResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string, 'amount'?: int|float, 'currency'?: string|null}
+ * @phpstan-type ReservationsStatisticsResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
+ * @phpstan-type RunningMachinesResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
  */
 final class PortalClient extends BaseClient
 {
@@ -1576,6 +1579,15 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Returns the site overview's running-machine pool, refreshed at most once a minute.
+     * @return list<LiveMachineResponse>
+     */
+    public function getPublicLiveMachines(): mixed
+    {
+        return $this->request('GetPublicLiveMachines', [], null);
+    }
+
+    /**
      * Shows recent purchases as coin markers on a map. No login required.
      * @param array{'limit'?: int} $options
      * @return PurchaseMapSnapshot
@@ -1601,6 +1613,24 @@ final class PortalClient extends BaseClient
     public function getPublicActiveUsers(): mixed
     {
         return $this->request('GetPublicActiveUsers', [], null);
+    }
+
+    /**
+     * Counts noncancelled dated reservations that have not ended, including ongoing reservations.
+     * @return ReservationsStatisticsResponse
+     */
+    public function getPublicReservations(): mixed
+    {
+        return $this->request('GetPublicReservations', [], null);
+    }
+
+    /**
+     * Counts machines whose current Started is before now and Done is after now.
+     * @return RunningMachinesResponse
+     */
+    public function getPublicRunningMachines(): mixed
+    {
+        return $this->request('GetPublicRunningMachines', [], null);
     }
 
     /**

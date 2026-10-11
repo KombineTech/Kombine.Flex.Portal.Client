@@ -87,7 +87,10 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetPortalStatusAsync` | GET | `/api/v1/status` |
 | `GetPublicActiveUsersAsync` | GET | `/api/v1/public/statistics/active-users` |
 | `GetPublicDisp73Async` | GET | `/api/v1/public/displays/Map1` |
+| `GetPublicLiveMachinesAsync` | GET | `/api/v1/public/statistics/live-machines` |
 | `GetPublicPurchasesAsync` | GET | `/api/v1/public/statistics/purchases` |
+| `GetPublicReservationsAsync` | GET | `/api/v1/public/statistics/reservations` |
+| `GetPublicRunningMachinesAsync` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetSearchBankAsync` | GET | `/api/v1/search/banks/{bankKid}` |
 | `GetServiceAsync` | GET | `/api/v1/services/{serviceKid}` |
 | `GetServiceCountAsync` | GET | `/api/v1/services/count` |

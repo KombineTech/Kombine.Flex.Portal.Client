@@ -638,6 +638,11 @@ export class PortalClient extends BaseClient {
     return this.send("GetKombineLogoTextWithBackground", {"color": color, "background": background, "width": width}, undefined, request) as Promise<PortalDownload>;
   }
 
+  /** Returns the site overview's running-machine pool, refreshed at most once a minute. */
+  getPublicLiveMachines(request: RequestOptions = {}): Promise<Models.LiveMachineResponse[]> {
+    return this.send("GetPublicLiveMachines", {}, undefined, request) as Promise<Models.LiveMachineResponse[]>;
+  }
+
   /** Shows recent purchases as coin markers on a map. No login required. */
   getPublicDisp73(options: Models.GetPublicDisp73Options = {}, request: RequestOptions = {}): Promise<Models.PurchaseMapSnapshot> {
     return this.send("GetPublicDisp73", {"limit": options.limit}, undefined, request) as Promise<Models.PurchaseMapSnapshot>;
@@ -651,6 +656,16 @@ export class PortalClient extends BaseClient {
   /** Counts active users in the site's current Log7 during the last 100 days, without login. */
   getPublicActiveUsers(request: RequestOptions = {}): Promise<Models.ActiveUsersResponse> {
     return this.send("GetPublicActiveUsers", {}, undefined, request) as Promise<Models.ActiveUsersResponse>;
+  }
+
+  /** Counts noncancelled dated reservations that have not ended, including ongoing reservations. */
+  getPublicReservations(request: RequestOptions = {}): Promise<Models.ReservationsStatisticsResponse> {
+    return this.send("GetPublicReservations", {}, undefined, request) as Promise<Models.ReservationsStatisticsResponse>;
+  }
+
+  /** Counts machines whose current Started is before now and Done is after now. */
+  getPublicRunningMachines(request: RequestOptions = {}): Promise<Models.RunningMachinesResponse> {
+    return this.send("GetPublicRunningMachines", {}, undefined, request) as Promise<Models.RunningMachinesResponse>;
   }
 
   /** Gets public API availability. This does not check database readiness. */

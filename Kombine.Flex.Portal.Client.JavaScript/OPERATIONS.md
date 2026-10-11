@@ -129,7 +129,10 @@
 | `GetKombineLogoText` | `get_kombine_logo_text` | `getKombineLogoText` | GET | `/api/v1/logos/kombine-logo-text/{color}.svg` |
 | `GetKombineLogoTextSized` | `get_kombine_logo_text_sized` | `getKombineLogoTextSized` | GET | `/api/v1/logos/kombine-logo-text/{color}/{width}.svg` |
 | `GetKombineLogoTextWithBackground` | `get_kombine_logo_text_with_background` | `getKombineLogoTextWithBackground` | GET | `/api/v1/logos/kombine-logo-text/{color}/{background}/{width}.svg` |
+| `GetPublicLiveMachines` | `get_public_live_machines` | `getPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` |
 | `GetPublicDisp73` | `get_public_disp73` | `getPublicDisp73` | GET | `/api/v1/public/displays/Map1` |
 | `GetPublicPurchases` | `get_public_purchases` | `getPublicPurchases` | GET | `/api/v1/public/statistics/purchases` |
 | `GetPublicActiveUsers` | `get_public_active_users` | `getPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
+| `GetPublicReservations` | `get_public_reservations` | `getPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
+| `GetPublicRunningMachines` | `get_public_running_machines` | `getPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPortalStatus` | `get_portal_status` | `getPortalStatus` | GET | `/api/v1/status` |

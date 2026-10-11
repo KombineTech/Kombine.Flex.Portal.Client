@@ -1758,6 +1758,14 @@ namespace Kombine.Flex.Portal.Client.Net20
             return SendDownload("GET", path, null, headers, 200);
         }
 
+        /// <summary>Returns the site overview's running-machine pool, refreshed at most once a minute.</summary>
+        public LiveMachineResponse[] GetPublicLiveMachines()
+        {
+            string path = "api/v1/public/statistics/live-machines";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (LiveMachineResponse[])SendJson("GET", path, null, headers, 200, typeof(LiveMachineResponse[]));
+        }
+
         /// <summary>Shows recent purchases as coin markers on a map. No login required.</summary>
         public PurchaseMapSnapshot GetPublicDisp73()
         {
@@ -1790,6 +1798,22 @@ namespace Kombine.Flex.Portal.Client.Net20
             string path = "api/v1/public/statistics/active-users";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (ActiveUsersResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveUsersResponse));
+        }
+
+        /// <summary>Counts noncancelled dated reservations that have not ended, including ongoing reservations.</summary>
+        public ReservationsStatisticsResponse GetPublicReservations()
+        {
+            string path = "api/v1/public/statistics/reservations";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ReservationsStatisticsResponse)SendJson("GET", path, null, headers, 200, typeof(ReservationsStatisticsResponse));
+        }
+
+        /// <summary>Counts machines whose current Started is before now and Done is after now.</summary>
+        public RunningMachinesResponse GetPublicRunningMachines()
+        {
+            string path = "api/v1/public/statistics/running-machines";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (RunningMachinesResponse)SendJson("GET", path, null, headers, 200, typeof(RunningMachinesResponse));
         }
 
         /// <summary>Gets public API availability. This does not check database readiness.</summary>

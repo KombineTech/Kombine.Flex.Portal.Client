@@ -1298,6 +1298,15 @@ IconPresentationResponse = TypedDict('IconPresentationResponse', {
     'iconKid': 'str | None',
 }, total=False)
 
+LiveMachineResponse = TypedDict('LiveMachineResponse', {
+    'unitKid': 'str | None',
+    'unitName': 'str | None',
+    'locationName': 'str | None',
+    'startedAtUtc': 'str',
+    'doneAtUtc': 'str | None',
+    'temperature': 'float | None',
+}, total=False)
+
 PurchaseHeatmapPoint = TypedDict('PurchaseHeatmapPoint', {
     'latitude': 'float',
     'longitude': 'float',
@@ -1327,5 +1336,19 @@ PurchasesResponse = TypedDict('PurchasesResponse', {
     'measuredAtUtc': 'str',
     'amount': 'float',
     'currency': 'str | None',
+}, total=False)
+
+ReservationsStatisticsResponse = TypedDict('ReservationsStatisticsResponse', {
+    'tenantKid': 'str | None',
+    'count': 'int',
+    'measuredAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
+}, total=False)
+
+RunningMachinesResponse = TypedDict('RunningMachinesResponse', {
+    'tenantKid': 'str | None',
+    'count': 'int',
+    'measuredAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
 }, total=False)
 

@@ -85,7 +85,10 @@
 | `GetPortalStatus` | GET | `/api/v1/status` |
 | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
 | `GetPublicDisp73` | GET | `/api/v1/public/displays/Map1` |
+| `GetPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` |
 | `GetPublicPurchases` | GET | `/api/v1/public/statistics/purchases` |
+| `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
+| `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` |
 | `GetServiceCount` | GET | `/api/v1/services/count` |
 | `GetService` | GET | `/api/v1/services/{serviceKid}` |
