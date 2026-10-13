@@ -4,4 +4,4 @@ from ._runtime import PortalApiError, PortalProtocolError, PortalSessionError, P
 from . import models
 
 __all__ = ["PortalClient", "PortalApiError", "PortalProtocolError", "PortalSessionError", "PortalDownload", "models"]
-__version__ = "0.6.2"
+__version__ = "0.7.1"

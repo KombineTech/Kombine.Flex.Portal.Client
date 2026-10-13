@@ -2599,6 +2599,51 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>Single-use mailbox proof for the pending manager.</summary>
+    public sealed class ManagerSignUpConfirmation
+    {
+        /// <summary>Protected single-use mailbox proof.</summary>
+        [JsonField("token")]
+        public string Token { get { return _Token; } set { _Token = value; } }
+        private string _Token;
+
+    }
+
+    /// <summary>Required self-registration profile with no permission selectors.</summary>
+    public sealed class ManagerSignUpRequest
+    {
+        /// <summary>Mailbox to verify.</summary>
+        [JsonField("email")]
+        public string Email { get { return _Email; } set { _Email = value; } }
+        private string _Email;
+
+        /// <summary>Manager name.</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>Manager organisation.</summary>
+        [JsonField("organisation")]
+        public string Organisation { get { return _Organisation; } set { _Organisation = value; } }
+        private string _Organisation;
+
+        /// <summary>Password chosen at registration.</summary>
+        [JsonField("password")]
+        public string Password { get { return _Password; } set { _Password = value; } }
+        private string _Password;
+
+        /// <summary>Matching password confirmation.</summary>
+        [JsonField("confirmPassword")]
+        public string ConfirmPassword { get { return _ConfirmPassword; } set { _ConfirmPassword = value; } }
+        private string _ConfirmPassword;
+
+        /// <summary>Optional email language: exactly lowercase en, da or es. Omitted/null uses English; empty or other values are invalid.</summary>
+        [JsonField("language")]
+        public string Language { get { return _Language; } set { _Language = value; } }
+        private string _Language;
+
+    }
+
     /// <summary>Desired state of one numeric eTab grant, using the last returned Tabs revision.</summary>
     public sealed class ManagerTabChangeRequest
     {
@@ -3692,6 +3737,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
         private double? _Longitude;
 
+        /// <summary>Last stored eState.ErrorUnit JSON text; null unless selected, empty when absent. May describe a historical fault.</summary>
+        [JsonField("errorUnit")]
+        public string ErrorUnit { get { return _ErrorUnit; } set { _ErrorUnit = value; } }
+        private string _ErrorUnit;
+
+        /// <summary>Stored AutoOutOfOrder JSON when autoOutOfOrderOnly is true; otherwise null.</summary>
+        [JsonField("autoOutOfOrder")]
+        public string AutoOutOfOrder { get { return _AutoOutOfOrder; } set { _AutoOutOfOrder = value; } }
+        private string _AutoOutOfOrder;
+
         /// <summary>Requested terminal eState.VersionMinor as decoded text; null unless selected, empty when absent.</summary>
         [JsonField("versionMinor")]
         public string VersionMinor { get { return _VersionMinor; } set { _VersionMinor = value; } }
@@ -3731,6 +3786,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         [JsonField("terminal")]
         public UnitTerminalResponse Terminal { get { return _Terminal; } set { _Terminal = value; } }
         private UnitTerminalResponse _Terminal;
+
+        /// <summary>progress</summary>
+        [JsonField("progress")]
+        public UnitProgressResponse Progress { get { return _Progress; } set { _Progress = value; } }
+        private UnitProgressResponse _Progress;
 
     }
 
@@ -3842,9 +3902,19 @@ namespace Kombine.Flex.Portal.Client.Net45
         public bool? HasHistory { get { return _HasHistory; } set { _HasHistory = value; } }
         private bool? _HasHistory;
 
+        /// <summary>valueFormat</summary>
+        [JsonField("valueFormat")]
+        public string ValueFormat { get { return _ValueFormat; } set { _ValueFormat = value; } }
+        private string _ValueFormat;
+
+        /// <summary>pattern</summary>
+        [JsonField("pattern")]
+        public string Pattern { get { return _Pattern; } set { _Pattern = value; } }
+        private string _Pattern;
+
     }
 
-    /// <summary>The authorized unit and one descriptor-defined group, with read-only stored values.</summary>
+    /// <summary>The authorized unit and one catalog-defined group, with read-only stored values.</summary>
     public sealed class UnitGroupResponse
     {
         /// <summary>location</summary>
@@ -4067,9 +4137,14 @@ namespace Kombine.Flex.Portal.Client.Net45
         public long? NextBeforeMs2000 { get { return _NextBeforeMs2000; } set { _NextBeforeMs2000 = value; } }
         private long? _NextBeforeMs2000;
 
+        /// <summary>valueFormat</summary>
+        [JsonField("valueFormat")]
+        public string ValueFormat { get { return _ValueFormat; } set { _ValueFormat = value; } }
+        private string _ValueFormat;
+
     }
 
-    /// <summary>A selectable persisted value and its localized descriptor label.</summary>
+    /// <summary>A selectable persisted value and its localized catalog label.</summary>
     public sealed class UnitSettingOption
     {
         /// <summary>value</summary>
@@ -4889,6 +4964,176 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>Public identity, display names and error code; no raw state payload.</summary>
+    public sealed class PublicMachineError
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>bankName</summary>
+        [JsonField("bankName")]
+        public string BankName { get { return _BankName; } set { _BankName = value; } }
+        private string _BankName;
+
+        /// <summary>locationName</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>errorId</summary>
+        [JsonField("errorId")]
+        public string ErrorId { get { return _ErrorId; } set { _ErrorId = value; } }
+        private string _ErrorId;
+
+    }
+
+    /// <summary>Public machine-error page, with a protected next-page cursor and refresh interval.</summary>
+    public sealed class PublicMachineErrorsPage
+    {
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public PublicMachineError[] Items { get { return _Items; } set { _Items = value; } }
+        private PublicMachineError[] _Items;
+
+        /// <summary>nextCursor</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+        /// <summary>refreshAfterSeconds</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+    }
+
+    /// <summary>Minimal public unit display and expected timing.</summary>
+    public sealed class PublicScopedProgressItem
+    {
+        /// <summary>Canonical site-bound unit identity.</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>Localized unit name.</summary>
+        [JsonField("unitName")]
+        public string UnitName { get { return _UnitName; } set { _UnitName = value; } }
+        private string _UnitName;
+
+        /// <summary>Localized location name.</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>Expected start or null for unknown timing. ISO 8601 text, sent unchanged.</summary>
+        [JsonField("startedAtUtc")]
+        public string StartedAtUtc { get { return _StartedAtUtc; } set { _StartedAtUtc = value; } }
+        private string _StartedAtUtc;
+
+        /// <summary>Expected end or null for unknown timing. ISO 8601 text, sent unchanged.</summary>
+        [JsonField("doneAtUtc")]
+        public string DoneAtUtc { get { return _DoneAtUtc; } set { _DoneAtUtc = value; } }
+        private string _DoneAtUtc;
+
+        /// <summary>progress</summary>
+        [JsonField("progress")]
+        public UnitProgressResponse Progress { get { return _Progress; } set { _Progress = value; } }
+        private UnitProgressResponse _Progress;
+
+    }
+
+    /// <summary>A bounded page of public progress for the exact site-bound scope.</summary>
+    public sealed class PublicScopedProgressResponse
+    {
+        /// <summary>Requested canonical KID.</summary>
+        [JsonField("scopeKid")]
+        public string ScopeKid { get { return _ScopeKid; } set { _ScopeKid = value; } }
+        private string _ScopeKid;
+
+        /// <summary>Unit, Location or Bank enum name.</summary>
+        [JsonField("scopeKind")]
+        public string ScopeKind { get { return _ScopeKind; } set { _ScopeKind = value; } }
+        private string _ScopeKind;
+
+        /// <summary>UTC calculation time. ISO 8601 text, sent unchanged.</summary>
+        [JsonField("calculatedAtUtc")]
+        public string CalculatedAtUtc { get { return _CalculatedAtUtc; } set { _CalculatedAtUtc = value; } }
+        private string _CalculatedAtUtc;
+
+        /// <summary>Recommended refresh interval.</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+        /// <summary>Public units in numeric identity order.</summary>
+        [JsonField("items")]
+        public PublicScopedProgressItem[] Items { get { return _Items; } set { _Items = value; } }
+        private PublicScopedProgressItem[] _Items;
+
+        /// <summary>Opaque next-page cursor, or null after the last page.</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+    }
+
+    /// <summary>Public presentation selected by this API site's trusted tenant.</summary>
+    public sealed class PublicWidgetPresentationResponse
+    {
+        /// <summary>Resolved supported culture for labels, names and number formatting.</summary>
+        [JsonField("language")]
+        public string Language { get { return _Language; } set { _Language = value; } }
+        private string _Language;
+
+        /// <summary>Hyphen-separated RGB hex palette for the API's circle SVGs.</summary>
+        [JsonField("colors")]
+        public string Colors { get { return _Colors; } set { _Colors = value; } }
+        private string _Colors;
+
+        /// <summary>RGB hex background inside the progress circle.</summary>
+        [JsonField("background")]
+        public string Background { get { return _Background; } set { _Background = value; } }
+        private string _Background;
+
+        /// <summary>Trusted HTTPS portal origin for the public purchase map, or null when unavailable.</summary>
+        [JsonField("webBase")]
+        public string WebBase { get { return _WebBase; } set { _WebBase = value; } }
+        private string _WebBase;
+
+        /// <summary>Existing localized portal text keys used by the widgets; contains no account data.</summary>
+        [JsonField("labels")]
+        public Dictionary<string, string> Labels { get { return _Labels; } set { _Labels = value; } }
+        private Dictionary<string, string> _Labels;
+
+    }
+
+    /// <summary>Purchase count and total for one currency; no currency conversion is performed.</summary>
+    public sealed class PurchaseCurrencySnapshot
+    {
+        /// <summary>Stored currency code; null represents purchases with no currency code.</summary>
+        [JsonField("currency")]
+        public string Currency { get { return _Currency; } set { _Currency = value; } }
+        private string _Currency;
+
+        /// <summary>Number of matching purchase rows for this currency.</summary>
+        [JsonField("count")]
+        public long? Count { get { return _Count; } set { _Count = value; } }
+        private long? _Count;
+
+        /// <summary>Positive total in major currency units (negated stored Amount divided by 100).</summary>
+        [JsonField("amount")]
+        public double? Amount { get { return _Amount; } set { _Amount = value; } }
+        private double? _Amount;
+
+    }
+
     /// <summary>Total revenue at a coordinate across all retained purchases, independent of the coin limit.</summary>
     public sealed class PurchaseHeatmapPoint
     {
@@ -4992,15 +5237,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string MeasuredAtUtc { get { return _MeasuredAtUtc; } set { _MeasuredAtUtc = value; } }
         private string _MeasuredAtUtc;
 
-        /// <summary>Positive purchase total in major currency units; zero for no matches.</summary>
-        [JsonField("amount")]
-        public double? Amount { get { return _Amount; } set { _Amount = value; } }
-        private double? _Amount;
-
-        /// <summary>MAX(Currency), or null for no matches. No currency conversion.</summary>
-        [JsonField("currency")]
-        public string Currency { get { return _Currency; } set { _Currency = value; } }
-        private string _Currency;
+        /// <summary>One count and amount per stored currency; empty for no matches. No currency conversion.</summary>
+        [JsonField("currencies")]
+        public PurchaseCurrencySnapshot[] Currencies { get { return _Currencies; } set { _Currencies = value; } }
+        private PurchaseCurrencySnapshot[] _Currencies;
 
     }
 
@@ -5596,6 +5836,24 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>Optional query/header parameters for GetControllerOverview. Null values use API defaults.</summary>
+    public sealed class GetControllerOverviewOptions
+    {
+        /// <summary>Accept-Language</summary>
+        public string AcceptLanguage { get { return _AcceptLanguage; } set { _AcceptLanguage = value; } }
+        private string _AcceptLanguage;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetControllerGroup. Null values use API defaults.</summary>
+    public sealed class GetControllerGroupOptions
+    {
+        /// <summary>Accept-Language</summary>
+        public string AcceptLanguage { get { return _AcceptLanguage; } set { _AcceptLanguage = value; } }
+        private string _AcceptLanguage;
+
+    }
+
     /// <summary>Optional query/header parameters for GetLocationUnits. Null values use API defaults.</summary>
     public sealed class GetLocationUnitsOptions
     {
@@ -5839,6 +6097,14 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string TerminalKid { get { return _TerminalKid; } set { _TerminalKid = value; } }
         private string _TerminalKid;
 
+        /// <summary>runningOnly</summary>
+        public bool? RunningOnly { get { return _RunningOnly; } set { _RunningOnly = value; } }
+        private bool? _RunningOnly;
+
+        /// <summary>autoOutOfOrderOnly</summary>
+        public bool? AutoOutOfOrderOnly { get { return _AutoOutOfOrderOnly; } set { _AutoOutOfOrderOnly = value; } }
+        private bool? _AutoOutOfOrderOnly;
+
     }
 
     /// <summary>Optional query/header parameters for GetTerminals. Null values use API defaults.</summary>
@@ -5883,6 +6149,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>terminalKid</summary>
         public string TerminalKid { get { return _TerminalKid; } set { _TerminalKid = value; } }
         private string _TerminalKid;
+
+        /// <summary>runningOnly</summary>
+        public bool? RunningOnly { get { return _RunningOnly; } set { _RunningOnly = value; } }
+        private bool? _RunningOnly;
 
     }
 
@@ -5989,12 +6259,38 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>Optional query/header parameters for GetPublicMachineErrors. Null values use API defaults.</summary>
+    public sealed class GetPublicMachineErrorsOptions
+    {
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
+
+    }
+
     /// <summary>Optional query/header parameters for GetPublicDisp73. Null values use API defaults.</summary>
     public sealed class GetPublicDisp73Options
     {
         /// <summary>limit</summary>
         public int? Limit { get { return _Limit; } set { _Limit = value; } }
         private int? _Limit;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetPublicScopedUnitProgress. Null values use API defaults.</summary>
+    public sealed class GetPublicScopedUnitProgressOptions
+    {
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
 
     }
 

@@ -644,6 +644,46 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (LocationBookingRulesResponse)SendJson("GET", path, null, headers, 200, typeof(LocationBookingRulesResponse));
         }
 
+        /// <summary>Read an authorized controller using its canonical Controller KID with MainId.</summary>
+        public UnitDetailsResponse GetControllerOverview(string @controllerKid)
+        {
+            return GetControllerOverview(@controllerKid, null);
+        }
+
+        /// <summary>Read an authorized controller using its canonical Controller KID with MainId.</summary>
+        public UnitDetailsResponse GetControllerOverview(string @controllerKid, GetControllerOverviewOptions options)
+        {
+            string path = "api/v1/controllers/{controllerKid}";
+            path = path.Replace("{controllerKid}", PathValue(@controllerKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                if (options.AcceptLanguage != null) headers.Add("Accept-Language", options.AcceptLanguage);
+            }
+            return (UnitDetailsResponse)SendJson("GET", path, null, headers, 200, typeof(UnitDetailsResponse));
+        }
+
+        /// <summary>Read the controller's temporary Core settings or states from its main unit.</summary>
+        public UnitGroupResponse GetControllerGroup(string @controllerKid, string @kind, string @group)
+        {
+            return GetControllerGroup(@controllerKid, @kind, @group, null);
+        }
+
+        /// <summary>Read the controller's temporary Core settings or states from its main unit.</summary>
+        public UnitGroupResponse GetControllerGroup(string @controllerKid, string @kind, string @group, GetControllerGroupOptions options)
+        {
+            string path = "api/v1/controllers/{controllerKid}/groups/{kind}/{group}";
+            path = path.Replace("{controllerKid}", PathValue(@controllerKid));
+            path = path.Replace("{kind}", PathValue(@kind));
+            path = path.Replace("{group}", PathValue(@group));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                if (options.AcceptLanguage != null) headers.Add("Accept-Language", options.AcceptLanguage);
+            }
+            return (UnitGroupResponse)SendJson("GET", path, null, headers, 200, typeof(UnitGroupResponse));
+        }
+
         /// <summary>Get the location label and its units, ordered by unit number.</summary>
         public LocationUnitsResponse GetLocationUnits(string @locationKid)
         {
@@ -923,6 +963,22 @@ namespace Kombine.Flex.Portal.Client.Net45
             string path = "api/v1/session/me";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (ManagerProfileResponse)SendJson("GET", path, null, headers, 200, typeof(ManagerProfileResponse));
+        }
+
+        /// <summary>Create a pending manager with a password and queue a manager-bound verification email.</summary>
+        public PersonalAccountResult RequestManagerSignUp(ManagerSignUpRequest body)
+        {
+            string path = "api/v1/session/signup";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PersonalAccountResult)SendJson("POST", path, body, headers, 202, typeof(PersonalAccountResult));
+        }
+
+        /// <summary>Verify the email and activate only the manager already created by self-registration.</summary>
+        public PersonalAccountResult ConfirmManagerSignUp(ManagerSignUpConfirmation body)
+        {
+            string path = "api/v1/session/signup-confirmation";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PersonalAccountResult)SendJson("POST", path, body, headers, 200, typeof(PersonalAccountResult));
         }
 
         /// <summary>Assign or remove one available eTab on an administrator.</summary>
@@ -1241,6 +1297,8 @@ namespace Kombine.Flex.Portal.Client.Net45
                 path = AddQuery(path, "includeCoordinates", options.IncludeCoordinates);
                 path = AddQuery(path, "locationKid", options.LocationKid);
                 path = AddQuery(path, "terminalKid", options.TerminalKid);
+                path = AddQuery(path, "runningOnly", options.RunningOnly);
+                path = AddQuery(path, "autoOutOfOrderOnly", options.AutoOutOfOrderOnly);
             }
             return (UnitDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(UnitDirectoryResponse));
         }
@@ -1268,6 +1326,7 @@ namespace Kombine.Flex.Portal.Client.Net45
                 path = AddQuery(path, "includeCoordinates", options.IncludeCoordinates);
                 path = AddQuery(path, "locationKid", options.LocationKid);
                 path = AddQuery(path, "terminalKid", options.TerminalKid);
+                path = AddQuery(path, "runningOnly", options.RunningOnly);
             }
             return (UnitDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(UnitDirectoryResponse));
         }
@@ -1766,6 +1825,34 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (LiveMachineResponse[])SendJson("GET", path, null, headers, 200, typeof(LiveMachineResponse[]));
         }
 
+        /// <summary>List machines with a positive AutoOutOfOrder Id without login.</summary>
+        public PublicMachineErrorsPage GetPublicMachineErrors()
+        {
+            return GetPublicMachineErrors(null);
+        }
+
+        /// <summary>List machines with a positive AutoOutOfOrder Id without login.</summary>
+        public PublicMachineErrorsPage GetPublicMachineErrors(GetPublicMachineErrorsOptions options)
+        {
+            string path = "api/v1/public/widgets/machine-errors";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+            }
+            return (PublicMachineErrorsPage)SendJson("GET", path, null, headers, 200, typeof(PublicMachineErrorsPage));
+        }
+
+        /// <summary>Draws purchase counts for the last hour in twelve five-minute intervals.</summary>
+        public PortalDownload GetPublicPurchasesChart(string @color)
+        {
+            string path = "api/v1/public/statistics/purchases/chart/{color}.svg";
+            path = path.Replace("{color}", PathValue(@color));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
         /// <summary>Shows recent purchases as coin markers on a map. No login required.</summary>
         public PurchaseMapSnapshot GetPublicDisp73()
         {
@@ -1784,6 +1871,26 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (PurchaseMapSnapshot)SendJson("GET", path, null, headers, 200, typeof(PurchaseMapSnapshot));
         }
 
+        /// <summary>Get progress for one unit or a page of all public units in a location or bank.</summary>
+        public PublicScopedProgressResponse GetPublicScopedUnitProgress(string @kid)
+        {
+            return GetPublicScopedUnitProgress(@kid, null);
+        }
+
+        /// <summary>Get progress for one unit or a page of all public units in a location or bank.</summary>
+        public PublicScopedProgressResponse GetPublicScopedUnitProgress(string @kid, GetPublicScopedUnitProgressOptions options)
+        {
+            string path = "api/v1/public/widgets/progress/{kid}";
+            path = path.Replace("{kid}", PathValue(@kid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+            }
+            return (PublicScopedProgressResponse)SendJson("GET", path, null, headers, 200, typeof(PublicScopedProgressResponse));
+        }
+
         /// <summary>Counts purchases in the site's Log1Hour without login.</summary>
         public PurchasesResponse GetPublicPurchases()
         {
@@ -1798,6 +1905,14 @@ namespace Kombine.Flex.Portal.Client.Net45
             string path = "api/v1/public/statistics/active-users";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (ActiveUsersResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveUsersResponse));
+        }
+
+        /// <summary>Get localized labels and the site's palette for the shared JavaScript widgets.</summary>
+        public PublicWidgetPresentationResponse GetPublicWidgetPresentation()
+        {
+            string path = "api/v1/public/widgets";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PublicWidgetPresentationResponse)SendJson("GET", path, null, headers, 200, typeof(PublicWidgetPresentationResponse));
         }
 
         /// <summary>Counts noncancelled dated reservations that have not ended, including ongoing reservations.</summary>

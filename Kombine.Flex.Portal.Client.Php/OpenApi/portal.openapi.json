@@ -6570,13 +6570,303 @@
         ]
       }
     },
+    "/api/v1/controllers/{controllerKid}": {
+      "get": {
+        "tags": [
+          "LocationUnits"
+        ],
+        "summary": "Read an authorized controller using its canonical Controller KID with MainId.",
+        "description": "Same authorization, tenant, scope and retention checks as GetUnitOverview. The authorized Alive hierarchy must identify this unit as its own controller. Controller data shares the main unit\u0027s Log24 storage. Core is the temporary settings and states selection; unavailable type metadata never invents fields.",
+        "operationId": "GetControllerOverview",
+        "parameters": [
+          {
+            "name": "controllerKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDetailsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDetailsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDetailsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/controllers/{controllerKid}/groups/{kind}/{group}": {
+      "get": {
+        "tags": [
+          "LocationUnits"
+        ],
+        "summary": "Read the controller\u0027s temporary Core settings or states from its main unit.",
+        "description": "Rechecks GetControllerOverview authorization and hierarchy. Uses only fields declared for the main unit type; missing Core metadata returns an empty items array without a storage read. Existing unit setting operations retain their authorization and revisions.",
+        "operationId": "GetControllerGroup",
+        "parameters": [
+          {
+            "name": "controllerKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "group",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitGroupResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitGroupResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitGroupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/locations/{locationKid}/units": {
       "get": {
         "tags": [
           "LocationUnits"
         ],
         "summary": "Get the location label and its units, ordered by unit number.",
-        "description": "### Access and visibility\r\n            \r\n- Requires an active manager, at least one assigned **Tab**, **Location Read**, **Unit Read** and matching tenant/bank/location access.\r\n- Send a canonical location KID on this site.\r\n- Location and unit deletion both follow **RetentionDays**; missing Deleted means zero.\r\n- Current unit settings, Cycle, Enabled, OutOfOrder, WashDocId, Connected, Started and Done come from **Log24**, in one bounded query.\r\n            \r\n### Names, icons and cycle\r\n            \r\n- Missing or invalid unit icons use \u0060object_cube\u0060; explicitly configured icons are preserved.\r\n- The API adds the unit number to \u0060iconKid.Text\u0060. The \u0060g/object_cube\u0060 asset prints it on the box face.\r\n- Unit names resolve \u0060[eLocalization numeric ID]\u0060 placeholders using \u0060Accept-Language\u0060 on each request, defaulting to \u0060en-GB\u0060. Unknown IDs remain unchanged.\r\n- Cycle uses the newest MS2000 from \u0060eSetting.Cycle\u0060 or \u0060eState.Cycle\u0060; state wins ties.\r\n- Absent or invalid cycle values return null. \u0060cycle\u0060 is an enum name; \u0060cycleText\u0060 is its localized label.\r\n- \u0060unitType\u0060 is the effective numeric type; \u0060unitTypeName\u0060 is the eUnitType name when defined; \u0060unitTypeSource\u0060 identifies the source setting.\r\n- A present UnitType2 takes precedence, including when malformed (null type, no legacy fallback). Otherwise UnitType is decoded using FlexOrm\u0027s \u0060(value \u003E\u003E 1) \u0026 63\u0060 rule.\r\n- Missing/invalid types return null, never an invented Type000. Unknown numeric types are retained without claiming metadata support.\r\n- \u0060progress\u0060 contains \u0060status\u0060, nullable \u0060percent\u0060/\u0060remainingSeconds\u0060 and \u0060calculatedAtUtc\u0060. The API recalculates from Started/Done at request time; clients need no MS2000 or KID calculations.\r\n- \u0060Estimated\u0060 is 0\u201399%; \u0060Complete\u0060 is 100% only for the actual DONE phase (excluding LinkOnline). Cycle substeps are not percentages. Disabled/out-of-order/disconnected/error states suppress estimates.\r\n- \u0060UnknownEndTime\u0060 covers missing/reset/invalid times, the unknown-end sentinel, mismatched sequence DocIds and fractional Connected quality. \u0060EstimateExpired\u0060 means wait for the actual cycle; it never means complete. Both have null percentages and remaining time.\r\n- Enabled must be exactly 1. Connected=0 blocks estimates; missing Connected is not assumed offline. Started/Done are JSON Text values; TagId is the sequence. No user identities are read for progress.\r\n- \u0060terminal\u0060 is an optional \u0060{kid,name,iconKid}\u0060 resolved from the trusted tenant\u0027s Alive.MainId for the exact visible unit set. The parent must be a visible Log24 unit in this location; an existing parent Alive row must map UnitId to itself. A missing parent Alive row is allowed when a visible child\u0027s MainId explicitly identifies it.\r\n- Missing, invalid, hidden, chained or unavailable hierarchy returns terminal=null; never guess a self-parent. Terminal names use Accept-Language and its iconKid includes the main unit number. Offline is independent.\r\n            \r\n### Results and cache\r\n            \r\n- At most **255 units**, ordered by unit number. No paging or count query.\r\n- No visible units returns empty items.\r\n- Unit data is cached for up to **10 seconds** and location labels for up to **60 seconds**. Authorization is reapplied on every call.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 404:** missing or invisible location.\r\n- After tab/resource checks, **HTTP 403** may include \u0060reason\u0060 of \u0060missing-location-read\u0060 or \u0060missing-unit-read\u0060. No business storage is read on denial.",
+        "description": "### Access and visibility\r\n            \r\n- Requires an active manager, at least one assigned **Tab**, **Location Read**, **Unit Read** and matching tenant/bank/location access.\r\n- Send a canonical location KID on this site.\r\n- Location and unit deletion both follow **RetentionDays**; missing Deleted means zero.\r\n- Current unit settings, Cycle, Enabled, OutOfOrder, WashDocId, Connected, Started and Done come from **Log24**, in one bounded query.\r\n            \r\n### Names, icons and cycle\r\n            \r\n- Missing or invalid unit icons use \u0060object_cube\u0060; explicitly configured icons are preserved.\r\n- The API adds the unit number to \u0060iconKid.Text\u0060. The \u0060g/object_cube\u0060 asset prints it on the box face.\r\n- Unit names resolve \u0060[eLocalization numeric ID]\u0060 placeholders using \u0060Accept-Language\u0060 on each request, defaulting to \u0060en-GB\u0060. Unknown IDs remain unchanged.\r\n- Cycle uses the newest MS2000 from \u0060eSetting.Cycle\u0060 or \u0060eState.Cycle\u0060; state wins ties.\r\n- Absent or invalid cycle values return null. \u0060cycle\u0060 is an enum name; \u0060cycleText\u0060 is its localized label.\r\n- \u0060unitType\u0060 is the effective numeric type; \u0060unitTypeName\u0060 is the eUnitType name when defined; \u0060unitTypeSource\u0060 identifies the source setting.\r\n- A present UnitType2 takes precedence, including when malformed (null type, no legacy fallback). Otherwise UnitType is decoded using the eight-bit \u0060(value \u003E\u003E 1) \u0026 255\u0060 rule.\r\n- Missing/invalid types return null, never an invented Type000. Unknown numeric types are retained without claiming metadata support.\r\n- \u0060progress\u0060 contains \u0060status\u0060, nullable \u0060percent\u0060/\u0060remainingSeconds\u0060 and \u0060calculatedAtUtc\u0060. The API recalculates from Started/Done at request time; clients need no MS2000 or KID calculations.\r\n- \u0060Estimated\u0060 uses floor(clamp((now-Started)/(Done-Started)*100,0,100)), including 100 at/after the expected end. Remaining seconds are clamped at zero.\r\n- \u0060UnknownEndTime\u0060 covers missing/nonpositive/invalid times and Done not after Started; percent and remainingSeconds are null.\r\n- Only Started/Done JSON Text timestamps affect progress. Cycle, Enabled, OutOfOrder, Connected and sequence IDs do not. No user identities are read for progress.\r\n- \u0060terminal\u0060 is an optional \u0060{kid,name,iconKid}\u0060 with a canonical Controller KID (MainId, UnitId=0), resolved from the trusted tenant\u0027s Alive.MainId for the exact visible unit set. The parent must be a visible Log24 unit in this location; an existing parent Alive row must map UnitId to itself. A missing parent Alive row is allowed when a visible child\u0027s MainId explicitly identifies it.\r\n- Missing, invalid, hidden, chained or unavailable hierarchy returns terminal=null; never guess a self-parent. Terminal names use the main unit\u2019s eState.ComputerName, matching GetTerminals without falling back to eSetting.Name and its iconKid includes the main unit number. Offline is independent.\r\n            \r\n### Results and cache\r\n            \r\n- At most **255 units**, ordered by unit number. No paging or count query.\r\n- No visible units returns empty items.\r\n- Unit data is cached for up to **10 seconds** and location labels for up to **60 seconds**. Authorization is reapplied on every call.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 404:** missing or invisible location.\r\n- After tab/resource checks, **HTTP 403** may include \u0060reason\u0060 of \u0060missing-location-read\u0060 or \u0060missing-unit-read\u0060. No business storage is read on denial.",
         "operationId": "GetLocationUnits",
         "parameters": [
           {
@@ -6730,7 +7020,7 @@
           "LocationUnits"
         ],
         "summary": "Read an authorized unit and its type\u0027s setting/state groups.",
-        "description": "### Access\r\n- Requires an active manager, at least one assigned Tab, Location Read, Unit Read and a matching tenant/bank/location grant.\r\n- Send a canonical unit KID on this site. The unit and its parent location must be visible within RetentionDays.\r\n- Uses the same bounded, ten-second location snapshot as GetLocationUnits. Authorization is reapplied on every call, before metadata is exposed.\r\n### Result\r\n- Returns \u0060location\u0060, \u0060unit\u0060, \u0060descriptorAvailable\u0060, \u0060settingGroups\u0060 and \u0060stateGroups\u0060.\r\n- Group identifiers are stable eSettingGroup/eStateGroup names, deduplicated and ordered by numeric enum value.\r\n- Metadata comes from the installed Kombine.Flex.Units descriptor packages, selected by the unit\u0027s effective type; no runtime/hardware connection is made.\r\n- Missing, malformed or unsupported types return descriptorAvailable=false and empty groups. No default type is substituted.\r\n- This read-only operation returns group metadata, not setting/state values or editing rights.\r\n### Errors\r\n- 400: invalid/foreign unit KID. 401: sign in again. 403: missing tab/scope/read access. 404: missing or retention-hidden location/unit. 503: storage unavailable.\r\n- Accept-Language localizes names/cycle labels; group identifiers remain language independent.",
+        "description": "### Access\r\n- Requires an active manager, at least one assigned Tab, Location Read, Unit Read and a matching tenant/bank/location grant.\r\n- Send a canonical unit KID on this site. The unit and its parent location must be visible within RetentionDays.\r\n- Uses the same bounded, ten-second location snapshot as GetLocationUnits. Authorization is reapplied on every call, before metadata is exposed.\r\n### Result\r\n- Returns \u0060location\u0060, \u0060unit\u0060, \u0060descriptorAvailable\u0060, \u0060settingGroups\u0060 and \u0060stateGroups\u0060.\r\n- Group identifiers are stable eSettingGroup/eStateGroup names, deduplicated and ordered by numeric enum value.\r\n- Metadata comes from SettingsAndStates.json and the shared enums, selected by the unit\u0027s effective type; no hardware connection is made.\r\n- Missing, malformed or unsupported types return descriptorAvailable=false and empty groups. No default type is substituted.\r\n- This read-only operation returns group metadata, not setting/state values or editing rights.\r\n### Errors\r\n- 400: invalid/foreign unit KID. 401: sign in again. 403: missing tab/scope/read access. 404: missing or retention-hidden location/unit. 503: storage unavailable.\r\n- Accept-Language localizes names/cycle labels; group identifiers remain language independent.",
         "operationId": "GetUnitOverview",
         "parameters": [
           {
@@ -6884,7 +7174,7 @@
           "LocationUnits"
         ],
         "summary": "Read the declared settings or states in one authorized unit group.",
-        "description": "### Access\r\n- Same active manager, Tab, location grant, Location Read, Unit Read and RetentionDays checks as GetUnitOverview.\r\n- \u0060kind\u0060 is settings or states. \u0060group\u0060 is an exact identifier returned by GetUnitOverview. The server selects fields from the effective unit type, never from client-supplied setting IDs.\r\n### Values and limits\r\n- Bounded Log24 reads for declared current-unit fields; newest MS2000 per field, no default substitution. Settings join the exact bank Log2 record for \u0060sync\u0060 (only 1 means acknowledged) and batch current Log7 editor names/icons into \u0060changedBy\u0060. Missing sync is null, never success.\r\n- \u0060changedBy\u0060 is null when no editor is recorded (UserId zero); display no user icon or name in that case. Unknown nonzero editors retain their display identity even without a KID.\r\n- \u0060canReadHistory\u0060 identifies fields supported by GetUnitSettingHistory. Fetch history only on demand. Sync-only changes and editor label changes do not invalidate the value revision or change MS2000.\r\n- \u0060hasHistory\u0060 indicates that the setting has at least one bank Log2 history record. Show history controls only when both canReadHistory and hasHistory are true.\r\n- Settings include \u0060canEdit\u0060, per-field \u0060revision\u0060 and input constraints. Use SetUnitSetting to save; Unit Write is required. States are always read-only. Dynamic-option and other-scope editors are not supported.\r\n- \u0060valueStatus\u0060 is stored, missing, other-scope or redacted. A stored null/empty value remains stored. MainUnit/other-object bindings have no value; this endpoint does not infer their owning KID or borrow the current unit\u0027s value.\r\n- Hidden settings are omitted; credential settings are redacted and never read. Enum field/group names are stable identifiers.\r\n- At most 512 stored fields and 16,384 characters per value; ambiguous or oversized data fails with 503, never partial results. Values are uncached; type/location snapshots retain their normal 10/60-second limits. Poll settings at most every five seconds and states every ten seconds, pausing hidden pages and never overlapping requests.\r\n### Errors\r\n- 400: invalid kind, group syntax or unit KID/site. 401: sign in again. 403: missing tab/scope/read permission. 404: missing/retention-hidden unit/location or group not declared for this type. 503: storage unavailable or invalid bounded response.",
+        "description": "### Access\r\n- Same active manager, Tab, location grant, Location Read, Unit Read and RetentionDays checks as GetUnitOverview.\r\n- \u0060kind\u0060 is settings or states. \u0060group\u0060 is an exact identifier returned by GetUnitOverview. The server selects fields from the effective unit type, never from client-supplied setting IDs.\r\n### Values and limits\r\n- Bounded Log24 reads for declared current-unit fields; newest MS2000 per field, no default substitution. Settings join the exact bank Log2 record for \u0060sync\u0060 (only 1 means acknowledged) and batch current Log7 editor names/icons into \u0060changedBy\u0060. Missing sync is null, never success.\r\n- \u0060changedBy\u0060 is null when no editor is recorded (UserId zero); display no user icon or name in that case. Unknown nonzero editors retain their display identity even without a KID.\r\n- \u0060canReadHistory\u0060 identifies fields supported by GetUnitSettingHistory. Fetch history only on demand. Sync-only changes and editor label changes do not invalidate the value revision or change MS2000.\r\n- \u0060hasHistory\u0060 indicates that the setting has at least one bank Log2 history record. Show history controls only when both canReadHistory and hasHistory are true.\r\n- Settings include \u0060canEdit\u0060, per-field \u0060revision\u0060 and input constraints. Use SetUnitSetting to save; Unit Write is required. States are always read-only. Dynamic-option and other-scope editors are not supported.\r\n- Optional \u0060valueFormat\u0060 selects a display/editor; Price comes from AttributeMetaRegEx(RegExs.Price). Display raw value/100 with two decimals, convert back exactly before saving. \u0060pattern\u0060 is a .NET regex on raw storage text, never display text. Minimum/maximum also use raw units. Null/unknown formats use ordinary presentation. Empty optional values stay empty.\r\n- \u0060valueStatus\u0060 is stored, missing, other-scope or redacted. A stored null/empty value remains stored. MainUnit/other-object bindings have no value; this endpoint does not infer their owning KID or borrow the current unit\u0027s value.\r\n- Hidden settings are omitted; credential settings are redacted and never read. Enum field/group names are stable identifiers.\r\n- At most 512 stored fields and 16,384 characters per value; ambiguous or oversized data fails with 503, never partial results. Values are uncached; type/location snapshots retain their normal 10/60-second limits. Poll settings at most every five seconds and states every ten seconds, pausing hidden pages and never overlapping requests.\r\n### Errors\r\n- 400: invalid kind, group syntax or unit KID/site. 401: sign in again. 403: missing tab/scope/read permission. 404: missing/retention-hidden unit/location or group not declared for this type. 503: storage unavailable or invalid bounded response.",
         "operationId": "GetUnitGroup",
         "parameters": [
           {
@@ -7054,7 +7344,7 @@
           "LocationUnits"
         ],
         "summary": "Read a bounded page of changes to one declared unit setting.",
-        "description": "### Access and scope\r\n- Same manager, assigned Tab, location grant, Location Read, Unit Read and RetentionDays checks as GetUnitGroup.\r\n- The group and exact setting identifier must be declared for this unit type and bound to the current unit. Hidden/credential/other-scope fields are not exposed.\r\n- Audit access exposes only editor KID, kind, current display name and icon; it grants no access to their account or directory. Manager/service labels use bank zero; installer labels use the site\u0027s tenant bank; resident labels use this unit\u0027s bank.\r\n### Paging and values\r\n- Newest first from bank Log2, with stored value, source MS2000, Sync and editor. Names/icons are current Log7 labels, not historical snapshots. Unknown editors have a null KID and may have an empty name.\r\n- \u0060changedBy\u0060 is null for UserId zero; display no user icon or name in that case.\r\n- \u0060limit\u0060 is 1\u201350 (default 25). Pass \u0060nextBeforeMs2000\u0060 as \u0060beforeMs2000\u0060 for the next page. Null means no more rows. No count query, defaults or cache.\r\n- Sync is the flag on that exact Log2 record: only 1 means acknowledged. Null means no known flag, never success. A sync-only update does not change the value revision or modification timestamp.\r\n- Fetch history on demand, not once per visible row. At most 16,384 characters per value; oversized/ambiguous data fails the whole page.\r\n### Errors\r\n- 400 invalid input/site; 401 login required; 403 missing access; 404 hidden unit/location or unsupported field/group; 503 storage failure. All storage work has an eight-second deadline.",
+        "description": "### Access and scope\r\n- Same manager, assigned Tab, location grant, Location Read, Unit Read and RetentionDays checks as GetUnitGroup.\r\n- The group and exact setting identifier must be declared for this unit type and bound to the current unit. Hidden/credential/other-scope fields are not exposed.\r\n- Audit access exposes only editor KID, kind, current display name and icon; it grants no access to their account or directory. Manager/service labels use bank zero; installer labels use the site\u0027s tenant bank; resident labels use this unit\u0027s bank.\r\n### Paging and values\r\n- Newest first from bank Log2, with stored value, source MS2000, Sync and editor. Names/icons are current Log7 labels, not historical snapshots. Unknown editors have a null KID and may have an empty name.\r\n- Page \u0060valueFormat\u0060 matches GetUnitGroup. Price displays value/100; history values remain raw. Restore by submitting the unchanged raw value and the current field revision, without a second multiplication.\r\n- \u0060changedBy\u0060 is null for UserId zero; display no user icon or name in that case.\r\n- \u0060limit\u0060 is 1\u201350 (default 25). Pass \u0060nextBeforeMs2000\u0060 as \u0060beforeMs2000\u0060 for the next page. Null means no more rows. No count query, defaults or cache.\r\n- Sync is the flag on that exact Log2 record: only 1 means acknowledged. Null means no known flag, never success. A sync-only update does not change the value revision or modification timestamp.\r\n- Fetch history on demand, not once per visible row. At most 16,384 characters per value; oversized/ambiguous data fails the whole page.\r\n### Errors\r\n- 400 invalid input/site; 401 login required; 403 missing access; 404 hidden unit/location or unsupported field/group; 503 storage failure. All storage work has an eight-second deadline.",
         "operationId": "GetUnitSettingHistory",
         "parameters": [
           {
@@ -10010,7 +10300,7 @@
                     },
                     {
                       "id": 62,
-                      "name": "Disp62",
+                      "name": "SignUp1",
                       "iconKid": ""
                     },
                     {
@@ -10050,7 +10340,7 @@
                     },
                     {
                       "id": 73,
-                      "name": "Disp73",
+                      "name": "Map1",
                       "iconKid": ""
                     },
                     {
@@ -10918,6 +11208,194 @@
             "ManagerBearer": []
           }
         ]
+      }
+    },
+    "/api/v1/session/signup": {
+      "post": {
+        "tags": [
+          "ManagerSignUp"
+        ],
+        "summary": "Create a pending manager with a password and queue a manager-bound verification email.",
+        "description": "Name/organisation are required, max 200 characters without controls. Password and confirmPassword must match,\r\n            with 12\u2013128 printable ASCII characters and no leading/trailing spaces. No tenant or permission selectors are accepted.\r\n            Stores the profile, password hash, pending marker, Enabled=0 and all operation masks=0 in Log7, then queues a Mails row\r\n            with the allocated manager UserId in the same transaction under the tenant manager-create lock. Mail failure rolls back creation.\r\n            Resubmission for an untouched pending account with the same password refreshes its proof and mail without allocating another ID.\r\n            Existing active/disabled non-signup accounts and wrong passwords get the same silent 202 accepted response without changes/mail.\r\n            The proof expires in 30 minutes. Allowed delivery domains: nortec.dk, kombinetech.com and arendt.dk; others: 400 email-delivery-restricted.\r\n            202 accepted confirms processing, not delivery. Email throttling is silent.\r\n            Language must be exactly lowercase en, da or es when supplied; omitted/null uses English.\r\n            Empty strings, whitespace, regional tags, uppercase and other values return 400 ValidationProblemDetails with errors.Language before account creation or mail queueing.\r\n            Never log request bodies, passwords or tokens; never retry an uncertain storage outcome automatically.",
+        "operationId": "RequestManagerSignUp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerSignUpRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerSignUpRequest"
+              }
+            },
+            "application/*\u002Bjson": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerSignUpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/session/signup-confirmation": {
+      "post": {
+        "tags": [
+          "ManagerSignUp"
+        ],
+        "summary": "Verify the email and activate only the manager already created by self-registration.",
+        "description": "Only token is accepted; no password or profile input. Explicit POST is required. The 30-minute proof is tenant/environment-bound\r\n            and checked against locked email, password, pending-proof and Enabled revisions. Deleted or non-pending accounts and changed proof-bound values are rejected.\r\n            Atomically replaces the pending marker with the existing email-version proof and sets Enabled=1; no permissions, profile or password changes.\r\n            Authorized administrators may separately assign or revoke access while verification is pending; confirmation preserves those changes and grants no permissions itself.\r\n            200 email-verified issues no session; sign in normally afterwards. Reused, expired or invalid proof: 400 invalid-signup-token.\r\n            503 signup-unavailable can have an uncertain outcome; do not automatically retry.",
+        "operationId": "ConfirmManagerSignUp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerSignUpConfirmation"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerSignUpConfirmation"
+              }
+            },
+            "application/*\u002Bjson": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerSignUpConfirmation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
       }
     },
     "/api/v1/managers/{managerKid}/tabs/{tabId}": {
@@ -14144,7 +14622,7 @@
           "UnitsDirectory"
         ],
         "summary": "List authorized units, including child units, for Units1.",
-        "description": "Requires Units1 (50), Bank/Location/Unit Read and current resource grants. Every page rechecks the active manager.\r\nReads tenant Log24, BankId \u003E=1000, with optional bounded Alive.MainId terminal hierarchy. Limited grants require an enabled location and bank/location/unit deletion\r\nwithin RetentionDays; missing Deleted means zero, malformed/future values are hidden. Site-wide grants can inspect all states.\r\nenabledOnly=true requires unit Enabled exactly 1. No request can select another tenant.\r\npageSize 1\u2013100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,\r\nor an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.\r\nsort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.\r\nUnit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.\r\nfields: bankName, locationName, unitType, washDocId, outOfOrder. Core parent names/icons remain populated.\r\nOptional unit fields are null unless selected, empty if missing. UnitType2 takes precedence over decoded legacy UnitType.\r\nterminal is optional {kid,name,iconKid}; the same-location Log24 main unit must be authorized and retention-visible. A child Alive.MainId may identify it when its own Alive row is absent; an existing contradictory main mapping is rejected. Unknown, chained or unavailable hierarchy returns null without discarding the page. Offline is independent.\r\nincludeCoordinates=true adds parent-location coordinates in decimal degrees, null if absent/invalid, for map presentation.\r\nFollow nextCursor until null. Protected cursors expire after 15 minutes and bind manager, tenant, grants, retention and all query options.\r\nRestart paging after changing options. Concurrent edits may move rows; pages are not a frozen snapshot.\r\nterminalKid on GetUnits restricts results to child units whose same-location Alive.MainId identifies that terminal.\r\nThe terminal itself is excluded. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.\r\nA missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.\r\nInvalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.\r\nOptional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.\r\nRepeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.\r\n400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-units-tab, missing-bank-read,\r\nmissing-location-read, missing-unit-read or missing-resource-access; 503 units-unavailable (retry manually). No-store.",
+        "description": "Requires Units1 (50), Bank/Location/Unit Read and current resource grants. Every page rechecks the active manager.\r\nReads tenant Log24, BankId \u003E=1000, with optional bounded Alive.MainId terminal hierarchy. Limited grants require an enabled location and bank/location/unit deletion\r\nwithin RetentionDays; missing Deleted means zero, malformed/future values are hidden. Site-wide grants can inspect all states.\r\nenabledOnly=true requires unit Enabled exactly 1. No request can select another tenant.\r\npageSize 1\u2013100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,\r\nor an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.\r\nsort: kid, name, bankName, locationName, unitId, unitType, washDocId, outOfOrder, errorUnit, progress; direction asc/desc.\r\nkid sorts numerically by bank, location and unit within the trusted tenant. Unit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.\r\nfields: bankName, locationName, unitType, washDocId, outOfOrder, errorUnit, progress. Core parent names/icons remain populated.\r\nerrorUnit is the last stored eState.ErrorUnit JSON text (empty if absent, null unless selected); it does not prove the fault is still active. Sorting is lexical by stored text.\r\nprogress is optional and sortable with sort=progress (Units1 only), and uses the overview-card calculation at request time: status, percent, remainingSeconds, calculatedAtUtc.\r\nPercent uses only (now-start)/(expectedEnd-start)*100, clamped to 0\u2013100; missing/invalid timing gives null.\r\nautoOutOfOrderOnly=true includes only Log24 eState.AutoOutOfOrder JSON with positive integer Id, independently of the OutOfOrder setting. Returns autoOutOfOrder JSON for those rows; otherwise null. Repeat the filter with cursors.\r\nrunningOnly=true requires valid positive Started/Done timestamps with Started \u003C= calculation time \u003C Done.\r\nFiltering precedes sorting/paging and does not require fields=progress. Default false; GetTerminals rejects true.\r\nCalculation time is fixed across the cursor chain (at most 15 minutes); refresh to reevaluate running units.\r\nRepeat runningOnly unchanged with each cursor. Authorization and retention use the current time.\r\nOptional unit fields are null unless selected, empty if missing. UnitType2 takes precedence over decoded legacy UnitType.\r\nterminal is optional {kid,name,iconKid}; the same-location Log24 main unit must be authorized and retention-visible. A child Alive.MainId may identify it when its own Alive row is absent; an existing contradictory main mapping is rejected. Unknown, chained or unavailable hierarchy returns null without discarding the page. Offline is independent.\r\nincludeCoordinates=true adds parent-location coordinates in decimal degrees, null if absent/invalid, for map presentation.\r\nFollow nextCursor until null. Protected cursors expire after 15 minutes and bind manager, tenant, grants, retention and all query options.\r\nRestart paging after changing options. Concurrent edits may move rows; pages are not a frozen snapshot.\r\nterminalKid on GetUnits is a canonical Controller KID (MainId); results include its first unit and child units mapped by same-location Alive.MainId.\r\nThe first unit remains a separate child. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.\r\nA missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.\r\nInvalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.\r\nOptional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.\r\nRepeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.\r\n400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-units-tab, missing-bank-read,\r\nmissing-location-read, missing-unit-read or missing-resource-access; 503 units-unavailable (retry manually). No-store.",
         "operationId": "GetUnits",
         "parameters": [
           {
@@ -14221,6 +14699,22 @@
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "runningOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "autoOutOfOrderOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -14339,7 +14833,7 @@
           "UnitsDirectory"
         ],
         "summary": "List authorized main units for Terminals1.",
-        "description": "Requires Terminals1 (66), Bank/Location/Unit Read and current site-bound resource grants; Units1 is not required.\r\nEach row\u0027s iconKid is the fixed terminal icon, independent of eSetting.Icon, with UnitId in its Text field.\r\nUses the same Log24 unit directory, visibility and RetentionDays as GetUnits. Name is eState.ComputerName, without fallback to eSetting.Name.\r\nTerminal fields/sorts: versionMinor, bootReason, booted, firmware, storageCardSerialNumber, page, backLight.\r\nBooted comes from eSetting.Booted; other terminal columns come from eState. Values are decoded text, null unless selected.\r\nOnly units whose ID appears as a positive MainId in this tenant\u0027s Alive table for the same bank and location qualify.\r\nRepeated Alive references produce one unit; Alive identities absent from Log24 are omitted. This is a read-only classification.\r\npageSize 1\u2013100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,\r\nor an exact same-site bank/location/unit KID. enabledOnly=true requires unit Enabled exactly 1.\r\nsort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.\r\nfields: bankName, locationName, unitType, washDocId, outOfOrder. Optional unit fields are null unless selected.\r\nincludeCoordinates=true returns parent-location coordinates for the map, null when absent/invalid.\r\nFollow nextCursor until null; cursors expire after 15 minutes and bind this directory, manager, tenant, grants,\r\nretention and all query options. Main-unit filtering precedes paging. Concurrent changes may move rows.\r\nterminalKid on GetUnits restricts results to child units whose same-location Alive.MainId identifies that terminal.\r\nThe terminal itself is excluded. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.\r\nA missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.\r\nInvalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.\r\nOptional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.\r\nRepeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.\r\n400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-terminals-tab, missing-bank-read,\r\nmissing-location-read, missing-unit-read or missing-resource-access; 503 terminals-unavailable (retry manually). No-store.",
+        "description": "Requires Terminals1 (66), Bank/Location/Unit Read and current site-bound resource grants; Units1 is not required.\r\nEach row\u0027s iconKid is the fixed terminal icon, independent of eSetting.Icon, with UnitId in its Text field.\r\nUses the same Log24 unit directory, visibility and RetentionDays as GetUnits. Name is eState.ComputerName, without fallback to eSetting.Name.\r\nTerminal fields/sorts: versionMinor, bootReason, booted, firmware, storageCardSerialNumber, page, backLight.\r\nBooted comes from eSetting.Booted; other terminal columns come from eState. Values are decoded text, null unless selected.\r\nOnly units whose ID appears as a positive MainId in this tenant\u0027s Alive table for the same bank and location qualify.\r\nRepeated Alive references produce one unit; Alive identities absent from Log24 are omitted. This is a read-only classification.\r\npageSize 1\u2013100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,\r\nor an exact same-site bank/location/unit KID. enabledOnly=true requires unit Enabled exactly 1.\r\nsort: kid, name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.\r\nfields: bankName, locationName, unitType, washDocId, outOfOrder. Optional unit fields are null unless selected.\r\nincludeCoordinates=true returns parent-location coordinates for the map, null when absent/invalid.\r\nFollow nextCursor until null; cursors expire after 15 minutes and bind this directory, manager, tenant, grants,\r\nretention and all query options. Main-unit filtering precedes paging. Concurrent changes may move rows.\r\nterminalKid on GetUnits is a canonical Controller KID (MainId); results include its first unit and child units mapped by same-location Alive.MainId.\r\nThe first unit remains a separate child. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.\r\nA missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.\r\nInvalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.\r\nOptional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.\r\nRepeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.\r\n400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-terminals-tab, missing-bank-read,\r\nmissing-location-read, missing-unit-read or missing-resource-access; 503 terminals-unavailable (retry manually). No-store.",
         "operationId": "GetTerminals",
         "parameters": [
           {
@@ -14416,6 +14910,14 @@
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "runningOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -14534,7 +15036,7 @@
           "UnitSettings"
         ],
         "summary": "Save one editable current-unit setting with revision protection.",
-        "description": "### Access\r\n- Requires an active manager, an assigned Tab, matching location grant, Location Read, Unit Read and Unit Write.\r\n- Account, credential, permissions, retention and effective unit type are rechecked under database locks before writing.\r\n- Only fields declared in this type\u0027s setting group can be written. States, hidden, device-owned, read-only, ORM-managed, credential, MainUnit/other-scope and dynamic-option fields cannot be edited here.\r\n### Request and result\r\n- Send \u0060value\u0060 as invariant text (maximum 4096 characters) and \u0060expectedRevision\u0060 from GetUnitGroup for this field.\r\n- Example: \u0060{ \u0022value\u0022: \u0022Washer 1\u0022, \u0022expectedRevision\u0022: \u002264 hexadecimal characters\u0022 }\u0060 for the Name setting.\r\n- Descriptor required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.\r\n- Appends bank Log2 history with the editor\u0027s UserId and Sync=0. The Log24 projection must match before commit.\r\n- Returns confirmed value, source MS2000 and new revision. A successful save means storage accepted it, not that the physical unit has acknowledged it.\r\n### Errors\r\n- 400 invalid input; 401 session changed; 403 insufficient rights/read-only field; 404 invisible unit/location/group; 409 value/type changed; 503 storage failure.\r\n- On 409 reload before editing again. Never automatically replay after a timeout or lost response: a commit may have succeeded. Read back first.",
+        "description": "### Access\r\n- Requires an active manager, an assigned Tab, matching location grant, Location Read, Unit Read and Unit Write.\r\n- Account, credential, permissions, retention and effective unit type are rechecked under database locks before writing.\r\n- Only fields declared in this type\u0027s setting group can be written. States, hidden, device-owned, read-only, ORM-managed, credential, MainUnit/other-scope and dynamic-option fields cannot be edited here.\r\n### Request and result\r\n- Send \u0060value\u0060 as invariant text (maximum 4096 characters) and \u0060expectedRevision\u0060 from GetUnitGroup for this field.\r\n- Price editors send raw minor units: displayed 12.50 becomes value \u00221250\u0022. RegExs.Price validates this raw value, not the displayed amount. Responses remain raw; decimal display text is invalid input.\r\n- Example: \u0060{ \u0022value\u0022: \u0022Washer 1\u0022, \u0022expectedRevision\u0022: \u002264 hexadecimal characters\u0022 }\u0060 for the Name setting.\r\n- Enum metadata and SettingsAndStates.json required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.\r\n- Appends bank Log2 history with the editor\u0027s UserId and Sync=0. The Log24 projection must match before commit.\r\n- Returns confirmed value, source MS2000 and new revision. A successful save means storage accepted it, not that the physical unit has acknowledged it.\r\n### Errors\r\n- 400 invalid input; 401 session changed; 403 insufficient rights/read-only field; 404 invisible unit/location/group; 409 value/type changed; 503 storage failure.\r\n- On 409 reload before editing again. Never automatically replay after a timeout or lost response: a commit may have succeeded. Read back first.",
         "operationId": "SetUnitSetting",
         "parameters": [
           {
@@ -17083,7 +17585,7 @@
           "Icons"
         ],
         "summary": "Renders Kid.Icon from a named local asset set, with Kid.Count as the badge.",
-        "description": "Public; no login, business lookup or database access. KID fields never grant permissions.\r\nSupply a URL-encoded canonical Kombine.Flex.Kid.ToString() value. Kid.Icons[0] is the main icon;\r\nKid.Icons[1] is the under-icon. A missing second entry or eIcon.none omits the under-icon.\r\nAdditional entries are ignored for rendering. The API also reads Kid.Count, Kid.Color and Kid.Text.\r\nIf KID parsing fails, an exact eIcon name (case-insensitive) uses count zero, black and empty text.\r\nNumeric enum IDs, substring matches, malformed KIDs and undefined icons are not name fallbacks.\r\nCount at or below zero hides the badge. Positive Int64 counts display in full; the red badge widens\r\nwith circular end caps and a straight middle, keeping its height and font size. Long labels widen the SVG canvas.\r\nChoose iconSet explicitly: line or g. The g set preserves its original multicolor artwork.\r\nMain and under-icon each try the chosen set, then other packaged sets in ordinal alphabetical order.\r\nUnknown sets or icons absent from every local set return 404; no external or database fallback.\r\nKid.Color uses the low 24 bits as opaque RGB (0 = black; the high byte is ignored).\r\nKid.Text is case-sensitive, limited to 128 characters without controls and used by assets with a text box.\r\nURL-encode path parameters. The canonical KID\r\nis limited to 2048 characters; other path parameters to 128 characters without controls.\r\nFormats: svg, png, jpg/jpeg, gif, bmp, tif/tiff, webp, ppm, tga and ico. Unknown formats return SVG.\r\nRaster output defaults to 128 \u00D7 128 pixels; SVG retains its authored viewport.\r\nFirst requests render to disk; repeated requests use the cache. Public cache: ten minutes.\r\nETag/Last-Modified support 304. Invalid parameters return 400; concurrency limits return 429;\r\nunavailable rendering/storage returns 503. Retry transient errors with backoff.\r\nRoutes without iconSet and the separate count/color/text/sub path segments have been removed; see /docs#changelog.",
+        "description": "Public; no login, business lookup or database access. KID fields never grant permissions.\r\nSupply a URL-encoded canonical Kombine.Flex.Kid.ToString() value. Kid.Icons[0] is the main icon;\r\nKid.Icons[1] is the under-icon. A missing second entry or eIcon.none omits the under-icon.\r\nOn the trusted Nortec site, the line-set check under-icon uses Nortec green (#4AC337).\r\nAdditional entries are ignored for rendering. The API also reads Kid.Count, Kid.Color and Kid.Text.\r\nIf KID parsing fails, an exact eIcon name (case-insensitive) uses count zero, black and empty text.\r\nNumeric enum IDs, substring matches, malformed KIDs and undefined icons are not name fallbacks.\r\nCount at or below zero hides the badge. Positive Int64 counts display in full; the red badge widens\r\nwith circular end caps and a straight middle, keeping its height and font size. Long labels widen the SVG canvas.\r\nChoose iconSet explicitly: line or g. The g set preserves its original multicolor artwork.\r\nMain and under-icon each try the chosen set, then other packaged sets in ordinal alphabetical order.\r\nUnknown sets or icons absent from every local set return 404; no external or database fallback.\r\nKid.Color uses the low 24 bits as opaque RGB (0 = black; the high byte is ignored).\r\nKid.Text is case-sensitive, limited to 128 characters without controls and used by assets with a text box.\r\nURL-encode path parameters. The canonical KID\r\nis limited to 2048 characters; other path parameters to 128 characters without controls.\r\nFormats: svg, png, jpg/jpeg, gif, bmp, tif/tiff, webp, ppm, tga and ico. Unknown formats return SVG.\r\nRaster output defaults to 128 \u00D7 128 pixels; SVG retains its authored viewport.\r\nFirst requests render to disk; repeated requests use the cache. Public cache: ten minutes.\r\nETag/Last-Modified support 304. Invalid parameters return 400; concurrency limits return 429;\r\nunavailable rendering/storage returns 503. Retry transient errors with backoff.\r\nRoutes without iconSet and the separate count/color/text/sub path segments have been removed; see /docs#changelog.",
         "operationId": "GetIconFromSet",
         "parameters": [
           {
@@ -18468,7 +18970,7 @@
           "Public"
         ],
         "summary": "Returns the site overview\u0027s running-machine pool, refreshed at most once a minute.",
-        "description": "Anonymous on each tenant site; data is restricted to the trusted configured tenant. No parameters. Current Log24 Started \u003C now \u003C Done, in UTC milliseconds since 2000. Names are eSetting.Name, temperature is optional eState.Temperature. Conflicting/missing lifecycle fields are excluded. Random sample of up to 1000 machines started within 100 hours and ending within 3 hours, from at most 100000 source rows; source overflow or unavailable storage returns 503. Clients choose distinct random machines, retain running selections and count down locally using end time. DoneAtUtc is null for out-of-range Done values: show unknown remaining time instead of a countdown. Up to 10000 metadata rows are read for the running-machine scope. Refresh every 60 seconds.",
+        "description": "Anonymous on each tenant site; data is restricted to the trusted configured tenant. No parameters. Current Log24 Started \u003C now \u003C Done, in UTC milliseconds since 2000. Names are eSetting.Name, temperature is optional eState.Temperature. Conflicting/missing lifecycle fields are excluded. Random sample of up to 1000 machines started within 100 hours and ending within 3 hours, from at most 100000 source rows; source overflow or unavailable storage returns 503. Clients choose distinct random machines, retain running selections and count down locally using end time. Only currently running machines with a valid end time after now and no more than 3 hours ahead are eligible; stored Done values outside this window are excluded. The response schema still allows null for DoneAtUtc; clients should not select entries without a valid end time in this window. Up to 10000 metadata rows are read for the running-machine scope. Refresh every 60 seconds.",
         "operationId": "GetPublicLiveMachines",
         "responses": {
           "200": {
@@ -18502,6 +19004,149 @@
           },
           "503": {
             "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/public/widgets/machine-errors": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "List machines with a positive AutoOutOfOrder Id without login.",
+        "description": "Explicit public read-only widget. Tenant is trusted site configuration, never request input.\r\n            Reads Log24 only; valid AutoOutOfOrder JSON with positive integer Id is required.\r\n            The state\u0027s MS2000 event time must be within the last 10 days, inclusive; unknown/future times are excluded.\r\n            Excludes deleted banks, locations and units and requires an enabled location. Disabled units remain included.\r\n            Publishes only unit KID, localized machine/bank/location names and errorId as a decimal digit string.\r\n            No raw error JSON, credentials, manager settings, coordinates or hierarchy are returned.\r\n            Pages contain 1\u2013100 items (default 50), ordered by numeric bank/location/unit identity.\r\n            Follow nextCursor with unchanged pageSize; cursors are site-bound, protected and expire after 15 minutes.\r\n            Pages are cached for 60 seconds with bounded concurrency; refresh from the first page.\r\n            400 invalid page/cursor; 503 unavailable with Retry-After 60. An error is never an empty success.",
+        "operationId": "GetPublicMachineErrors",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicMachineErrorsPage"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicMachineErrorsPage"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicMachineErrorsPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/statistics/purchases/chart/{color}.svg": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Draws purchase counts for the last hour in twelve five-minute intervals.",
+        "description": "### Scope and time window\r\n- **No login required.** Uses the configured site\u0027s tenant, without caller-selected tenants, dates or filters.\r\n- Uses the same base Log1Hour filters and shared one-minute measurement as GetPublicPurchases:\r\n  eUserId.Users through eUserId.Guest, inclusive, Text NOT LIKE \u0027%E\u0027, and Amount \u003C 0.\r\n- Counts rows across currencies, without summing or converting money. No personal transaction data is returned.\r\n- Twelve consecutive intervals cover [sinceUtc, measuredAtUtc), oldest first; each interval includes its start and excludes its end.\r\n- Only the chart applies this exact MS2000 time window. GetPublicPurchases retains the total of all qualifying rows in Log1Hour,\r\n  so chart counts can sum to less than that total when database cleanup is delayed or rows have future timestamps.\r\n- The twelve interval values are spaced evenly from the left edge to the right edge, oldest first.\r\n- The vertical range follows the observed minimum and maximum; a constant series, including all zeroes, is centered vertically.\r\n### Image and color\r\n- Transparent sparkline with a fixed 320 \u00D7 80 viewBox, displayed across the card\u0027s full inner width.\r\n- Only a line, without area fill, visible numbers, axis labels or point markers; no scripts, animation, external fonts or assets.\r\n- The final segment ends in an open arrowhead aligned with that segment; each wing is half the segment\u0027s length, with the same stroke and color and no fill.\r\n- \u0060color\u0060: 3/6-digit RGB hex without #, an exact eColor name, a standard named color, or transparent (case-insensitive).\r\n- Empty data draws a centered flat line. The SVG description retains exact counts for accessibility.\r\n- The root svg element\u0027s \u0060data-counts\u0060 attribute contains the same twelve counts as the line and description:\r\n  comma-separated, nonnegative integers in invariant format without grouping separators, oldest first.\r\n- For img rendering, use those values in localized alt text and reuse the fetched SVG for the image; no extra data request is needed.\r\n- HTTP responses use **no-store**; the underlying measurement is shared with JSON requests for one minute per API instance.\r\n### Errors\r\n- **400**, code \u0060invalid-purchase-chart-color\u0060: use a supported color. Validation occurs before database access.\r\n- **503**, code \u0060purchase-statistics-unavailable\u0060: no image is returned; wait **60 seconds** before retrying.",
+        "operationId": "GetPublicPurchasesChart",
+        "parameters": [
+          {
+            "name": "color",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "image/svg\u002Bxml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -18574,13 +19219,131 @@
         }
       }
     },
+    "/api/v1/public/widgets/progress/{kid}": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get progress for one unit or a page of all public units in a location or bank.",
+        "description": "Anonymous by explicit widget publication policy. Supply a canonical Unit, Location or Bank KID belonging to this API site\u0027s configured tenant. Reads Log24 only; no Alive, Orders, account data or manager permissions. Public visibility excludes deleted banks/locations/units and requires an enabled location; disabled units remain included. Location and bank pages include child units and idle/unknown timing, not a random running-machine sample. Each page contains at most 100 units in numeric bank/location/unit order. Follow nextCursor until null; cursors bind site, exact scope and page size, expire after 15 minutes and grant no private access. Refresh loaded pages from the first page every 60 seconds, using fresh cursors; pages are not a frozen snapshot. Names are localized using Accept-Language. Progress uses the same Started/Done calculation as the portal; missing/invalid timing is unknown, never invented zero. No temperature or additional settings are published. JS: mountProgressWidgets from /docs/widgets.mjs; examples: /docs/widgets. 400 invalid scope/page/cursor, 404 no public unit, 503 unavailable/busy with Retry-After: 60; failures are never returned as empty success.",
+        "operationId": "GetPublicScopedUnitProgress",
+        "parameters": [
+          {
+            "name": "kid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicScopedProgressResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicScopedProgressResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicScopedProgressResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/public/statistics/purchases": {
       "get": {
         "tags": [
           "Public"
         ],
         "summary": "Counts purchases in the site\u0027s Log1Hour without login.",
-        "description": "### Public scope and selection\r\n            \r\n- **No login required.** The site selects the tenant; no tenant or filter override is accepted.\r\n- Uses \u0060eUserId.Users\u0060 through \u0060eUserId.UsersLast\u0060, inclusive (currently **1001\u201399999**), \u0060Text NOT LIKE \u0027%E\u0027\u0060 and \u0060Amount \u003C 0\u0060.\r\n- Counts **rows**, not distinct users.\r\n            \r\n### Time window and amounts\r\n            \r\n- **Log1Hour** holds recent transactions and is cleaned every minute by the database.\r\n- The one-hour window depends on that maintenance. \u0060sinceUtc\u0060 is the nominal start at measurement time.\r\n- Count, \u0060-SUM(Amount)/100\u0060 and \u0060MAX(Currency)\u0060 are cached for **one minute** per API instance.\r\n- No currency conversion is performed; \u0060MAX(Currency)\u0060 assumes matching transactions share a currency.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 503:** wait **60 seconds** before retrying.",
+        "description": "### Public scope and selection\r\n            \r\n- **No login required.** The site selects the tenant; no tenant or filter override is accepted.\r\n- Uses \u0060eUserId.Users\u0060 through \u0060eUserId.Guest\u0060, inclusive, \u0060Text NOT LIKE \u0027%E\u0027\u0060 and \u0060Amount \u003C 0\u0060.\r\n- Counts **rows**, not distinct users.\r\n            \r\n### Time window and amounts\r\n            \r\n- **Log1Hour** holds recent transactions and is cleaned every minute by the database.\r\n- The one-hour window depends on that maintenance. \u0060sinceUtc\u0060 is the nominal start at measurement time.\r\n- The total count and \u0060currencies\u0060 are cached for **one minute** per API instance.\r\n- The SVG chart shares this snapshot but applies an exact timestamp window; its interval counts can differ from this total when rows outside that window remain in Log1Hour.\r\n- Each currency entry contains \u0060currency\u0060, its purchase \u0060count\u0060 and \u0060amount\u0060 (\u0060-SUM(Amount)/100\u0060 for that currency).\r\n- Amounts remain separate per stored currency; no currency conversion is performed.\r\n- No purchases returns \u0060count: 0\u0060 and \u0060currencies: []\u0060; a null currency code remains a separate entry.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 503:** wait **60 seconds** before retrying.",
         "operationId": "GetPublicPurchases",
         "responses": {
           "200": {
@@ -18598,8 +19361,18 @@
                 "example": {
                   "tenantKid": "3E7QAo",
                   "count": 42,
-                  "amount": 123.45,
-                  "currency": "DKK",
+                  "currencies": [
+                    {
+                      "currency": "DKK",
+                      "count": 30,
+                      "amount": 100.25
+                    },
+                    {
+                      "currency": "EUR",
+                      "count": 12,
+                      "amount": 23.20
+                    }
+                  ],
                   "lookbackHours": 1,
                   "sinceUtc": "2026-09-23T09:00:00\u002B00:00",
                   "measuredAtUtc": "2026-09-23T10:00:00\u002B00:00"
@@ -18641,7 +19414,7 @@
           "Public"
         ],
         "summary": "Counts active users in the site\u0027s current Log7 during the last 100 days, without login.",
-        "description": "### Public scope and count\r\n            \r\n- **No login required.** The site chooses the tenant; no caller-supplied KID, dates or filters are accepted.\r\n- Counts distinct **(BankId, UserId)** pairs with **BankId \u2265 1000** and UserId **1001\u201399999** (\u0060eUserId.UsersLast\u0060 inclusive).\r\n- Activity means a current **Log7** record\u0027s \u0060MS2000\u0060 exceeds the UTC **100-day cutoff**; it is not a verified login.\r\n- No personal data is returned.\r\n            \r\n### Cache and errors\r\n            \r\n- Results are cached for **5 minutes** per API instance. Concurrent requests share one query.\r\n- A failed refresh returns **HTTP 503**, not zero. Wait **60 seconds** before retrying.",
+        "description": "### Public scope and count\r\n            \r\n- **No login required.** The site chooses the tenant; no caller-supplied KID, dates or filters are accepted.\r\n- Counts distinct **(BankId, UserId)** pairs with **BankId \u2265 1000** and either UserId **1001\u201399999** (\u0060eUserId.UsersLast\u0060 inclusive) or **999999999** (\u0060eUserId.Guest\u0060).\r\n- Activity means a current **Log7** record\u0027s \u0060MS2000\u0060 exceeds the UTC **100-day cutoff**; it is not a verified login.\r\n- No personal data is returned.\r\n            \r\n### Cache and errors\r\n            \r\n- Results are cached for **5 minutes** per API instance. Concurrent requests share one query.\r\n- A failed refresh returns **HTTP 503**, not zero. Wait **60 seconds** before retrying.",
         "operationId": "GetPublicActiveUsers",
         "responses": {
           "200": {
@@ -18687,6 +19460,38 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/widgets": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get localized labels and the site\u0027s palette for the shared JavaScript widgets.",
+        "description": "No login. Tenant comes exclusively from trusted site configuration. Accept-Language selects a supported language, with Danish fallback for missing translations. Washco uses English. This operation reads no database. Load /docs/widgets.mjs and call mountWidgets; see /docs/widgets for live examples. Business data comes from the existing public statistics operations and retains their bounds, caches, error responses and anonymous read-only CORS policy.",
+        "operationId": "GetPublicWidgetPresentation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicWidgetPresentationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicWidgetPresentationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicWidgetPresentationResponse"
                 }
               }
             }
@@ -21542,6 +22347,55 @@
         "additionalProperties": false,
         "description": "A short-lived opaque API token; no refresh token is issued."
       },
+      "ManagerSignUpConfirmation": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Protected single-use mailbox proof.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Single-use mailbox proof for the pending manager."
+      },
+      "ManagerSignUpRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Mailbox to verify.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Manager name.",
+            "nullable": true
+          },
+          "organisation": {
+            "type": "string",
+            "description": "Manager organisation.",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "description": "Password chosen at registration.",
+            "nullable": true
+          },
+          "confirmPassword": {
+            "type": "string",
+            "description": "Matching password confirmation.",
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "description": "Optional email language: exactly lowercase en, da or es. Omitted/null uses English; empty or other values are invalid.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Required self-registration profile with no permission selectors."
+      },
       "ManagerTabChangeRequest": {
         "required": [
           "expectedRevision"
@@ -22666,6 +23520,16 @@
             "format": "double",
             "nullable": true
           },
+          "errorUnit": {
+            "type": "string",
+            "description": "Last stored eState.ErrorUnit JSON text; null unless selected, empty when absent. May describe a historical fault.",
+            "nullable": true
+          },
+          "autoOutOfOrder": {
+            "type": "string",
+            "description": "Stored AutoOutOfOrder JSON when autoOutOfOrderOnly is true; otherwise null.",
+            "nullable": true
+          },
           "versionMinor": {
             "type": "string",
             "description": "Requested terminal eState.VersionMinor as decoded text; null unless selected, empty when absent.",
@@ -22703,6 +23567,9 @@
           },
           "terminal": {
             "$ref": "#/components/schemas/UnitTerminalResponse"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/UnitProgressResponse"
           }
         },
         "additionalProperties": false,
@@ -22804,6 +23671,14 @@
           },
           "hasHistory": {
             "type": "boolean"
+          },
+          "valueFormat": {
+            "type": "string",
+            "nullable": true
+          },
+          "pattern": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -22835,7 +23710,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "The authorized unit and one descriptor-defined group, with read-only stored values."
+        "description": "The authorized unit and one catalog-defined group, with read-only stored values."
       },
       "UnitIconResponse": {
         "type": "object",
@@ -23019,6 +23894,10 @@
             "type": "integer",
             "format": "int64",
             "nullable": true
+          },
+          "valueFormat": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -23037,7 +23916,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "A selectable persisted value and its localized descriptor label."
+        "description": "A selectable persisted value and its localized catalog label."
       },
       "UnitSettingRequest": {
         "required": [
@@ -23856,6 +24735,189 @@
         "additionalProperties": false,
         "description": "Minimal public site-tenant machine display, without resident or payment fields."
       },
+      "PublicMachineError": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Public identity, display names and error code; no raw state payload."
+      },
+      "PublicMachineErrorsPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicMachineError"
+            },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Public machine-error page, with a protected next-page cursor and refresh interval."
+      },
+      "PublicScopedProgressItem": {
+        "type": "object",
+        "properties": {
+          "unitKid": {
+            "type": "string",
+            "description": "Canonical site-bound unit identity.",
+            "nullable": true
+          },
+          "unitName": {
+            "type": "string",
+            "description": "Localized unit name.",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "description": "Localized location name.",
+            "nullable": true
+          },
+          "startedAtUtc": {
+            "type": "string",
+            "description": "Expected start or null for unknown timing.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "doneAtUtc": {
+            "type": "string",
+            "description": "Expected end or null for unknown timing.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "progress": {
+            "$ref": "#/components/schemas/UnitProgressResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Minimal public unit display and expected timing."
+      },
+      "PublicScopedProgressResponse": {
+        "type": "object",
+        "properties": {
+          "scopeKid": {
+            "type": "string",
+            "description": "Requested canonical KID.",
+            "nullable": true
+          },
+          "scopeKind": {
+            "type": "string",
+            "description": "Unit, Location or Bank enum name.",
+            "nullable": true
+          },
+          "calculatedAtUtc": {
+            "type": "string",
+            "description": "UTC calculation time.",
+            "format": "date-time"
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "description": "Recommended refresh interval.",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicScopedProgressItem"
+            },
+            "description": "Public units in numeric identity order.",
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "description": "Opaque next-page cursor, or null after the last page.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A bounded page of public progress for the exact site-bound scope."
+      },
+      "PublicWidgetPresentationResponse": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Resolved supported culture for labels, names and number formatting.",
+            "nullable": true
+          },
+          "colors": {
+            "type": "string",
+            "description": "Hyphen-separated RGB hex palette for the API\u0027s circle SVGs.",
+            "nullable": true
+          },
+          "background": {
+            "type": "string",
+            "description": "RGB hex background inside the progress circle.",
+            "nullable": true
+          },
+          "webBase": {
+            "type": "string",
+            "description": "Trusted HTTPS portal origin for the public purchase map, or null when unavailable.",
+            "nullable": true
+          },
+          "labels": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Existing localized portal text keys used by the widgets; contains no account data.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Public presentation selected by this API site\u0027s trusted tenant."
+      },
+      "PurchaseCurrencySnapshot": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Stored currency code; null represents purchases with no currency code.",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of matching purchase rows for this currency.",
+            "format": "int64"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Positive total in major currency units (negated stored Amount divided by 100).",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Purchase count and total for one currency; no currency conversion is performed."
+      },
       "PurchaseHeatmapPoint": {
         "type": "object",
         "properties": {
@@ -23960,14 +25022,12 @@
             "description": "UTC measurement time.",
             "format": "date-time"
           },
-          "amount": {
-            "type": "number",
-            "description": "Positive purchase total in major currency units; zero for no matches.",
-            "format": "double"
-          },
-          "currency": {
-            "type": "string",
-            "description": "MAX(Currency), or null for no matches. No currency conversion.",
+          "currencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PurchaseCurrencySnapshot"
+            },
+            "description": "One count and amount per stored currency; empty for no matches. No currency conversion.",
             "nullable": true
           }
         },
@@ -24124,6 +25184,9 @@
     },
     {
       "name": "ManagerSession"
+    },
+    {
+      "name": "ManagerSignUp"
     },
     {
       "name": "ManagerTabs"

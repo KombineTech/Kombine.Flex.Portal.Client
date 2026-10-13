@@ -159,6 +159,14 @@ class PortalClient(BaseClient):
         "Read localized configured reservation rules for the location's visible units."
         return self._request('GetLocationBookingRules', {'locationKid': location_kid, 'Accept-Language': accept_language}, None)
 
+    def get_controller_overview(self, controller_kid: str, *, accept_language: str | None = None) -> UnitDetailsResponse:
+        'Read an authorized controller using its canonical Controller KID with MainId.'
+        return self._request('GetControllerOverview', {'controllerKid': controller_kid, 'Accept-Language': accept_language}, None)
+
+    def get_controller_group(self, controller_kid: str, kind: str, group: str, *, accept_language: str | None = None) -> UnitGroupResponse:
+        "Read the controller's temporary Core settings or states from its main unit."
+        return self._request('GetControllerGroup', {'controllerKid': controller_kid, 'kind': kind, 'group': group, 'Accept-Language': accept_language}, None)
+
     def get_location_units(self, location_kid: str, *, accept_language: str | None = None) -> LocationUnitsResponse:
         'Get the location label and its units, ordered by unit number.'
         return self._request('GetLocationUnits', {'locationKid': location_kid, 'Accept-Language': accept_language}, None)
@@ -242,6 +250,14 @@ class PortalClient(BaseClient):
     def get_current_manager(self) -> ManagerProfileResponse:
         'Get your profile, permitted tabs, bank/location access, and operation permissions.'
         return self._request('GetCurrentManager', {}, None)
+
+    def request_manager_sign_up(self, body: ManagerSignUpRequest) -> PersonalAccountResult:
+        'Create a pending manager with a password and queue a manager-bound verification email.'
+        return self._request('RequestManagerSignUp', {}, body)
+
+    def confirm_manager_sign_up(self, body: ManagerSignUpConfirmation) -> PersonalAccountResult:
+        'Verify the email and activate only the manager already created by self-registration.'
+        return self._request('ConfirmManagerSignUp', {}, body)
 
     def set_manager_tab(self, manager_kid: str, tab_id: int, body: ManagerTabChangeRequest) -> ManagerTabChangeResponse:
         'Assign or remove one available eTab on an administrator.'
@@ -343,13 +359,13 @@ class PortalClient(BaseClient):
         'Count accessible active terminals for the Terminals1 navigation icon.'
         return self._request('GetActiveTerminalCount', {}, None)
 
-    def get_units(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None, location_kid: str | None = None, terminal_kid: str | None = None) -> UnitDirectoryResponse:
+    def get_units(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None, location_kid: str | None = None, terminal_kid: str | None = None, running_only: bool | None = None, auto_out_of_order_only: bool | None = None) -> UnitDirectoryResponse:
         'List authorized units, including child units, for Units1.'
-        return self._request('GetUnits', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates, 'locationKid': location_kid, 'terminalKid': terminal_kid}, None)
+        return self._request('GetUnits', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates, 'locationKid': location_kid, 'terminalKid': terminal_kid, 'runningOnly': running_only, 'autoOutOfOrderOnly': auto_out_of_order_only}, None)
 
-    def get_terminals(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None, location_kid: str | None = None, terminal_kid: str | None = None) -> UnitDirectoryResponse:
+    def get_terminals(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None, location_kid: str | None = None, terminal_kid: str | None = None, running_only: bool | None = None) -> UnitDirectoryResponse:
         'List authorized main units for Terminals1.'
-        return self._request('GetTerminals', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates, 'locationKid': location_kid, 'terminalKid': terminal_kid}, None)
+        return self._request('GetTerminals', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates, 'locationKid': location_kid, 'terminalKid': terminal_kid, 'runningOnly': running_only}, None)
 
     def set_unit_setting(self, unit_kid: str, group: str, setting: str, body: UnitSettingRequest) -> UnitSettingResponse:
         'Save one editable current-unit setting with revision protection.'
@@ -519,9 +535,21 @@ class PortalClient(BaseClient):
         "Returns the site overview's running-machine pool, refreshed at most once a minute."
         return self._request('GetPublicLiveMachines', {}, None)
 
+    def get_public_machine_errors(self, *, page_size: int | None = None, cursor: str | None = None) -> PublicMachineErrorsPage:
+        'List machines with a positive AutoOutOfOrder Id without login.'
+        return self._request('GetPublicMachineErrors', {'pageSize': page_size, 'cursor': cursor}, None)
+
+    def get_public_purchases_chart(self, color: str) -> PortalDownload:
+        'Draws purchase counts for the last hour in twelve five-minute intervals.'
+        return self._request('GetPublicPurchasesChart', {'color': color}, None)
+
     def get_public_disp73(self, *, limit: int | None = None) -> PurchaseMapSnapshot:
         'Shows recent purchases as coin markers on a map. No login required.'
         return self._request('GetPublicDisp73', {'limit': limit}, None)
+
+    def get_public_scoped_unit_progress(self, kid: str, *, page_size: int | None = None, cursor: str | None = None) -> PublicScopedProgressResponse:
+        'Get progress for one unit or a page of all public units in a location or bank.'
+        return self._request('GetPublicScopedUnitProgress', {'kid': kid, 'pageSize': page_size, 'cursor': cursor}, None)
 
     def get_public_purchases(self) -> PurchasesResponse:
         "Counts purchases in the site's Log1Hour without login."
@@ -530,6 +558,10 @@ class PortalClient(BaseClient):
     def get_public_active_users(self) -> ActiveUsersResponse:
         "Counts active users in the site's current Log7 during the last 100 days, without login."
         return self._request('GetPublicActiveUsers', {}, None)
+
+    def get_public_widget_presentation(self) -> PublicWidgetPresentationResponse:
+        "Get localized labels and the site's palette for the shared JavaScript widgets."
+        return self._request('GetPublicWidgetPresentation', {}, None)
 
     def get_public_reservations(self) -> ReservationsStatisticsResponse:
         'Counts noncancelled dated reservations that have not ended, including ongoing reservations.'

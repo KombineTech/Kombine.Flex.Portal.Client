@@ -6,6 +6,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | --- | --- | --- |
 | `AskPortalAssistantAsync` | POST | `/api/v1/assistant/query` |
 | `ChangeMyManagerPasswordAsync` | POST | `/api/v1/session/me/password` |
+| `ConfirmManagerSignUpAsync` | POST | `/api/v1/session/signup-confirmation` |
 | `ConfirmMyManagerEmailAsync` | POST | `/api/v1/session/me/email-confirmation` |
 | `CreateBankUserAsync` | POST | `/api/v1/banks/{bankKid}/users` |
 | `CreateManagerAsync` | POST | `/api/v1/managers` |
@@ -45,6 +46,8 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetCircleProgressSizedAsync` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg` |
 | `GetCircleRunningAsync` | GET | `/api/v1/circles/running/{color}.svg` |
 | `GetCircleRunningSizedAsync` | GET | `/api/v1/circles/running/{color}/{width}x{height}.svg` |
+| `GetControllerGroupAsync` | GET | `/api/v1/controllers/{controllerKid}/groups/{kind}/{group}` |
+| `GetControllerOverviewAsync` | GET | `/api/v1/controllers/{controllerKid}` |
 | `GetCurrentManagerAsync` | GET | `/api/v1/session/me` |
 | `GetHostingLogsAsync` | GET | `/api/v1/hosting/logs` |
 | `GetHostingMetricsAsync` | GET | `/api/v1/hosting/metrics` |
@@ -88,9 +91,13 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetPublicActiveUsersAsync` | GET | `/api/v1/public/statistics/active-users` |
 | `GetPublicDisp73Async` | GET | `/api/v1/public/displays/Map1` |
 | `GetPublicLiveMachinesAsync` | GET | `/api/v1/public/statistics/live-machines` |
+| `GetPublicMachineErrorsAsync` | GET | `/api/v1/public/widgets/machine-errors` |
 | `GetPublicPurchasesAsync` | GET | `/api/v1/public/statistics/purchases` |
+| `GetPublicPurchasesChartAsync` | GET | `/api/v1/public/statistics/purchases/chart/{color}.svg` |
 | `GetPublicReservationsAsync` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachinesAsync` | GET | `/api/v1/public/statistics/running-machines` |
+| `GetPublicScopedUnitProgressAsync` | GET | `/api/v1/public/widgets/progress/{kid}` |
+| `GetPublicWidgetPresentationAsync` | GET | `/api/v1/public/widgets` |
 | `GetSearchBankAsync` | GET | `/api/v1/search/banks/{bankKid}` |
 | `GetServiceAsync` | GET | `/api/v1/services/{serviceKid}` |
 | `GetServiceCountAsync` | GET | `/api/v1/services/count` |
@@ -114,6 +121,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `LookupObjectCoordinatesAsync` | POST | `/api/v1/addresses/{kid}/lookup` |
 | `RenewManagerSessionAsync` | POST | `/api/v1/session/renew` |
 | `RequestManagerPasswordResetAsync` | POST | `/api/v1/session/forgot-password` |
+| `RequestManagerSignUpAsync` | POST | `/api/v1/session/signup` |
 | `RequestMyManagerEmailVerificationAsync` | POST | `/api/v1/session/me/email-verification` |
 | `ResetManagerPasswordAsync` | POST | `/api/v1/session/reset-password` |
 | `ReverseBankAccountEntryAsync` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` |

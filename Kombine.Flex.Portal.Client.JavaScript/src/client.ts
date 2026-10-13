@@ -193,6 +193,16 @@ export class PortalClient extends BaseClient {
     return this.send("GetLocationBookingRules", {"locationKid": locationKid, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.LocationBookingRulesResponse>;
   }
 
+  /** Read an authorized controller using its canonical Controller KID with MainId. */
+  getControllerOverview(controllerKid: string, options: Models.GetControllerOverviewOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDetailsResponse> {
+    return this.send("GetControllerOverview", {"controllerKid": controllerKid, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.UnitDetailsResponse>;
+  }
+
+  /** Read the controller's temporary Core settings or states from its main unit. */
+  getControllerGroup(controllerKid: string, kind: string, group: string, options: Models.GetControllerGroupOptions = {}, request: RequestOptions = {}): Promise<Models.UnitGroupResponse> {
+    return this.send("GetControllerGroup", {"controllerKid": controllerKid, "kind": kind, "group": group, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.UnitGroupResponse>;
+  }
+
   /** Get the location label and its units, ordered by unit number. */
   getLocationUnits(locationKid: string, options: Models.GetLocationUnitsOptions = {}, request: RequestOptions = {}): Promise<Models.LocationUnitsResponse> {
     return this.send("GetLocationUnits", {"locationKid": locationKid, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.LocationUnitsResponse>;
@@ -296,6 +306,16 @@ export class PortalClient extends BaseClient {
   /** Get your profile, permitted tabs, bank/location access, and operation permissions. */
   getCurrentManager(request: RequestOptions = {}): Promise<Models.ManagerProfileResponse> {
     return this.send("GetCurrentManager", {}, undefined, request) as Promise<Models.ManagerProfileResponse>;
+  }
+
+  /** Create a pending manager with a password and queue a manager-bound verification email. */
+  requestManagerSignUp(body: Models.ManagerSignUpRequest, request: RequestOptions = {}): Promise<Models.PersonalAccountResult> {
+    return this.send("RequestManagerSignUp", {}, body, request) as Promise<Models.PersonalAccountResult>;
+  }
+
+  /** Verify the email and activate only the manager already created by self-registration. */
+  confirmManagerSignUp(body: Models.ManagerSignUpConfirmation, request: RequestOptions = {}): Promise<Models.PersonalAccountResult> {
+    return this.send("ConfirmManagerSignUp", {}, body, request) as Promise<Models.PersonalAccountResult>;
   }
 
   /** Assign or remove one available eTab on an administrator. */
@@ -425,12 +445,12 @@ export class PortalClient extends BaseClient {
 
   /** List authorized units, including child units, for Units1. */
   getUnits(options: Models.GetUnitsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDirectoryResponse> {
-    return this.send("GetUnits", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "locationKid": options.locationKid, "terminalKid": options.terminalKid}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
+    return this.send("GetUnits", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "locationKid": options.locationKid, "terminalKid": options.terminalKid, "runningOnly": options.runningOnly, "autoOutOfOrderOnly": options.autoOutOfOrderOnly}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
   }
 
   /** List authorized main units for Terminals1. */
   getTerminals(options: Models.GetTerminalsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDirectoryResponse> {
-    return this.send("GetTerminals", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "locationKid": options.locationKid, "terminalKid": options.terminalKid}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
+    return this.send("GetTerminals", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "locationKid": options.locationKid, "terminalKid": options.terminalKid, "runningOnly": options.runningOnly}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
   }
 
   /** Save one editable current-unit setting with revision protection. */
@@ -643,9 +663,24 @@ export class PortalClient extends BaseClient {
     return this.send("GetPublicLiveMachines", {}, undefined, request) as Promise<Models.LiveMachineResponse[]>;
   }
 
+  /** List machines with a positive AutoOutOfOrder Id without login. */
+  getPublicMachineErrors(options: Models.GetPublicMachineErrorsOptions = {}, request: RequestOptions = {}): Promise<Models.PublicMachineErrorsPage> {
+    return this.send("GetPublicMachineErrors", {"pageSize": options.pageSize, "cursor": options.cursor}, undefined, request) as Promise<Models.PublicMachineErrorsPage>;
+  }
+
+  /** Draws purchase counts for the last hour in twelve five-minute intervals. */
+  getPublicPurchasesChart(color: string, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetPublicPurchasesChart", {"color": color}, undefined, request) as Promise<PortalDownload>;
+  }
+
   /** Shows recent purchases as coin markers on a map. No login required. */
   getPublicDisp73(options: Models.GetPublicDisp73Options = {}, request: RequestOptions = {}): Promise<Models.PurchaseMapSnapshot> {
     return this.send("GetPublicDisp73", {"limit": options.limit}, undefined, request) as Promise<Models.PurchaseMapSnapshot>;
+  }
+
+  /** Get progress for one unit or a page of all public units in a location or bank. */
+  getPublicScopedUnitProgress(kid: string, options: Models.GetPublicScopedUnitProgressOptions = {}, request: RequestOptions = {}): Promise<Models.PublicScopedProgressResponse> {
+    return this.send("GetPublicScopedUnitProgress", {"kid": kid, "pageSize": options.pageSize, "cursor": options.cursor}, undefined, request) as Promise<Models.PublicScopedProgressResponse>;
   }
 
   /** Counts purchases in the site's Log1Hour without login. */
@@ -656,6 +691,11 @@ export class PortalClient extends BaseClient {
   /** Counts active users in the site's current Log7 during the last 100 days, without login. */
   getPublicActiveUsers(request: RequestOptions = {}): Promise<Models.ActiveUsersResponse> {
     return this.send("GetPublicActiveUsers", {}, undefined, request) as Promise<Models.ActiveUsersResponse>;
+  }
+
+  /** Get localized labels and the site's palette for the shared JavaScript widgets. */
+  getPublicWidgetPresentation(request: RequestOptions = {}): Promise<Models.PublicWidgetPresentationResponse> {
+    return this.send("GetPublicWidgetPresentation", {}, undefined, request) as Promise<Models.PublicWidgetPresentationResponse>;
   }
 
   /** Counts noncancelled dated reservations that have not ended, including ongoing reservations. */

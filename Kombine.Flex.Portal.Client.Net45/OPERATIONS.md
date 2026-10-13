@@ -4,6 +4,7 @@
 | --- | --- | --- |
 | `AskPortalAssistant` | POST | `/api/v1/assistant/query` |
 | `ChangeMyManagerPassword` | POST | `/api/v1/session/me/password` |
+| `ConfirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` |
 | `ConfirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` |
 | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` |
 | `CreateManager` | POST | `/api/v1/managers` |
@@ -43,6 +44,8 @@
 | `GetCircleProgress` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}.svg` |
 | `GetCircleRunningSized` | GET | `/api/v1/circles/running/{color}/{width}x{height}.svg` |
 | `GetCircleRunning` | GET | `/api/v1/circles/running/{color}.svg` |
+| `GetControllerGroup` | GET | `/api/v1/controllers/{controllerKid}/groups/{kind}/{group}` |
+| `GetControllerOverview` | GET | `/api/v1/controllers/{controllerKid}` |
 | `GetCurrentManager` | GET | `/api/v1/session/me` |
 | `GetHostingLogs` | GET | `/api/v1/hosting/logs` |
 | `GetHostingMetrics` | GET | `/api/v1/hosting/metrics` |
@@ -86,9 +89,13 @@
 | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
 | `GetPublicDisp73` | GET | `/api/v1/public/displays/Map1` |
 | `GetPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` |
+| `GetPublicMachineErrors` | GET | `/api/v1/public/widgets/machine-errors` |
+| `GetPublicPurchasesChart` | GET | `/api/v1/public/statistics/purchases/chart/{color}.svg` |
 | `GetPublicPurchases` | GET | `/api/v1/public/statistics/purchases` |
 | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
+| `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |
+| `GetPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
 | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` |
 | `GetServiceCount` | GET | `/api/v1/services/count` |
 | `GetService` | GET | `/api/v1/services/{serviceKid}` |
@@ -112,6 +119,7 @@
 | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` |
 | `RenewManagerSession` | POST | `/api/v1/session/renew` |
 | `RequestManagerPasswordReset` | POST | `/api/v1/session/forgot-password` |
+| `RequestManagerSignUp` | POST | `/api/v1/session/signup` |
 | `RequestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` |
 | `ResetManagerPassword` | POST | `/api/v1/session/reset-password` |
 | `ReverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` |

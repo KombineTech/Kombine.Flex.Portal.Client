@@ -40,6 +40,8 @@
 | `SearchLocations` | `search_locations` | `searchLocations` | GET | `/api/v1/search/locations` |
 | `SearchLocationActivation` | `search_location_activation` | `searchLocationActivation` | GET | `/api/v1/search/location-activation` |
 | `GetLocationBookingRules` | `get_location_booking_rules` | `getLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` |
+| `GetControllerOverview` | `get_controller_overview` | `getControllerOverview` | GET | `/api/v1/controllers/{controllerKid}` |
+| `GetControllerGroup` | `get_controller_group` | `getControllerGroup` | GET | `/api/v1/controllers/{controllerKid}/groups/{kind}/{group}` |
 | `GetLocationUnits` | `get_location_units` | `getLocationUnits` | GET | `/api/v1/locations/{locationKid}/units` |
 | `GetUnitOverview` | `get_unit_overview` | `getUnitOverview` | GET | `/api/v1/units/{unitKid}` |
 | `GetUnitGroup` | `get_unit_group` | `getUnitGroup` | GET | `/api/v1/units/{unitKid}/groups/{kind}/{group}` |
@@ -61,6 +63,8 @@
 | `LoginManager` | `login_manager` | `loginManager` | POST | `/api/v1/session/login` |
 | `RenewManagerSession` | `renew_manager_session` | `renewManagerSession` | POST | `/api/v1/session/renew` |
 | `GetCurrentManager` | `get_current_manager` | `getCurrentManager` | GET | `/api/v1/session/me` |
+| `RequestManagerSignUp` | `request_manager_sign_up` | `requestManagerSignUp` | POST | `/api/v1/session/signup` |
+| `ConfirmManagerSignUp` | `confirm_manager_sign_up` | `confirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` |
 | `SetManagerTab` | `set_manager_tab` | `setManagerTab` | POST | `/api/v1/managers/{managerKid}/tabs/{tabId}` |
 | `SetCurrentManagerTheme` | `set_current_manager_theme` | `setCurrentManagerTheme` | POST | `/api/v1/session/me/theme` |
 | `GetManagerCount` | `get_manager_count` | `getManagerCount` | GET | `/api/v1/managers/count` |
@@ -130,9 +134,13 @@
 | `GetKombineLogoTextSized` | `get_kombine_logo_text_sized` | `getKombineLogoTextSized` | GET | `/api/v1/logos/kombine-logo-text/{color}/{width}.svg` |
 | `GetKombineLogoTextWithBackground` | `get_kombine_logo_text_with_background` | `getKombineLogoTextWithBackground` | GET | `/api/v1/logos/kombine-logo-text/{color}/{background}/{width}.svg` |
 | `GetPublicLiveMachines` | `get_public_live_machines` | `getPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` |
+| `GetPublicMachineErrors` | `get_public_machine_errors` | `getPublicMachineErrors` | GET | `/api/v1/public/widgets/machine-errors` |
+| `GetPublicPurchasesChart` | `get_public_purchases_chart` | `getPublicPurchasesChart` | GET | `/api/v1/public/statistics/purchases/chart/{color}.svg` |
 | `GetPublicDisp73` | `get_public_disp73` | `getPublicDisp73` | GET | `/api/v1/public/displays/Map1` |
+| `GetPublicScopedUnitProgress` | `get_public_scoped_unit_progress` | `getPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |
 | `GetPublicPurchases` | `get_public_purchases` | `getPublicPurchases` | GET | `/api/v1/public/statistics/purchases` |
 | `GetPublicActiveUsers` | `get_public_active_users` | `getPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
+| `GetPublicWidgetPresentation` | `get_public_widget_presentation` | `getPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
 | `GetPublicReservations` | `get_public_reservations` | `getPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachines` | `get_public_running_machines` | `getPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPortalStatus` | `get_portal_status` | `getPortalStatus` | GET | `/api/v1/status` |
