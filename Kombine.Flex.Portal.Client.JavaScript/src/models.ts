@@ -1205,6 +1205,28 @@ export interface ManagerSessionResponse {
   "tokenType"?: string | null;
 }
 
+/** Single-use mailbox proof for the pending manager. */
+export interface ManagerSignUpConfirmation {
+  /** Protected single-use mailbox proof. */
+  "token"?: string | null;
+}
+
+/** Required self-registration profile with no permission selectors. */
+export interface ManagerSignUpRequest {
+  /** Mailbox to verify. */
+  "email"?: string | null;
+  /** Manager name. */
+  "name"?: string | null;
+  /** Manager organisation. */
+  "organisation"?: string | null;
+  /** Password chosen at registration. */
+  "password"?: string | null;
+  /** Matching password confirmation. */
+  "confirmPassword"?: string | null;
+  /** Optional email language: exactly lowercase en, da or es. Omitted/null uses English; empty or other values are invalid. */
+  "language"?: string | null;
+}
+
 /** Desired state of one numeric eTab grant, using the last returned Tabs revision. */
 export interface ManagerTabChangeRequest {
   /** Required boolean; true assigns the tab and false removes it. */
@@ -1723,6 +1745,10 @@ export interface UnitDirectoryItem {
   "latitude"?: number | null;
   /** longitude */
   "longitude"?: number | null;
+  /** Last stored eState.ErrorUnit JSON text; null unless selected, empty when absent. May describe a historical fault. */
+  "errorUnit"?: string | null;
+  /** Stored AutoOutOfOrder JSON when autoOutOfOrderOnly is true; otherwise null. */
+  "autoOutOfOrder"?: string | null;
   /** Requested terminal eState.VersionMinor as decoded text; null unless selected, empty when absent. */
   "versionMinor"?: string | null;
   /** Requested terminal eState.BootReason as decoded text; null unless selected, empty when absent. */
@@ -1739,6 +1765,8 @@ export interface UnitDirectoryItem {
   "backLight"?: string | null;
   /** terminal */
   "terminal"?: UnitTerminalResponse;
+  /** progress */
+  "progress"?: UnitProgressResponse;
 }
 
 /** A scoped Units1 or Terminals1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location. */
@@ -1787,9 +1815,13 @@ export interface UnitGroupFieldResponse {
   "canReadHistory"?: boolean;
   /** hasHistory */
   "hasHistory"?: boolean;
+  /** valueFormat */
+  "valueFormat"?: string | null;
+  /** pattern */
+  "pattern"?: string | null;
 }
 
-/** The authorized unit and one descriptor-defined group, with read-only stored values. */
+/** The authorized unit and one catalog-defined group, with read-only stored values. */
 export interface UnitGroupResponse {
   /** location */
   "location"?: BankLocationResponse;
@@ -1893,9 +1925,11 @@ export interface UnitSettingHistoryResponse {
   "items"?: (UnitSettingHistoryItem)[] | null;
   /** nextBeforeMs2000 */
   "nextBeforeMs2000"?: bigint | null;
+  /** valueFormat */
+  "valueFormat"?: string | null;
 }
 
-/** A selectable persisted value and its localized descriptor label. */
+/** A selectable persisted value and its localized catalog label. */
 export interface UnitSettingOption {
   /** value */
   "value"?: string | null;
@@ -2282,6 +2316,86 @@ export interface LiveMachineResponse {
   "temperature"?: number | null;
 }
 
+/** Public identity, display names and error code; no raw state payload. */
+export interface PublicMachineError {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** errorId */
+  "errorId"?: string | null;
+}
+
+/** Public machine-error page, with a protected next-page cursor and refresh interval. */
+export interface PublicMachineErrorsPage {
+  /** items */
+  "items"?: (PublicMachineError)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+}
+
+/** Minimal public unit display and expected timing. */
+export interface PublicScopedProgressItem {
+  /** Canonical site-bound unit identity. */
+  "unitKid"?: string | null;
+  /** Localized unit name. */
+  "unitName"?: string | null;
+  /** Localized location name. */
+  "locationName"?: string | null;
+  /** Expected start or null for unknown timing. */
+  "startedAtUtc"?: string | null;
+  /** Expected end or null for unknown timing. */
+  "doneAtUtc"?: string | null;
+  /** progress */
+  "progress"?: UnitProgressResponse;
+}
+
+/** A bounded page of public progress for the exact site-bound scope. */
+export interface PublicScopedProgressResponse {
+  /** Requested canonical KID. */
+  "scopeKid"?: string | null;
+  /** Unit, Location or Bank enum name. */
+  "scopeKind"?: string | null;
+  /** UTC calculation time. */
+  "calculatedAtUtc"?: string;
+  /** Recommended refresh interval. */
+  "refreshAfterSeconds"?: number;
+  /** Public units in numeric identity order. */
+  "items"?: (PublicScopedProgressItem)[] | null;
+  /** Opaque next-page cursor, or null after the last page. */
+  "nextCursor"?: string | null;
+}
+
+/** Public presentation selected by this API site's trusted tenant. */
+export interface PublicWidgetPresentationResponse {
+  /** Resolved supported culture for labels, names and number formatting. */
+  "language"?: string | null;
+  /** Hyphen-separated RGB hex palette for the API's circle SVGs. */
+  "colors"?: string | null;
+  /** RGB hex background inside the progress circle. */
+  "background"?: string | null;
+  /** Trusted HTTPS portal origin for the public purchase map, or null when unavailable. */
+  "webBase"?: string | null;
+  /** Existing localized portal text keys used by the widgets; contains no account data. */
+  "labels"?: Record<string, string> | null;
+}
+
+/** Purchase count and total for one currency; no currency conversion is performed. */
+export interface PurchaseCurrencySnapshot {
+  /** Stored currency code; null represents purchases with no currency code. */
+  "currency"?: string | null;
+  /** Number of matching purchase rows for this currency. */
+  "count"?: bigint;
+  /** Positive total in major currency units (negated stored Amount divided by 100). */
+  "amount"?: number;
+}
+
 /** Total revenue at a coordinate across all retained purchases, independent of the coin limit. */
 export interface PurchaseHeatmapPoint {
   /** latitude */
@@ -2330,10 +2444,8 @@ export interface PurchasesResponse {
   "sinceUtc"?: string;
   /** UTC measurement time. */
   "measuredAtUtc"?: string;
-  /** Positive purchase total in major currency units; zero for no matches. */
-  "amount"?: number;
-  /** MAX(Currency), or null for no matches. No currency conversion. */
-  "currency"?: string | null;
+  /** One count and amount per stored currency; empty for no matches. No currency conversion. */
+  "currencies"?: (PurchaseCurrencySnapshot)[] | null;
 }
 
 /** Public count of reservations that have not ended. */
@@ -2534,6 +2646,14 @@ export interface GetLocationBookingRulesOptions {
   acceptLanguage?: string;
 }
 
+export interface GetControllerOverviewOptions {
+  acceptLanguage?: string;
+}
+
+export interface GetControllerGroupOptions {
+  acceptLanguage?: string;
+}
+
 export interface GetLocationUnitsOptions {
   acceptLanguage?: string;
 }
@@ -2623,6 +2743,8 @@ export interface GetUnitsOptions {
   includeCoordinates?: boolean;
   locationKid?: string;
   terminalKid?: string;
+  runningOnly?: boolean;
+  autoOutOfOrderOnly?: boolean;
 }
 
 export interface GetTerminalsOptions {
@@ -2636,6 +2758,7 @@ export interface GetTerminalsOptions {
   includeCoordinates?: boolean;
   locationKid?: string;
   terminalKid?: string;
+  runningOnly?: boolean;
 }
 
 export interface GetBankNextUserNumberOptions {
@@ -2676,7 +2799,17 @@ export interface GetIconPresentationOptions {
   color?: number;
 }
 
+export interface GetPublicMachineErrorsOptions {
+  pageSize?: number;
+  cursor?: string;
+}
+
 export interface GetPublicDisp73Options {
   limit?: number;
+}
+
+export interface GetPublicScopedUnitProgressOptions {
+  pageSize?: number;
+  cursor?: string;
 }
 

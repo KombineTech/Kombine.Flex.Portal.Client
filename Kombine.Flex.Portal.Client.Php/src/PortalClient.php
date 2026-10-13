@@ -89,6 +89,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ManagerResetPasswordRequest array{'token': string, 'password': string, 'confirmPassword': string}
  * @phpstan-type ManagerResourceGrantResponse array{'kid'?: string|null, 'scope'?: string|null}
  * @phpstan-type ManagerSessionResponse array{'accessToken'?: string|null, 'expiresIn'?: int, 'tokenType'?: string|null}
+ * @phpstan-type ManagerSignUpConfirmation array{'token'?: string|null}
+ * @phpstan-type ManagerSignUpRequest array{'email'?: string|null, 'name'?: string|null, 'organisation'?: string|null, 'password'?: string|null, 'confirmPassword'?: string|null, 'language'?: string|null}
  * @phpstan-type ManagerTabChangeRequest array{'enabled'?: bool|null, 'expectedRevision': string|null}
  * @phpstan-type ManagerTabChangeResponse array{'tabs'?: list<ManagerTabResponse>|null, 'tabsRevision'?: string|null, 'canEditTabs'?: bool, 'canEditPermissions'?: bool}
  * @phpstan-type ManagerTabResponse array{'id'?: int, 'name'?: string|null, 'iconKid'?: string|null}
@@ -129,9 +131,9 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type TenantStatusResponse array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'sources'?: list<TenantStatusSourceResult>|null, 'items'?: list<TenantStatusItem>|null}
  * @phpstan-type TenantStatusSourceResult array{'kind'?: string|null, 'count'?: int, 'hasMore'?: bool, 'errorCode'?: string|null}
  * @phpstan-type UnitDetailsResponse array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'descriptorAvailable'?: bool, 'settingGroups'?: list<string>|null, 'stateGroups'?: list<string>|null}
- * @phpstan-type UnitDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null, 'versionMinor'?: string|null, 'bootReason'?: string|null, 'booted'?: string|null, 'firmware'?: string|null, 'storageCardSerialNumber'?: string|null, 'page'?: string|null, 'backLight'?: string|null, 'terminal'?: UnitTerminalResponse}
+ * @phpstan-type UnitDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null, 'errorUnit'?: string|null, 'autoOutOfOrder'?: string|null, 'versionMinor'?: string|null, 'bootReason'?: string|null, 'booted'?: string|null, 'firmware'?: string|null, 'storageCardSerialNumber'?: string|null, 'page'?: string|null, 'backLight'?: string|null, 'terminal'?: UnitTerminalResponse, 'progress'?: UnitProgressResponse}
  * @phpstan-type UnitDirectoryResponse array{'items'?: list<UnitDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
- * @phpstan-type UnitGroupFieldResponse array{'name'?: string|null, 'valueType'?: string|null, 'scope'?: string|null, 'valueStatus'?: string|null, 'value'?: string|null, 'ms2000'?: int|null, 'canEdit'?: bool, 'revision'?: string|null, 'required'?: bool, 'minimum'?: int|null, 'maximum'?: int|null, 'options'?: list<UnitSettingOption>|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse, 'canReadHistory'?: bool, 'hasHistory'?: bool}
+ * @phpstan-type UnitGroupFieldResponse array{'name'?: string|null, 'valueType'?: string|null, 'scope'?: string|null, 'valueStatus'?: string|null, 'value'?: string|null, 'ms2000'?: int|null, 'canEdit'?: bool, 'revision'?: string|null, 'required'?: bool, 'minimum'?: int|null, 'maximum'?: int|null, 'options'?: list<UnitSettingOption>|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse, 'canReadHistory'?: bool, 'hasHistory'?: bool, 'valueFormat'?: string|null, 'pattern'?: string|null}
  * @phpstan-type UnitGroupResponse array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'kind'?: string|null, 'group'?: string|null, 'items'?: list<UnitGroupFieldResponse>|null}
  * @phpstan-type UnitIconResponse array{'kid'?: string|null, 'iconKid'?: string|null, 'offline'?: bool|null, 'status'?: int}
  * @phpstan-type UnitIconsResponse array{'items'?: list<UnitIconResponse>|null}
@@ -139,7 +141,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UnitProgressResponse array{'status'?: string|null, 'percent'?: int|null, 'remainingSeconds'?: int|null, 'calculatedAtUtc'?: string}
  * @phpstan-type UnitSettingEditorResponse array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type UnitSettingHistoryItem array{'value'?: string|null, 'ms2000'?: int, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse}
- * @phpstan-type UnitSettingHistoryResponse array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, 'items'?: list<UnitSettingHistoryItem>|null, 'nextBeforeMs2000'?: int|null}
+ * @phpstan-type UnitSettingHistoryResponse array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, 'items'?: list<UnitSettingHistoryItem>|null, 'nextBeforeMs2000'?: int|null, 'valueFormat'?: string|null}
  * @phpstan-type UnitSettingOption array{'value'?: string|null, 'label'?: string|null}
  * @phpstan-type UnitSettingRequest array{'value': string|null, 'expectedRevision': string|null}
  * @phpstan-type UnitSettingResponse array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, 'value'?: string|null, 'ms2000'?: int, 'revision'?: string|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse}
@@ -169,10 +171,16 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ApiStatusResponse array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|null}
  * @phpstan-type IconPresentationResponse array{'iconKid'?: string|null}
  * @phpstan-type LiveMachineResponse array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'temperature'?: int|float|null}
+ * @phpstan-type PublicMachineError array{'kid'?: string|null, 'name'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'errorId'?: string|null}
+ * @phpstan-type PublicMachineErrorsPage array{'items'?: list<PublicMachineError>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
+ * @phpstan-type PublicScopedProgressItem array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string|null, 'doneAtUtc'?: string|null, 'progress'?: UnitProgressResponse}
+ * @phpstan-type PublicScopedProgressResponse array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PublicScopedProgressItem>|null, 'nextCursor'?: string|null}
+ * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null}
+ * @phpstan-type PurchaseCurrencySnapshot array{'currency'?: string|null, 'count'?: int, 'amount'?: int|float}
  * @phpstan-type PurchaseHeatmapPoint array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
  * @phpstan-type PurchaseMapPoint array{'kid'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float, 'timestampUtc'?: string, 'amount'?: int|float}
  * @phpstan-type PurchaseMapSnapshot array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PurchaseMapPoint>|null, 'heatmap'?: list<PurchaseHeatmapPoint>|null}
- * @phpstan-type PurchasesResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string, 'amount'?: int|float, 'currency'?: string|null}
+ * @phpstan-type PurchasesResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string, 'currencies'?: list<PurchaseCurrencySnapshot>|null}
  * @phpstan-type ReservationsStatisticsResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
  * @phpstan-type RunningMachinesResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
  */
@@ -595,6 +603,30 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Read an authorized controller using its canonical Controller KID with MainId.
+     * @param string $controllerKid
+     * @param array{'Accept-Language'?: string} $options
+     * @return UnitDetailsResponse
+     */
+    public function getControllerOverview(mixed $controllerKid, array $options = []): mixed
+    {
+        return $this->request('GetControllerOverview', ['controllerKid' => $controllerKid] + $options, null);
+    }
+
+    /**
+     * Read the controller's temporary Core settings or states from its main unit.
+     * @param string $controllerKid
+     * @param string $kind
+     * @param string $group
+     * @param array{'Accept-Language'?: string} $options
+     * @return UnitGroupResponse
+     */
+    public function getControllerGroup(mixed $controllerKid, mixed $kind, mixed $group, array $options = []): mixed
+    {
+        return $this->request('GetControllerGroup', ['controllerKid' => $controllerKid, 'kind' => $kind, 'group' => $group] + $options, null);
+    }
+
+    /**
      * Get the location label and its units, ordered by unit number.
      * @param string $locationKid
      * @param array{'Accept-Language'?: string} $options
@@ -816,6 +848,26 @@ final class PortalClient extends BaseClient
     public function getCurrentManager(): mixed
     {
         return $this->request('GetCurrentManager', [], null);
+    }
+
+    /**
+     * Create a pending manager with a password and queue a manager-bound verification email.
+     * @param ManagerSignUpRequest $body
+     * @return PersonalAccountResult
+     */
+    public function requestManagerSignUp(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('RequestManagerSignUp', [], $body);
+    }
+
+    /**
+     * Verify the email and activate only the manager already created by self-registration.
+     * @param ManagerSignUpConfirmation $body
+     * @return PersonalAccountResult
+     */
+    public function confirmManagerSignUp(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('ConfirmManagerSignUp', [], $body);
     }
 
     /**
@@ -1077,7 +1129,7 @@ final class PortalClient extends BaseClient
 
     /**
      * List authorized units, including child units, for Units1.
-     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'includeCoordinates'?: bool, 'locationKid'?: string, 'terminalKid'?: string} $options
+     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'includeCoordinates'?: bool, 'locationKid'?: string, 'terminalKid'?: string, 'runningOnly'?: bool, 'autoOutOfOrderOnly'?: bool} $options
      * @return UnitDirectoryResponse
      */
     public function getUnits(array $options = []): mixed
@@ -1087,7 +1139,7 @@ final class PortalClient extends BaseClient
 
     /**
      * List authorized main units for Terminals1.
-     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'includeCoordinates'?: bool, 'locationKid'?: string, 'terminalKid'?: string} $options
+     * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'includeCoordinates'?: bool, 'locationKid'?: string, 'terminalKid'?: string, 'runningOnly'?: bool} $options
      * @return UnitDirectoryResponse
      */
     public function getTerminals(array $options = []): mixed
@@ -1588,6 +1640,27 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * List machines with a positive AutoOutOfOrder Id without login.
+     * @param array{'pageSize'?: int, 'cursor'?: string} $options
+     * @return PublicMachineErrorsPage
+     */
+    public function getPublicMachineErrors(array $options = []): mixed
+    {
+        return $this->request('GetPublicMachineErrors', [] + $options, null);
+    }
+
+    /**
+     * Draws purchase counts for the last hour in twelve five-minute intervals.
+     * @param string $color
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getPublicPurchasesChart(mixed $color, mixed $destination): mixed
+    {
+        return $this->request('GetPublicPurchasesChart', ['color' => $color], null, $destination);
+    }
+
+    /**
      * Shows recent purchases as coin markers on a map. No login required.
      * @param array{'limit'?: int} $options
      * @return PurchaseMapSnapshot
@@ -1595,6 +1668,17 @@ final class PortalClient extends BaseClient
     public function getPublicDisp73(array $options = []): mixed
     {
         return $this->request('GetPublicDisp73', [] + $options, null);
+    }
+
+    /**
+     * Get progress for one unit or a page of all public units in a location or bank.
+     * @param string $kid
+     * @param array{'pageSize'?: int, 'cursor'?: string} $options
+     * @return PublicScopedProgressResponse
+     */
+    public function getPublicScopedUnitProgress(mixed $kid, array $options = []): mixed
+    {
+        return $this->request('GetPublicScopedUnitProgress', ['kid' => $kid] + $options, null);
     }
 
     /**
@@ -1613,6 +1697,15 @@ final class PortalClient extends BaseClient
     public function getPublicActiveUsers(): mixed
     {
         return $this->request('GetPublicActiveUsers', [], null);
+    }
+
+    /**
+     * Get localized labels and the site's palette for the shared JavaScript widgets.
+     * @return PublicWidgetPresentationResponse
+     */
+    public function getPublicWidgetPresentation(): mixed
+    {
+        return $this->request('GetPublicWidgetPresentation', [], null);
     }
 
     /**

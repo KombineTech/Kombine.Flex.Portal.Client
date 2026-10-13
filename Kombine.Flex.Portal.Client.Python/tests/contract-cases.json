@@ -2410,6 +2410,94 @@
     "example": {}
   },
   {
+    "operation": "GetControllerOverview",
+    "python": "get_controller_overview",
+    "javascript": "getControllerOverview",
+    "method": "GET",
+    "path": "api/v1/controllers/{controllerKid}",
+    "status": 200,
+    "auth": true,
+    "parameters": [
+      {
+        "name": "controllerKid",
+        "where": "path",
+        "py": "controller_kid",
+        "js": "controllerKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDetailsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetControllerGroup",
+    "python": "get_controller_group",
+    "javascript": "getControllerGroup",
+    "method": "GET",
+    "path": "api/v1/controllers/{controllerKid}/groups/{kind}/{group}",
+    "status": 200,
+    "auth": true,
+    "parameters": [
+      {
+        "name": "controllerKid",
+        "where": "path",
+        "py": "controller_kid",
+        "js": "controllerKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "kind",
+        "where": "path",
+        "py": "kind",
+        "js": "kind",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "group",
+        "where": "path",
+        "py": "group",
+        "js": "group",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitGroupResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetLocationUnits",
     "python": "get_location_units",
     "javascript": "getLocationUnits",
@@ -3908,7 +3996,7 @@
         },
         {
           "id": 62,
-          "name": "Disp62",
+          "name": "SignUp1",
           "iconKid": ""
         },
         {
@@ -3948,7 +4036,7 @@
         },
         {
           "id": 73,
-          "name": "Disp73",
+          "name": "Map1",
           "iconKid": ""
         },
         {
@@ -4238,6 +4326,42 @@
         }
       ]
     }
+  },
+  {
+    "operation": "RequestManagerSignUp",
+    "python": "request_manager_sign_up",
+    "javascript": "requestManagerSignUp",
+    "method": "POST",
+    "path": "api/v1/session/signup",
+    "status": 202,
+    "auth": false,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/ManagerSignUpRequest"
+    },
+    "response": {
+      "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ConfirmManagerSignUp",
+    "python": "confirm_manager_sign_up",
+    "javascript": "confirmManagerSignUp",
+    "method": "POST",
+    "path": "api/v1/session/signup-confirmation",
+    "status": 200,
+    "auth": false,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/ManagerSignUpConfirmation"
+    },
+    "response": {
+      "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false,
+    "example": {}
   },
   {
     "operation": "SetManagerTab",
@@ -5100,6 +5224,24 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "py": "running_only",
+        "js": "runningOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "autoOutOfOrderOnly",
+        "where": "query",
+        "py": "auto_out_of_order_only",
+        "js": "autoOutOfOrderOnly",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
@@ -5207,6 +5349,15 @@
         "js": "terminalKid",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "py": "running_only",
+        "js": "runningOnly",
+        "schema": {
+          "type": "boolean"
         }
       }
     ],
@@ -6875,6 +7026,69 @@
     "example": []
   },
   {
+    "operation": "GetPublicMachineErrors",
+    "python": "get_public_machine_errors",
+    "javascript": "getPublicMachineErrors",
+    "method": "GET",
+    "path": "api/v1/public/widgets/machine-errors",
+    "status": 200,
+    "auth": false,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicMachineErrorsPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicPurchasesChart",
+    "python": "get_public_purchases_chart",
+    "javascript": "getPublicPurchasesChart",
+    "method": "GET",
+    "path": "api/v1/public/statistics/purchases/chart/{color}.svg",
+    "status": 200,
+    "auth": false,
+    "parameters": [
+      {
+        "name": "color",
+        "where": "path",
+        "py": "color",
+        "js": "color",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
     "operation": "GetPublicDisp73",
     "python": "get_public_disp73",
     "javascript": "getPublicDisp73",
@@ -6902,6 +7116,51 @@
     "example": {}
   },
   {
+    "operation": "GetPublicScopedUnitProgress",
+    "python": "get_public_scoped_unit_progress",
+    "javascript": "getPublicScopedUnitProgress",
+    "method": "GET",
+    "path": "api/v1/public/widgets/progress/{kid}",
+    "status": 200,
+    "auth": false,
+    "parameters": [
+      {
+        "name": "kid",
+        "where": "path",
+        "py": "kid",
+        "js": "kid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicScopedProgressResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetPublicPurchases",
     "python": "get_public_purchases",
     "javascript": "getPublicPurchases",
@@ -6918,8 +7177,18 @@
     "example": {
       "tenantKid": "3E7QAo",
       "count": 42,
-      "amount": 123.45,
-      "currency": "DKK",
+      "currencies": [
+        {
+          "currency": "DKK",
+          "count": 30,
+          "amount": 100.25
+        },
+        {
+          "currency": "EUR",
+          "count": 12,
+          "amount": 23.2
+        }
+      ],
       "lookbackHours": 1,
       "sinceUtc": "2026-09-23T09:00:00+00:00",
       "measuredAtUtc": "2026-09-23T10:00:00+00:00"
@@ -6946,6 +7215,22 @@
       "sinceUtc": "2026-06-15T10:00:00+00:00",
       "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     }
+  },
+  {
+    "operation": "GetPublicWidgetPresentation",
+    "python": "get_public_widget_presentation",
+    "javascript": "getPublicWidgetPresentation",
+    "method": "GET",
+    "path": "api/v1/public/widgets",
+    "status": 200,
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWidgetPresentationResponse"
+    },
+    "binary": false,
+    "example": {}
   },
   {
     "operation": "GetPublicReservations",

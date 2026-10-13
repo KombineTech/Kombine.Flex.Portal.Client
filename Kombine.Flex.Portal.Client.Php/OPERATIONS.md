@@ -1,12 +1,13 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `ebd2f0244bfe719b9a22919ddc41f49b413575801d593380d46e9001a08248eb`).
-134 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `079368478fbf01e537f4d9b7102cfb9f63df442647b379b40056de245c011922`).
+142 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
 | `askPortalAssistant` | `AskPortalAssistant` | POST | `/api/v1/assistant/query` | Bearer |
 | `changeMyManagerPassword` | `ChangeMyManagerPassword` | POST | `/api/v1/session/me/password` | Bearer |
+| `confirmManagerSignUp` | `ConfirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` | Anonymous |
 | `confirmMyManagerEmail` | `ConfirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` | Anonymous |
 | `createBankUser` | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` | Bearer |
 | `createManager` | `CreateManager` | POST | `/api/v1/managers` | Bearer |
@@ -46,6 +47,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `ebd2f0244bfe719b9a2
 | `getCircleProgress` | `GetCircleProgress` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}.svg` | Anonymous |
 | `getCircleRunningSized` | `GetCircleRunningSized` | GET | `/api/v1/circles/running/{color}/{width}x{height}.svg` | Anonymous |
 | `getCircleRunning` | `GetCircleRunning` | GET | `/api/v1/circles/running/{color}.svg` | Anonymous |
+| `getControllerGroup` | `GetControllerGroup` | GET | `/api/v1/controllers/{controllerKid}/groups/{kind}/{group}` | Bearer |
+| `getControllerOverview` | `GetControllerOverview` | GET | `/api/v1/controllers/{controllerKid}` | Bearer |
 | `getCurrentManager` | `GetCurrentManager` | GET | `/api/v1/session/me` | Bearer |
 | `getHostingLogs` | `GetHostingLogs` | GET | `/api/v1/hosting/logs` | Bearer |
 | `getHostingMetrics` | `GetHostingMetrics` | GET | `/api/v1/hosting/metrics` | Bearer |
@@ -89,9 +92,13 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `ebd2f0244bfe719b9a2
 | `getPublicActiveUsers` | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` | Anonymous |
 | `getPublicDisp73` | `GetPublicDisp73` | GET | `/api/v1/public/displays/Map1` | Anonymous |
 | `getPublicLiveMachines` | `GetPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` | Anonymous |
+| `getPublicMachineErrors` | `GetPublicMachineErrors` | GET | `/api/v1/public/widgets/machine-errors` | Anonymous |
+| `getPublicPurchasesChart` | `GetPublicPurchasesChart` | GET | `/api/v1/public/statistics/purchases/chart/{color}.svg` | Anonymous |
 | `getPublicPurchases` | `GetPublicPurchases` | GET | `/api/v1/public/statistics/purchases` | Anonymous |
 | `getPublicReservations` | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` | Anonymous |
 | `getPublicRunningMachines` | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` | Anonymous |
+| `getPublicScopedUnitProgress` | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` | Anonymous |
+| `getPublicWidgetPresentation` | `GetPublicWidgetPresentation` | GET | `/api/v1/public/widgets` | Anonymous |
 | `getSearchBank` | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` | Bearer |
 | `getServiceCount` | `GetServiceCount` | GET | `/api/v1/services/count` | Bearer |
 | `getService` | `GetService` | GET | `/api/v1/services/{serviceKid}` | Bearer |
@@ -115,6 +122,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `ebd2f0244bfe719b9a2
 | `lookupObjectCoordinates` | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` | Bearer |
 | `renewManagerSession` | `RenewManagerSession` | POST | `/api/v1/session/renew` | Bearer |
 | `requestManagerPasswordReset` | `RequestManagerPasswordReset` | POST | `/api/v1/session/forgot-password` | Anonymous |
+| `requestManagerSignUp` | `RequestManagerSignUp` | POST | `/api/v1/session/signup` | Anonymous |
 | `requestMyManagerEmailVerification` | `RequestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` | Bearer |
 | `resetManagerPassword` | `ResetManagerPassword` | POST | `/api/v1/session/reset-password` | Anonymous |
 | `reverseBankAccountEntry` | `ReverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` | Bearer |
