@@ -2857,7 +2857,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Additional entries are ignored for rendering. The API also reads Kid.Count, Kid.Color and Kid.Text.
         /// <br/>If KID parsing fails, an exact eIcon name (case-insensitive) uses count zero, black and empty text.
         /// <br/>Numeric enum IDs, substring matches, malformed KIDs and undefined icons are not name fallbacks.
-        /// <br/>Count at or below zero hides the badge. Positive Int64 counts display in full; the red badge widens
+        /// <br/>Count zero hides the badge. Nonzero Int64 counts display their full absolute value, including Int64.MinValue.
+        /// <br/>Positive counts use white with black digits; negative counts use red with white digits. The badge widens
         /// <br/>with circular end caps and a straight middle, keeping its height and font size. Long labels widen the SVG canvas.
         /// <br/>Choose iconSet explicitly: line or g. The g set preserves its original multicolor artwork.
         /// <br/>Main and under-icon each try the chosen set, then other packaged sets in ordinal alphabetical order.
@@ -19757,7 +19758,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Additional entries are ignored for rendering. The API also reads Kid.Count, Kid.Color and Kid.Text.
         /// <br/>If KID parsing fails, an exact eIcon name (case-insensitive) uses count zero, black and empty text.
         /// <br/>Numeric enum IDs, substring matches, malformed KIDs and undefined icons are not name fallbacks.
-        /// <br/>Count at or below zero hides the badge. Positive Int64 counts display in full; the red badge widens
+        /// <br/>Count zero hides the badge. Nonzero Int64 counts display their full absolute value, including Int64.MinValue.
+        /// <br/>Positive counts use white with black digits; negative counts use red with white digits. The badge widens
         /// <br/>with circular end caps and a straight middle, keeping its height and font size. Long labels widen the SVG canvas.
         /// <br/>Choose iconSet explicitly: line or g. The g set preserves its original multicolor artwork.
         /// <br/>Main and under-icon each try the chosen set, then other packaged sets in ordinal alphabetical order.
@@ -27699,6 +27701,12 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("labels")]
         public System.Collections.Generic.IDictionary<string, string>? Labels { get; set; } = default!;
+
+        /// <summary>
+        /// Public browser Maps key, restricted by HTTP referrer at Google; never a server credential. Null when maps are not configured.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("googleMapsBrowserKey")]
+        public string? GoogleMapsBrowserKey { get; set; } = default!;
 
     }
 

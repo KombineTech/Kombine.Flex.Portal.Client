@@ -5112,6 +5112,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         public Dictionary<string, string> Labels { get { return _Labels; } set { _Labels = value; } }
         private Dictionary<string, string> _Labels;
 
+        /// <summary>Public browser Maps key, restricted by HTTP referrer at Google; never a server credential. Null when maps are not configured.</summary>
+        [JsonField("googleMapsBrowserKey")]
+        public string GoogleMapsBrowserKey { get { return _GoogleMapsBrowserKey; } set { _GoogleMapsBrowserKey = value; } }
+        private string _GoogleMapsBrowserKey;
+
     }
 
     /// <summary>Purchase count and total for one currency; no currency conversion is performed.</summary>

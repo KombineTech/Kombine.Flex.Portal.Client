@@ -175,7 +175,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PublicMachineErrorsPage array{'items'?: list<PublicMachineError>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
  * @phpstan-type PublicScopedProgressItem array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string|null, 'doneAtUtc'?: string|null, 'progress'?: UnitProgressResponse}
  * @phpstan-type PublicScopedProgressResponse array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PublicScopedProgressItem>|null, 'nextCursor'?: string|null}
- * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null}
+ * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null}
  * @phpstan-type PurchaseCurrencySnapshot array{'currency'?: string|null, 'count'?: int, 'amount'?: int|float}
  * @phpstan-type PurchaseHeatmapPoint array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
  * @phpstan-type PurchaseMapPoint array{'kid'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float, 'timestampUtc'?: string, 'amount'?: int|float}
