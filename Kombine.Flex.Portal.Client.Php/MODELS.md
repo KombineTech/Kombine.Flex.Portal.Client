@@ -1025,7 +1025,7 @@ array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: s
 ### PublicWidgetPresentationResponse
 
 ```php
-array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null}
+array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null}
 ```
 
 ### PurchaseCurrencySnapshot

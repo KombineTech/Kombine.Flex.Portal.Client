@@ -1364,6 +1364,7 @@ PublicWidgetPresentationResponse = TypedDict('PublicWidgetPresentationResponse',
     'background': 'str | None',
     'webBase': 'str | None',
     'labels': 'dict[str, str] | None',
+    'googleMapsBrowserKey': 'str | None',
 }, total=False)
 
 PurchaseCurrencySnapshot = TypedDict('PurchaseCurrencySnapshot', {

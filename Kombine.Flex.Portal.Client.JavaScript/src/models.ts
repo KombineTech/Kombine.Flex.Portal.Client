@@ -2384,6 +2384,8 @@ export interface PublicWidgetPresentationResponse {
   "webBase"?: string | null;
   /** Existing localized portal text keys used by the widgets; contains no account data. */
   "labels"?: Record<string, string> | null;
+  /** Public browser Maps key, restricted by HTTP referrer at Google; never a server credential. Null when maps are not configured. */
+  "googleMapsBrowserKey"?: string | null;
 }
 
 /** Purchase count and total for one currency; no currency conversion is performed. */

@@ -4815,6 +4815,10 @@
             "type": "string"
           },
           "nullable": true
+        },
+        "googleMapsBrowserKey": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
