@@ -1,12 +1,26 @@
+## Camera1 · 0.8.0
+
+Version 0.8.0 indeholder alle 148 offentlige operationer, inklusive Camera1. Kald PrepareCameraCapture med originalens præcise SHA-256, længde, UTC-optagelsestid, ressource-KID og sensorobjekt. Upload derefter de samme bytes med uploadToken. Live Photos kræver også matchende længde/hash og den oprindelige MOV-fil. Behold samme token og bytes ved et bevidst genforsøg; klienten gentager aldrig automatisk. Forøg tidsfristen ved videobehandling. API’et kontrollerer Camera1 og præcise Read/Write-rettigheder til ressourcen. Lister kan være ufuldstændige eller have tomme sider med nextCursor; fortsæt, indtil cursor mangler. Hent medier gennem API’et; Range-kald kan give HTTP 206. Se /docs#camera-captures for grænser og fejl.
+
+```javascript
+// uploadToken comes from prepareCameraCapture for the exact original Blob bytes.
+const body = new FormData();
+body.set("uploadToken", uploadToken);
+body.set("original", originalBlob, "capture.jpg");
+const saved = await api.saveCameraCapture(body, { signal });
+```
+
+Fetch creates the multipart Content-Type boundary. Add a `motion` Blob for Live Photos. File and text payloads together are limited to 139 MiB, reserving framing overhead under the API limit; text fields: 512 KiB each.
+
 Alle administratorrolleskift kræver Læs og Skriv på både Tabs og Kids. Håndter missing-tabs-read, missing-tabs-write, missing-kids-read og missing-kids-write (HTTP 403).
 
 GetTerminals bruger rapporteret ComputerName til navn, filtrering og sortering; manglende navne er tomme. Bed om fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight for terminaldata. Værdier er strenge, null ved fravalg og tomme ved manglende data. Behold fields under sideskift, og genstart gamle cursors. Lokationsnavne følger altid med. Se /docs#changelog for alle migreringskrav.
 
-Version 0.7.2 omfatter 142 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; håndter deres særskilte læse-/skriverettigheder og 403-svar. Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
+Version 0.8.0 omfatter 148 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; håndter deres særskilte læse-/skriverettigheder og 403-svar. Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
 
-Version 0.7.2: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
+Version 0.8.0: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
 
-Version 0.7.2 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
+Version 0.8.0 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
 
 Version 0.2.5 tilføjer de valgfrie felter latestPostingMs2000 og hasActiveSubscription til GetBankUserBalances. Posteringstidspunktet er et 64-bit antal UTC-millisekunder siden 2000-01-01; nul betyder ingen posteringer. Null eller et manglende felt betyder ukendt, og manglende eller skjulte beboere giver null. Abonnementsstatus bekræfter ikke en betaling. Bevar eksisterende saldohåndtering og rettigheder; se /docs#user-balances.
 
@@ -27,10 +41,10 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 Pakken er **ikke publiceret på npm**. Installér den leverede tarball:
 
 ```sh
-npm install ./kombine-flex-portal-client-0.7.2.tgz
+npm install ./kombine-flex-portal-client-0.8.0.tgz
 ```
 
-Version 0.7.2 følger den aktuelle beta-kandidat (142 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
+Version 0.8.0 følger den aktuelle beta-kandidat (148 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
 
 Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser.
 

@@ -21,7 +21,7 @@ function sample(spec) {
   }
 }
 
-assert.equal(cases.length, 142);
+assert.equal(cases.length, 148);
 for (const spec of cases) {
   test('wire contract: ' + spec.operation, async () => {
     let observed;
@@ -53,6 +53,13 @@ for (const spec of cases) {
         else expectedHeaders[param.name.toLowerCase()] = String(value);
       }
     }
+    if (spec.multipart) {
+      const form = new FormData();
+      form.set('uploadToken', 'fixture-token');
+      form.set('original', new Blob([new Uint8Array([0, 255, 42])]), 'photo.jpg');
+      form.set('motion', new Blob(['motion']), 'motion.mov');
+      args.push(form);
+    }
     const body = spec.body ? sample(spec.body) : undefined;
     if (spec.body) args.push(body);
     if (hasOptions) args.push(options);
@@ -67,6 +74,14 @@ for (const spec of cases) {
     assert.equal(observed.init.cache, 'no-store');
     for (const [name, value] of Object.entries(expectedHeaders)) assert.equal(observed.init.headers.get(name), value);
     if (spec.body) assert.equal(observed.init.body, stringifyJson(body));
+    if (spec.multipart) {
+      assert.equal(observed.init.body, args[0]);
+      assert.equal(observed.init.headers.get('content-type'), null);
+      const encoded = new Response(observed.init.body);
+      const decoded = await encoded.formData();
+      assert.equal(decoded.get('uploadToken'), 'fixture-token');
+      assert.deepEqual(new Uint8Array(await decoded.get('original').arrayBuffer()), new Uint8Array([0, 255, 42]));
+    }
     if (spec.binary) {
       assert.ok(result instanceof PortalDownload);
       const chunks = [];
@@ -227,4 +242,26 @@ test('real HTTP, no redirects, deadline and external abort including response bo
   const pending = new PortalClient(base + 'slow/').getPortalStatus({ signal: abort.signal });
   setTimeout(() => abort.abort(), 80);
   await assert.rejects(pending, e => e.name === 'AbortError');
+});
+
+
+test('multipart rejects missing, unknown, duplicate and non-file fields before transport', async () => {
+  const client = new PortalClient('https://x/', { fetch: async () => { assert.fail('No network expected'); } });
+  const missing = new FormData(); missing.set('uploadToken', 'token');
+  const wrong = new FormData(); wrong.set('uploadToken', 'token'); wrong.set('original', 'bytes');
+  const extra = new FormData(); extra.set('uploadToken', 'token'); extra.set('original', new Blob(['x']), 'x.jpg'); extra.set('extra', 'x');
+  const duplicate = new FormData(); duplicate.set('uploadToken', 'token'); duplicate.append('original', new Blob(['x']), 'x.jpg'); duplicate.append('original', new Blob(['y']), 'y.jpg');
+  for (const body of [{}, missing, wrong, extra, duplicate]) await assert.rejects(client.saveCameraCapture(body), TypeError);
+});
+
+
+test('camera range response streams HTTP 206', async () => {
+  const client = new PortalClient('https://x/', { fetch: async (url, init) => {
+    assert.equal(init.headers.get('range'), 'bytes=1-2');
+    return new Response(new Uint8Array([42, 255]), { status: 206, headers: { 'Content-Range': 'bytes 1-2/5' } });
+  }});
+  const result = await client.getCameraCaptureContent('opaque', { range: 'bytes=1-2' });
+  assert.equal(result.status, 206);
+  const bytes = []; for await (const chunk of result.chunks()) bytes.push(...chunk);
+  assert.deepEqual(bytes, [42, 255]);
 });

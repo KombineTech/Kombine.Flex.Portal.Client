@@ -879,6 +879,171 @@
       },
       "additionalProperties": false
     },
+    "CameraAvailabilityResponse": {
+      "type": "object",
+      "properties": {
+        "hasCaptures": {
+          "type": "boolean"
+        },
+        "isDegraded": {
+          "type": "boolean"
+        },
+        "canCapture": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CameraCaptureItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "nullable": true
+        },
+        "captureId": {
+          "type": "string",
+          "nullable": true
+        },
+        "resourceKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "ownerKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "fileName": {
+          "type": "string",
+          "nullable": true
+        },
+        "kind": {
+          "type": "string",
+          "nullable": true
+        },
+        "capturedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "hasPreview": {
+          "type": "boolean"
+        },
+        "hasMotion": {
+          "type": "boolean"
+        },
+        "hasPlayback": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CameraCapturePage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CameraCaptureItem"
+          },
+          "nullable": true
+        },
+        "nextCursor": {
+          "type": "string",
+          "nullable": true
+        },
+        "isDegraded": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CameraPrepareRequest": {
+      "type": "object",
+      "properties": {
+        "resourceKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "kind": {
+          "type": "string",
+          "nullable": true
+        },
+        "originalFileName": {
+          "type": "string",
+          "nullable": true
+        },
+        "originalNameAvailable": {
+          "type": "boolean"
+        },
+        "capturedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "mediaLength": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mediaSha256": {
+          "type": "string",
+          "nullable": true
+        },
+        "sensorData": {
+          "type": "object"
+        },
+        "motionLength": {
+          "type": "integer",
+          "format": "int64",
+          "nullable": true
+        },
+        "motionSha256": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "CameraPrepareResponse": {
+      "type": "object",
+      "properties": {
+        "uploadToken": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "CameraResourceResponse": {
+      "type": "object",
+      "properties": {
+        "resourceKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "CameraSaveResponse": {
+      "type": "object",
+      "properties": {
+        "captureId": {
+          "type": "string",
+          "nullable": true
+        },
+        "resourceKid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "DatabaseAccessResponse": {
       "type": "object",
       "properties": {
@@ -5010,6 +5175,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/AccountIconResponse"
       },
@@ -5142,6 +5308,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/AccountResponse"
       },
@@ -5274,6 +5441,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/AccountRevisionResponse"
       },
@@ -5305,6 +5473,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/AccountEntryResponse"
       },
@@ -5328,6 +5497,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ObjectAddressResponse"
       },
@@ -5353,6 +5523,7 @@
       "body": {
         "$ref": "#/components/schemas/UpdateObjectAddressRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ObjectAddressResponse"
       },
@@ -5378,6 +5549,7 @@
       "body": {
         "$ref": "#/components/schemas/ObjectAddressRevisionRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ObjectAddressResponse"
       },
@@ -5403,6 +5575,7 @@
       "body": {
         "$ref": "#/components/schemas/SetObjectCoordinatesRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ObjectAddressResponse"
       },
@@ -5428,6 +5601,7 @@
       "body": {
         "$ref": "#/components/schemas/SetObjectCoordinateProvenanceRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ObjectAddressResponse"
       },
@@ -5444,6 +5618,7 @@
       "body": {
         "$ref": "#/components/schemas/AssistantRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/AssistantResponse"
       },
@@ -5524,6 +5699,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/BankDirectoryResponse"
       },
@@ -5538,6 +5714,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ActiveBankCountResponse"
       },
@@ -5611,6 +5788,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/BankDocumentPage"
       },
@@ -5637,6 +5815,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/BankIconsResponse"
       },
@@ -5660,6 +5839,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "array",
         "items": {
@@ -5686,6 +5866,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
       },
@@ -5709,6 +5890,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
       },
@@ -5732,6 +5914,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
       },
@@ -5820,6 +6003,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/BankUsersResponse"
       },
@@ -5845,6 +6029,7 @@
       "body": {
         "$ref": "#/components/schemas/UserCommandRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserWorkspaceResponse"
       },
@@ -5944,6 +6129,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/BookingsResponse"
       },
@@ -5977,10 +6163,187 @@
       "body": {
         "$ref": "#/components/schemas/BookingCommand"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/BookingResponse"
       },
       "binary": false
+    },
+    "GetCameraResource": {
+      "method": "GET",
+      "path": "api/v1/camera/resource",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "resourceKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/CameraResourceResponse"
+      },
+      "binary": false
+    },
+    "GetCameraAvailability": {
+      "method": "GET",
+      "path": "api/v1/camera/availability",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "resourceKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/CameraAvailabilityResponse"
+      },
+      "binary": false
+    },
+    "PrepareCameraCapture": {
+      "method": "POST",
+      "path": "api/v1/camera/prepare",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": {
+        "$ref": "#/components/schemas/CameraPrepareRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/CameraPrepareResponse"
+      },
+      "binary": false
+    },
+    "SaveCameraCapture": {
+      "method": "POST",
+      "path": "api/v1/camera",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "multipart": {
+        "required": [
+          "uploadToken",
+          "original"
+        ],
+        "type": "object",
+        "properties": {
+          "uploadToken": {
+            "type": "string",
+            "description": "Unchanged token from PrepareCameraCapture."
+          },
+          "original": {
+            "type": "string",
+            "description": "Original captured bytes matching the prepared length and SHA-256.",
+            "format": "binary"
+          },
+          "motion": {
+            "type": "string",
+            "description": "Required only for live-photo: the original QuickTime MOV companion matching its prepared length and hash. Omit for other capture kinds.",
+            "format": "binary"
+          }
+        }
+      },
+      "response": {
+        "$ref": "#/components/schemas/CameraSaveResponse"
+      },
+      "binary": false
+    },
+    "GetCameraCaptures": {
+      "method": "GET",
+      "path": "api/v1/camera",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "resourceKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "cursor",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/CameraCapturePage"
+      },
+      "binary": false
+    },
+    "GetCameraCaptureContent": {
+      "method": "GET",
+      "path": "api/v1/camera/{id}/content",
+      "statuses": [
+        200,
+        206
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "id",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "part",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Range",
+          "where": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
     },
     "ExportBankAccount": {
       "method": "GET",
@@ -6117,6 +6480,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -6181,6 +6545,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -6222,6 +6587,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -6262,6 +6628,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -6302,6 +6669,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -6334,6 +6702,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/HostingLogsResponse"
       },
@@ -6374,6 +6743,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/HostingMetricsResponse"
       },
@@ -6399,6 +6769,7 @@
       "body": {
         "$ref": "#/components/schemas/InstallerIconRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/InstallerIconResponse"
       },
@@ -6463,6 +6834,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/InstallerDirectoryResponse"
       },
@@ -6486,6 +6858,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/InstallerDetailsResponse"
       },
@@ -6500,6 +6873,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/LiveLogsResponse"
       },
@@ -6523,6 +6897,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ActiveLocationCountResponse"
       },
@@ -6611,6 +6986,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/LocationDirectoryResponse"
       },
@@ -6634,6 +7010,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
       },
@@ -6657,6 +7034,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
       },
@@ -6688,6 +7066,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/LocationBookingRulesResponse"
       },
@@ -6719,6 +7098,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitDetailsResponse"
       },
@@ -6766,6 +7146,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitGroupResponse"
       },
@@ -6797,6 +7178,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/LocationUnitsResponse"
       },
@@ -6828,6 +7210,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitDetailsResponse"
       },
@@ -6875,6 +7258,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitGroupResponse"
       },
@@ -6932,6 +7316,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitSettingHistoryResponse"
       },
@@ -6958,6 +7343,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitIconsResponse"
       },
@@ -6984,6 +7370,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/LocationIconsResponse"
       },
@@ -7015,6 +7402,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/LocationOpeningHoursResponse"
       },
@@ -7029,6 +7417,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerCreationResponse"
       },
@@ -7085,6 +7474,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerDirectoryResponse"
       },
@@ -7110,6 +7500,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerInvitationRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerInvitationResponse"
       },
@@ -7135,6 +7526,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerKidChangeRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerKidChangeResponse"
       },
@@ -7151,6 +7543,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerForgotPasswordRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerPasswordResetResponse"
       },
@@ -7167,6 +7560,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerResetPasswordRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerPasswordResetResponse"
       },
@@ -7192,6 +7586,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerPermissionRoleRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerPermissionRoleResponse"
       },
@@ -7225,6 +7620,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerPermissionChangeRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerOperationPermissionResponse"
       },
@@ -7258,6 +7654,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerProfileChangeRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerProfileChangeResponse"
       },
@@ -7281,6 +7678,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerDirectoryItem"
       },
@@ -7304,6 +7702,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "array",
         "items": {
@@ -7332,6 +7731,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerLoginRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerSessionResponse"
       },
@@ -7346,6 +7746,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerSessionResponse"
       },
@@ -7360,6 +7761,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerProfileResponse"
       },
@@ -7376,6 +7778,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerSignUpRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalAccountResult"
       },
@@ -7392,6 +7795,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerSignUpConfirmation"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalAccountResult"
       },
@@ -7426,6 +7830,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerTabChangeRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerTabChangeResponse"
       },
@@ -7442,6 +7847,7 @@
       "body": {
         "$ref": "#/components/schemas/ManagerThemeRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ManagerThemeResponse"
       },
@@ -7456,6 +7862,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PeopleDirectoryCount"
       },
@@ -7470,6 +7877,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PeopleDirectoryCount"
       },
@@ -7484,6 +7892,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalManagerProfile"
       },
@@ -7498,6 +7907,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalManagerTabs"
       },
@@ -7524,6 +7934,7 @@
       "body": {
         "$ref": "#/components/schemas/PersonalTabRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalManagerTabs"
       },
@@ -7549,6 +7960,7 @@
       "body": {
         "$ref": "#/components/schemas/PersonalProfileRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalManagerProfile"
       },
@@ -7565,6 +7977,7 @@
       "body": {
         "$ref": "#/components/schemas/PersonalEmailRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalAccountResult"
       },
@@ -7581,6 +7994,7 @@
       "body": {
         "$ref": "#/components/schemas/PersonalEmailConfirmation"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalAccountResult"
       },
@@ -7597,6 +8011,7 @@
       "body": {
         "$ref": "#/components/schemas/PersonalPasswordRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalAccountResult"
       },
@@ -7636,6 +8051,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ServiceDirectoryResponse"
       },
@@ -7650,6 +8066,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PeopleDirectoryCount"
       },
@@ -7673,6 +8090,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ServiceDetailsResponse"
       },
@@ -7706,6 +8124,7 @@
       "body": {
         "$ref": "#/components/schemas/ServiceProfileRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ServiceDetailsResponse"
       },
@@ -7731,6 +8150,7 @@
       "body": {
         "$ref": "#/components/schemas/ServiceApiKeyRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ServiceApiKeyResponse"
       },
@@ -7763,6 +8183,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SettlementHistoryResponse"
       },
@@ -7795,6 +8216,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SettlementDetailResponse"
       },
@@ -7819,6 +8241,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/TenantStatusResponse"
       },
@@ -7868,6 +8291,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/TenantStatusPageResponse"
       },
@@ -7907,6 +8331,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/DocumentTable"
       },
@@ -7946,6 +8371,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -7995,6 +8421,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8010,6 +8437,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ActiveUnitCountResponse"
       },
@@ -8024,6 +8452,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ActiveUnitCountResponse"
       },
@@ -8136,6 +8565,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitDirectoryResponse"
       },
@@ -8240,6 +8670,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitDirectoryResponse"
       },
@@ -8281,6 +8712,7 @@
       "body": {
         "$ref": "#/components/schemas/UnitSettingRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitSettingResponse"
       },
@@ -8306,6 +8738,7 @@
       "body": {
         "$ref": "#/components/schemas/UserBalancesRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserBalancesResponse"
       },
@@ -8329,6 +8762,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserNumberSuggestionResponse"
       },
@@ -8360,6 +8794,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserNumberSuggestionResponse"
       },
@@ -8391,6 +8826,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserWorkspaceResponse"
       },
@@ -8422,6 +8858,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserActivationResponse"
       },
@@ -8455,6 +8892,7 @@
       "body": {
         "$ref": "#/components/schemas/UserCommandRequest"
       },
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserWorkspaceResponse"
       },
@@ -8519,6 +8957,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserDirectoryResponse"
       },
@@ -8533,6 +8972,7 @@
       "auth": true,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PeopleDirectoryCount"
       },
@@ -8573,6 +9013,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserReceiptsResponse"
       },
@@ -8604,6 +9045,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
       },
@@ -8627,6 +9069,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
       },
@@ -8650,6 +9093,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
       },
@@ -8664,6 +9108,7 @@
       "auth": false,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8688,6 +9133,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8721,6 +9167,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8745,6 +9192,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8787,6 +9235,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8828,6 +9277,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8887,6 +9337,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8911,6 +9362,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8953,6 +9405,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -8986,6 +9439,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9037,6 +9491,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9087,6 +9542,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/IconPresentationResponse"
       },
@@ -9110,6 +9566,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "array",
         "items": {
@@ -9152,6 +9609,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9201,6 +9659,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9258,6 +9717,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9282,6 +9742,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9315,6 +9776,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9356,6 +9818,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9388,6 +9851,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9429,6 +9893,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9478,6 +9943,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9502,6 +9968,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9535,6 +10002,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9576,6 +10044,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9600,6 +10069,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9633,6 +10103,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9674,6 +10145,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9689,6 +10161,7 @@
       "auth": false,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "array",
         "items": {
@@ -9724,6 +10197,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PublicMachineErrorsPage"
       },
@@ -9747,6 +10221,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "type": "string",
         "format": "binary"
@@ -9772,6 +10247,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PurchaseMapSnapshot"
       },
@@ -9812,6 +10288,7 @@
         }
       ],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PublicScopedProgressResponse"
       },
@@ -9826,6 +10303,7 @@
       "auth": false,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PurchasesResponse"
       },
@@ -9840,6 +10318,7 @@
       "auth": false,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ActiveUsersResponse"
       },
@@ -9854,6 +10333,7 @@
       "auth": false,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PublicWidgetPresentationResponse"
       },
@@ -9868,6 +10348,7 @@
       "auth": false,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ReservationsStatisticsResponse"
       },
@@ -9882,6 +10363,7 @@
       "auth": false,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/RunningMachinesResponse"
       },
@@ -9896,6 +10378,7 @@
       "auth": false,
       "parameters": [],
       "body": null,
+      "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ApiStatusResponse"
       },

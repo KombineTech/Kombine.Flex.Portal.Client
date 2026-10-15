@@ -614,6 +614,73 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read the display identity of one authorized camera resource.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Camera1, the exact resource's Read permission, site-bound resource scope and retention visibility. A location does not require Unit Read; a unit does not require Location Read. Returns only resourceKid, name and an API-computed iconKid for the requested bank, location or unit, without parent or child metadata. Invalid or cross-tenant KIDs return 400, invalid sessions 401, denied access 403, missing/invisible resources 404 and unavailable storage 503.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraResourceResponse> GetCameraResourceAsync(string? resourceKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Check the lazy local camera tab and capture permission for one exact resource.
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraAvailabilityResponse> GetCameraAvailabilityAsync(string? resourceKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Prepare a bounded, immutable capture plan including optional weather.
+        /// </summary>
+        /// <remarks>
+        /// Requires Camera1 plus resource Read and Write. Hash original bytes with SHA-256. For kind live-photo, provide motionLength and motionSha256 for the original QuickTime movie companion. The signed uploadToken binds both files, metadata, owner and tenant. Retain the token and identical bytes for retries; tokens expire after 24 hours. Weather failure does not prevent capture.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraPrepareResponse> PrepareCameraCaptureAsync(CameraPrepareRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Save new camera media immediately and replicate after the first complete regional copy.
+        /// </summary>
+        /// <remarks>
+        /// Multipart fields: uploadToken from PrepareCameraCapture and original (binary file); live-photo additionally requires motion (original JPEG plus QuickTime MOV). Every component is bounded, hashed and decoded server-side. Success confirms the full set, generated thumbnail, optional playback derivative and JSON in one private region. FRA/AMS origin filenames remain unchanged when replicated. No camera database or public storage link is used.
+        /// </remarks>
+        /// <param name="uploadToken">Unchanged token from PrepareCameraCapture.</param>
+        /// <param name="original">Original captured bytes matching the prepared length and SHA-256.</param>
+        /// <param name="motion">Required only for live-photo: the original QuickTime MOV companion matching its prepared length and hash. Omit for other capture kinds.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraSaveResponse> SaveCameraCaptureAsync(string? uploadToken = null, FileParameter original = null, FileParameter? motion = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List own tenant captures, or all authorized captures on one exact bank, location or unit.
+        /// </summary>
+        /// <remarks>
+        /// Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. No storage URLs or credentials are returned.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraCapturePage> GetCameraCapturesAsync(string? resourceKid = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Stream one capture component through the API, with current resource authorization.
+        /// </summary>
+        /// <remarks>
+        /// id is an opaque, short-lived identity from GetCameraCaptures. part is original, thumbnail, metadata, motion, motion-playback, playback or preview. QuickTime and WebM originals have a separate H.264/AAC playback part; Live Photo motion uses motion-playback. Missing copies fall back to the other region. No redirects or public Spaces links.
+        /// </remarks>
+        /// <param name="range">Optional single byte range, for example bytes=0-1023. Valid ranges return 206; invalid ranges return 416.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetCameraCaptureContentAsync(string id, string? part = null, string? range = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Downloads the complete filtered selection as CSV or a genuine Excel workbook.
         /// </summary>
         /// <remarks>
@@ -6687,6 +6754,885 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read the display identity of one authorized camera resource.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Camera1, the exact resource's Read permission, site-bound resource scope and retention visibility. A location does not require Unit Read; a unit does not require Location Read. Returns only resourceKid, name and an API-computed iconKid for the requested bank, location or unit, without parent or child metadata. Invalid or cross-tenant KIDs return 400, invalid sessions 401, denied access 403, missing/invisible resources 404 and unavailable storage 503.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraResourceResponse> GetCameraResourceAsync(string? resourceKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/resource"
+                    urlBuilder_.Append("api/v1/camera/resource");
+                    urlBuilder_.Append('?');
+                    if (resourceKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("resourceKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(resourceKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraResourceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Check the lazy local camera tab and capture permission for one exact resource.
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraAvailabilityResponse> GetCameraAvailabilityAsync(string? resourceKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/availability"
+                    urlBuilder_.Append("api/v1/camera/availability");
+                    urlBuilder_.Append('?');
+                    if (resourceKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("resourceKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(resourceKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraAvailabilityResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Prepare a bounded, immutable capture plan including optional weather.
+        /// </summary>
+        /// <remarks>
+        /// Requires Camera1 plus resource Read and Write. Hash original bytes with SHA-256. For kind live-photo, provide motionLength and motionSha256 for the original QuickTime movie companion. The signed uploadToken binds both files, metadata, owner and tenant. Retain the token and identical bytes for retries; tokens expire after 24 hours. Weather failure does not prevent capture.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraPrepareResponse> PrepareCameraCaptureAsync(CameraPrepareRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/prepare"
+                    urlBuilder_.Append("api/v1/camera/prepare");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraPrepareResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 413)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Content Too Large", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Save new camera media immediately and replicate after the first complete regional copy.
+        /// </summary>
+        /// <remarks>
+        /// Multipart fields: uploadToken from PrepareCameraCapture and original (binary file); live-photo additionally requires motion (original JPEG plus QuickTime MOV). Every component is bounded, hashed and decoded server-side. Success confirms the full set, generated thumbnail, optional playback derivative and JSON in one private region. FRA/AMS origin filenames remain unchanged when replicated. No camera database or public storage link is used.
+        /// </remarks>
+        /// <param name="uploadToken">Unchanged token from PrepareCameraCapture.</param>
+        /// <param name="original">Original captured bytes matching the prepared length and SHA-256.</param>
+        /// <param name="motion">Required only for live-photo: the original QuickTime MOV companion matching its prepared length and hash. Omit for other capture kinds.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraSaveResponse> SaveCameraCaptureAsync(string? uploadToken = null, FileParameter original = null, FileParameter? motion = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var boundary_ = System.Guid.NewGuid().ToString();
+                    var content_ = new System.Net.Http.MultipartFormDataContent(boundary_);
+                    content_.Headers.Remove("Content-Type");
+                    content_.Headers.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=" + boundary_);
+
+                    if (uploadToken == null)
+                        throw new System.ArgumentNullException("uploadToken");
+                    else
+                    {
+                        content_.Add(new System.Net.Http.StringContent(ConvertToString(uploadToken, System.Globalization.CultureInfo.InvariantCulture)), "uploadToken");
+                    }
+
+                    if (original == null)
+                        throw new System.ArgumentNullException("original");
+                    else
+                    {
+                        var content_original_ = new System.Net.Http.StreamContent(original.Data);
+                        if (!string.IsNullOrEmpty(original.ContentType))
+                            content_original_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(original.ContentType);
+                        content_.Add(content_original_, "original", original.FileName ?? "original");
+                    }
+
+                    if (motion != null)
+                    {
+                        var content_motion_ = new System.Net.Http.StreamContent(motion.Data);
+                        if (!string.IsNullOrEmpty(motion.ContentType))
+                            content_motion_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(motion.ContentType);
+                        content_.Add(content_motion_, "motion", motion.FileName ?? "motion");
+                    }
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera"
+                    urlBuilder_.Append("api/v1/camera");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraSaveResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 413)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Content Too Large", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List own tenant captures, or all authorized captures on one exact bank, location or unit.
+        /// </summary>
+        /// <remarks>
+        /// Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. No storage URLs or credentials are returned.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraCapturePage> GetCameraCapturesAsync(string? resourceKid = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera"
+                    urlBuilder_.Append("api/v1/camera");
+                    urlBuilder_.Append('?');
+                    if (resourceKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("resourceKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(resourceKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraCapturePage>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Stream one capture component through the API, with current resource authorization.
+        /// </summary>
+        /// <remarks>
+        /// id is an opaque, short-lived identity from GetCameraCaptures. part is original, thumbnail, metadata, motion, motion-playback, playback or preview. QuickTime and WebM originals have a separate H.264/AAC playback part; Live Photo motion uses motion-playback. Missing copies fall back to the other region. No redirects or public Spaces links.
+        /// </remarks>
+        /// <param name="range">Optional single byte range, for example bytes=0-1023. Valid ranges return 206; invalid ranges return 416.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetCameraCaptureContentAsync(string id, string? part = null, string? range = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (range != null)
+                        request_.Headers.TryAddWithoutValidation("Range", ConvertToString(range, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/{id}/content"
+                    urlBuilder_.Append("api/v1/camera/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/content");
+                    urlBuilder_.Append('?');
+                    if (part != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("part")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(part, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 416)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Range Not Satisfiable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -23633,6 +24579,177 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Availability and effective capture permission for one exact authorized resource.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraAvailabilityResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasCaptures")]
+        public bool? HasCaptures { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDegraded")]
+        public bool? IsDegraded { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("canCapture")]
+        public bool? CanCapture { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One authorized capture; all object identifiers are canonical KIDs or opaque API tokens.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraCaptureItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("captureId")]
+        public string? CaptureId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("resourceKid")]
+        public string? ResourceKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ownerKid")]
+        public string? OwnerKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fileName")]
+        public string? FileName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capturedAtUtc")]
+        public System.DateTimeOffset? CapturedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasPreview")]
+        public bool? HasPreview { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasMotion")]
+        public bool? HasMotion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasPlayback")]
+        public bool? HasPlayback { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One bounded page. A degraded page may omit captures from an unavailable region; refresh from the beginning after recovery.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraCapturePage
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<CameraCaptureItem>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
+        public string? NextCursor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDegraded")]
+        public bool? IsDegraded { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Immutable input for recorded photo, video or a paired Live Photo; tenant and owner are never client parameters.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraPrepareRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("resourceKid")]
+        public string? ResourceKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("originalFileName")]
+        public string? OriginalFileName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("originalNameAvailable")]
+        public bool? OriginalNameAvailable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capturedAtUtc")]
+        public System.DateTimeOffset? CapturedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mediaLength")]
+        public long? MediaLength { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mediaSha256")]
+        public string? MediaSha256 { get; set; } = default!;
+
+        /// <summary>
+        /// Available device observations with source, time and units; use an empty object when unavailable. Never include API credentials.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("sensorData")]
+        public object? SensorData { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("motionLength")]
+        public long? MotionLength { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("motionSha256")]
+        public string? MotionSha256 { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Opaque signed ticket; retry with this exact token and unchanged original bytes.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraPrepareResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("uploadToken")]
+        public string? UploadToken { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Display metadata for the exact authorized camera resource, without parent or child data.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraResourceResponse
+    {
+
+        /// <summary>
+        /// Canonical, site-bound bank, location or unit identity.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("resourceKid")]
+        public string? ResourceKid { get; set; } = default!;
+
+        /// <summary>
+        /// Resource display name; unit localization placeholders are resolved.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// API-computed icon identity including the resource number; use unchanged in icon URLs.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// A complete media set exists in at least one region; the second copy continues independently.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraSaveResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("captureId")]
+        public string? CaptureId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("resourceKid")]
+        public string? ResourceKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Site database access indicator, never a manager permission or a guarantee for a business operation.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -27932,6 +29049,33 @@ namespace Kombine.Flex.Portal.Client
         {
             writer.WriteStringValue(value.ToString("yyyy-MM-dd"));
         }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FileParameter
+    {
+        public FileParameter(System.IO.Stream data)
+            : this (data, null, null)
+        {
+        }
+
+        public FileParameter(System.IO.Stream data, string? fileName)
+            : this (data, fileName, null)
+        {
+        }
+
+        public FileParameter(System.IO.Stream data, string? fileName, string? contentType)
+        {
+            Data = data;
+            FileName = fileName;
+            ContentType = contentType;
+        }
+
+        public System.IO.Stream Data { get; private set; }
+
+        public string? FileName { get; private set; }
+
+        public string? ContentType { get; private set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]

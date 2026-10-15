@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import Any
 from .models import *
-from ._runtime import BaseClient, PortalDownload
+from ._runtime import BaseClient, PortalDownload, PortalUploadFile
 
 
 class PortalClient(BaseClient):
@@ -94,6 +94,30 @@ class PortalClient(BaseClient):
     def execute_bank_booking_command(self, bank_kid: str, booking_kid: str, body: BookingCommand) -> BookingResponse:
         'Appends a cancellation or restoration, preserving history and requesting backend synchronization.'
         return self._request('ExecuteBankBookingCommand', {'bankKid': bank_kid, 'bookingKid': booking_kid}, body)
+
+    def get_camera_resource(self, *, resource_kid: str | None = None) -> CameraResourceResponse:
+        'Read the display identity of one authorized camera resource.'
+        return self._request('GetCameraResource', {'resourceKid': resource_kid}, None)
+
+    def get_camera_availability(self, *, resource_kid: str | None = None) -> CameraAvailabilityResponse:
+        'Check the lazy local camera tab and capture permission for one exact resource.'
+        return self._request('GetCameraAvailability', {'resourceKid': resource_kid}, None)
+
+    def prepare_camera_capture(self, body: CameraPrepareRequest) -> CameraPrepareResponse:
+        'Prepare a bounded, immutable capture plan including optional weather.'
+        return self._request('PrepareCameraCapture', {}, body)
+
+    def save_camera_capture(self, body: dict[str, str | PortalUploadFile]) -> CameraSaveResponse:
+        'Save new camera media immediately and replicate after the first complete regional copy.'
+        return self._request('SaveCameraCapture', {}, body)
+
+    def get_camera_captures(self, *, resource_kid: str | None = None, cursor: str | None = None) -> CameraCapturePage:
+        'List own tenant captures, or all authorized captures on one exact bank, location or unit.'
+        return self._request('GetCameraCaptures', {'resourceKid': resource_kid, 'cursor': cursor}, None)
+
+    def get_camera_capture_content(self, id: str, *, part: str | None = None, range: str | None = None) -> PortalDownload:
+        'Stream one capture component through the API, with current resource authorization.'
+        return self._request('GetCameraCaptureContent', {'id': id, 'part': part, 'Range': range}, None)
 
     def export_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None, format: str | None = None) -> PortalDownload:
         'Downloads the complete filtered selection as CSV or a genuine Excel workbook.'

@@ -6,6 +6,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/account/icon",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -19,6 +22,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/AccountIconResponse"
     },
@@ -32,6 +36,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/account",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -167,6 +174,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/AccountResponse"
     },
@@ -180,6 +188,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/account/revision",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -315,6 +326,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/AccountRevisionResponse"
     },
@@ -330,6 +342,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/account/{transactionKid}/reversal",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -352,6 +367,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/AccountEntryResponse"
     },
@@ -365,6 +381,9 @@
     "method": "GET",
     "path": "api/v1/addresses/{kid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -378,6 +397,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -391,6 +411,9 @@
     "method": "PUT",
     "path": "api/v1/addresses/{kid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -406,6 +429,7 @@
     "body": {
       "$ref": "#/components/schemas/UpdateObjectAddressRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -419,6 +443,9 @@
     "method": "POST",
     "path": "api/v1/addresses/{kid}/lookup",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -434,6 +461,7 @@
     "body": {
       "$ref": "#/components/schemas/ObjectAddressRevisionRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -447,6 +475,9 @@
     "method": "PUT",
     "path": "api/v1/addresses/{kid}/coordinates",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -462,6 +493,7 @@
     "body": {
       "$ref": "#/components/schemas/SetObjectCoordinatesRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -475,6 +507,9 @@
     "method": "PUT",
     "path": "api/v1/addresses/{kid}/provenance",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -490,6 +525,7 @@
     "body": {
       "$ref": "#/components/schemas/SetObjectCoordinateProvenanceRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -503,11 +539,15 @@
     "method": "POST",
     "path": "api/v1/assistant/query",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/AssistantRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/AssistantResponse"
     },
@@ -521,6 +561,9 @@
     "method": "GET",
     "path": "api/v1/banks",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -598,6 +641,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BankDirectoryResponse"
     },
@@ -611,9 +655,13 @@
     "method": "GET",
     "path": "api/v1/banks/active-count",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ActiveBankCountResponse"
     },
@@ -627,6 +675,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/documents",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -696,6 +747,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BankDocumentPage"
     },
@@ -709,6 +761,9 @@
     "method": "GET",
     "path": "api/v1/banks/icons",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -725,6 +780,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BankIconsResponse"
     },
@@ -738,6 +794,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/locations",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -751,6 +810,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "array",
       "items": {
@@ -767,6 +827,9 @@
     "method": "GET",
     "path": "api/v1/search/banks",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -780,6 +843,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -793,6 +857,9 @@
     "method": "GET",
     "path": "api/v1/search/bank-activation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -806,6 +873,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -819,6 +887,9 @@
     "method": "GET",
     "path": "api/v1/search/banks/{bankKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -832,6 +903,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -845,6 +917,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -931,6 +1006,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BankUsersResponse"
     },
@@ -961,6 +1037,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/users",
     "status": 201,
+    "statuses": [
+      201
+    ],
     "auth": true,
     "parameters": [
       {
@@ -976,6 +1055,7 @@
     "body": {
       "$ref": "#/components/schemas/UserCommandRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserWorkspaceResponse"
     },
@@ -989,6 +1069,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/bookings",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1087,6 +1170,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BookingsResponse"
     },
@@ -1100,6 +1184,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/bookings/{bookingKid}/commands",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1124,10 +1211,224 @@
     "body": {
       "$ref": "#/components/schemas/BookingCommand"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BookingResponse"
     },
     "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetCameraResource",
+    "python": "get_camera_resource",
+    "javascript": "getCameraResource",
+    "method": "GET",
+    "path": "api/v1/camera/resource",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "resourceKid",
+        "where": "query",
+        "py": "resource_kid",
+        "js": "resourceKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraResourceResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetCameraAvailability",
+    "python": "get_camera_availability",
+    "javascript": "getCameraAvailability",
+    "method": "GET",
+    "path": "api/v1/camera/availability",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "resourceKid",
+        "where": "query",
+        "py": "resource_kid",
+        "js": "resourceKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraAvailabilityResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "PrepareCameraCapture",
+    "python": "prepare_camera_capture",
+    "javascript": "prepareCameraCapture",
+    "method": "POST",
+    "path": "api/v1/camera/prepare",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/CameraPrepareRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraPrepareResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "SaveCameraCapture",
+    "python": "save_camera_capture",
+    "javascript": "saveCameraCapture",
+    "method": "POST",
+    "path": "api/v1/camera",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": {
+      "required": [
+        "uploadToken",
+        "original"
+      ],
+      "type": "object",
+      "properties": {
+        "uploadToken": {
+          "type": "string",
+          "description": "Unchanged token from PrepareCameraCapture."
+        },
+        "original": {
+          "type": "string",
+          "description": "Original captured bytes matching the prepared length and SHA-256.",
+          "format": "binary"
+        },
+        "motion": {
+          "type": "string",
+          "description": "Required only for live-photo: the original QuickTime MOV companion matching its prepared length and hash. Omit for other capture kinds.",
+          "format": "binary"
+        }
+      }
+    },
+    "response": {
+      "$ref": "#/components/schemas/CameraSaveResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetCameraCaptures",
+    "python": "get_camera_captures",
+    "javascript": "getCameraCaptures",
+    "method": "GET",
+    "path": "api/v1/camera",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "resourceKid",
+        "where": "query",
+        "py": "resource_kid",
+        "js": "resourceKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraCapturePage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetCameraCaptureContent",
+    "python": "get_camera_capture_content",
+    "javascript": "getCameraCaptureContent",
+    "method": "GET",
+    "path": "api/v1/camera/{id}/content",
+    "status": 200,
+    "statuses": [
+      200,
+      206
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "id",
+        "where": "path",
+        "py": "id",
+        "js": "id",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "part",
+        "where": "query",
+        "py": "part",
+        "js": "part",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Range",
+        "where": "header",
+        "py": "range",
+        "js": "range",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
     "example": {}
   },
   {
@@ -1137,6 +1438,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/account/export",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1281,6 +1585,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -1295,6 +1600,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/export",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1353,6 +1661,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -1367,6 +1676,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/settlements/{period}/download",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1399,6 +1711,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -1413,6 +1726,9 @@
     "method": "GET",
     "path": "api/v1/documents/{documentKid}/table.csv",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1444,6 +1760,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -1458,6 +1775,9 @@
     "method": "GET",
     "path": "api/v1/documents/{documentKid}/table.xls",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1489,6 +1809,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -1503,6 +1824,9 @@
     "method": "GET",
     "path": "api/v1/hosting/logs",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1525,6 +1849,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/HostingLogsResponse"
     },
@@ -1538,6 +1863,9 @@
     "method": "GET",
     "path": "api/v1/hosting/metrics",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1570,6 +1898,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/HostingMetricsResponse"
     },
@@ -1583,6 +1912,9 @@
     "method": "POST",
     "path": "api/v1/installers/{installerKid}/icon",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1598,6 +1930,7 @@
     "body": {
       "$ref": "#/components/schemas/InstallerIconRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/InstallerIconResponse"
     },
@@ -1827,6 +2160,9 @@
     "method": "GET",
     "path": "api/v1/installers",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1886,6 +2222,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/InstallerDirectoryResponse"
     },
@@ -1925,6 +2262,9 @@
     "method": "GET",
     "path": "api/v1/installers/{installerKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1938,6 +2278,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/InstallerDetailsResponse"
     },
@@ -2188,9 +2529,13 @@
     "method": "GET",
     "path": "api/v1/diagnostics/live-logs",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LiveLogsResponse"
     },
@@ -2204,6 +2549,9 @@
     "method": "GET",
     "path": "api/v1/locations/active-count",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2217,6 +2565,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ActiveLocationCountResponse"
     },
@@ -2230,6 +2579,9 @@
     "method": "GET",
     "path": "api/v1/locations",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2316,6 +2668,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationDirectoryResponse"
     },
@@ -2329,6 +2682,9 @@
     "method": "GET",
     "path": "api/v1/search/locations",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2342,6 +2698,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -2355,6 +2712,9 @@
     "method": "GET",
     "path": "api/v1/search/location-activation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2368,6 +2728,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -2381,6 +2742,9 @@
     "method": "GET",
     "path": "api/v1/locations/{locationKid}/booking-rules",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2403,6 +2767,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationBookingRulesResponse"
     },
@@ -2416,6 +2781,9 @@
     "method": "GET",
     "path": "api/v1/controllers/{controllerKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2438,6 +2806,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitDetailsResponse"
     },
@@ -2451,6 +2820,9 @@
     "method": "GET",
     "path": "api/v1/controllers/{controllerKid}/groups/{kind}/{group}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2491,6 +2863,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitGroupResponse"
     },
@@ -2504,6 +2877,9 @@
     "method": "GET",
     "path": "api/v1/locations/{locationKid}/units",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2526,6 +2902,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationUnitsResponse"
     },
@@ -2539,6 +2916,9 @@
     "method": "GET",
     "path": "api/v1/units/{unitKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2561,6 +2941,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitDetailsResponse"
     },
@@ -2574,6 +2955,9 @@
     "method": "GET",
     "path": "api/v1/units/{unitKid}/groups/{kind}/{group}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2614,6 +2998,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitGroupResponse"
     },
@@ -2627,6 +3012,9 @@
     "method": "GET",
     "path": "api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2678,6 +3066,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitSettingHistoryResponse"
     },
@@ -2691,6 +3080,9 @@
     "method": "GET",
     "path": "api/v1/units/icons",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2707,6 +3099,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitIconsResponse"
     },
@@ -2720,6 +3113,9 @@
     "method": "GET",
     "path": "api/v1/locations/icons",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2736,6 +3132,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationIconsResponse"
     },
@@ -2749,6 +3146,9 @@
     "method": "GET",
     "path": "api/v1/locations/{locationKid}/opening-hours",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2771,6 +3171,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationOpeningHoursResponse"
     },
@@ -2784,9 +3185,13 @@
     "method": "POST",
     "path": "api/v1/managers",
     "status": 201,
+    "statuses": [
+      201
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerCreationResponse"
     },
@@ -2800,6 +3205,9 @@
     "method": "GET",
     "path": "api/v1/managers",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2850,6 +3258,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerDirectoryResponse"
     },
@@ -2999,6 +3408,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/invitation",
     "status": 202,
+    "statuses": [
+      202
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3014,6 +3426,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerInvitationRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerInvitationResponse"
     },
@@ -3027,6 +3440,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/kids",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3042,6 +3458,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerKidChangeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerKidChangeResponse"
     },
@@ -3064,11 +3481,15 @@
     "method": "POST",
     "path": "api/v1/session/forgot-password",
     "status": 202,
+    "statuses": [
+      202
+    ],
     "auth": false,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ManagerForgotPasswordRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerPasswordResetResponse"
     },
@@ -3082,11 +3503,15 @@
     "method": "POST",
     "path": "api/v1/session/reset-password",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ManagerResetPasswordRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerPasswordResetResponse"
     },
@@ -3100,6 +3525,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/permission-role",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3115,6 +3543,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerPermissionRoleRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerPermissionRoleResponse"
     },
@@ -3251,6 +3680,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/permissions/{resource}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3275,6 +3707,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerPermissionChangeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerOperationPermissionResponse"
     },
@@ -3298,6 +3731,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/profile/{field}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3322,6 +3758,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerProfileChangeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerProfileChangeResponse"
     },
@@ -3560,6 +3997,9 @@
     "method": "GET",
     "path": "api/v1/managers/{managerKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3573,6 +4013,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerDirectoryItem"
     },
@@ -4080,6 +4521,16 @@
           "iconKid": ""
         },
         {
+          "id": 83,
+          "name": "ForgotPassword1",
+          "iconKid": ""
+        },
+        {
+          "id": 84,
+          "name": "Camera1",
+          "iconKid": ""
+        },
+        {
           "id": 5,
           "name": "Banks2",
           "iconKid": ""
@@ -4129,6 +4580,9 @@
     "method": "GET",
     "path": "api/v1/managers/{managerKid}/same-email",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4142,6 +4596,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "array",
       "items": {
@@ -4158,6 +4613,9 @@
     "method": "POST",
     "path": "api/v1/session/login",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -4173,6 +4631,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerLoginRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerSessionResponse"
     },
@@ -4190,9 +4649,13 @@
     "method": "POST",
     "path": "api/v1/session/renew",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerSessionResponse"
     },
@@ -4210,9 +4673,13 @@
     "method": "GET",
     "path": "api/v1/session/me",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerProfileResponse"
     },
@@ -4334,11 +4801,15 @@
     "method": "POST",
     "path": "api/v1/session/signup",
     "status": 202,
+    "statuses": [
+      202
+    ],
     "auth": false,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ManagerSignUpRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
     },
@@ -4352,11 +4823,15 @@
     "method": "POST",
     "path": "api/v1/session/signup-confirmation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ManagerSignUpConfirmation"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
     },
@@ -4370,6 +4845,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/tabs/{tabId}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4395,6 +4873,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerTabChangeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerTabChangeResponse"
     },
@@ -4424,11 +4903,15 @@
     "method": "POST",
     "path": "api/v1/session/me/theme",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ManagerThemeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerThemeResponse"
     },
@@ -4444,9 +4927,13 @@
     "method": "GET",
     "path": "api/v1/managers/count",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PeopleDirectoryCount"
     },
@@ -4460,9 +4947,13 @@
     "method": "GET",
     "path": "api/v1/installers/count",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PeopleDirectoryCount"
     },
@@ -4476,9 +4967,13 @@
     "method": "GET",
     "path": "api/v1/session/me/profile",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerProfile"
     },
@@ -4492,9 +4987,13 @@
     "method": "GET",
     "path": "api/v1/session/me/tabs",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerTabs"
     },
@@ -4508,6 +5007,9 @@
     "method": "POST",
     "path": "api/v1/session/me/tabs/{tabId}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4524,6 +5026,7 @@
     "body": {
       "$ref": "#/components/schemas/PersonalTabRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerTabs"
     },
@@ -4537,6 +5040,9 @@
     "method": "POST",
     "path": "api/v1/session/me/profile/{field}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4552,6 +5058,7 @@
     "body": {
       "$ref": "#/components/schemas/PersonalProfileRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerProfile"
     },
@@ -4565,11 +5072,15 @@
     "method": "POST",
     "path": "api/v1/session/me/email-verification",
     "status": 202,
+    "statuses": [
+      202
+    ],
     "auth": true,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/PersonalEmailRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
     },
@@ -4583,11 +5094,15 @@
     "method": "POST",
     "path": "api/v1/session/me/email-confirmation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/PersonalEmailConfirmation"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
     },
@@ -4601,11 +5116,15 @@
     "method": "POST",
     "path": "api/v1/session/me/password",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/PersonalPasswordRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
     },
@@ -4619,6 +5138,9 @@
     "method": "GET",
     "path": "api/v1/services",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4650,6 +5172,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ServiceDirectoryResponse"
     },
@@ -4663,9 +5186,13 @@
     "method": "GET",
     "path": "api/v1/services/count",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PeopleDirectoryCount"
     },
@@ -4679,6 +5206,9 @@
     "method": "GET",
     "path": "api/v1/services/{serviceKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4692,6 +5222,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ServiceDetailsResponse"
     },
@@ -4705,6 +5236,9 @@
     "method": "POST",
     "path": "api/v1/services/{serviceKid}/profile/{field}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4729,6 +5263,7 @@
     "body": {
       "$ref": "#/components/schemas/ServiceProfileRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ServiceDetailsResponse"
     },
@@ -4742,6 +5277,9 @@
     "method": "POST",
     "path": "api/v1/services/{serviceKid}/api-key",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4757,6 +5295,7 @@
     "body": {
       "$ref": "#/components/schemas/ServiceApiKeyRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ServiceApiKeyResponse"
     },
@@ -4770,6 +5309,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/settlements",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4793,6 +5335,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SettlementHistoryResponse"
     },
@@ -4821,6 +5364,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/settlements/{period}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4844,6 +5390,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SettlementDetailResponse"
     },
@@ -4874,6 +5421,9 @@
     "method": "GET",
     "path": "api/v1/tenant/status",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4888,6 +5438,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/TenantStatusResponse"
     },
@@ -4901,6 +5452,9 @@
     "method": "GET",
     "path": "api/v1/tenant/status/page",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4943,6 +5497,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/TenantStatusPageResponse"
     },
@@ -4956,6 +5511,9 @@
     "method": "GET",
     "path": "api/v1/documents/{documentKid}/table",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4987,6 +5545,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/DocumentTable"
     },
@@ -5000,6 +5559,9 @@
     "method": "GET",
     "path": "api/v1/documents/{documentKid}/table.html",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5031,6 +5593,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5045,6 +5608,9 @@
     "method": "GET",
     "path": "api/v1/documents/{documentKid}/graph.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5086,6 +5652,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5100,9 +5667,13 @@
     "method": "GET",
     "path": "api/v1/units/active-count",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ActiveUnitCountResponse"
     },
@@ -5116,9 +5687,13 @@
     "method": "GET",
     "path": "api/v1/terminals/active-count",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ActiveUnitCountResponse"
     },
@@ -5132,6 +5707,9 @@
     "method": "GET",
     "path": "api/v1/units",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5245,6 +5823,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitDirectoryResponse"
     },
@@ -5258,6 +5837,9 @@
     "method": "GET",
     "path": "api/v1/terminals",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5362,6 +5944,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitDirectoryResponse"
     },
@@ -5375,6 +5958,9 @@
     "method": "POST",
     "path": "api/v1/units/{unitKid}/groups/settings/{group}/{setting}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5408,6 +5994,7 @@
     "body": {
       "$ref": "#/components/schemas/UnitSettingRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitSettingResponse"
     },
@@ -5421,6 +6008,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/users/balances",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5436,6 +6026,7 @@
     "body": {
       "$ref": "#/components/schemas/UserBalancesRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserBalancesResponse"
     },
@@ -5476,6 +6067,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/next-number",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5489,6 +6083,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserNumberSuggestionResponse"
     },
@@ -5502,6 +6097,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/next-number-after",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5524,6 +6122,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserNumberSuggestionResponse"
     },
@@ -5537,6 +6136,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/{userKid}/workspace",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5559,6 +6161,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserWorkspaceResponse"
     },
@@ -5572,6 +6175,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/{userKid}/activation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5594,6 +6200,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserActivationResponse"
     },
@@ -5607,6 +6214,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/users/{userKid}/commands",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5631,6 +6241,7 @@
     "body": {
       "$ref": "#/components/schemas/UserCommandRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserWorkspaceResponse"
     },
@@ -5644,6 +6255,9 @@
     "method": "GET",
     "path": "api/v1/users",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5703,6 +6317,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserDirectoryResponse"
     },
@@ -5716,9 +6331,13 @@
     "method": "GET",
     "path": "api/v1/users/count",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PeopleDirectoryCount"
     },
@@ -5732,6 +6351,9 @@
     "method": "GET",
     "path": "api/v1/users/{userKid}/receipts",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5764,6 +6386,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserReceiptsResponse"
     },
@@ -5777,6 +6400,9 @@
     "method": "GET",
     "path": "api/v1/search/users",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5799,6 +6425,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -5812,6 +6439,9 @@
     "method": "GET",
     "path": "api/v1/search/user-sms",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5825,6 +6455,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -5838,6 +6469,9 @@
     "method": "GET",
     "path": "api/v1/search/user-activation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5851,6 +6485,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -5864,9 +6499,13 @@
     "method": "GET",
     "path": "download",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5881,6 +6520,9 @@
     "method": "GET",
     "path": "download/windows/{architecture}/portal.appinstaller",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5894,6 +6536,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5908,6 +6551,10 @@
     "method": "GET",
     "path": "download/windows/{architecture}/{fileName}",
     "status": 200,
+    "statuses": [
+      200,
+      206
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5930,6 +6577,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5944,6 +6592,9 @@
     "method": "GET",
     "path": "api/v1/circles/gradient/{colors}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5957,6 +6608,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5971,6 +6623,9 @@
     "method": "GET",
     "path": "api/v1/circles/gradient/{colors}/{width}x{height}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6004,6 +6659,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6018,6 +6674,9 @@
     "method": "GET",
     "path": "api/v1/circles/progress/{background}/{colors}/{percent}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6050,6 +6709,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6064,6 +6724,9 @@
     "method": "GET",
     "path": "api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6116,6 +6779,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6130,6 +6794,9 @@
     "method": "GET",
     "path": "api/v1/circles/running/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6143,6 +6810,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6157,6 +6825,9 @@
     "method": "GET",
     "path": "api/v1/circles/running/{color}/{width}x{height}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6190,6 +6861,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6204,6 +6876,9 @@
     "method": "GET",
     "path": "api/v1/gradients/linear/{colors}/{angle}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6227,6 +6902,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6241,6 +6917,9 @@
     "method": "GET",
     "path": "api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6284,6 +6963,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6298,6 +6978,9 @@
     "method": "GET",
     "path": "api/v1/icon/presentation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6340,6 +7023,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/IconPresentationResponse"
     },
@@ -6353,6 +7037,9 @@
     "method": "GET",
     "path": "api/v1/icon/catalog/{iconSet}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6366,6 +7053,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "array",
       "items": {
@@ -6382,6 +7070,9 @@
     "method": "GET",
     "path": "api/v1/icon/{iconSet}/{kid}.{format}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6413,6 +7104,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6427,6 +7119,9 @@
     "method": "GET",
     "path": "api/v1/icon/{iconSet}/{kid}/{size}.{format}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6468,6 +7163,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6482,6 +7178,9 @@
     "method": "GET",
     "path": "api/v1/icon/{iconSet}/{kid}/{backColor}/{size}.{format}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6532,6 +7231,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6546,6 +7246,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6559,6 +7262,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6573,6 +7277,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{color}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6596,6 +7303,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6610,6 +7318,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{color}/{background}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6642,6 +7353,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6656,6 +7368,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{parts}/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6678,6 +7393,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6692,6 +7408,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{parts}/{color}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6724,6 +7443,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6738,6 +7458,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6779,6 +7502,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6793,6 +7517,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-text/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6806,6 +7533,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6820,6 +7548,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-text/{color}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6843,6 +7574,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6857,6 +7589,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-text/{color}/{background}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6889,6 +7624,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6903,6 +7639,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-logo-text/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6916,6 +7655,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6930,6 +7670,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-logo-text/{color}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6953,6 +7696,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6967,6 +7711,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-logo-text/{color}/{background}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6999,6 +7746,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -7013,9 +7761,13 @@
     "method": "GET",
     "path": "api/v1/public/statistics/live-machines",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "array",
       "items": {
@@ -7032,6 +7784,9 @@
     "method": "GET",
     "path": "api/v1/public/widgets/machine-errors",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -7055,6 +7810,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PublicMachineErrorsPage"
     },
@@ -7068,6 +7824,9 @@
     "method": "GET",
     "path": "api/v1/public/statistics/purchases/chart/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -7081,6 +7840,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -7095,6 +7855,9 @@
     "method": "GET",
     "path": "api/v1/public/displays/Map1",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -7109,6 +7872,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PurchaseMapSnapshot"
     },
@@ -7122,6 +7886,9 @@
     "method": "GET",
     "path": "api/v1/public/widgets/progress/{kid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -7154,6 +7921,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PublicScopedProgressResponse"
     },
@@ -7167,9 +7935,13 @@
     "method": "GET",
     "path": "api/v1/public/statistics/purchases",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PurchasesResponse"
     },
@@ -7201,9 +7973,13 @@
     "method": "GET",
     "path": "api/v1/public/statistics/active-users",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ActiveUsersResponse"
     },
@@ -7223,9 +7999,13 @@
     "method": "GET",
     "path": "api/v1/public/widgets",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PublicWidgetPresentationResponse"
     },
@@ -7239,9 +8019,13 @@
     "method": "GET",
     "path": "api/v1/public/statistics/reservations",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ReservationsStatisticsResponse"
     },
@@ -7255,9 +8039,13 @@
     "method": "GET",
     "path": "api/v1/public/statistics/running-machines",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/RunningMachinesResponse"
     },
@@ -7271,9 +8059,13 @@
     "method": "GET",
     "path": "api/v1/status",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ApiStatusResponse"
     },

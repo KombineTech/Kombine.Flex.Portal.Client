@@ -182,6 +182,48 @@ array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: str
 array{'items'?: list<BookingResponse>|null, 'units'?: list<BookingUnitResponse>|null, 'from'?: string, 'through'?: string, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool}
 ```
 
+### CameraAvailabilityResponse
+
+```php
+array{'hasCaptures'?: bool, 'isDegraded'?: bool, 'canCapture'?: bool}
+```
+
+### CameraCaptureItem
+
+```php
+array{'id'?: string|null, 'captureId'?: string|null, 'resourceKid'?: string|null, 'ownerKid'?: string|null, 'fileName'?: string|null, 'kind'?: string|null, 'capturedAtUtc'?: string, 'hasPreview'?: bool, 'hasMotion'?: bool, 'hasPlayback'?: bool}
+```
+
+### CameraCapturePage
+
+```php
+array{'items'?: list<CameraCaptureItem>|null, 'nextCursor'?: string|null, 'isDegraded'?: bool}
+```
+
+### CameraPrepareRequest
+
+```php
+array{'resourceKid'?: string|null, 'kind'?: string|null, 'originalFileName'?: string|null, 'originalNameAvailable'?: bool, 'capturedAtUtc'?: string, 'mediaLength'?: int, 'mediaSha256'?: string|null, 'sensorData'?: array<string,mixed>, 'motionLength'?: int|null, 'motionSha256'?: string|null}
+```
+
+### CameraPrepareResponse
+
+```php
+array{'uploadToken'?: string|null}
+```
+
+### CameraResourceResponse
+
+```php
+array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
+```
+
+### CameraSaveResponse
+
+```php
+array{'captureId'?: string|null, 'resourceKid'?: string|null}
+```
+
 ### DatabaseAccessResponse
 
 ```php

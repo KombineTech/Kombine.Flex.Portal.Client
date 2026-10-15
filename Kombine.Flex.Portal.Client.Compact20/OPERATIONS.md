@@ -38,6 +38,10 @@
 | `GetBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
 | `GetBankUsers` | GET | `/api/v1/banks/{bankKid}/users` |
 | `GetBanks` | GET | `/api/v1/banks` |
+| `GetCameraAvailability` | GET | `/api/v1/camera/availability` |
+| `GetCameraCaptureContent` | GET | `/api/v1/camera/{id}/content` |
+| `GetCameraCaptures` | GET | `/api/v1/camera` |
+| `GetCameraResource` | GET | `/api/v1/camera/resource` |
 | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` |
 | `GetCircleGradient` | GET | `/api/v1/circles/gradient/{colors}.svg` |
 | `GetCircleProgressSized` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg` |
@@ -117,12 +121,14 @@
 | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `LoginManager` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` |
+| `PrepareCameraCapture` | POST | `/api/v1/camera/prepare` |
 | `RenewManagerSession` | POST | `/api/v1/session/renew` |
 | `RequestManagerPasswordReset` | POST | `/api/v1/session/forgot-password` |
 | `RequestManagerSignUp` | POST | `/api/v1/session/signup` |
 | `RequestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` |
 | `ResetManagerPassword` | POST | `/api/v1/session/reset-password` |
 | `ReverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` |
+| `SaveCameraCapture` | POST | `/api/v1/camera` |
 | `SearchBankActivation` | GET | `/api/v1/search/bank-activation` |
 | `SearchBanks` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` |

@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit, quote
 from urllib.error import HTTPError
 
-from kombine_flex_portal import PortalClient, PortalApiError, PortalProtocolError, PortalSessionError, PortalDownload
+from kombine_flex_portal import PortalClient, PortalApiError, PortalProtocolError, PortalSessionError, PortalDownload, PortalUploadFile
 from kombine_flex_portal import models
 from kombine_flex_portal._runtime import _CONTRACT
 
@@ -57,7 +57,7 @@ def sample(spec):
 
 class ContractTests(unittest.TestCase):
     def test_every_public_operation(self):
-        self.assertEqual(len(CASES), 142)
+        self.assertEqual(len(CASES), 148)
         for case in CASES:
             with self.subTest(operation=case['operation']):
                 response_data = b'PK\x00\xff' if case['binary'] else json.dumps(sample(case['response']), ensure_ascii=False).encode()
@@ -83,6 +83,8 @@ class ContractTests(unittest.TestCase):
                             expected_query[param['name']] = [text]
                         else:
                             expected_headers[param['name'].lower()] = text
+                if case.get('multipart'):
+                    args.append({'uploadToken': 'fixture-token', 'original': PortalUploadFile(io.BytesIO(b'original\x00bytes'), 'photo.jpg'), 'motion': PortalUploadFile(io.BytesIO(b'motion\xffbytes'), 'motion.mov')})
                 body = sample(case['body']) if case['body'] else None
                 if case['body']:
                     args.append(body)
@@ -97,6 +99,14 @@ class ContractTests(unittest.TestCase):
                 self.assertEqual(headers.get('authorization'), 'Bearer test-token' if case['auth'] else None)
                 for name, value in expected_headers.items():
                     self.assertEqual(headers[name], value)
+                if case.get('multipart'):
+                    payload = b''.join(request.data)
+                    self.assertEqual(len(payload), int(headers['content-length']))
+                    self.assertTrue(headers['content-type'].startswith('multipart/form-data; boundary='))
+                    self.assertIn(b'original\x00bytes', payload)
+                    self.assertIn(b'motion\xffbytes', payload)
+                    self.assertIn(b'name="uploadToken"', payload)
+                    self.assertFalse(args[-1]['original'].stream.closed)
                 if body is not None:
                     self.assertEqual(json.loads(request.data), body)
                 if case['binary']:
@@ -283,3 +293,53 @@ class HttpTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class MultipartTests(unittest.TestCase):
+    def test_rejects_invalid_filename_and_unseekable_stream(self):
+        for name in ('', 'x\r\nheader', 'x".jpg', 'x\\y.jpg'):
+            with self.assertRaises(ValueError): PortalUploadFile(io.BytesIO(b'x'), name)
+        class Unseekable(io.BytesIO):
+            def seekable(self): return False
+        with self.assertRaises(ValueError): PortalUploadFile(Unseekable(b'x'), 'x.jpg')
+
+    def test_rejects_missing_or_unknown_fields_before_network(self):
+        api = client(lambda _: self.fail('No network expected'))
+        for body in ({}, {'uploadToken': 'x'}, {'uploadToken': 'x', 'original': 'bytes'}, {'uploadToken': 'x', 'original': PortalUploadFile(io.BytesIO(b'x'), 'x.jpg'), 'extra': 'x'}):
+            with self.assertRaises(ValueError): api.save_camera_capture(body)
+
+
+    def test_partial_camera_response(self):
+        api = client(lambda req: Response(b'\x00\xff', 206, {'Content-Range': 'bytes 1-2/5'}))
+        with api.get_camera_capture_content('opaque', range='bytes=1-2') as result:
+            self.assertEqual(result.status, 206)
+            self.assertEqual(b''.join(result.iter_bytes()), b'\x00\xff')
+
+    def test_real_http_streams_multipart_with_explicit_length(self):
+        observed = []
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *args): pass
+            def do_POST(self):
+                data = self.rfile.read(int(self.headers['Content-Length']))
+                observed.append((self.path, dict(self.headers), data))
+                payload = b'{"captureId":"capture","resourceKid":"kid"}'
+                self.send_response(200)
+                self.send_header('Content-Length', str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        worker = threading.Thread(target=server.serve_forever, daemon=True); worker.start()
+        try:
+            api = PortalClient(f'http://127.0.0.1:{server.server_port}/')
+            api.access_token = 'fixture-token'
+            original = io.BytesIO(b'original\x00\xffbytes')
+            result = api.save_camera_capture({'uploadToken': 'fixture-upload', 'original': PortalUploadFile(original, 'photo.jpg')})
+            self.assertEqual(result['captureId'], 'capture')
+            path, headers, body = observed[0]
+            self.assertEqual(path, '/api/v1/camera')
+            self.assertEqual(headers['Authorization'], 'Bearer fixture-token')
+            self.assertNotIn('Transfer-Encoding', headers)
+            self.assertIn(b'original\x00\xffbytes', body)
+            self.assertFalse(original.closed)
+        finally:
+            server.shutdown(); server.server_close(); worker.join()

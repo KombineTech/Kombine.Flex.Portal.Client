@@ -5,6 +5,7 @@ import json
 import math
 import ssl
 import threading
+import uuid
 from importlib.resources import files
 from types import MappingProxyType
 from typing import Any, Iterator, TYPE_CHECKING
@@ -153,6 +154,75 @@ class PortalDownload:
         self.close()
 
 
+class PortalUploadFile:
+    """Caller-owned seekable binary stream. Rewind explicitly before a deliberate retry."""
+    def __init__(self, stream, filename: str):
+        if not isinstance(filename, str) or not filename or len(filename) > 1024 or any(ord(c) < 32 or ord(c) == 127 or c in '"\\' for c in filename):
+            raise ValueError('Invalid upload filename.')
+        if not stream.readable() or not stream.seekable():
+            raise ValueError('A readable seekable binary stream is required.')
+        self.stream, self.filename = stream, filename
+
+
+class _MultipartBody:
+    def __init__(self, body, schema):
+        if '$ref' in schema:
+            schema = _CONTRACT['schemas'][schema['$ref'].split('/')[-1]]
+        if not isinstance(body, dict) or any(name not in body for name in schema.get('required', [])):
+            raise ValueError('Required multipart fields are missing.')
+        self.boundary = 'kombine-' + uuid.uuid4().hex
+        self.parts = []
+        self.length = 0
+        for name, value in body.items():
+            field = schema.get('properties', {}).get(name)
+            if not field or any(c in name for c in '\r\n"'):
+                raise ValueError('Invalid multipart field.')
+            header = '--' + self.boundary + '\r\nContent-Disposition: form-data; name="' + name + '"'
+            if field.get('format') == 'binary':
+                if not isinstance(value, PortalUploadFile):
+                    raise ValueError('A PortalUploadFile is required.')
+                start = value.stream.tell()
+                value.stream.seek(0, 2)
+                length = value.stream.tell() - start
+                value.stream.seek(start)
+                if length < 0:
+                    raise ValueError('Invalid upload stream position.')
+                header += '; filename="' + value.filename + '"\r\nContent-Type: application/octet-stream'
+                payload = (value.stream, start, length)
+            else:
+                if not isinstance(value, str):
+                    raise ValueError('A multipart text field is required.')
+                payload = value.encode('utf-8')
+                length = len(payload)
+                if length > 512 * 1024:
+                    raise ValueError('Multipart text field is too large.')
+            header = (header + '\r\n\r\n').encode('utf-8')
+            self.parts.append((header, payload))
+            self.length += len(header) + length + 2
+        self.end = ('--' + self.boundary + '--\r\n').encode('ascii')
+        self.length += len(self.end)
+        if self.length > 140 * 1024 * 1024:
+            raise ValueError('Multipart upload is too large.')
+
+    def __iter__(self):
+        for header, payload in self.parts:
+            yield header
+            if isinstance(payload, bytes):
+                yield payload
+            else:
+                stream, start, remaining = payload
+                if stream.tell() != start:
+                    raise ValueError('Upload stream position changed.')
+                while remaining:
+                    chunk = stream.read(min(65536, remaining))
+                    if not isinstance(chunk, bytes) or not chunk:
+                        raise ValueError('Upload stream ended before its declared length.')
+                    remaining -= len(chunk)
+                    yield chunk
+            yield b'\r\n'
+        yield self.end
+
+
 class BaseClient:
     def __init__(self, api_base_url: str, *, timeout: float = 30, max_json_bytes: int = 16 * 1024 * 1024):
         """One tenant and user per instance. timeout is socket I/O timeout in seconds."""
@@ -269,7 +339,11 @@ class BaseClient:
                     raise ValueError('Invalid header value.')
                 headers[param['name']] = text
         data = None
-        if spec['body'] is not None:
+        if spec.get('multipart'):
+            data = _MultipartBody(body, spec['multipart'])
+            headers['Content-Type'] = 'multipart/form-data; boundary=' + data.boundary
+            headers['Content-Length'] = str(data.length)
+        elif spec['body'] is not None:
             if body is None:
                 raise ValueError('A request body is required.')
             try:
@@ -295,7 +369,7 @@ class BaseClient:
             with self._lock:
                 if self._version == version and self._token == token:
                     self.clear_session()
-        if spec['binary'] and status == spec['status']:
+        if spec['binary'] and status in spec['statuses']:
             return PortalDownload(response, status, response_headers)
         try:
             chunks = []
