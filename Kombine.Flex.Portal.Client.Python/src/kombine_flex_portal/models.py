@@ -566,6 +566,27 @@ LocationUnitsResponse = TypedDict('LocationUnitsResponse', {
     'items': 'list[UnitOverviewResponse] | None',
 }, total=False)
 
+LocationWeatherCurrent = TypedDict('LocationWeatherCurrent', {
+    'observedAtUtc': 'str',
+    'retrievedAtUtc': 'str',
+    'temperatureCelsius': 'float',
+    'apparentTemperatureCelsius': 'float | None',
+    'windSpeedMetresPerSecond': 'float | None',
+    'precipitationMillimetres': 'float | None',
+    'relativeHumidityPercent': 'float | None',
+    'weatherCode': 'int | None',
+    'isDay': 'bool | None',
+}, total=False)
+
+LocationWeatherResponse = TypedDict('LocationWeatherResponse', {
+    'locationKid': 'str | None',
+    'status': 'str | None',
+    'address': 'str | None',
+    'zip': 'str | None',
+    'positionSource': 'str | None',
+    'current': 'LocationWeatherCurrent | None',
+}, total=False)
+
 ManagerCreationResponse = TypedDict('ManagerCreationResponse', {
     'kid': 'str | None',
 }, total=False)

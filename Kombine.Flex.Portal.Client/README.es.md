@@ -2,11 +2,11 @@ Todos los cambios de rol de administrador requieren Read y Write tanto de Tabs c
 
 GetTerminals usa el ComputerName comunicado para el nombre, el filtro y la ordenación; los nombres ausentes están vacíos. Solicite fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight para los datos del terminal. Son cadenas, null si no se seleccionan y vacías si faltan. Mantenga fields al paginar y reinicie los cursores anteriores. Cada fila incluye el nombre de la ubicación. Consulte /docs#changelog para todos los requisitos de migración.
 
-La versión 0.8.0 incluye 148 operaciones. GetUnits añade el directorio de unidades autorizado: mantenga filtros y fields al paginar y reinicie ante invalid-cursor. Los roles de administrador requieren las nueve categorías de expectedFlags, incluidas Tabs y Kids; gestione sus permisos independientes y las respuestas 403. Se eliminan las asignaciones de acceso de servicios: deje de enviar esas solicitudes y de leer el objeto access. Las partes del logotipo se indican en la ruta antes del color, no en parámetros de consulta. UserBalance sigue siendo compatible. Consulte /docs#changelog para la migración y /docs#unit-directory para paginación y ejemplos.
+La versión 0.8.1 incluye 149 operaciones. GetUnits añade el directorio de unidades autorizado: mantenga filtros y fields al paginar y reinicie ante invalid-cursor. Los roles de administrador requieren las nueve categorías de expectedFlags, incluidas Tabs y Kids; gestione sus permisos independientes y las respuestas 403. Se eliminan las asignaciones de acceso de servicios: deje de enviar esas solicitudes y de leer el objeto access. Las partes del logotipo se indican en la ruta antes del color, no en parámetros de consulta. UserBalance sigue siendo compatible. Consulte /docs#changelog para la migración y /docs#unit-directory para paginación y ejemplos.
 
 Versión 0.8.0: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.
 
-a versión 0.8.0 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales.
+La versión 0.8.0 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales.
 
 La versión 0.2.5 añade los campos opcionales latestPostingMs2000 y hasActiveSubscription a GetBankUserBalances. La fecha del asiento es un entero de 64 bits en milisegundos UTC desde 2000-01-01; cero indica que no hay asientos. Null o un campo ausente significa desconocido; los residentes inexistentes u ocultos devuelven null. El estado de suscripción no confirma un pago. Mantenga el tratamiento de saldos y los permisos existentes; consulte /docs#user-balances.
 
@@ -22,15 +22,36 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 
 # Kombine Flex Portal — cliente .NET
 
-Cliente HTTPS/JSON tipado para las 148 operaciones públicas. No depende de otros paquetes Kombine, no accede a bases de datos ni contiene reglas de negocio. La referencia principal detallada está en [inglés](README.md); [OPERATIONS.md](OPERATIONS.md) enumera todas las operaciones.
+Cliente HTTPS/JSON tipado para las 149 operaciones públicas. No depende de otros paquetes Kombine, no accede a bases de datos ni contiene reglas de negocio. La referencia principal detallada está en [inglés](README.md); [OPERATIONS.md](OPERATIONS.md) enumera todas las operaciones.
 
-La versión 0.8.0 corresponde al contrato API actual (148 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
+La versión 0.8.1 corresponde al contrato API actual (149 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
 
 La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites.
 
+## Tiempo actual de una ubicación
+
+La versión 0.8.1 añade `GetLocationWeatherAsync`; el SDK incluye 149 operaciones. La API usa las coordenadas guardadas de la ubicación autorizada o su dirección/código postal guardados. Solo se acepta `locationKid`; el cliente no puede enviar coordenadas ni seleccionar otro tenant. Se requieren administrador activo, Tab asignada, Bank Read, Location Read, ámbito correcto y visibilidad según retención. No se requieren Unit Read ni Write.
+
+```csharp
+var weather = await api.GetLocationWeatherAsync(locationKid, cancellationToken);
+if (weather.Status == "Available" && weather.Current != null)
+    Console.WriteLine($"{weather.Current.TemperatureCelsius} °C");
+```
+
+```vbnet
+Dim weather = Await api.GetLocationWeatherAsync(locationKid, cancellationToken)
+If weather.Status = "Available" AndAlso weather.Current IsNot Nothing Then
+    Console.WriteLine("{0} °C", weather.Current.TemperatureCelsius)
+End If
+```
+
+Compruebe `status` antes de usar `current`: `Available` contiene mediciones actuales; `LocationUnknown` y `Unavailable` tienen `current = null`. Las mediciones opcionales desconocidas son null; conserve los ceros reales. Las fechas son UTC, las temperaturas Celsius, el viento metros/segundo, la precipitación milímetros y la humedad porcentaje. `positionSource = "Address"` indica una posición aproximada por dirección/código postal. Muestre **Weather data by Open-Meteo, CC BY 4.0**; son datos de modelo, no de un sensor local.
+
+Actualice al navegar. La API conserva resultados correctos diez minutos y fallos un minuto; las respuestas HTTP son no-store. Un fallo del proveedor puede devolver HTTP 200 con `Unavailable`; un fallo de almacenamiento o el plazo de doce segundos devuelve HTTP 503, código `location-weather-unavailable`. No sustituya datos ausentes por cero ni reintente automáticamente. Mantenga utilizable el resto de la aplicación. Consulte [tiempo de ubicación](/docs#location-weather) para permisos y errores.
+
 ## Capturas de cámara y medios privados
 
-La versión 0.8.0 incluye seis operaciones de cámara tipadas. Se requieren Camera1 y Read sobre el recurso; preparar y guardar también requieren Write. Obtenga `resourceKid` de la API. El servidor selecciona el tenant y el propietario.
+La versión 0.8.0 añadió seis operaciones de cámara tipadas. Se requieren Camera1 y Read sobre el recurso; preparar y guardar también requieren Write. Obtenga `resourceKid` de la API. El servidor selecciona el tenant y el propietario.
 
 El ejemplo envía un JPEG recién capturado con su fecha real de captura. Calcule el hash de los bytes originales exactos y no recodifique el archivo después de prepararlo. La API valida el archivo y los metadatos. La aplicación sigue siendo responsable de la captura.
 
@@ -72,11 +93,11 @@ Guardar correctamente significa que el conjunto completo de medios/JSON existe e
 
 ## Instalación y plataformas
 
-Las versiones de producción se publican en [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Instale una versión publicada con el comando siguiente y nuget.org como fuente. Si una versión beta aún no está disponible allí, añada el archivo revisado Kombine.Flex.Portal.Client.0.8.0.nupkg de la documentación API a una fuente NuGet local.
+Las versiones de producción se publican en [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Instale una versión publicada con el comando siguiente y nuget.org como fuente. Si una versión beta aún no está disponible allí, añada el archivo revisado Kombine.Flex.Portal.Client.0.8.1.nupkg de la documentación API a una fuente NuGet local.
 
 ```powershell
 dotnet nuget add source ./packages --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.8.0
+dotnet add package Kombine.Flex.Portal.Client --version 0.8.1
 ```
 
 .NET Framework 4.7.2/4.8/4.8.1 usa netstandard2.0 con Microsoft System.Text.Json 10.0.12 y sus dependencias. .NET 8/9 usa net8.0; .NET 10 usa net10.0 sin paquetes adicionales. Mantenga nuget.org o un mirror aprobado para dependencias Microsoft. Framework puede necesitar binding redirects automáticos y System.Net.Http al inyectar HttpClient. Las pruebas Framework compilan contra 4.7.2/4.8 y se ejecutan en 4.8.1 instalado; no se ha probado una instalación original de 4.7.2.
@@ -124,7 +145,7 @@ CVR: 44637928
 [support@kombinetech.com](mailto:support@kombinetech.com)  
 [kombinetech.com](https://kombinetech.com/)
 
-## Gestión automática de sesiones — 0.8.0 (sin publicar)
+## Gestión automática de sesiones — 0.8.1 (sin publicar)
 
 `SendRequestAsync` también admite descargas, respuestas en streaming y operaciones añadidas después del contrato generado incluido. Comprueba que la solicitud permanezca dentro de la dirección fija de la API, conserva las cabeceras de la aplicación y nunca reintenta. El código que llama es responsable de la solicitud y la respuesta. Use `HttpCompletionOption.ResponseHeadersRead` para streaming. La aplicación puede utilizar sus propios modelos de respuesta; la API sigue aplicando los permisos.
 

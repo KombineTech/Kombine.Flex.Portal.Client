@@ -1,3 +1,14 @@
+## Location weather · 0.8.1
+
+Version 0.8.1 exposes all 149 operations, adding `GetLocationWeather` for a canonical location KID. Reuse the manager session. The API requires the assigned Tab, Bank Read, Location Read, matching scope and visible location/parent bank. It resolves stored coordinates or the location address; clients never supply provider keys or coordinates. Check `status`: `Available` has `current`; `LocationUnknown` or `Unavailable` has no measurements. Unknown values are null, never zero. Temperature is Celsius, wind m/s, precipitation mm and humidity percent; times are UTC. Address-based positions may be approximate. Display attribution: Weather data by Open-Meteo, CC BY 4.0. Handle HTTP 400/401/403/404/503 normally and retry only deliberately; provider failure may also return HTTP 200 with `Unavailable`. See [location weather](/docs#location-weather).
+
+```php
+$weather = $api->getLocationWeather($locationKid);
+if (($weather["status"] ?? null) === "Available" && ($weather["current"] ?? null) !== null) {
+    echo $weather["current"]["temperatureCelsius"];
+}
+```
+
 Version 0.4.3: GetLocations now requires fields=vismaCustNo,bankActivationCode,locationActivationCode to retain the previous optional values; accept null for unselected fields. Keep fields unchanged while paging and restart old cursors. New resident-number suggestions are read-only and do not reserve a number. Activation responses include qrCodeDataV1 and qrCodeDataV2 (five values with 30-bit noise/checksum); treat both as credentials. See /docs#changelog for migration and /docs for permissions and error handling.
 
 Version 0.8.0 includes all 148 public operations, including Camera1. Call PrepareCameraCapture with the exact original SHA-256, length, UTC capture time, resource KID and sensor object, then upload the same bytes with its uploadToken. Live Photos also need the matching motion length/hash and original MOV companion. Keep the same token and bytes for a deliberate retry; no client retries automatically. Increase the request timeout for video processing. Camera1 and exact resource Read/Write permissions are enforced by the API. Listings can be degraded or contain empty pages with nextCursor; continue until the cursor is absent. Download content through the API; Range requests may return HTTP 206. See /docs#camera-captures for limits and errors.
@@ -19,7 +30,7 @@ Add a `motion` CURLFile for Live Photos. Only readable local files are accepted;
 
 [API contract changelog](https://api.team.kombine.technology/docs#changelog) — use `/docs#changelog` on the same tenant API and environment as your client. The changelog is English-only.
 
-Version **0.8.0**, prepared locally; not deployed or published to Packagist. Covers 148 public operations from the included OpenAPI snapshot. Requires **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS support and trusted CA certificates. No external PHP library or internal Kombine assembly is required. Windows, Linux and macOS are supported by the transport; this version was tested on Windows CLI. Use a currently supported PHP release.
+Version **0.8.1**, prepared locally; not deployed or published to Packagist. Covers 149 public operations from the included OpenAPI snapshot. Requires **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS support and trusted CA certificates. No external PHP library or internal Kombine assembly is required. Windows, Linux and macOS are supported by the transport; this version was tested on Windows CLI. Use a currently supported PHP release.
 
 Version 0.3.1 synchronizes GetBankUserBalances documentation with its 20-second database deadline. Request and response fields are unchanged. Allow extra time for transport and authorization; HTTP 503 still returns no partial balances. Version 0.2.5 adds optional latestPostingMs2000 and hasActiveSubscription fields to GetBankUserBalances. The posting time is a 64-bit UTC millisecond count since 2000-01-01; zero means no postings. Null or an absent field means unknown, and missing or hidden residents return null. Subscription status is not payment confirmation. Keep existing balance handling and permissions; see /docs#user-balances. Version 0.2.5 adds GetLocationOpeningHours and GetLocationBookingRules. Both require Location Read, Unit Read and the authorized location scope. Reservation rules contain plain text plus ordered parts with text/isValue for optional value emphasis; never render these strings as HTML. Keep text as the fallback for older responses. See /docs#location-opening-hours and /docs#location-booking-rules for permissions, examples and limits. Version 0.2.5 adds GetUserReceipts and GetHostingMetrics for API releases that expose these operations. Load receipts on demand, starting at offset 0. Continue with nextOffset and the same revision; on HTTP 409 (receipts-changed), discard earlier pages and restart at offset 0. Keep currencies separate and minor-unit amounts as 64-bit integers. See /docs#user-receipts and /docs#hosting for permissions and limits.
 
@@ -27,11 +38,11 @@ For this beta candidate, migrate response fields icon/bankIcon/unitIcon to iconK
 
 ## Install
 
-Download `kombine-flex-portal-client-php-0.8.0.zip` from the API guide's PHP section. For Composer, save the ZIP under your application's `packages/` directory, then run:
+Download `kombine-flex-portal-client-php-0.8.1.zip` from the API guide's PHP section. For Composer, save the ZIP under your application's `packages/` directory, then run:
 
 ```sh
 composer config repositories.kombine artifact ./packages
-composer require kombine/flex-portal-client:0.8.0
+composer require kombine/flex-portal-client:0.8.1
 ```
 
 Composer's artifact repository requires `ext-zip` during installation. For installation without Composer, extract the ZIP into `flex-portal-client/` and replace the autoload line below with `require __DIR__ . '/flex-portal-client/autoload.php';`. Keep the entire `src/` directory, including `contract.json`. Both packages can be loaded together.

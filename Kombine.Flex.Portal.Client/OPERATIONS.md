@@ -83,6 +83,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetLocationOpeningHoursAsync` | GET | `/api/v1/locations/{locationKid}/opening-hours` |
 | `GetLocationsAsync` | GET | `/api/v1/locations` |
 | `GetLocationUnitsAsync` | GET | `/api/v1/locations/{locationKid}/units` |
+| `GetLocationWeatherAsync` | GET | `/api/v1/locations/{locationKid}/weather` |
 | `GetManagerAsync` | GET | `/api/v1/managers/{managerKid}` |
 | `GetManagerCountAsync` | GET | `/api/v1/managers/count` |
 | `GetManagersAsync` | GET | `/api/v1/managers` |

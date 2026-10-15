@@ -26,7 +26,7 @@ internal static class Program
                 Console.WriteLine("HTTPS public status succeeded on CLR " + Environment.Version + ". No credentials or business data used.");
                 return 0;
             }
-            Contracts(); Multipart();
+            Contracts(); Multipart(); LocationWeatherNulls();
             JsonRoundTripAndTyping(); ReceiptPaging();
             MalformedJson();
             LoginAndSessionIsolation(); _assertions += SessionChecks.Run();
@@ -39,7 +39,7 @@ internal static class Program
             LoopbackCamera(false); LoopbackCamera(true); LoopbackTransport();
             LoopbackPost(false);
             LoopbackPost(true);
-            Console.WriteLine("PASS: " + _assertions + " checks, 148 API operations; CLR " + Environment.Version + ".");
+            Console.WriteLine("PASS: " + _assertions + " checks, 149 API operations; CLR " + Environment.Version + ".");
             return 0;
         }
         catch (Exception error)
@@ -157,10 +157,35 @@ internal static class Program
         finally { listener.Stop(); }
     }
 #endif
+    private static void LocationWeatherNulls()
+    {
+        foreach (string status in new string[] { "LocationUnknown", "Unavailable" })
+        {
+            Fake fake = new Fake(200, "{\"status\":\"" + status + "\",\"current\":null,\"positionSource\":null}");
+            using (PortalApiClient api = Client(fake))
+            {
+                LocationWeatherResponse weather = api.GetLocationWeather("opaque-location");
+                Equal(status, weather.Status, "Weather unavailable status preserved");
+                Equal(null, weather.Current, "Unavailable weather has no measurements");
+                Equal(null, weather.PositionSource, "Unknown position is null");
+                Equal(1, fake.Calls, "No automatic weather retry");
+            }
+        }
+        Fake available = new Fake(200, "{\"status\":\"Available\",\"current\":{\"temperatureCelsius\":-2.5,\"apparentTemperatureCelsius\":null,\"windSpeedMetresPerSecond\":0,\"weatherCode\":null,\"isDay\":false}}");
+        using (PortalApiClient api = Client(available))
+        {
+            LocationWeatherCurrent current = api.GetLocationWeather("opaque-location").Current;
+            Equal(-2.5, current.TemperatureCelsius.Value, "Negative Celsius preserved");
+            Equal(null, current.ApparentTemperatureCelsius, "Unknown apparent temperature is null");
+            Equal(0.0, current.WindSpeedMetresPerSecond.Value, "Actual calm wind is zero");
+            Equal(null, current.WeatherCode, "Unknown weather code is null");
+            Equal(false, current.IsDay.Value, "Night is false");
+        }
+    }
     private static void Contracts()
     {
         string[] rows = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ContractCases.tsv"));
-        Equal(148, rows.Length, "Published operation count");
+        Equal(149, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });

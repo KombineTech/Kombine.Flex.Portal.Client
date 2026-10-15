@@ -911,6 +911,15 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (LocationOpeningHoursResponse)SendJson("GET", path, null, headers, 200, typeof(LocationOpeningHoursResponse));
         }
 
+        /// <summary>Get current weather for the authorized location's stored position or address.</summary>
+        public LocationWeatherResponse GetLocationWeather(string @locationKid)
+        {
+            string path = "api/v1/locations/{locationKid}/weather";
+            path = path.Replace("{locationKid}", PathValue(@locationKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (LocationWeatherResponse)SendJson("GET", path, null, headers, 200, typeof(LocationWeatherResponse));
+        }
+
         /// <summary>Create an empty enabled administrator with a previously unused manager identity.</summary>
         public ManagerCreationResponse CreateManager()
         {

@@ -219,6 +219,10 @@ class PortalClient(BaseClient):
         'Read grouped opening hours, upcoming exceptions and the current opening status for a location.'
         return self._request('GetLocationOpeningHours', {'locationKid': location_kid, 'Accept-Language': accept_language}, None)
 
+    def get_location_weather(self, location_kid: str) -> LocationWeatherResponse:
+        "Get current weather for the authorized location's stored position or address."
+        return self._request('GetLocationWeather', {'locationKid': location_kid}, None)
+
     def create_manager(self) -> ManagerCreationResponse:
         'Create an empty enabled administrator with a previously unused manager identity.'
         return self._request('CreateManager', {}, None)

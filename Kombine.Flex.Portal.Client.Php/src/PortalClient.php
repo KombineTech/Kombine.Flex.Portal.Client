@@ -74,6 +74,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type LocationIconsResponse array{'items'?: list<LocationIconResponse>|null}
  * @phpstan-type LocationOpeningHoursResponse array{'locationKid'?: string|null, 'timeZone'?: string|null, 'calculatedAt'?: string, 'groups'?: list<OpeningHoursGroup>|null}
  * @phpstan-type LocationUnitsResponse array{'location'?: BankLocationResponse, 'items'?: list<UnitOverviewResponse>|null}
+ * @phpstan-type LocationWeatherCurrent array{'observedAtUtc'?: string, 'retrievedAtUtc'?: string, 'temperatureCelsius'?: int|float, 'apparentTemperatureCelsius'?: int|float|null, 'windSpeedMetresPerSecond'?: int|float|null, 'precipitationMillimetres'?: int|float|null, 'relativeHumidityPercent'?: int|float|null, 'weatherCode'?: int|null, 'isDay'?: bool|null}
+ * @phpstan-type LocationWeatherResponse array{'locationKid'?: string|null, 'status'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'positionSource'?: string|null, 'current'?: LocationWeatherCurrent|null}
  * @phpstan-type ManagerCreationResponse array{'kid'?: string|null}
  * @phpstan-type ManagerDirectoryItem array{'kid'?: string|null, 'name'?: string|null, 'email'?: string|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'tabs'?: list<ManagerTabResponse>|null, 'iconKid'?: string|null, 'gravatarUrl'?: string|null, 'organisation'?: string|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedAt'?: string|null, 'lastActiveAt'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'retentionDays'?: int, 'isCurrentManager'?: bool, 'canEditPermissions'?: bool, 'canEditTabs'?: bool, 'canEditProfile'?: bool, 'profileRevision'?: string|null, 'tabsRevision'?: string|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool, 'availableTabs'?: list<ManagerTabResponse>|null, 'availableIcons'?: list<string>|null}
  * @phpstan-type ManagerDirectoryResponse array{'items'?: list<ManagerDirectoryItem>|null, 'nextCursor'?: string|null}
@@ -772,6 +774,16 @@ final class PortalClient extends BaseClient
     public function getLocationOpeningHours(mixed $locationKid, array $options = []): mixed
     {
         return $this->request('GetLocationOpeningHours', ['locationKid' => $locationKid] + $options, null);
+    }
+
+    /**
+     * Get current weather for the authorized location's stored position or address.
+     * @param string $locationKid
+     * @return LocationWeatherResponse
+     */
+    public function getLocationWeather(mixed $locationKid): mixed
+    {
+        return $this->request('GetLocationWeather', ['locationKid' => $locationKid], null);
     }
 
     /**

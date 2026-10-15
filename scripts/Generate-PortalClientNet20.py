@@ -27,7 +27,16 @@ def cs(value):
     return json.dumps(value, ensure_ascii=True)
 
 
+def reference_schema(schema):
+    # OpenAPI 3.0 nullable references wrap a single $ref in allOf.
+    references = schema.get('allOf')
+    if isinstance(references, list) and len(references) == 1 and '$ref' in references[0]:
+        return {**references[0], **{key: value for key, value in schema.items() if key != 'allOf'}}
+    return schema
+
+
 def kind(schema, nullable=True):
+    schema = reference_schema(schema)
     if '$ref' in schema:
         key = schema['$ref'].split('/')[-1]
         if 'enum' in schemas[key]:

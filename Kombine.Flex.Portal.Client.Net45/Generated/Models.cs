@@ -2134,6 +2134,91 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>Open-Meteo model conditions. Times are UTC; units are explicit in measurement names.</summary>
+    public sealed class LocationWeatherCurrent
+    {
+        /// <summary>observedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("observedAtUtc")]
+        public string ObservedAtUtc { get { return _ObservedAtUtc; } set { _ObservedAtUtc = value; } }
+        private string _ObservedAtUtc;
+
+        /// <summary>retrievedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("retrievedAtUtc")]
+        public string RetrievedAtUtc { get { return _RetrievedAtUtc; } set { _RetrievedAtUtc = value; } }
+        private string _RetrievedAtUtc;
+
+        /// <summary>temperatureCelsius</summary>
+        [JsonField("temperatureCelsius")]
+        public double? TemperatureCelsius { get { return _TemperatureCelsius; } set { _TemperatureCelsius = value; } }
+        private double? _TemperatureCelsius;
+
+        /// <summary>apparentTemperatureCelsius</summary>
+        [JsonField("apparentTemperatureCelsius")]
+        public double? ApparentTemperatureCelsius { get { return _ApparentTemperatureCelsius; } set { _ApparentTemperatureCelsius = value; } }
+        private double? _ApparentTemperatureCelsius;
+
+        /// <summary>windSpeedMetresPerSecond</summary>
+        [JsonField("windSpeedMetresPerSecond")]
+        public double? WindSpeedMetresPerSecond { get { return _WindSpeedMetresPerSecond; } set { _WindSpeedMetresPerSecond = value; } }
+        private double? _WindSpeedMetresPerSecond;
+
+        /// <summary>precipitationMillimetres</summary>
+        [JsonField("precipitationMillimetres")]
+        public double? PrecipitationMillimetres { get { return _PrecipitationMillimetres; } set { _PrecipitationMillimetres = value; } }
+        private double? _PrecipitationMillimetres;
+
+        /// <summary>relativeHumidityPercent</summary>
+        [JsonField("relativeHumidityPercent")]
+        public double? RelativeHumidityPercent { get { return _RelativeHumidityPercent; } set { _RelativeHumidityPercent = value; } }
+        private double? _RelativeHumidityPercent;
+
+        /// <summary>weatherCode</summary>
+        [JsonField("weatherCode")]
+        public int? WeatherCode { get { return _WeatherCode; } set { _WeatherCode = value; } }
+        private int? _WeatherCode;
+
+        /// <summary>isDay</summary>
+        [JsonField("isDay")]
+        public bool? IsDay { get { return _IsDay; } set { _IsDay = value; } }
+        private bool? _IsDay;
+
+    }
+
+    /// <summary>Weather for one authorized location. Null measurements mean unknown, never zero.</summary>
+    public sealed class LocationWeatherResponse
+    {
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>status</summary>
+        [JsonField("status")]
+        public string Status { get { return _Status; } set { _Status = value; } }
+        private string _Status;
+
+        /// <summary>address</summary>
+        [JsonField("address")]
+        public string Address { get { return _Address; } set { _Address = value; } }
+        private string _Address;
+
+        /// <summary>zip</summary>
+        [JsonField("zip")]
+        public string Zip { get { return _Zip; } set { _Zip = value; } }
+        private string _Zip;
+
+        /// <summary>positionSource</summary>
+        [JsonField("positionSource")]
+        public string PositionSource { get { return _PositionSource; } set { _PositionSource = value; } }
+        private string _PositionSource;
+
+        /// <summary>Current conditions, or null unless status is Available.</summary>
+        [JsonField("current")]
+        public LocationWeatherCurrent Current { get { return _Current; } set { _Current = value; } }
+        private LocationWeatherCurrent _Current;
+
+    }
+
     /// <summary>The canonical KID of the newly activated empty administrator.</summary>
     public sealed class ManagerCreationResponse
     {

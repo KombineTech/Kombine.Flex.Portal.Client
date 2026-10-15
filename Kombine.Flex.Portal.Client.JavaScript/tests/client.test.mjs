@@ -21,7 +21,7 @@ function sample(spec) {
   }
 }
 
-assert.equal(cases.length, 148);
+assert.equal(cases.length, 149);
 for (const spec of cases) {
   test('wire contract: ' + spec.operation, async () => {
     let observed;
@@ -264,4 +264,19 @@ test('camera range response streams HTTP 206', async () => {
   assert.equal(result.status, 206);
   const bytes = []; for await (const chunk of result.chunks()) bytes.push(...chunk);
   assert.deepEqual(bytes, [42, 255]);
+});
+
+test('location weather preserves unavailable, null and real zero measurements', async () => {
+  for (const status of ['LocationUnknown', 'Unavailable']) {
+    const body = { locationKid: 'opaque-location', status, positionSource: null, current: null };
+    let calls = 0;
+    const api = new PortalClient('https://api.example.test/', { fetch: async () => { calls++; return json(body); } });
+    assert.equal(stringifyJson(await api.getLocationWeather('opaque-location')), stringifyJson(body));
+    assert.equal(calls, 1);
+  }
+  const current = { observedAtUtc: '2026-10-15T10:00:00Z', retrievedAtUtc: '2026-10-15T10:01:00Z', temperatureCelsius: -2.5,
+    apparentTemperatureCelsius: null, windSpeedMetresPerSecond: 0, precipitationMillimetres: null,
+    relativeHumidityPercent: null, weatherCode: null, isDay: false };
+  const api = new PortalClient('https://api.example.test/', { fetch: async () => json({ status: 'Available', current }) });
+  assert.equal(stringifyJson((await api.getLocationWeather('opaque-location')).current), stringifyJson(current));
 });

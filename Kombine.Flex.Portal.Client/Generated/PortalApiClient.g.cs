@@ -1365,6 +1365,30 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Get current weather for the authorized location's stored position or address.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager bearer session, assigned Tab, Bank Read, Location Read, matching resource scope
+        /// <br/>and RetentionDays visibility. Location and parent bank must also satisfy GetObjectAddress visibility.
+        /// <br/>Authorization and a bounded Log-only address read precede every cache lookup. No Unit Read or Write is needed.
+        /// <br/>Uses eSetting.Latitude and Longitude (integer millionths of degrees) when both are valid; otherwise geocodes
+        /// <br/>available Address and Zip using the site's configured geocoder. Address-only/postal results are approximate.
+        /// <br/>Never inherits another object's address, substitutes zero, writes settings or accepts caller-supplied coordinates.
+        /// <br/>Returns status Available, LocationUnknown (no resolvable position), or Unavailable (provider/configuration failure).
+        /// <br/>current is null unless Available. Optional measurements are null when unknown. positionSource is Coordinates,
+        /// <br/>Address, or null. Times are UTC; temperature is Celsius, wind m/s, precipitation mm and humidity percent.
+        /// <br/>Open-Meteo model data, not an on-site sensor. Display attribution: Weather data by Open-Meteo, CC BY 4.0.
+        /// <br/>Cache: ten minutes per tenant/location/address revision; failures one minute. No-store HTTP. Refresh on navigation.
+        /// <br/>Four concurrent provider lookups per process, twelve-second request deadline, no retries.
+        /// <br/>400 invalid/foreign KID; 401 invalid/inactive manager; 403 scope/tab/read denial; 404 hidden/missing object;
+        /// <br/>503 location-weather-unavailable on storage failure/deadline. Unavailable never means zero weather.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<LocationWeatherResponse> GetLocationWeatherAsync(string locationKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Create an empty enabled administrator with a previously unused manager identity.
         /// </summary>
         /// <remarks>
@@ -11378,6 +11402,151 @@ namespace Kombine.Flex.Portal.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<LocationOpeningHoursResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get current weather for the authorized location's stored position or address.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager bearer session, assigned Tab, Bank Read, Location Read, matching resource scope
+        /// <br/>and RetentionDays visibility. Location and parent bank must also satisfy GetObjectAddress visibility.
+        /// <br/>Authorization and a bounded Log-only address read precede every cache lookup. No Unit Read or Write is needed.
+        /// <br/>Uses eSetting.Latitude and Longitude (integer millionths of degrees) when both are valid; otherwise geocodes
+        /// <br/>available Address and Zip using the site's configured geocoder. Address-only/postal results are approximate.
+        /// <br/>Never inherits another object's address, substitutes zero, writes settings or accepts caller-supplied coordinates.
+        /// <br/>Returns status Available, LocationUnknown (no resolvable position), or Unavailable (provider/configuration failure).
+        /// <br/>current is null unless Available. Optional measurements are null when unknown. positionSource is Coordinates,
+        /// <br/>Address, or null. Times are UTC; temperature is Celsius, wind m/s, precipitation mm and humidity percent.
+        /// <br/>Open-Meteo model data, not an on-site sensor. Display attribution: Weather data by Open-Meteo, CC BY 4.0.
+        /// <br/>Cache: ten minutes per tenant/location/address revision; failures one minute. No-store HTTP. Refresh on navigation.
+        /// <br/>Four concurrent provider lookups per process, twelve-second request deadline, no retries.
+        /// <br/>400 invalid/foreign KID; 401 invalid/inactive manager; 403 scope/tab/read denial; 404 hidden/missing object;
+        /// <br/>503 location-weather-unavailable on storage failure/deadline. Unavailable never means zero weather.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<LocationWeatherResponse> GetLocationWeatherAsync(string locationKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (locationKid == null)
+                throw new System.ArgumentNullException("locationKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/{locationKid}/weather"
+                    urlBuilder_.Append("api/v1/locations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/weather");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<LocationWeatherResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -25655,6 +25824,72 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Open-Meteo model conditions. Times are UTC; units are explicit in measurement names.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationWeatherCurrent
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("observedAtUtc")]
+        public System.DateTimeOffset? ObservedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("retrievedAtUtc")]
+        public System.DateTimeOffset? RetrievedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("temperatureCelsius")]
+        public double? TemperatureCelsius { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("apparentTemperatureCelsius")]
+        public double? ApparentTemperatureCelsius { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("windSpeedMetresPerSecond")]
+        public double? WindSpeedMetresPerSecond { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("precipitationMillimetres")]
+        public double? PrecipitationMillimetres { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("relativeHumidityPercent")]
+        public double? RelativeHumidityPercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("weatherCode")]
+        public int? WeatherCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDay")]
+        public bool? IsDay { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Weather for one authorized location. Null measurements mean unknown, never zero.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationWeatherResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationKid")]
+        public string? LocationKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("address")]
+        public string? Address { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("zip")]
+        public string? Zip { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("positionSource")]
+        public string? PositionSource { get; set; } = default!;
+
+        /// <summary>
+        /// Current conditions, or null unless status is Available.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("current")]
+        public Current? Current { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// The canonical KID of the newly activated empty administrator.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -29028,6 +29263,21 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
         public int? RefreshAfterSeconds { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Current : LocationWeatherCurrent
+    {
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 

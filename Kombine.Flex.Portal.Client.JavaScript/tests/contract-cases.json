@@ -3179,6 +3179,36 @@
     "example": {}
   },
   {
+    "operation": "GetLocationWeather",
+    "python": "get_location_weather",
+    "javascript": "getLocationWeather",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/weather",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationWeatherResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "CreateManager",
     "python": "create_manager",
     "javascript": "createManager",

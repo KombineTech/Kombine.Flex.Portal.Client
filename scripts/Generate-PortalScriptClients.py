@@ -25,7 +25,16 @@ def type_name(s):
     return s[0].upper() + s[1:]
 
 
+def reference_schema(schema):
+    # OpenAPI 3.0 nullable references wrap a single $ref in allOf.
+    references = schema.get('allOf')
+    if isinstance(references, list) and len(references) == 1 and '$ref' in references[0]:
+        return {**references[0], **{key: value for key, value in schema.items() if key != 'allOf'}}
+    return schema
+
+
 def kind(s, language):
+    s = reference_schema(s)
     if '$ref' in s:
         t = type_name(s['$ref'].split('/')[-1])
     else:
@@ -45,6 +54,7 @@ def brief(text):
 
 
 def shape(s):
+    s = reference_schema(s)
     # Preserve wire types and numeric width; authorization/validation rules remain in the API.
     return {k: ({p: shape(v) for p, v in value.items()} if k == 'properties' else shape(value) if isinstance(value, dict) else value)
             for k, value in s.items() if k in ('$ref', 'type', 'format', 'nullable', 'properties', 'items', 'additionalProperties')}
