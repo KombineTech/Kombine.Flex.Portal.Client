@@ -342,6 +342,97 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (BookingResponse)SendJson("POST", path, body, headers, 200, typeof(BookingResponse));
         }
 
+        /// <summary>Read the display identity of one authorized camera resource.</summary>
+        public CameraResourceResponse GetCameraResource()
+        {
+            return GetCameraResource(null);
+        }
+
+        /// <summary>Read the display identity of one authorized camera resource.</summary>
+        public CameraResourceResponse GetCameraResource(GetCameraResourceOptions options)
+        {
+            string path = "api/v1/camera/resource";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "resourceKid", options.ResourceKid);
+            }
+            return (CameraResourceResponse)SendJson("GET", path, null, headers, 200, typeof(CameraResourceResponse));
+        }
+
+        /// <summary>Check the lazy local camera tab and capture permission for one exact resource.</summary>
+        public CameraAvailabilityResponse GetCameraAvailability()
+        {
+            return GetCameraAvailability(null);
+        }
+
+        /// <summary>Check the lazy local camera tab and capture permission for one exact resource.</summary>
+        public CameraAvailabilityResponse GetCameraAvailability(GetCameraAvailabilityOptions options)
+        {
+            string path = "api/v1/camera/availability";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "resourceKid", options.ResourceKid);
+            }
+            return (CameraAvailabilityResponse)SendJson("GET", path, null, headers, 200, typeof(CameraAvailabilityResponse));
+        }
+
+        /// <summary>Prepare a bounded, immutable capture plan including optional weather.</summary>
+        public CameraPrepareResponse PrepareCameraCapture(CameraPrepareRequest body)
+        {
+            string path = "api/v1/camera/prepare";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (CameraPrepareResponse)SendJson("POST", path, body, headers, 200, typeof(CameraPrepareResponse));
+        }
+
+        /// <summary>Save new camera media immediately and replicate after the first complete regional copy.</summary>
+        public CameraSaveResponse SaveCameraCapture(PortalMultipart body)
+        {
+            string path = "api/v1/camera";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (CameraSaveResponse)SendJson("POST", path, body, headers, 200, typeof(CameraSaveResponse));
+        }
+
+        /// <summary>List own tenant captures, or all authorized captures on one exact bank, location or unit.</summary>
+        public CameraCapturePage GetCameraCaptures()
+        {
+            return GetCameraCaptures(null);
+        }
+
+        /// <summary>List own tenant captures, or all authorized captures on one exact bank, location or unit.</summary>
+        public CameraCapturePage GetCameraCaptures(GetCameraCapturesOptions options)
+        {
+            string path = "api/v1/camera";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "resourceKid", options.ResourceKid);
+                path = AddQuery(path, "cursor", options.Cursor);
+            }
+            return (CameraCapturePage)SendJson("GET", path, null, headers, 200, typeof(CameraCapturePage));
+        }
+
+        /// <summary>Stream one capture component through the API, with current resource authorization.</summary>
+        public PortalDownload GetCameraCaptureContent(string @id)
+        {
+            return GetCameraCaptureContent(@id, null);
+        }
+
+        /// <summary>Stream one capture component through the API, with current resource authorization.</summary>
+        public PortalDownload GetCameraCaptureContent(string @id, GetCameraCaptureContentOptions options)
+        {
+            string path = "api/v1/camera/{id}/content";
+            path = path.Replace("{id}", PathValue(@id));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "part", options.Part);
+                if (options.Range != null) headers.Add("Range", options.Range);
+            }
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
         /// <summary>Downloads the complete filtered selection as CSV or a genuine Excel workbook.</summary>
         public PortalDownload ExportBankAccount(string @bankKid)
         {

@@ -25,8 +25,8 @@ export class PortalApiError extends Error {
   }
 }
 
-type Schema = { $ref?: string; type?: string; format?: string; properties?: Record<string, Schema>; items?: Schema; additionalProperties?: Schema | boolean };
-type Operation = { method: string; path: string; auth: boolean; status: number; binary: boolean; body: Schema | null; response: Schema; parameters: { name: string; where: string; schema: Schema }[] };
+type Schema = { $ref?: string; type?: string; format?: string; properties?: Record<string, Schema>; items?: Schema; required?: string[]; additionalProperties?: Schema | boolean };
+type Operation = { method: string; path: string; auth: boolean; status: number; statuses: number[]; binary: boolean; body: Schema | null; multipart?: Schema | null; response: Schema; parameters: { name: string; where: string; schema: Schema }[] };
 const schemas = contract.schemas as Record<string, Schema>;
 const operations = contract.operations as Record<string, Operation>;
 
@@ -171,8 +171,28 @@ export class BaseClient {
         headers.set(param.name, text);
       }
     }
-    let serialized: string | undefined;
-    if (spec.body) {
+    let serialized: string | FormData | undefined;
+    if (spec.multipart) {
+      if (!(body instanceof FormData)) throw new TypeError("A multipart FormData body is required.");
+      const schema = spec.multipart.$ref ? schemas[spec.multipart.$ref.split("/").at(-1)!] : spec.multipart;
+      for (const name of schema.required ?? []) if (!body.has(name)) throw new TypeError("A required multipart field is missing.");
+      let size = 0;
+      for (const [name, value] of body) {
+        const field = schema.properties?.[name];
+        if (!field || body.getAll(name).length !== 1) throw new TypeError("Invalid multipart field.");
+        if (field.format === "binary") {
+          if (!(value instanceof Blob)) throw new TypeError("A file is required.");
+          size += value.size;
+        } else {
+          if (typeof value !== "string") throw new TypeError("A text field is required.");
+          const bytes = new TextEncoder().encode(value).length;
+          if (bytes > 512 * 1024) throw new TypeError("Multipart text field is too large.");
+          size += bytes;
+        }
+      }
+      if (size > 139 * 1024 * 1024) throw new TypeError("Multipart upload is too large.");
+      serialized = body; // Fetch generates the boundary; never set Content-Type manually.
+    } else if (spec.body) {
       if (body == null) throw new TypeError("A request body is required.");
       checkShape(body, spec.body, false);
       serialized = stringifyJson(body);
@@ -195,7 +215,7 @@ export class BaseClient {
       });
       abort.signal.throwIfAborted();
       if (response.status === 401 && token && version === this.#version && this.#token === token) this.clearSession();
-      if (response.status === spec.status && spec.binary) {
+      if (spec.statuses.includes(response.status) && spec.binary) {
         transferred = true;
         return new PortalDownload(response, abort, finish);
       }

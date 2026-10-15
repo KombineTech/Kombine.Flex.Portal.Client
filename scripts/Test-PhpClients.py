@@ -3,6 +3,8 @@
 No third-party Python/PHP packages, credentials, real services or databases are used.
 """
 import argparse
+from email.parser import BytesParser
+from email.policy import default as email_policy
 from collections import Counter
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -60,6 +62,7 @@ def cases(api):
                     else: headers[param['name'].lower()] = value
             wire_path = path
             for key, value in path_values.items(): wire_path = wire_path.replace('{' + key + '}', quote(string(value), safe=''))
+            multipart = 'multipart/form-data' in op.get('requestBody', {}).get('content', {})
             body_schema = op.get('requestBody', {}).get('content', {}).get('application/json', {}).get('schema')
             body = sample(body_schema, doc['components']['schemas']) if body_schema is not None else None
             status, success = next((int(k), v) for k, v in op['responses'].items() if k.isdigit() and k.startswith('2'))
@@ -68,11 +71,12 @@ def cases(api):
             response = 'binary\0data\n' if binary else sample(response_schema, doc['components']['schemas']) if response_schema else None
             call_args = list(path_values.values())
             if body is not None: call_args.append(body)
+            if multipart: call_args.append({'uploadToken': 'fixture-token'})
             sink_index = len(call_args)
             if options: call_args.append(options)
             result.append(dict(method=op['operationId'][0].lower() + op['operationId'][1:], args=call_args,
                                sinkIndex=sink_index, verb=verb.upper(), path=wire_path, query=query, headers=headers, body=body,
-                               auth=bool(op.get('security', doc.get('security'))), binary=binary, response=response, status=status))
+                               auth=bool(op.get('security', doc.get('security'))), multipart=multipart, binary=binary, response=response, status=status))
     return result
 
 
@@ -110,10 +114,19 @@ class Handler(BaseHTTPRequestHandler):
                 assert parse_qs(actual.query, keep_blank_values=True) == case['query'], 'query'
                 assert self.headers.get('Authorization') == ('Bearer synthetic-token' if case['auth'] else None), 'auth'
                 for name, value in case['headers'].items(): assert self.headers.get(name) == value, 'header'
-                assert (json.loads(raw) if raw else None) == case['body'], 'body'
-                if raw: assert self.headers.get('Content-Type') == 'application/json', 'content type'
+                if case['multipart']:
+                    message = BytesParser(policy=email_policy).parsebytes(('Content-Type: ' + self.headers['Content-Type'] + '\r\n\r\n').encode() + raw)
+                    parts_by_name = {p.get_param('name', header='content-disposition'): p for p in message.iter_parts()}
+                    assert set(parts_by_name) == {'uploadToken', 'original', 'motion'}, ('multipart fields', list(parts_by_name))
+                    assert parts_by_name['uploadToken'].get_payload(decode=True) == b'fixture-token', 'multipart token'
+                    assert parts_by_name['original'].get_payload(decode=True) == b'original\x00bytes', ('original', parts_by_name['original'].get_payload(decode=True))
+                    assert parts_by_name['motion'].get_payload(decode=True) == b'motion\xffbytes', ('motion', parts_by_name['motion'].get_payload(decode=True))
+                else:
+                    assert (json.loads(raw) if raw else None) == case['body'], 'body'
+                    if raw: assert self.headers.get('Content-Type') == 'application/json', 'content type'
             except (AssertionError, ValueError) as error:
                 failures.append(f'{api}/{case["method"]}: {error}')
+                print(failures[-1], flush=True)
                 self.respond(500, '{"code":"fixture-mismatch"}')
                 return
             response = case['response'] if case['binary'] else json.dumps(case['response'], ensure_ascii=False)

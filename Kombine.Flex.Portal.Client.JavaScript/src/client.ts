@@ -113,6 +113,36 @@ export class PortalClient extends BaseClient {
     return this.send("ExecuteBankBookingCommand", {"bankKid": bankKid, "bookingKid": bookingKid}, body, request) as Promise<Models.BookingResponse>;
   }
 
+  /** Read the display identity of one authorized camera resource. */
+  getCameraResource(options: Models.GetCameraResourceOptions = {}, request: RequestOptions = {}): Promise<Models.CameraResourceResponse> {
+    return this.send("GetCameraResource", {"resourceKid": options.resourceKid}, undefined, request) as Promise<Models.CameraResourceResponse>;
+  }
+
+  /** Check the lazy local camera tab and capture permission for one exact resource. */
+  getCameraAvailability(options: Models.GetCameraAvailabilityOptions = {}, request: RequestOptions = {}): Promise<Models.CameraAvailabilityResponse> {
+    return this.send("GetCameraAvailability", {"resourceKid": options.resourceKid}, undefined, request) as Promise<Models.CameraAvailabilityResponse>;
+  }
+
+  /** Prepare a bounded, immutable capture plan including optional weather. */
+  prepareCameraCapture(body: Models.CameraPrepareRequest, request: RequestOptions = {}): Promise<Models.CameraPrepareResponse> {
+    return this.send("PrepareCameraCapture", {}, body, request) as Promise<Models.CameraPrepareResponse>;
+  }
+
+  /** Save new camera media immediately and replicate after the first complete regional copy. */
+  saveCameraCapture(body: FormData, request: RequestOptions = {}): Promise<Models.CameraSaveResponse> {
+    return this.send("SaveCameraCapture", {}, body, request) as Promise<Models.CameraSaveResponse>;
+  }
+
+  /** List own tenant captures, or all authorized captures on one exact bank, location or unit. */
+  getCameraCaptures(options: Models.GetCameraCapturesOptions = {}, request: RequestOptions = {}): Promise<Models.CameraCapturePage> {
+    return this.send("GetCameraCaptures", {"resourceKid": options.resourceKid, "cursor": options.cursor}, undefined, request) as Promise<Models.CameraCapturePage>;
+  }
+
+  /** Stream one capture component through the API, with current resource authorization. */
+  getCameraCaptureContent(id: string, options: Models.GetCameraCaptureContentOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetCameraCaptureContent", {"id": id, "part": options.part, "Range": options.range}, undefined, request) as Promise<PortalDownload>;
+  }
+
   /** Downloads the complete filtered selection as CSV or a genuine Excel workbook. */
   exportBankAccount(bankKid: string, options: Models.ExportBankAccountOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("ExportBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit, "format": options.format}, undefined, request) as Promise<PortalDownload>;

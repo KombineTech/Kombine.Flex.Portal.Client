@@ -194,11 +194,16 @@ public sealed class ClientTests
             var arguments = method.GetParameters().Select(parameter =>
             {
                 var type = Nullable.GetUnderlyingType(parameter.ParameterType) ?? parameter.ParameterType;
-                object? value = type == typeof(string) ? "opaque-KID" : type.IsValueType ? Activator.CreateInstance(type) : parameter.HasDefaultValue ? null : Activator.CreateInstance(type);
+                object? value = type == typeof(FileParameter) ? new FileParameter(new MemoryStream([1]), "fixture.jpg", "image/jpeg") : type == typeof(string) ? "opaque-KID" : type.IsValueType ? Activator.CreateInstance(type) : parameter.HasDefaultValue ? null : Activator.CreateInstance(type);
                 if (expectedPath.Contains("{" + parameter.Name + "}")) expectedPath = expectedPath.Replace("{" + parameter.Name + "}", value?.ToString());
                 return value;
             }).ToArray();
-            if (method.Invoke(client, arguments) is Task task) await task;
+            if (method.Invoke(client, arguments) is Task task)
+            {
+                await task;
+                if (task.GetType().GetProperty("Result")?.GetValue(task) is IDisposable result) result.Dispose();
+            }
+            foreach (var file in arguments.OfType<FileParameter>()) file.Data.Dispose();
             Assert.NotNull(sent);
             Assert.Equal(verb.ToUpperInvariant(), sent.Method.Method);
             Assert.Equal(expectedPath, Uri.UnescapeDataString(sent.RequestUri!.AbsolutePath));

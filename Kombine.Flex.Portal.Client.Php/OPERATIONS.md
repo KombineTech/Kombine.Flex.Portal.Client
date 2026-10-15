@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `1d6a4a45b55e8d18181e02dd16280a9a240457a468d023197dde5163e20458a3`).
-142 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `4b375fbdf3629c5e70dd76be3d008fd62122d8cb3552242277287b7b80d230bf`).
+148 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -41,6 +41,10 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `1d6a4a45b55e8d18181
 | `getBankUserWorkspace` | `GetBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` | Bearer |
 | `getBankUsers` | `GetBankUsers` | GET | `/api/v1/banks/{bankKid}/users` | Bearer |
 | `getBanks` | `GetBanks` | GET | `/api/v1/banks` | Bearer |
+| `getCameraAvailability` | `GetCameraAvailability` | GET | `/api/v1/camera/availability` | Bearer |
+| `getCameraCaptureContent` | `GetCameraCaptureContent` | GET | `/api/v1/camera/{id}/content` | Bearer |
+| `getCameraCaptures` | `GetCameraCaptures` | GET | `/api/v1/camera` | Bearer |
+| `getCameraResource` | `GetCameraResource` | GET | `/api/v1/camera/resource` | Bearer |
 | `getCircleGradientSized` | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` | Anonymous |
 | `getCircleGradient` | `GetCircleGradient` | GET | `/api/v1/circles/gradient/{colors}.svg` | Anonymous |
 | `getCircleProgressSized` | `GetCircleProgressSized` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg` | Anonymous |
@@ -120,12 +124,14 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `1d6a4a45b55e8d18181
 | `inviteManager` | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` | Bearer |
 | `loginManager` | `LoginManager` | POST | `/api/v1/session/login` | Anonymous |
 | `lookupObjectCoordinates` | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` | Bearer |
+| `prepareCameraCapture` | `PrepareCameraCapture` | POST | `/api/v1/camera/prepare` | Bearer |
 | `renewManagerSession` | `RenewManagerSession` | POST | `/api/v1/session/renew` | Bearer |
 | `requestManagerPasswordReset` | `RequestManagerPasswordReset` | POST | `/api/v1/session/forgot-password` | Anonymous |
 | `requestManagerSignUp` | `RequestManagerSignUp` | POST | `/api/v1/session/signup` | Anonymous |
 | `requestMyManagerEmailVerification` | `RequestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` | Bearer |
 | `resetManagerPassword` | `ResetManagerPassword` | POST | `/api/v1/session/reset-password` | Anonymous |
 | `reverseBankAccountEntry` | `ReverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` | Bearer |
+| `saveCameraCapture` | `SaveCameraCapture` | POST | `/api/v1/camera` | Bearer |
 | `searchBankActivation` | `SearchBankActivation` | GET | `/api/v1/search/bank-activation` | Bearer |
 | `searchBanks` | `SearchBanks` | GET | `/api/v1/search/banks` | Bearer |
 | `searchLocationActivation` | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` | Bearer |

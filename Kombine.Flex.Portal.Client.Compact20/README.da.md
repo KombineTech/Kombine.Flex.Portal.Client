@@ -1,12 +1,39 @@
+## Camera1 · 0.8.0
+
+Version 0.8.0 indeholder alle 148 offentlige operationer, inklusive Camera1. Kald PrepareCameraCapture med originalens præcise SHA-256, længde, UTC-optagelsestid, ressource-KID og sensorobjekt. Upload derefter de samme bytes med uploadToken. Live Photos kræver også matchende længde/hash og den oprindelige MOV-fil. Behold samme token og bytes ved et bevidst genforsøg; klienten gentager aldrig automatisk. Forøg tidsfristen ved videobehandling. API’et kontrollerer Camera1 og præcise Read/Write-rettigheder til ressourcen. Lister kan være ufuldstændige eller have tomme sider med nextCursor; fortsæt, indtil cursor mangler. Hent medier gennem API’et; Range-kald kan give HTTP 206. Se /docs#camera-captures for grænser og fejl.
+
+```csharp
+// uploadToken comes from PrepareCameraCapture; originalPath points to those exact bytes.
+using (System.IO.FileStream original = System.IO.File.OpenRead(originalPath))
+{
+    PortalMultipart body = new PortalMultipart();
+    body.AddField("uploadToken", uploadToken);
+    body.AddFile("original", System.IO.Path.GetFileName(originalPath), original);
+    CameraSaveResponse saved = api.SaveCameraCapture(body);
+}
+```
+
+```vbnet
+' uploadToken comes from PrepareCameraCapture; originalPath contains the same bytes.
+Using original As System.IO.FileStream = System.IO.File.OpenRead(originalPath)
+    Dim body As New PortalMultipart()
+    body.AddField("uploadToken", uploadToken)
+    body.AddFile("original", System.IO.Path.GetFileName(originalPath), original)
+    Dim saved As CameraSaveResponse = api.SaveCameraCapture(body)
+End Using
+```
+
+Streams remain caller-owned. Use seekable streams, rewind and create a new multipart body before retrying. For Live Photos, add a second file named `motion`. Maximum multipart body: 140 MiB; text fields: 512 KiB each.
+
 Alle administratorrolleskift kræver Læs og Skriv på både Tabs og Kids. Håndter missing-tabs-read, missing-tabs-write, missing-kids-read og missing-kids-write (HTTP 403).
 
 GetTerminals bruger rapporteret ComputerName til navn, filtrering og sortering; manglende navne er tomme. Bed om fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight for terminaldata. Værdier er strenge, null ved fravalg og tomme ved manglende data. Behold fields under sideskift, og genstart gamle cursors. Lokationsnavne følger altid med. Se /docs#changelog for alle migreringskrav.
 
-Version 0.7.2 omfatter 142 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; håndter deres særskilte læse-/skriverettigheder og 403-svar. Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
+Version 0.8.0 omfatter 148 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; håndter deres særskilte læse-/skriverettigheder og 403-svar. Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
 
-Version 0.7.2: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
+Version 0.8.0: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
 
-Version 0.7.2 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
+Version 0.8.0 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
 
 Version 0.2.5 tilføjer de valgfrie felter latestPostingMs2000 og hasActiveSubscription til GetBankUserBalances. Posteringstidspunktet er et 64-bit antal UTC-millisekunder siden 2000-01-01; nul betyder ingen posteringer. Null eller et manglende felt betyder ukendt, og manglende eller skjulte beboere giver null. Abonnementsstatus bekræfter ikke en betaling. Bevar eksisterende saldohåndtering og rettigheder; se /docs#user-balances.
 
@@ -26,7 +53,7 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 Ingen NuGet-pakker, databaseforbindelser, Kombine-biblioteker eller reference til desktop-klienten. Kun Compact Frameworks egne `mscorlib` og `System`, version 2.0, kræves. Biblioteket indeholder kommunikation og serialisering; forretningsregler og adgangskontrol ligger fortsat i API'et.
 
-Version 0.7.2 følger den aktuelle beta-kandidat (142 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
+Version 0.8.0 følger den aktuelle beta-kandidat (148 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
 
 Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser.
 
@@ -161,9 +188,9 @@ Solutionen indeholder:
 
 I udviklingsrepoet bygger/tester/pakker `scripts/Test-PortalClientCompact20.ps1`. Scriptet kræver PowerShell 7 på udviklings-pc'en; kunder og enheder behøver det ikke. `scripts/Generate-PortalClientNet20.py --compact` opdaterer de indtjekkede kontraktklasser fra det fælles OpenAPI-snapshot.
 
-**Verificeret:** Release-build med de originale VS2008/MSBuild 3.5-værktøjer og CF 2.0-referencebiblioteker; alle 142 operationer og syntetiske kontroller på desktop-testværten. Tests kontrollerer også, at DLL'en refererer til Compact Frameworks assembly-identiteter. Device-testprogrammet er bygget mod CF 2.0. **Ikke verificeret:** kørsel eller HTTPS på en fysisk CE/Mobile-enhed eller emulator. Der er ikke udført rigtige login eller databaseændringer.
+**Verificeret:** Release-build med de originale VS2008/MSBuild 3.5-værktøjer og CF 2.0-referencebiblioteker; alle 148 operationer og syntetiske kontroller på desktop-testværten. Tests kontrollerer også, at DLL'en refererer til Compact Frameworks assembly-identiteter. Device-testprogrammet er bygget mod CF 2.0. **Ikke verificeret:** kørsel eller HTTPS på en fysisk CE/Mobile-enhed eller emulator. Der er ikke udført rigtige login eller databaseændringer.
 
-## Automatisk sessionshåndtering — 0.7.2 (ikke udgivet)
+## Automatisk sessionshåndtering — 0.8.0 (ikke udgivet)
 
 Behold én `PortalSession` pr. API-adresse og konto/login. Klienter oprettet fra den fornyer ved brug kort før udløb; samtidige login og fornyelser samles. Der kører ingen baggrundstimer. Dispose af en klient logger ikke den fælles session ud; brug `session.ClearSession()`. Et igangværende login kan ikke genoprette en ryddet session. Log aldrig tokens eller adgangskoder.
 

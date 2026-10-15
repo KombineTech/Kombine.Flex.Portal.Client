@@ -17,13 +17,13 @@ internal static class Program
     {
         _assertions = 0; _directory = directory;
         RuntimeAndDependencies();
-        Contracts(); JsonRoundTripAndTyping(); ReceiptPaging(); MalformedJson(); LoginAndSessionIsolation(); _assertions += SessionChecks.Run();
+        Contracts(); Multipart(); JsonRoundTripAndTyping(); ReceiptPaging(); MalformedJson(); LoginAndSessionIsolation(); _assertions += SessionChecks.Run();
         LogoutDuringLogin(); InvalidSessions(); ErrorsAndBoundedResponses(); QueryAndHeaderEncoding();
         DownloadOwnership(); EndpointValidation();
 #if DESKTOP_TEST_HOST
-        LoopbackTransport(); LoopbackPost(false); LoopbackPost(true); StalledTransport(false); StalledTransport(true);
+        LoopbackCamera(false); LoopbackCamera(true); LoopbackTransport(); LoopbackPost(false); LoopbackPost(true); StalledTransport(false); StalledTransport(true);
 #endif
-        return "PASS: " + _assertions + " checks, 142 API operations; runtime " + Environment.Version + ".";
+        return "PASS: " + _assertions + " checks, 148 API operations; runtime " + Environment.Version + ".";
     }
     private static string _directory;
     private static void Check(bool ok, string label) { _assertions++; if (!ok) throw new Exception(label); }
@@ -57,10 +57,99 @@ internal static class Program
         { string line; while ((line = reader.ReadLine()) != null) if (line.Length > 0) rows.Add(line); }
         return rows.ToArray();
     }
+    private static void Multipart()
+    {
+        MemoryStream input = new MemoryStream(new byte[] { 0, 255, 42 });
+        PortalMultipart body = new PortalMultipart(); body.AddField("uploadToken", "fixture-token"); body.AddFile("original", "photo.jpg", input);
+        MemoryStream output = new MemoryStream(); body.WriteTo(output);
+        Equal(body.Length, output.Length, "Multipart declared length matches bytes");
+        string text = Encoding.UTF8.GetString(output.ToArray(), 0, (int)output.Length);
+        Check(text.IndexOf("name=\"uploadToken\"") >= 0 && text.IndexOf("fixture-token") >= 0, "Multipart token field");
+        Check(text.IndexOf("filename=\"photo.jpg\"") >= 0, "Multipart filename");
+        Check(input.CanRead, "Caller retains upload stream");
+        Throws<ArgumentException>(delegate { body.AddField("uploadToken", "duplicate"); }, "Duplicate multipart field");
+        Throws<ArgumentException>(delegate { body.AddFile("original2", "x\r\nheader", input); }, "Header injection rejected");
+        Throws<InvalidOperationException>(delegate { body.WriteTo(new MemoryStream()); }, "Rewind required for retry");
+        Fake fake = new Fake(200, "{\"captureId\":\"capture\",\"resourceKid\":\"kid\"}");
+        input.Position = 0;
+        using (PortalApiClient api = Client(fake)) { api.SaveCameraCapture(body); }
+        Check(fake.Last.Multipart == body && fake.Last.Body == null, "Multipart bypasses JSON serialization");
+        input.Close(); output.Close();
+    }
+#if !PORTAL_COMPACT20 || DESKTOP_TEST_HOST
+    private static void LoopbackCamera(bool download)
+    {
+        TcpListener listener = new TcpListener(IPAddress.Loopback, 0); listener.Start();
+        int port = ((IPEndPoint)listener.LocalEndpoint).Port;
+        string requestHeaders = null; byte[] requestBody = null; Exception failure = null;
+        Thread worker = new Thread(delegate()
+        {
+            try
+            {
+                using (TcpClient socket = listener.AcceptTcpClient())
+                using (NetworkStream stream = socket.GetStream())
+                {
+                    socket.ReceiveTimeout = 5000;
+                    StringBuilder header = new StringBuilder();
+                    while (!header.ToString().EndsWith("\r\n\r\n", StringComparison.Ordinal))
+                    { int next = stream.ReadByte(); if (next < 0 || header.Length > 8192) throw new Exception("Invalid camera fixture request"); header.Append((char)next); }
+                    requestHeaders = header.ToString();
+                    if (requestHeaders.ToLowerInvariant().IndexOf("expect: 100-continue") >= 0)
+                    { byte[] interim = Encoding.ASCII.GetBytes("HTTP/1.1 100 Continue\r\n\r\n"); stream.Write(interim, 0, interim.Length); }
+                    int length = 0;
+                    foreach (string line in requestHeaders.Split(new string[] { "\r\n" }, StringSplitOptions.None))
+                        if (line.StartsWith("Content-Length:", StringComparison.OrdinalIgnoreCase)) length = Int32.Parse(line.Substring(15).Trim(), CultureInfo.InvariantCulture);
+                    requestBody = new byte[length]; int total = 0;
+                    while (total < length) { int count = stream.Read(requestBody, total, length - total); if (count == 0) throw new Exception("Truncated upload"); total += count; }
+                    string body = download ? "xy" : "{\"captureId\":\"capture\",\"resourceKid\":\"kid\"}";
+                    string status = download ? "206 Partial Content" : "200 OK";
+                    byte[] response = Encoding.ASCII.GetBytes("HTTP/1.1 " + status + "\r\nContent-Length: " + body.Length + "\r\nConnection: close\r\n\r\n" + body);
+                    stream.Write(response, 0, response.Length);
+                }
+            }
+            catch (Exception error) { failure = error; }
+        });
+        worker.IsBackground = true; worker.Start();
+        try
+        {
+            using (PortalApiClient api = new PortalApiClient(new Uri("http://127.0.0.1:" + port + "/")))
+            {
+                api.TimeoutMilliseconds = 3000; api.AccessToken = "fixture-only-token";
+                if (download)
+                {
+                    GetCameraCaptureContentOptions options = new GetCameraCaptureContentOptions(); options.Range = "bytes=1-2";
+                    using (PortalDownload result = api.GetCameraCaptureContent("opaque", options))
+                    { Equal(206, result.StatusCode, "Real range download status"); Equal((int)'x', result.Stream.ReadByte(), "Partial content byte"); }
+                }
+                else
+                {
+                    using (MemoryStream input = new MemoryStream(new byte[] { 0, 255, 42 }))
+                    {
+                        PortalMultipart body = new PortalMultipart(); body.AddField("uploadToken", "fixture-token"); body.AddFile("original", "photo.jpg", input);
+                        Equal("capture", api.SaveCameraCapture(body).CaptureId, "Real multipart response");
+                        Check(input.CanRead, "Real transport retains caller stream");
+                    }
+                }
+            }
+            Check(worker.Join(5000), "Camera fixture finished"); if (failure != null) throw failure;
+            Check(requestHeaders.IndexOf("Authorization: Bearer fixture-only-token", StringComparison.Ordinal) >= 0, "Camera wire bearer");
+            if (download) Check(requestHeaders.IndexOf("Range: bytes=1-2", StringComparison.OrdinalIgnoreCase) >= 0, "Actual restricted Range header");
+            else
+            {
+                Check(requestHeaders.IndexOf("multipart/form-data; boundary=", StringComparison.OrdinalIgnoreCase) >= 0, "Actual multipart Content-Type");
+                string bodyText = Encoding.UTF8.GetString(requestBody, 0, requestBody.Length);
+                Check(bodyText.IndexOf("fixture-token") >= 0 && bodyText.IndexOf("filename=\"photo.jpg\"") >= 0, "Actual multipart fields");
+                bool found = false; for (int i = 0; i + 2 < requestBody.Length; i++) if (requestBody[i] == 0 && requestBody[i + 1] == 255 && requestBody[i + 2] == 42) found = true;
+                Check(found, "Original upload bytes preserved");
+            }
+        }
+        finally { listener.Stop(); }
+    }
+#endif
     private static void Contracts()
     {
         string[] rows = ReadRows(Path.Combine(_directory, "ContractCases.tsv"));
-        Equal(142, rows.Length, "Published operation count");
+        Equal(148, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });

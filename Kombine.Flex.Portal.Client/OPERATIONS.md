@@ -40,6 +40,10 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetBankUserNumberForNewUserAsync` | GET | `/api/v1/banks/{bankKid}/users/next-number` |
 | `GetBankUsersAsync` | GET | `/api/v1/banks/{bankKid}/users` |
 | `GetBankUserWorkspaceAsync` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
+| `GetCameraAvailabilityAsync` | GET | `/api/v1/camera/availability` |
+| `GetCameraCaptureContentAsync` | GET | `/api/v1/camera/{id}/content` |
+| `GetCameraCapturesAsync` | GET | `/api/v1/camera` |
+| `GetCameraResourceAsync` | GET | `/api/v1/camera/resource` |
 | `GetCircleGradientAsync` | GET | `/api/v1/circles/gradient/{colors}.svg` |
 | `GetCircleGradientSizedAsync` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` |
 | `GetCircleProgressAsync` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}.svg` |
@@ -119,12 +123,14 @@ Generated from the checked-in public integration contract. All business rules ar
 | `InviteManagerAsync` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `LoginManagerAsync` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinatesAsync` | POST | `/api/v1/addresses/{kid}/lookup` |
+| `PrepareCameraCaptureAsync` | POST | `/api/v1/camera/prepare` |
 | `RenewManagerSessionAsync` | POST | `/api/v1/session/renew` |
 | `RequestManagerPasswordResetAsync` | POST | `/api/v1/session/forgot-password` |
 | `RequestManagerSignUpAsync` | POST | `/api/v1/session/signup` |
 | `RequestMyManagerEmailVerificationAsync` | POST | `/api/v1/session/me/email-verification` |
 | `ResetManagerPasswordAsync` | POST | `/api/v1/session/reset-password` |
 | `ReverseBankAccountEntryAsync` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` |
+| `SaveCameraCaptureAsync` | POST | `/api/v1/camera` |
 | `SearchBankActivationAsync` | GET | `/api/v1/search/bank-activation` |
 | `SearchBanksAsync` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivationAsync` | GET | `/api/v1/search/location-activation` |

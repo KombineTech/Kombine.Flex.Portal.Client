@@ -435,6 +435,98 @@ export interface BookingsResponse {
   "hasMore"?: boolean;
 }
 
+/** Availability and effective capture permission for one exact authorized resource. */
+export interface CameraAvailabilityResponse {
+  /** hasCaptures */
+  "hasCaptures"?: boolean;
+  /** isDegraded */
+  "isDegraded"?: boolean;
+  /** canCapture */
+  "canCapture"?: boolean;
+}
+
+/** One authorized capture; all object identifiers are canonical KIDs or opaque API tokens. */
+export interface CameraCaptureItem {
+  /** id */
+  "id"?: string | null;
+  /** captureId */
+  "captureId"?: string | null;
+  /** resourceKid */
+  "resourceKid"?: string | null;
+  /** ownerKid */
+  "ownerKid"?: string | null;
+  /** fileName */
+  "fileName"?: string | null;
+  /** kind */
+  "kind"?: string | null;
+  /** capturedAtUtc */
+  "capturedAtUtc"?: string;
+  /** hasPreview */
+  "hasPreview"?: boolean;
+  /** hasMotion */
+  "hasMotion"?: boolean;
+  /** hasPlayback */
+  "hasPlayback"?: boolean;
+}
+
+/** One bounded page. A degraded page may omit captures from an unavailable region; refresh from the beginning after recovery. */
+export interface CameraCapturePage {
+  /** items */
+  "items"?: (CameraCaptureItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** isDegraded */
+  "isDegraded"?: boolean;
+}
+
+/** Immutable input for recorded photo, video or a paired Live Photo; tenant and owner are never client parameters. */
+export interface CameraPrepareRequest {
+  /** resourceKid */
+  "resourceKid"?: string | null;
+  /** kind */
+  "kind"?: string | null;
+  /** originalFileName */
+  "originalFileName"?: string | null;
+  /** originalNameAvailable */
+  "originalNameAvailable"?: boolean;
+  /** capturedAtUtc */
+  "capturedAtUtc"?: string;
+  /** mediaLength */
+  "mediaLength"?: bigint;
+  /** mediaSha256 */
+  "mediaSha256"?: string | null;
+  /** Available device observations with source, time and units; use an empty object when unavailable. Never include API credentials. */
+  "sensorData"?: unknown;
+  /** motionLength */
+  "motionLength"?: bigint | null;
+  /** motionSha256 */
+  "motionSha256"?: string | null;
+}
+
+/** Opaque signed ticket; retry with this exact token and unchanged original bytes. */
+export interface CameraPrepareResponse {
+  /** uploadToken */
+  "uploadToken"?: string | null;
+}
+
+/** Display metadata for the exact authorized camera resource, without parent or child data. */
+export interface CameraResourceResponse {
+  /** Canonical, site-bound bank, location or unit identity. */
+  "resourceKid"?: string | null;
+  /** Resource display name; unit localization placeholders are resolved. */
+  "name"?: string | null;
+  /** API-computed icon identity including the resource number; use unchanged in icon URLs. */
+  "iconKid"?: string | null;
+}
+
+/** A complete media set exists in at least one region; the second copy continues independently. */
+export interface CameraSaveResponse {
+  /** captureId */
+  "captureId"?: string | null;
+  /** resourceKid */
+  "resourceKid"?: string | null;
+}
+
 /** Site database access indicator, never a manager permission or a guarantee for a business operation. */
 export interface DatabaseAccessResponse {
   /** True: Log7 read/append privilege check succeeded. False: read succeeds but the write connection is absent, denies access or is read-only. Null: status could not be determined. Checks shared Log7 and bank-zero Log7 history only; bank grants, triggers and transactions may differ. */
@@ -2559,6 +2651,24 @@ export interface GetBankBookingsOptions {
   search?: string;
   offset?: number;
   limit?: number;
+}
+
+export interface GetCameraResourceOptions {
+  resourceKid?: string;
+}
+
+export interface GetCameraAvailabilityOptions {
+  resourceKid?: string;
+}
+
+export interface GetCameraCapturesOptions {
+  resourceKid?: string;
+  cursor?: string;
+}
+
+export interface GetCameraCaptureContentOptions {
+  part?: string;
+  range?: string;
 }
 
 export interface ExportBankAccountOptions {

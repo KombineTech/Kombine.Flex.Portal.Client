@@ -26,11 +26,21 @@ foreach ($fixtures as $i => $case) {
     $client = new $class($base . 'matrix/' . $i . '/');
     $client->setAccessToken('synthetic-token');
     $args = $case['args'];
+    $uploadFiles = [];
+    if ($case['multipart']) {
+        foreach (['original' => "original\0bytes", 'motion' => "motion\xffbytes"] as $name => $bytes) {
+            $file = tempnam(sys_get_temp_dir(), 'portal-camera-test-');
+            file_put_contents($file, $bytes);
+            $uploadFiles[] = $file;
+            $args[0][$name] = new CURLFile($file, 'application/octet-stream', $name . '.bin');
+        }
+    }
     if ($case['binary']) {
         $stream = fopen('php://temp', 'w+b');
         array_splice($args, $case['sinkIndex'], 0, [$stream]);
     }
-    $result = $client->{$case['method']}(...$args);
+    try { $result = $client->{$case['method']}(...$args); }
+    finally { foreach ($uploadFiles as $file) unlink($file); }
     if ($case['binary']) {
         check($result->bytes === strlen($case['response']), 'Download byte count ' . $case['method']);
         rewind($stream);

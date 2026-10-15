@@ -35,6 +35,13 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type BookingRuleUnit array{'kid'?: string|null, 'name'?: string|null}
  * @phpstan-type BookingUnitResponse array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: string|null, 'name'?: string|null}
  * @phpstan-type BookingsResponse array{'items'?: list<BookingResponse>|null, 'units'?: list<BookingUnitResponse>|null, 'from'?: string, 'through'?: string, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool}
+ * @phpstan-type CameraAvailabilityResponse array{'hasCaptures'?: bool, 'isDegraded'?: bool, 'canCapture'?: bool}
+ * @phpstan-type CameraCaptureItem array{'id'?: string|null, 'captureId'?: string|null, 'resourceKid'?: string|null, 'ownerKid'?: string|null, 'fileName'?: string|null, 'kind'?: string|null, 'capturedAtUtc'?: string, 'hasPreview'?: bool, 'hasMotion'?: bool, 'hasPlayback'?: bool}
+ * @phpstan-type CameraCapturePage array{'items'?: list<CameraCaptureItem>|null, 'nextCursor'?: string|null, 'isDegraded'?: bool}
+ * @phpstan-type CameraPrepareRequest array{'resourceKid'?: string|null, 'kind'?: string|null, 'originalFileName'?: string|null, 'originalNameAvailable'?: bool, 'capturedAtUtc'?: string, 'mediaLength'?: int, 'mediaSha256'?: string|null, 'sensorData'?: array<string,mixed>, 'motionLength'?: int|null, 'motionSha256'?: string|null}
+ * @phpstan-type CameraPrepareResponse array{'uploadToken'?: string|null}
+ * @phpstan-type CameraResourceResponse array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
+ * @phpstan-type CameraSaveResponse array{'captureId'?: string|null, 'resourceKid'?: string|null}
  * @phpstan-type DatabaseAccessResponse array{'canWrite'?: bool|null, 'checkedAtUtc'?: string}
  * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type DocumentColumn array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
@@ -428,6 +435,68 @@ final class PortalClient extends BaseClient
     public function executeBankBookingCommand(mixed $bankKid, mixed $bookingKid, #[\SensitiveParameter] array $body): mixed
     {
         return $this->request('ExecuteBankBookingCommand', ['bankKid' => $bankKid, 'bookingKid' => $bookingKid], $body);
+    }
+
+    /**
+     * Read the display identity of one authorized camera resource.
+     * @param array{'resourceKid'?: string} $options
+     * @return CameraResourceResponse
+     */
+    public function getCameraResource(array $options = []): mixed
+    {
+        return $this->request('GetCameraResource', [] + $options, null);
+    }
+
+    /**
+     * Check the lazy local camera tab and capture permission for one exact resource.
+     * @param array{'resourceKid'?: string} $options
+     * @return CameraAvailabilityResponse
+     */
+    public function getCameraAvailability(array $options = []): mixed
+    {
+        return $this->request('GetCameraAvailability', [] + $options, null);
+    }
+
+    /**
+     * Prepare a bounded, immutable capture plan including optional weather.
+     * @param CameraPrepareRequest $body
+     * @return CameraPrepareResponse
+     */
+    public function prepareCameraCapture(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('PrepareCameraCapture', [], $body);
+    }
+
+    /**
+     * Save new camera media immediately and replicate after the first complete regional copy.
+     * @param array<string,string|\CURLFile> $body Multipart fields and caller-owned file paths.
+     * @return CameraSaveResponse
+     */
+    public function saveCameraCapture(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('SaveCameraCapture', [], $body);
+    }
+
+    /**
+     * List own tenant captures, or all authorized captures on one exact bank, location or unit.
+     * @param array{'resourceKid'?: string, 'cursor'?: string} $options
+     * @return CameraCapturePage
+     */
+    public function getCameraCaptures(array $options = []): mixed
+    {
+        return $this->request('GetCameraCaptures', [] + $options, null);
+    }
+
+    /**
+     * Stream one capture component through the API, with current resource authorization.
+     * @param string $id
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @param array{'part'?: string, 'Range'?: string} $options
+     * @return DownloadResponse
+     */
+    public function getCameraCaptureContent(mixed $id, mixed $destination, array $options = []): mixed
+    {
+        return $this->request('GetCameraCaptureContent', ['id' => $id] + $options, null, $destination);
     }
 
     /**

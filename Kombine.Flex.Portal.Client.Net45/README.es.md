@@ -1,12 +1,39 @@
+## Camera1 · 0.8.0
+
+La versión 0.8.0 incluye las 148 operaciones públicas, incluida Camera1. Llame a PrepareCameraCapture con SHA-256 y longitud exactos del original, fecha UTC, KID del recurso y objeto de sensores; cargue los mismos bytes con uploadToken. Live Photos requiere además la longitud/hash y el MOV original asociado. Conserve el token y los bytes para un reintento deliberado; no hay reintentos automáticos. Aumente el plazo para procesar vídeo. La API exige Camera1 y permisos Read/Write del recurso exacto. Las listas pueden estar degradadas o devolver páginas vacías con nextCursor; continúe hasta que no haya cursor. Descargue por la API; Range puede devolver HTTP 206. Consulte /docs#camera-captures para límites y errores.
+
+```csharp
+// uploadToken comes from PrepareCameraCapture; originalPath points to those exact bytes.
+using (System.IO.FileStream original = System.IO.File.OpenRead(originalPath))
+{
+    PortalMultipart body = new PortalMultipart();
+    body.AddField("uploadToken", uploadToken);
+    body.AddFile("original", System.IO.Path.GetFileName(originalPath), original);
+    CameraSaveResponse saved = api.SaveCameraCapture(body);
+}
+```
+
+```vbnet
+' uploadToken comes from PrepareCameraCapture; originalPath contains the same bytes.
+Using original As System.IO.FileStream = System.IO.File.OpenRead(originalPath)
+    Dim body As New PortalMultipart()
+    body.AddField("uploadToken", uploadToken)
+    body.AddFile("original", System.IO.Path.GetFileName(originalPath), original)
+    Dim saved As CameraSaveResponse = api.SaveCameraCapture(body)
+End Using
+```
+
+Streams remain caller-owned. Use seekable streams, rewind and create a new multipart body before retrying. For Live Photos, add a second file named `motion`. Maximum multipart body: 140 MiB; text fields: 512 KiB each.
+
 Todos los cambios de rol de administrador requieren Read y Write tanto de Tabs como de Kids. Gestione missing-tabs-read, missing-tabs-write, missing-kids-read y missing-kids-write (HTTP 403).
 
 GetTerminals usa el ComputerName comunicado para el nombre, el filtro y la ordenación; los nombres ausentes están vacíos. Solicite fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight para los datos del terminal. Son cadenas, null si no se seleccionan y vacías si faltan. Mantenga fields al paginar y reinicie los cursores anteriores. Cada fila incluye el nombre de la ubicación. Consulte /docs#changelog para todos los requisitos de migración.
 
-La versión 0.7.2 incluye 142 operaciones. GetUnits añade el directorio de unidades autorizado: mantenga filtros y fields al paginar y reinicie ante invalid-cursor. Los roles de administrador requieren las nueve categorías de expectedFlags, incluidas Tabs y Kids; gestione sus permisos independientes y las respuestas 403. Se eliminan las asignaciones de acceso de servicios: deje de enviar esas solicitudes y de leer el objeto access. Las partes del logotipo se indican en la ruta antes del color, no en parámetros de consulta. UserBalance sigue siendo compatible. Consulte /docs#changelog para la migración y /docs#unit-directory para paginación y ejemplos.
+La versión 0.8.0 incluye 148 operaciones. GetUnits añade el directorio de unidades autorizado: mantenga filtros y fields al paginar y reinicie ante invalid-cursor. Los roles de administrador requieren las nueve categorías de expectedFlags, incluidas Tabs y Kids; gestione sus permisos independientes y las respuestas 403. Se eliminan las asignaciones de acceso de servicios: deje de enviar esas solicitudes y de leer el objeto access. Las partes del logotipo se indican en la ruta antes del color, no en parámetros de consulta. UserBalance sigue siendo compatible. Consulte /docs#changelog para la migración y /docs#unit-directory para paginación y ejemplos.
 
-Versión 0.7.2: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.
+Versión 0.8.0: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.
 
-a versión 0.7.2 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales.
+a versión 0.8.0 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales.
 
 La versión 0.2.5 añade los campos opcionales latestPostingMs2000 y hasActiveSubscription a GetBankUserBalances. La fecha del asiento es un entero de 64 bits en milisegundos UTC desde 2000-01-01; cero indica que no hay asientos. Null o un campo ausente significa desconocido; los residentes inexistentes u ocultos devuelven null. El estado de suscripción no confirma un pago. Mantenga el tratamiento de saldos y los permisos existentes; consulte /docs#user-balances.
 
@@ -22,15 +49,15 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 
 # Cliente Flex Portal para .NET Framework 4.5
 
-`Kombine.Flex.Portal.Client.Net45` ofrece métodos síncronos y tipados para las **142 operaciones públicas**. No requiere NuGet, bibliotecas Kombine, acceso a bases de datos ni cálculos de KID. Las reglas de negocio y los permisos se aplican en la API. Consulte [OPERATIONS.md](OPERATIONS.md).
+`Kombine.Flex.Portal.Client.Net45` ofrece métodos síncronos y tipados para las **148 operaciones públicas**. No requiere NuGet, bibliotecas Kombine, acceso a bases de datos ni cálculos de KID. Las reglas de negocio y los permisos se aplican en la API. Consulte [OPERATIONS.md](OPERATIONS.md).
 
-La versión 0.7.2 corresponde al candidato beta actual (142 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
+La versión 0.8.0 corresponde al candidato beta actual (148 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
 
 La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites.
 
 ## Instalación
 
-Extraiga `Kombine.Flex.Portal.Client.Net45.0.7.2.zip` y seleccione **Add Reference → Browse → Kombine.Flex.Portal.Client.Net45.dll**. Conserve el XML junto a la DLL para IntelliSense y distribuya la DLL con su aplicación. `Source` contiene el código y `Kombine.Flex.Portal.Client.2012.sln`. La DLL solo referencia mscorlib y System 4.5; es un proyecto clásico independiente.
+Extraiga `Kombine.Flex.Portal.Client.Net45.0.8.0.zip` y seleccione **Add Reference → Browse → Kombine.Flex.Portal.Client.Net45.dll**. Conserve el XML junto a la DLL para IntelliSense y distribuya la DLL con su aplicación. `Source` contiene el código y `Kombine.Flex.Portal.Client.2012.sln`. La DLL solo referencia mscorlib y System 4.5; es un proyecto clásico independiente.
 
 ## Primero la URL de la API, después las credenciales
 
@@ -108,7 +135,7 @@ El script de desarrollo obtiene las referencias de Microsoft 1.0.3 solo si falta
 
 En el repositorio de desarrollo, `scripts/Test-PortalClientNet45.ps1` compila, prueba y empaqueta el ZIP; PowerShell 7 no es necesario en el equipo cliente. `scripts/Generate-PortalClientNet20.py --net45` regenera los contratos desde OpenAPI. Para usar o compilar la DLL, el cliente no necesita Python, generadores ni una API en ejecución. El idioma principal de la documentación es inglés; se incluyen alternativas en danés y español.
 
-## Gestión automática de sesiones — 0.7.2 (sin publicar)
+## Gestión automática de sesiones — 0.8.0 (sin publicar)
 
 Mantenga una `PortalSession` por dirección API y cuenta/inicio de sesión. Los clientes creados a partir de ella renuevan al usarse poco antes de caducar; la autenticación simultánea se coordina. No hay temporizador en segundo plano. Dispose del cliente no cierra la sesión compartida; use `session.ClearSession()`. La autenticación pendiente no puede restaurar una sesión borrada. No registre tokens ni contraseñas.
 

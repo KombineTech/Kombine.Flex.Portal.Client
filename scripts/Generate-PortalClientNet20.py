@@ -77,6 +77,7 @@ for path, methods in contract['paths'].items():
         options = [p for p in op.get('parameters', []) if p['in'] != 'path']
         for p in options:
             if p['in'] not in ('query', 'header'): raise ValueError('Unsupported parameter: ' + p['in'])
+        multipart = op.get('requestBody', {}).get('content', {}).get('multipart/form-data', {}).get('schema')
         body = op.get('requestBody', {}).get('content', {}).get('application/json', {}).get('schema')
         successes = [(int(k), v) for k, v in op['responses'].items() if k.startswith('2')]
         # These clients request complete downloads; 206 is only used when a caller sends Range.
@@ -89,6 +90,9 @@ for path, methods in contract['paths'].items():
         result = 'PortalDownload' if binary else kind(response_schema, False) if response_schema else 'void'
         parameters = [kind(p['schema'], False) + ' @' + p['name'] for p in path_params]
         args = ['@' + p['name'] for p in path_params]
+        if multipart:
+            parameters.append('PortalMultipart body')
+            args.append('body')
         if body:
             parameters.append(kind(body, False) + ' body')
             args.append('body')
@@ -115,7 +119,7 @@ for path, methods in contract['paths'].items():
                 else: client += '                if (' + v + ' != null) headers.Add(' + cs(p['name']) + ', ' + v + ');\n'
             client += '            }\n'
         invocation = 'SendDownload' if binary else 'SendJson'
-        call_args = [cs(verb.upper()), 'path', 'body' if body else 'null', 'headers', str(status)]
+        call_args = [cs(verb.upper()), 'path', 'body' if body or multipart else 'null', 'headers', str(status)]
         if not binary: call_args.append('typeof(' + ('object' if result == 'void' else result) + ')')
         client += '            ' + ('' if result == 'void' else 'return ' + ('' if binary else '(' + result + ')')) + invocation + '(' + ', '.join(call_args) + ');\n        }\n\n'
         operations.append('| `' + method + '` | ' + verb.upper() + ' | `' + path + '` |')

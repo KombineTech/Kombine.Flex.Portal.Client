@@ -129,7 +129,29 @@ abstract class BaseClient
             }
         }
         $json = null;
-        if ($spec['body'] !== null) {
+        if (($spec['multipart'] ?? null) !== null) {
+            $schema = $spec['multipart'];
+            if (isset($schema['$ref'])) $schema = $this->contract['schemas'][basename($schema['$ref'])];
+            if ($body === null || array_diff($schema['required'] ?? [], array_keys($body))) throw new \InvalidArgumentException('Required multipart fields are missing.');
+            $size = 0;
+            foreach ($body as $name => $value) {
+                $field = $schema['properties'][$name] ?? null;
+                if ($field === null) throw new \InvalidArgumentException('Invalid multipart field.');
+                if (($field['format'] ?? null) === 'binary') {
+                    if (!$value instanceof \CURLFile) throw new \InvalidArgumentException('A CURLFile is required.');
+                    $uploadPath = $value->getFilename();
+                    if (str_contains($uploadPath, '://') || !is_file($uploadPath) || !is_readable($uploadPath)) throw new \InvalidArgumentException('A readable local file is required.');
+                    $bytes = filesize($uploadPath);
+                    if ($bytes === false) throw new \InvalidArgumentException('Cannot determine upload file length.');
+                    $size += $bytes;
+                } else {
+                    if (!is_string($value) || strlen($value) > 512 * 1024) throw new \InvalidArgumentException('Invalid multipart text field.');
+                    $size += strlen($value);
+                }
+            }
+            if ($size > 139 * 1024 * 1024) throw new \InvalidArgumentException('Multipart upload is too large.');
+            $json = $body; // cURL streams files and creates the multipart Content-Type boundary.
+        } elseif ($spec['body'] !== null) {
             if ($body === null) throw new \InvalidArgumentException('A JSON request object is required.');
             try { $json = json_encode($this->shape($body, $spec['body'], true), JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION, 64); }
             catch (\JsonException) { throw new \InvalidArgumentException('Invalid request JSON.'); }

@@ -250,6 +250,59 @@ BookingsResponse = TypedDict('BookingsResponse', {
     'hasMore': 'bool',
 }, total=False)
 
+CameraAvailabilityResponse = TypedDict('CameraAvailabilityResponse', {
+    'hasCaptures': 'bool',
+    'isDegraded': 'bool',
+    'canCapture': 'bool',
+}, total=False)
+
+CameraCaptureItem = TypedDict('CameraCaptureItem', {
+    'id': 'str | None',
+    'captureId': 'str | None',
+    'resourceKid': 'str | None',
+    'ownerKid': 'str | None',
+    'fileName': 'str | None',
+    'kind': 'str | None',
+    'capturedAtUtc': 'str',
+    'hasPreview': 'bool',
+    'hasMotion': 'bool',
+    'hasPlayback': 'bool',
+}, total=False)
+
+CameraCapturePage = TypedDict('CameraCapturePage', {
+    'items': 'list[CameraCaptureItem] | None',
+    'nextCursor': 'str | None',
+    'isDegraded': 'bool',
+}, total=False)
+
+CameraPrepareRequest = TypedDict('CameraPrepareRequest', {
+    'resourceKid': 'str | None',
+    'kind': 'str | None',
+    'originalFileName': 'str | None',
+    'originalNameAvailable': 'bool',
+    'capturedAtUtc': 'str',
+    'mediaLength': 'int',
+    'mediaSha256': 'str | None',
+    'sensorData': 'Any',
+    'motionLength': 'int | None',
+    'motionSha256': 'str | None',
+}, total=False)
+
+CameraPrepareResponse = TypedDict('CameraPrepareResponse', {
+    'uploadToken': 'str | None',
+}, total=False)
+
+CameraResourceResponse = TypedDict('CameraResourceResponse', {
+    'resourceKid': 'str | None',
+    'name': 'str | None',
+    'iconKid': 'str | None',
+}, total=False)
+
+CameraSaveResponse = TypedDict('CameraSaveResponse', {
+    'captureId': 'str | None',
+    'resourceKid': 'str | None',
+}, total=False)
+
 DatabaseAccessResponse = TypedDict('DatabaseAccessResponse', {
     'canWrite': 'bool | None',
     'checkedAtUtc': 'str',

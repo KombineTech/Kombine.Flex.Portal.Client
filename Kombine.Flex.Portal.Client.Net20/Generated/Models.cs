@@ -944,6 +944,201 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Availability and effective capture permission for one exact authorized resource.</summary>
+    public sealed class CameraAvailabilityResponse
+    {
+        /// <summary>hasCaptures</summary>
+        [JsonField("hasCaptures")]
+        public bool? HasCaptures { get { return _HasCaptures; } set { _HasCaptures = value; } }
+        private bool? _HasCaptures;
+
+        /// <summary>isDegraded</summary>
+        [JsonField("isDegraded")]
+        public bool? IsDegraded { get { return _IsDegraded; } set { _IsDegraded = value; } }
+        private bool? _IsDegraded;
+
+        /// <summary>canCapture</summary>
+        [JsonField("canCapture")]
+        public bool? CanCapture { get { return _CanCapture; } set { _CanCapture = value; } }
+        private bool? _CanCapture;
+
+    }
+
+    /// <summary>One authorized capture; all object identifiers are canonical KIDs or opaque API tokens.</summary>
+    public sealed class CameraCaptureItem
+    {
+        /// <summary>id</summary>
+        [JsonField("id")]
+        public string Id { get { return _Id; } set { _Id = value; } }
+        private string _Id;
+
+        /// <summary>captureId</summary>
+        [JsonField("captureId")]
+        public string CaptureId { get { return _CaptureId; } set { _CaptureId = value; } }
+        private string _CaptureId;
+
+        /// <summary>resourceKid</summary>
+        [JsonField("resourceKid")]
+        public string ResourceKid { get { return _ResourceKid; } set { _ResourceKid = value; } }
+        private string _ResourceKid;
+
+        /// <summary>ownerKid</summary>
+        [JsonField("ownerKid")]
+        public string OwnerKid { get { return _OwnerKid; } set { _OwnerKid = value; } }
+        private string _OwnerKid;
+
+        /// <summary>fileName</summary>
+        [JsonField("fileName")]
+        public string FileName { get { return _FileName; } set { _FileName = value; } }
+        private string _FileName;
+
+        /// <summary>kind</summary>
+        [JsonField("kind")]
+        public string Kind { get { return _Kind; } set { _Kind = value; } }
+        private string _Kind;
+
+        /// <summary>capturedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("capturedAtUtc")]
+        public string CapturedAtUtc { get { return _CapturedAtUtc; } set { _CapturedAtUtc = value; } }
+        private string _CapturedAtUtc;
+
+        /// <summary>hasPreview</summary>
+        [JsonField("hasPreview")]
+        public bool? HasPreview { get { return _HasPreview; } set { _HasPreview = value; } }
+        private bool? _HasPreview;
+
+        /// <summary>hasMotion</summary>
+        [JsonField("hasMotion")]
+        public bool? HasMotion { get { return _HasMotion; } set { _HasMotion = value; } }
+        private bool? _HasMotion;
+
+        /// <summary>hasPlayback</summary>
+        [JsonField("hasPlayback")]
+        public bool? HasPlayback { get { return _HasPlayback; } set { _HasPlayback = value; } }
+        private bool? _HasPlayback;
+
+    }
+
+    /// <summary>One bounded page. A degraded page may omit captures from an unavailable region; refresh from the beginning after recovery.</summary>
+    public sealed class CameraCapturePage
+    {
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public CameraCaptureItem[] Items { get { return _Items; } set { _Items = value; } }
+        private CameraCaptureItem[] _Items;
+
+        /// <summary>nextCursor</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+        /// <summary>isDegraded</summary>
+        [JsonField("isDegraded")]
+        public bool? IsDegraded { get { return _IsDegraded; } set { _IsDegraded = value; } }
+        private bool? _IsDegraded;
+
+    }
+
+    /// <summary>Immutable input for recorded photo, video or a paired Live Photo; tenant and owner are never client parameters.</summary>
+    public sealed class CameraPrepareRequest
+    {
+        /// <summary>resourceKid</summary>
+        [JsonField("resourceKid")]
+        public string ResourceKid { get { return _ResourceKid; } set { _ResourceKid = value; } }
+        private string _ResourceKid;
+
+        /// <summary>kind</summary>
+        [JsonField("kind")]
+        public string Kind { get { return _Kind; } set { _Kind = value; } }
+        private string _Kind;
+
+        /// <summary>originalFileName</summary>
+        [JsonField("originalFileName")]
+        public string OriginalFileName { get { return _OriginalFileName; } set { _OriginalFileName = value; } }
+        private string _OriginalFileName;
+
+        /// <summary>originalNameAvailable</summary>
+        [JsonField("originalNameAvailable")]
+        public bool? OriginalNameAvailable { get { return _OriginalNameAvailable; } set { _OriginalNameAvailable = value; } }
+        private bool? _OriginalNameAvailable;
+
+        /// <summary>capturedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("capturedAtUtc")]
+        public string CapturedAtUtc { get { return _CapturedAtUtc; } set { _CapturedAtUtc = value; } }
+        private string _CapturedAtUtc;
+
+        /// <summary>mediaLength</summary>
+        [JsonField("mediaLength")]
+        public long? MediaLength { get { return _MediaLength; } set { _MediaLength = value; } }
+        private long? _MediaLength;
+
+        /// <summary>mediaSha256</summary>
+        [JsonField("mediaSha256")]
+        public string MediaSha256 { get { return _MediaSha256; } set { _MediaSha256 = value; } }
+        private string _MediaSha256;
+
+        /// <summary>Available device observations with source, time and units; use an empty object when unavailable. Never include API credentials.</summary>
+        [JsonField("sensorData")]
+        public object SensorData { get { return _SensorData; } set { _SensorData = value; } }
+        private object _SensorData;
+
+        /// <summary>motionLength</summary>
+        [JsonField("motionLength")]
+        public long? MotionLength { get { return _MotionLength; } set { _MotionLength = value; } }
+        private long? _MotionLength;
+
+        /// <summary>motionSha256</summary>
+        [JsonField("motionSha256")]
+        public string MotionSha256 { get { return _MotionSha256; } set { _MotionSha256 = value; } }
+        private string _MotionSha256;
+
+    }
+
+    /// <summary>Opaque signed ticket; retry with this exact token and unchanged original bytes.</summary>
+    public sealed class CameraPrepareResponse
+    {
+        /// <summary>uploadToken</summary>
+        [JsonField("uploadToken")]
+        public string UploadToken { get { return _UploadToken; } set { _UploadToken = value; } }
+        private string _UploadToken;
+
+    }
+
+    /// <summary>Display metadata for the exact authorized camera resource, without parent or child data.</summary>
+    public sealed class CameraResourceResponse
+    {
+        /// <summary>Canonical, site-bound bank, location or unit identity.</summary>
+        [JsonField("resourceKid")]
+        public string ResourceKid { get { return _ResourceKid; } set { _ResourceKid = value; } }
+        private string _ResourceKid;
+
+        /// <summary>Resource display name; unit localization placeholders are resolved.</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>API-computed icon identity including the resource number; use unchanged in icon URLs.</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
+    }
+
+    /// <summary>A complete media set exists in at least one region; the second copy continues independently.</summary>
+    public sealed class CameraSaveResponse
+    {
+        /// <summary>captureId</summary>
+        [JsonField("captureId")]
+        public string CaptureId { get { return _CaptureId; } set { _CaptureId = value; } }
+        private string _CaptureId;
+
+        /// <summary>resourceKid</summary>
+        [JsonField("resourceKid")]
+        public string ResourceKid { get { return _ResourceKid; } set { _ResourceKid = value; } }
+        private string _ResourceKid;
+
+    }
+
     /// <summary>Site database access indicator, never a manager permission or a guarantee for a business operation.</summary>
     public sealed class DatabaseAccessResponse
     {
@@ -5581,6 +5776,50 @@ namespace Kombine.Flex.Portal.Client.Net20
         /// <summary>limit</summary>
         public int? Limit { get { return _Limit; } set { _Limit = value; } }
         private int? _Limit;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetCameraResource. Null values use API defaults.</summary>
+    public sealed class GetCameraResourceOptions
+    {
+        /// <summary>resourceKid</summary>
+        public string ResourceKid { get { return _ResourceKid; } set { _ResourceKid = value; } }
+        private string _ResourceKid;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetCameraAvailability. Null values use API defaults.</summary>
+    public sealed class GetCameraAvailabilityOptions
+    {
+        /// <summary>resourceKid</summary>
+        public string ResourceKid { get { return _ResourceKid; } set { _ResourceKid = value; } }
+        private string _ResourceKid;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetCameraCaptures. Null values use API defaults.</summary>
+    public sealed class GetCameraCapturesOptions
+    {
+        /// <summary>resourceKid</summary>
+        public string ResourceKid { get { return _ResourceKid; } set { _ResourceKid = value; } }
+        private string _ResourceKid;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetCameraCaptureContent. Null values use API defaults.</summary>
+    public sealed class GetCameraCaptureContentOptions
+    {
+        /// <summary>part</summary>
+        public string Part { get { return _Part; } set { _Part = value; } }
+        private string _Part;
+
+        /// <summary>Optional single byte range, for example bytes=0-1023. Valid ranges return 206; invalid ranges return 416.</summary>
+        public string Range { get { return _Range; } set { _Range = value; } }
+        private string _Range;
 
     }
 

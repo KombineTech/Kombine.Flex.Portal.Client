@@ -70,7 +70,7 @@ for name, spec in schemas.items():
 
 operations = {}
 cases = []
-pyc = '"""Generated operations; regenerate with scripts/Generate-PortalScriptClients.py."""\nfrom __future__ import annotations\nfrom typing import Any\nfrom .models import *\nfrom ._runtime import BaseClient, PortalDownload\n\n\nclass PortalClient(BaseClient):\n'
+pyc = '"""Generated operations; regenerate with scripts/Generate-PortalScriptClients.py."""\nfrom __future__ import annotations\nfrom typing import Any\nfrom .models import *\nfrom ._runtime import BaseClient, PortalDownload, PortalUploadFile\n\n\nclass PortalClient(BaseClient):\n'
 tsc = '// Generated operations; regenerate with scripts/Generate-PortalScriptClients.py.\nimport { BaseClient, PortalDownload, type RequestOptions } from "./runtime.js";\nimport type * as Models from "./models.js";\n\nexport class PortalClient extends BaseClient {\n'
 rows = []
 for path, methods in contract['paths'].items():
@@ -82,7 +82,9 @@ for path, methods in contract['paths'].items():
         params = op.get('parameters', [])
         pp = [p for p in params if p['in'] == 'path']
         qp = [p for p in params if p['in'] != 'path']
-        body = op.get('requestBody', {}).get('content', {}).get('application/json', {}).get('schema')
+        request_content = op.get('requestBody', {}).get('content', {})
+        multipart = request_content.get('multipart/form-data', {}).get('schema')
+        body = request_content.get('application/json', {}).get('schema')
         successes = [(int(k), v) for k, v in op['responses'].items() if k.startswith('2')]
         # Generated methods do not send Range, so full downloads expect HTTP 200.
         assert len(successes) == 1 or {s for s, _ in successes} == {200, 206}
@@ -92,13 +94,16 @@ for path, methods in contract['paths'].items():
         response = next(iter(content.values()))['schema'] if content else None
         binary = bool(response and response.get('format') == 'binary')
         assert response is not None
-        operations[oid] = dict(method=verb.upper(), path=path.lstrip('/'), status=status,
+        operations[oid] = dict(method=verb.upper(), path=path.lstrip('/'), status=status, statuses=[s for s, _ in successes],
                                auth=bool(op.get('security', contract.get('security'))),
                                parameters=[dict(name=p['name'], where=p['in'], py=snake(p['name']), js=p['name'][0].lower()+p['name'][1:] if p['in'] != 'header' else re.sub(r'-(\w)', lambda m: m[1].upper(), p['name'].lower()), schema=shape(p['schema'])) for p in params],
-                               body=shape(body) if body else None, response=shape(response), binary=binary)
+                               body=shape(body) if body else None, multipart=multipart, response=shape(response), binary=binary)
         metadata = operations[oid]
         pyargs = [snake(p['name']) + ': ' + kind(p['schema'], 'py') for p in pp]
         tsargs = [p['name'] + ': ' + kind(p['schema'], 'ts') for p in pp]
+        if multipart:
+            pyargs.append('body: dict[str, str | PortalUploadFile]')
+            tsargs.append('body: FormData')
         if body:
             pyargs.append('body: ' + kind(body, 'py'))
             tsargs.append('body: Models.' + kind(body, 'ts'))
@@ -118,10 +123,10 @@ for path, methods in contract['paths'].items():
             tr = 'Models.' + type_name(response['items']['$ref'].split('/')[-1]) + '[]'
         pyc += '\n    def ' + pn + '(self' + (', ' + ', '.join(pyargs) if pyargs else '') + ') -> ' + pr + ':\n'
         pyc += '        ' + repr(brief(op.get('summary', oid))) + '\n'
-        pyc += '        return self._request(' + repr(oid) + ', {' + ', '.join(repr(p['name']) + ': ' + snake(p['name']) for p in params) + '}, ' + ('body' if body else 'None') + ')\n'
+        pyc += '        return self._request(' + repr(oid) + ', {' + ', '.join(repr(p['name']) + ': ' + snake(p['name']) for p in params) + '}, ' + ('body' if body or multipart else 'None') + ')\n'
         tsc += '  /** ' + brief(op.get('summary', oid)) + ' */\n  ' + jn + '(' + ', '.join(tsargs) + '): Promise<' + tr + '> {\n'
         values = [json.dumps(p['name']) + ': ' + (p['name'] if p['in'] == 'path' else 'options.' + next(m['js'] for m in metadata['parameters'] if m['name'] == p['name'])) for p in params]
-        tsc += '    return this.send(' + json.dumps(oid) + ', {' + ', '.join(values) + '}, ' + ('body' if body else 'undefined') + ', request) as Promise<' + tr + '>;\n  }\n\n'
+        tsc += '    return this.send(' + json.dumps(oid) + ', {' + ', '.join(values) + '}, ' + ('body' if body or multipart else 'undefined') + ', request) as Promise<' + tr + '>;\n  }\n\n'
         example = next((c['example'] for c in content.values() if 'example' in c), [] if response.get('type') == 'array' else {})
         cases.append(dict(operation=oid, python=pn, javascript=jn, **metadata, example=example))
         rows.append(f'| `{oid}` | `{pn}` | `{jn}` | {verb.upper()} | `{path}` |')

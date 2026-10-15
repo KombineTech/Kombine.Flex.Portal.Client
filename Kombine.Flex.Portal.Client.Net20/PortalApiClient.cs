@@ -126,7 +126,8 @@ namespace Kombine.Flex.Portal.Client.Net20
                 CheckDisposed();
                 if (_accessToken != null) request.Headers.Add("Authorization", "Bearer " + _accessToken);
             }
-            if (body != null)
+            request.Multipart = body as PortalMultipart;
+            if (body != null && request.Multipart == null)
             {
                 request.Body = new UTF8Encoding(false, true).GetBytes(PortalJson.Serialize(body));
                 if (request.Body.Length > _maxJsonResponseBytes) throw new InvalidDataException("JSON request exceeds the configured limit.");
@@ -151,7 +152,7 @@ namespace Kombine.Flex.Portal.Client.Net20
         private PortalDownload SendDownload(string method, string path, object body, Dictionary<string, string> headers, int expectedStatus)
         {
             PortalResponse response = Send(method, path, body, headers);
-            if (response.Status == expectedStatus) return new PortalDownload(response);
+            if (response.Status == expectedStatus || expectedStatus == 200 && response.Status == 206 && headers.ContainsKey("Range")) return new PortalDownload(response);
             using (response) { throw new PortalApiException(response.Status, ReadJson(response), response.Headers); }
         }
         private string ReadJson(PortalResponse response)
