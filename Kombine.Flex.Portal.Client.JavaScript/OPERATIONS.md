@@ -55,6 +55,7 @@
 | `GetUnitIcons` | `get_unit_icons` | `getUnitIcons` | GET | `/api/v1/units/icons` |
 | `GetLocationIcons` | `get_location_icons` | `getLocationIcons` | GET | `/api/v1/locations/icons` |
 | `GetLocationOpeningHours` | `get_location_opening_hours` | `getLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` |
+| `GetLocationWeather` | `get_location_weather` | `getLocationWeather` | GET | `/api/v1/locations/{locationKid}/weather` |
 | `CreateManager` | `create_manager` | `createManager` | POST | `/api/v1/managers` |
 | `GetManagers` | `get_managers` | `getManagers` | GET | `/api/v1/managers` |
 | `InviteManager` | `invite_manager` | `inviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` |

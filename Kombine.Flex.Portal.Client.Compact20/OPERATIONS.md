@@ -80,6 +80,7 @@
 | `GetLocationIcons` | GET | `/api/v1/locations/icons` |
 | `GetLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` |
 | `GetLocationUnits` | GET | `/api/v1/locations/{locationKid}/units` |
+| `GetLocationWeather` | GET | `/api/v1/locations/{locationKid}/weather` |
 | `GetLocations` | GET | `/api/v1/locations` |
 | `GetManagerCount` | GET | `/api/v1/managers/count` |
 | `GetManager` | GET | `/api/v1/managers/{managerKid}` |

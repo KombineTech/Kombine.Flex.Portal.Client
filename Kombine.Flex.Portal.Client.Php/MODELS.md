@@ -416,6 +416,18 @@ array{'locationKid'?: string|null, 'timeZone'?: string|null, 'calculatedAt'?: st
 array{'location'?: BankLocationResponse, 'items'?: list<UnitOverviewResponse>|null}
 ```
 
+### LocationWeatherCurrent
+
+```php
+array{'observedAtUtc'?: string, 'retrievedAtUtc'?: string, 'temperatureCelsius'?: int|float, 'apparentTemperatureCelsius'?: int|float|null, 'windSpeedMetresPerSecond'?: int|float|null, 'precipitationMillimetres'?: int|float|null, 'relativeHumidityPercent'?: int|float|null, 'weatherCode'?: int|null, 'isDay'?: bool|null}
+```
+
+### LocationWeatherResponse
+
+```php
+array{'locationKid'?: string|null, 'status'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'positionSource'?: string|null, 'current'?: LocationWeatherCurrent|null}
+```
+
 ### ManagerCreationResponse
 
 ```php

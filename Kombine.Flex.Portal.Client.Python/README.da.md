@@ -1,3 +1,13 @@
+## Lokationens vejr · 0.8.1
+
+Version 0.8.1 omfatter alle 149 operationer og tilføjer `GetLocationWeather` til et kanonisk lokations-KID. Genbrug administratorsessionen. API’et kræver tildelt Tab, Bank Læs, Lokation Læs, matchende adgangsområde samt synlig lokation og bank. Den bruger gemte koordinater eller lokationens adresse; klienten sender aldrig udbydernøgler eller koordinater. Kontrollér `status`: `Available` har `current`; `LocationUnknown` og `Unavailable` har ingen målinger. Ukendte værdier er null, aldrig nul. Temperatur er Celsius, vind m/s, nedbør mm og fugtighed procent; tidspunkter er UTC. Adressebaseret position kan være omtrentlig. Vis kildeangivelsen: Weather data by Open-Meteo, CC BY 4.0. Håndter HTTP 400/401/403/404/503 normalt, og gentag kun bevidst; udbyderfejl kan også give HTTP 200 med `Unavailable`. Se [lokationens vejr](/docs#location-weather).
+
+```python
+weather = api.get_location_weather(location_kid)
+if weather.get("status") == "Available" and weather.get("current") is not None:
+    print(weather["current"]["temperatureCelsius"])
+```
+
 ## Camera1 · 0.8.0
 
 Version 0.8.0 indeholder alle 148 offentlige operationer, inklusive Camera1. Kald PrepareCameraCapture med originalens præcise SHA-256, længde, UTC-optagelsestid, ressource-KID og sensorobjekt. Upload derefter de samme bytes med uploadToken. Live Photos kræver også matchende længde/hash og den oprindelige MOV-fil. Behold samme token og bytes ved et bevidst genforsøg; klienten gentager aldrig automatisk. Forøg tidsfristen ved videobehandling. API’et kontrollerer Camera1 og præcise Read/Write-rettigheder til ressourcen. Lister kan være ufuldstændige eller have tomme sider med nextCursor; fortsæt, indtil cursor mangler. Hent medier gennem API’et; Range-kald kan give HTTP 206. Se /docs#camera-captures for grænser og fejl.
@@ -39,15 +49,15 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 # Kombine Flex Portal — Python-klient
 
-`kombine-flex-portal-client` er en selvstændig Python 3.11+-pakke til alle **110 offentlige API-operationer**. Den bruger kun Pythons standardbibliotek. Ingen .NET, NuGet, databaseadgang eller andre Kombine-pakker er nødvendige. Rettigheder og forretningsregler håndhæves fortsat af API'et.
+`kombine-flex-portal-client` er en selvstændig Python 3.11+-pakke til alle **149 offentlige API-operationer**. Den bruger kun Pythons standardbibliotek. Ingen .NET, NuGet, databaseadgang eller andre Kombine-pakker er nødvendige. Rettigheder og forretningsregler håndhæves fortsat af API'et.
 
 Pakken er **ikke publiceret på PyPI**. Installér den leverede wheel lokalt:
 
 ```sh
-python -m pip install ./kombine_flex_portal_client-0.8.0-py3-none-any.whl
+python -m pip install ./kombine_flex_portal_client-0.8.1-py3-none-any.whl
 ```
 
-Version 0.8.0 følger den aktuelle beta-kandidat (148 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
+Version 0.8.1 følger den aktuelle beta-kandidat (149 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
 
 Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser.
 

@@ -8932,6 +8932,153 @@
         ]
       }
     },
+    "/api/v1/locations/{locationKid}/weather": {
+      "get": {
+        "tags": [
+          "LocationWeather"
+        ],
+        "summary": "Get current weather for the authorized location\u0027s stored position or address.",
+        "description": "Requires an active manager bearer session, assigned Tab, Bank Read, Location Read, matching resource scope\r\nand RetentionDays visibility. Location and parent bank must also satisfy GetObjectAddress visibility.\r\nAuthorization and a bounded Log-only address read precede every cache lookup. No Unit Read or Write is needed.\r\nUses eSetting.Latitude and Longitude (integer millionths of degrees) when both are valid; otherwise geocodes\r\navailable Address and Zip using the site\u0027s configured geocoder. Address-only/postal results are approximate.\r\nNever inherits another object\u0027s address, substitutes zero, writes settings or accepts caller-supplied coordinates.\r\nReturns status Available, LocationUnknown (no resolvable position), or Unavailable (provider/configuration failure).\r\ncurrent is null unless Available. Optional measurements are null when unknown. positionSource is Coordinates,\r\nAddress, or null. Times are UTC; temperature is Celsius, wind m/s, precipitation mm and humidity percent.\r\nOpen-Meteo model data, not an on-site sensor. Display attribution: Weather data by Open-Meteo, CC BY 4.0.\r\nCache: ten minutes per tenant/location/address revision; failures one minute. No-store HTTP. Refresh on navigation.\r\nFour concurrent provider lookups per process, twelve-second request deadline, no retries.\r\n400 invalid/foreign KID; 401 invalid/inactive manager; 403 scope/tab/read denial; 404 hidden/missing object;\r\n503 location-weather-unavailable on storage failure/deadline. Unavailable never means zero weather.",
+        "operationId": "GetLocationWeather",
+        "parameters": [
+          {
+            "name": "locationKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationWeatherResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationWeatherResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationWeatherResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/managers": {
       "post": {
         "tags": [
@@ -22836,6 +22983,91 @@
         "additionalProperties": false,
         "description": "An authorized location and its visible unit list."
       },
+      "LocationWeatherCurrent": {
+        "type": "object",
+        "properties": {
+          "observedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retrievedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "temperatureCelsius": {
+            "type": "number",
+            "format": "double"
+          },
+          "apparentTemperatureCelsius": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "windSpeedMetresPerSecond": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precipitationMillimetres": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "relativeHumidityPercent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "weatherCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isDay": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Open-Meteo model conditions. Times are UTC; units are explicit in measurement names."
+      },
+      "LocationWeatherResponse": {
+        "type": "object",
+        "properties": {
+          "locationKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          },
+          "positionSource": {
+            "type": "string",
+            "nullable": true
+          },
+          "current": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LocationWeatherCurrent"
+              }
+            ],
+            "description": "Current conditions, or null unless status is Available.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Weather for one authorized location. Null measurements mean unknown, never zero."
+      },
       "ManagerCreationResponse": {
         "type": "object",
         "properties": {
@@ -26433,6 +26665,9 @@
     },
     {
       "name": "LocationUnits"
+    },
+    {
+      "name": "LocationWeather"
     },
     {
       "name": "ManagerCreation"

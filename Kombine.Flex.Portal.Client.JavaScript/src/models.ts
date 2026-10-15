@@ -989,6 +989,44 @@ export interface LocationUnitsResponse {
   "items"?: (UnitOverviewResponse)[] | null;
 }
 
+/** Open-Meteo model conditions. Times are UTC; units are explicit in measurement names. */
+export interface LocationWeatherCurrent {
+  /** observedAtUtc */
+  "observedAtUtc"?: string;
+  /** retrievedAtUtc */
+  "retrievedAtUtc"?: string;
+  /** temperatureCelsius */
+  "temperatureCelsius"?: number;
+  /** apparentTemperatureCelsius */
+  "apparentTemperatureCelsius"?: number | null;
+  /** windSpeedMetresPerSecond */
+  "windSpeedMetresPerSecond"?: number | null;
+  /** precipitationMillimetres */
+  "precipitationMillimetres"?: number | null;
+  /** relativeHumidityPercent */
+  "relativeHumidityPercent"?: number | null;
+  /** weatherCode */
+  "weatherCode"?: number | null;
+  /** isDay */
+  "isDay"?: boolean | null;
+}
+
+/** Weather for one authorized location. Null measurements mean unknown, never zero. */
+export interface LocationWeatherResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** status */
+  "status"?: string | null;
+  /** address */
+  "address"?: string | null;
+  /** zip */
+  "zip"?: string | null;
+  /** positionSource */
+  "positionSource"?: string | null;
+  /** Current conditions, or null unless status is Available. */
+  "current"?: LocationWeatherCurrent | null;
+}
+
 /** The canonical KID of the newly activated empty administrator. */
 export interface ManagerCreationResponse {
   /** kid */

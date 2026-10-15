@@ -56,8 +56,23 @@ def sample(spec):
 
 
 class ContractTests(unittest.TestCase):
+    def test_location_weather_preserves_unavailable_and_unknown_measurements(self):
+        for status in ("LocationUnknown", "Unavailable"):
+            body = {"locationKid": "opaque-location", "status": status, "positionSource": None, "current": None}
+            calls = []
+            api = client(lambda request: (calls.append(request), Response(json.dumps(body).encode()))[1])
+            api.access_token = "fixture-token"
+            self.assertEqual(api.get_location_weather("opaque-location"), body)
+            self.assertEqual(len(calls), 1)
+        current = {"observedAtUtc": "2026-10-15T10:00:00Z", "retrievedAtUtc": "2026-10-15T10:01:00Z", "temperatureCelsius": -2.5,
+                   "apparentTemperatureCelsius": None, "windSpeedMetresPerSecond": 0.0, "precipitationMillimetres": None,
+                   "relativeHumidityPercent": None, "weatherCode": None, "isDay": False}
+        body = {"status": "Available", "current": current}
+        api = client(lambda request: Response(json.dumps(body).encode()))
+        self.assertEqual(api.get_location_weather("opaque-location")["current"], current)
+
     def test_every_public_operation(self):
-        self.assertEqual(len(CASES), 148)
+        self.assertEqual(len(CASES), 149)
         for case in CASES:
             with self.subTest(operation=case['operation']):
                 response_data = b'PK\x00\xff' if case['binary'] else json.dumps(sample(case['response']), ensure_ascii=False).encode()
@@ -119,11 +134,14 @@ class ContractTests(unittest.TestCase):
                 self.assertTrue(response.closed)
 
     def test_model_hints_resolve(self):
-        from typing import get_type_hints, is_typeddict
+        from typing import get_type_hints, is_typeddict, get_args
         for value in vars(models).values():
             if is_typeddict(value):
                 get_type_hints(value)
         self.assertEqual(models.ManagerLoginRequest.__required_keys__, frozenset({'email', 'password'}))
+        current_types = get_args(get_type_hints(models.LocationWeatherResponse)['current'])
+        self.assertIn(type(None), current_types)
+        self.assertIn(models.LocationWeatherCurrent, current_types)
 
     def test_empty_query_and_false_are_not_omitted(self):
         observed = []

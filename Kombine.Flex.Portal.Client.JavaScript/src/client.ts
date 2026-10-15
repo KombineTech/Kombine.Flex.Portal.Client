@@ -268,6 +268,11 @@ export class PortalClient extends BaseClient {
     return this.send("GetLocationOpeningHours", {"locationKid": locationKid, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.LocationOpeningHoursResponse>;
   }
 
+  /** Get current weather for the authorized location's stored position or address. */
+  getLocationWeather(locationKid: string, request: RequestOptions = {}): Promise<Models.LocationWeatherResponse> {
+    return this.send("GetLocationWeather", {"locationKid": locationKid}, undefined, request) as Promise<Models.LocationWeatherResponse>;
+  }
+
   /** Create an empty enabled administrator with a previously unused manager identity. */
   createManager(request: RequestOptions = {}): Promise<Models.ManagerCreationResponse> {
     return this.send("CreateManager", {}, undefined, request) as Promise<Models.ManagerCreationResponse>;

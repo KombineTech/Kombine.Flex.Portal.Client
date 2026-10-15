@@ -1,3 +1,20 @@
+## Location weather · 0.8.1
+
+Version 0.8.1 exposes all 149 operations, adding `GetLocationWeather` for a canonical location KID. Reuse the manager session. The API requires the assigned Tab, Bank Read, Location Read, matching scope and visible location/parent bank. It resolves stored coordinates or the location address; clients never supply provider keys or coordinates. Check `status`: `Available` has `current`; `LocationUnknown` or `Unavailable` has no measurements. Unknown values are null, never zero. Temperature is Celsius, wind m/s, precipitation mm and humidity percent; times are UTC. Address-based positions may be approximate. Display attribution: Weather data by Open-Meteo, CC BY 4.0. Handle HTTP 400/401/403/404/503 normally and retry only deliberately; provider failure may also return HTTP 200 with `Unavailable`. See [location weather](/docs#location-weather).
+
+```csharp
+LocationWeatherResponse weather = api.GetLocationWeather(locationKid);
+if (weather.Status == "Available" && weather.Current != null)
+    Console.WriteLine(weather.Current.TemperatureCelsius);
+```
+
+```vbnet
+Dim weather As LocationWeatherResponse = api.GetLocationWeather(locationKid)
+If weather.Status = "Available" AndAlso weather.Current IsNot Nothing Then
+    Console.WriteLine(weather.Current.TemperatureCelsius)
+End If
+```
+
 ## Camera1 · 0.8.0
 
 Version 0.8.0 includes all 148 public operations, including Camera1. Call PrepareCameraCapture with the exact original SHA-256, length, UTC capture time, resource KID and sensor object, then upload the same bytes with its uploadToken. Live Photos also need the matching motion length/hash and original MOV companion. Keep the same token and bytes for a deliberate retry; no client retries automatically. Increase the request timeout for video processing. Camera1 and exact resource Read/Write permissions are enforced by the API. Listings can be degraded or contain empty pages with nextCursor; continue until the cursor is absent. Download content through the API; Range requests may return HTTP 206. See /docs#camera-captures for limits and errors.
@@ -49,15 +66,15 @@ Use the same tenant and environment as your client: append /docs#changelog to it
 
 # Flex Portal client for .NET Compact Framework 2.0
 
-`Kombine.Flex.Portal.Client.Compact20` provides typed, synchronous methods for all **110 public integration operations**. No NuGet, other Kombine libraries, database access, KID calculation or business rules are required. Authorization remains in the API. See [OPERATIONS.md](OPERATIONS.md).
+`Kombine.Flex.Portal.Client.Compact20` provides typed, synchronous methods for all **149 public integration operations**. No NuGet, other Kombine libraries, database access, KID calculation or business rules are required. Authorization remains in the API. See [OPERATIONS.md](OPERATIONS.md).
 
-Version 0.8.0 targets the current beta candidate (148 operations). Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.
+Version 0.8.1 targets the current beta candidate (149 operations). Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.
 
 Version 0.2.5 adds GetLocationOpeningHours and GetLocationBookingRules. Both require Location Read, Unit Read and the authorized location scope. Reservation rules contain plain text plus ordered parts with text/isValue for optional value emphasis; never render these strings as HTML. Keep text as the fallback for older responses. See /docs#location-opening-hours and /docs#location-booking-rules for permissions, examples and limits.
 
 ## Install without NuGet
 
-1. Extract `Kombine.Flex.Portal.Client.Compact20.0.8.0.zip`.
+1. Extract `Kombine.Flex.Portal.Client.Compact20.0.8.1.zip`.
 2. Choose **Add Reference → Browse → Kombine.Flex.Portal.Client.Compact20.dll** in your application.
 3. Keep the XML file beside the DLL for IntelliSense and distribute the DLL with your app.
 4. Source code and `Kombine.Flex.Portal.Client.Compact2008.sln` are in `Source`.
@@ -170,11 +187,11 @@ Use Visual Studio 2008 Professional with Smart Device tools and the CF 2.0 SDK. 
 
 DeviceTests contains the CF test EXE, DLL and ContractCases.tsv: copy all three to the same device directory. The solution also contains a desktop test host with synthetic JSON/contract/HTTP checks; this does not substitute for a device test.
 
-Verified: original MSBuild 3.5/CF 2.0 reference build, all 148 operations and synthetic checks on the desktop host, including assembly-identity checks. The device test program builds. **Physical-device/emulator execution and HTTPS have not been verified.** No real login or database mutation was performed.
+Verified: original MSBuild 3.5/CF 2.0 reference build, all 149 operations and synthetic checks on the desktop host, including assembly-identity checks. The device test program builds. **Physical-device/emulator execution and HTTPS have not been verified.** No real login or database mutation was performed.
 
 In the development repository, `scripts/Test-PortalClientCompact20.ps1` builds, tests and creates the ZIP. PowerShell 7 is a developer tool, not a customer/device requirement. `scripts/Generate-PortalClientNet20.py --compact` regenerates checked-in contracts from the shared OpenAPI snapshot; customers do not need Python, a generator or a running API to build/use the DLL. Documentation is primarily English, with Danish and Spanish alternatives included in the package.
 
-## Managed sessions — 0.8.0 (unreleased)
+## Managed sessions — 0.8.1 (unreleased)
 
 Keep one `PortalSession` per API endpoint and account/login. Clients created from it renew on use shortly before expiry; concurrent authentication is serialized. No background timer runs. Disposing a client does not log out the shared session; call `session.ClearSession()` to log out. Pending authentication cannot restore a cleared session. Do not log tokens or credentials.
 

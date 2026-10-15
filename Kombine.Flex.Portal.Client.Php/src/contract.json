@@ -1980,6 +1980,84 @@
       },
       "additionalProperties": false
     },
+    "LocationWeatherCurrent": {
+      "type": "object",
+      "properties": {
+        "observedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "retrievedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "temperatureCelsius": {
+          "type": "number",
+          "format": "double"
+        },
+        "apparentTemperatureCelsius": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "windSpeedMetresPerSecond": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "precipitationMillimetres": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "relativeHumidityPercent": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "weatherCode": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "isDay": {
+          "type": "boolean",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocationWeatherResponse": {
+      "type": "object",
+      "properties": {
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "status": {
+          "type": "string",
+          "nullable": true
+        },
+        "address": {
+          "type": "string",
+          "nullable": true
+        },
+        "zip": {
+          "type": "string",
+          "nullable": true
+        },
+        "positionSource": {
+          "type": "string",
+          "nullable": true
+        },
+        "current": {
+          "$ref": "#/components/schemas/LocationWeatherCurrent",
+          "type": "object",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "ManagerCreationResponse": {
       "type": "object",
       "properties": {
@@ -7405,6 +7483,30 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/LocationOpeningHoursResponse"
+      },
+      "binary": false
+    },
+    "GetLocationWeather": {
+      "method": "GET",
+      "path": "api/v1/locations/{locationKid}/weather",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "locationKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/LocationWeatherResponse"
       },
       "binary": false
     },

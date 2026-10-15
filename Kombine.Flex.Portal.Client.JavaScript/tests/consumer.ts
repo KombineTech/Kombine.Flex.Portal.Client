@@ -1,4 +1,4 @@
-import { PortalClient, PortalApiError, type UserCurrencyBalanceItem, type ManagerLoginRequest } from "../dist/index.js";
+import { PortalClient, PortalApiError, type UserCurrencyBalanceItem, type LocationWeatherResponse, type ManagerLoginRequest } from "../dist/index.js";
 
 const client = new PortalClient("https://api.example.test/");
 const credentials: ManagerLoginRequest = { email: "x@example.test", password: "fixture" };
@@ -17,3 +17,9 @@ void client.getBankAccount("kid", { IncludeZero: false });
 const error = new PortalApiError(403, '{"code":"forbidden"}', new Headers());
 const code: string | undefined = error.code;
 void code;
+
+const unavailableWeather: LocationWeatherResponse = { status: "Unavailable", current: null };
+void client.getLocationWeather("location-kid");
+void unavailableWeather;
+// @ts-expect-error Current is a typed measurement object or null, never an arbitrary value.
+const invalidWeather: LocationWeatherResponse = { current: "not-weather" };

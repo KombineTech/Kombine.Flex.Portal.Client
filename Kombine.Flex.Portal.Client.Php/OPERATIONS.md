@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `4b375fbdf3629c5e70dd76be3d008fd62122d8cb3552242277287b7b80d230bf`).
-148 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `f55189d24bdcefea5514b246e8eb93eb3255617de891edcc5b762fb9f0327a07`).
+149 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -83,6 +83,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `4b375fbdf3629c5e70d
 | `getLocationIcons` | `GetLocationIcons` | GET | `/api/v1/locations/icons` | Bearer |
 | `getLocationOpeningHours` | `GetLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` | Bearer |
 | `getLocationUnits` | `GetLocationUnits` | GET | `/api/v1/locations/{locationKid}/units` | Bearer |
+| `getLocationWeather` | `GetLocationWeather` | GET | `/api/v1/locations/{locationKid}/weather` | Bearer |
 | `getLocations` | `GetLocations` | GET | `/api/v1/locations` | Bearer |
 | `getManagerCount` | `GetManagerCount` | GET | `/api/v1/managers/count` | Bearer |
 | `getManager` | `GetManager` | GET | `/api/v1/managers/{managerKid}` | Bearer |
