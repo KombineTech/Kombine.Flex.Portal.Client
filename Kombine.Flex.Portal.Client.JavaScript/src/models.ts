@@ -2446,6 +2446,14 @@ export interface LiveMachineResponse {
   "temperature"?: number | null;
 }
 
+/** Public thumbnail URL and relative portal destination; no original or sensor metadata. */
+export interface PublicCameraPhoto {
+  /** thumbnailUrl */
+  "thumbnailUrl"?: string | null;
+  /** workspacePath */
+  "workspacePath"?: string | null;
+}
+
 /** Public identity, display names and error code; no raw state payload. */
 export interface PublicMachineError {
   /** kid */

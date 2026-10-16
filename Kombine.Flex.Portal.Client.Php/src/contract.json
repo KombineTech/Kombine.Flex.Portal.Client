@@ -4922,6 +4922,20 @@
       },
       "additionalProperties": false
     },
+    "PublicCameraPhoto": {
+      "type": "object",
+      "properties": {
+        "thumbnailUrl": {
+          "type": "string",
+          "nullable": true
+        },
+        "workspacePath": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "PublicMachineError": {
       "type": "object",
       "properties": {
@@ -10304,6 +10318,49 @@
         "$ref": "#/components/schemas/PublicMachineErrorsPage"
       },
       "binary": false
+    },
+    "GetPublicRecentCameraPhotos": {
+      "method": "GET",
+      "path": "api/v1/public/camera/photos",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PublicCameraPhoto"
+        }
+      },
+      "binary": false
+    },
+    "GetPublicCameraThumbnail": {
+      "method": "GET",
+      "path": "api/v1/public/camera/photos/{id}/thumbnail",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "id",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
     },
     "GetPublicPurchasesChart": {
       "method": "GET",

@@ -138,6 +138,8 @@ GetKombineLogoTextSized	GET	/api/v1/logos/kombine-logo-text/{color}/{width}.svg	
 GetKombineLogoTextWithBackground	GET	/api/v1/logos/kombine-logo-text/{color}/{background}/{width}.svg	200	{}
 GetPublicLiveMachines	GET	/api/v1/public/statistics/live-machines	200	[]
 GetPublicMachineErrors	GET	/api/v1/public/widgets/machine-errors	200	{}
+GetPublicRecentCameraPhotos	GET	/api/v1/public/camera/photos	200	[]
+GetPublicCameraThumbnail	GET	/api/v1/public/camera/photos/{id}/thumbnail	200	{}
 GetPublicPurchasesChart	GET	/api/v1/public/statistics/purchases/chart/{color}.svg	200	{}
 GetPublicDisp73	GET	/api/v1/public/displays/Map1	200	{}
 GetPublicScopedUnitProgress	GET	/api/v1/public/widgets/progress/{kid}	200	{}

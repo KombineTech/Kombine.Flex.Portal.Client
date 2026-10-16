@@ -1,6 +1,10 @@
-## Lokationens vejr · 0.8.1
+## Seneste kamerabilleder · 0.8.2
 
-Version 0.8.1 omfatter alle 149 operationer og tilføjer `GetLocationWeather` til et kanonisk lokations-KID. Genbrug administratorsessionen. API’et kræver tildelt Tab, Bank Læs, Lokation Læs, matchende adgangsområde samt synlig lokation og bank. Den bruger gemte koordinater eller lokationens adresse; klienten sender aldrig udbydernøgler eller koordinater. Kontrollér `status`: `Available` har `current`; `LocationUnknown` og `Unavailable` har ingen målinger. Ukendte værdier er null, aldrig nul. Temperatur er Celsius, vind m/s, nedbør mm og fugtighed procent; tidspunkter er UTC. Adressebaseret position kan være omtrentlig. Vis kildeangivelsen: Weather data by Open-Meteo, CC BY 4.0. Håndter HTTP 400/401/403/404/503 normalt, og gentag kun bevidst; udbyderfejl kan også give HTTP 200 med `Unavailable`. Se [lokationens vejr](/docs#location-weather).
+Tilføjer `GetPublicRecentCameraPhotos` og `GetPublicCameraThumbnail`. De offentlige operationer kræver ikke login og er bundet til sitets tenant. Listen returnerer højst ti billeder med kortlivede miniature-URL’er og arbejdsområdestier. Miniaturer er offentlige; originaler og metadata forbliver beskyttede. Åbning af arbejdsområdet kræver normale administratorrettigheder. Håndtér 503 ved utilgængelig liste og 400/404 ved ugyldige, udløbne eller manglende miniaturer. Se [offentlige widgets](/docs#public-widgets).
+
+## Lokationens vejr · 0.8.2
+
+Version 0.8.2 omfatter alle 151 operationer og tilføjer `GetLocationWeather` til et kanonisk lokations-KID. Genbrug administratorsessionen. API’et kræver tildelt Tab, Bank Læs, Lokation Læs, matchende adgangsområde samt synlig lokation og bank. Den bruger gemte koordinater eller lokationens adresse; klienten sender aldrig udbydernøgler eller koordinater. Kontrollér `status`: `Available` har `current`; `LocationUnknown` og `Unavailable` har ingen målinger. Ukendte værdier er null, aldrig nul. Temperatur er Celsius, vind m/s, nedbør mm og fugtighed procent; tidspunkter er UTC. Adressebaseret position kan være omtrentlig. Vis kildeangivelsen: Weather data by Open-Meteo, CC BY 4.0. Håndter HTTP 400/401/403/404/503 normalt, og gentag kun bevidst; udbyderfejl kan også give HTTP 200 med `Unavailable`. Se [lokationens vejr](/docs#location-weather).
 
 ```csharp
 LocationWeatherResponse weather = api.GetLocationWeather(locationKid);
@@ -66,17 +70,17 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 # Flex Portal-klient til .NET Framework 2.0 / Visual Studio 2008
 
-Åbn **`Kombine.Flex.Portal.Client.2008.sln`** i Visual Studio 2008. Biblioteket hedder **`Kombine.Flex.Portal.Client.Net20`** og indeholder typede, synkrone metoder til alle **149 offentlige integrationskald** i API-kontrakten.
+Åbn **`Kombine.Flex.Portal.Client.2008.sln`** i Visual Studio 2008. Biblioteket hedder **`Kombine.Flex.Portal.Client.Net20`** og indeholder typede, synkrone metoder til alle **151 offentlige integrationskald** i API-kontrakten.
 
 Ingen NuGet, SDK-style-projekter, .NET Core eller Kombine-pakker kræves. Den færdige DLL refererer kun til **mscorlib 2.0** og **System 2.0**. Projektet bruger klassisk MSBuild 3.5, `TargetFrameworkVersion=v2.0` og C# 2.0-syntaks. Det er en separat solution; den moderne portal-solution og .NET 8/10-klient ændres ikke af denne variant.
 
-Version 0.8.1 følger den aktuelle beta-kandidat (149 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
+Version 0.8.2 følger den aktuelle beta-kandidat (151 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
 
 Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser.
 
 ## Brug uden NuGet
 
-1. Pak `Kombine.Flex.Portal.Client.Net20.0.8.1.zip` ud.
+1. Pak `Kombine.Flex.Portal.Client.Net20.0.8.2.zip` ud.
 2. I kundens projekt: **Add Reference → Browse → Kombine.Flex.Portal.Client.Net20.dll**.
 3. Lad XML-filen med samme navn ligge ved DLL'en, så Visual Studio viser IntelliSense.
 4. Distribuer DLL'en med applikationen. Kildekode og 2008-solutionen ligger i ZIP'ens `Source`-mappe.
@@ -278,7 +282,7 @@ Udvikling i hovedrepoet: `scripts/Test-PortalClientNet20.ps1` bygger, tester og 
 
 Verificeret lokalt med de gamle MSBuild 3.5-værktøjer og kørsel på CLR 2.0.50727. Visual Studio 2008-IDE'en og kundens konkrete Windows-installation er ikke afprøvet her. API-login med en rigtig kundekonto er heller ikke en del af de syntetiske tests.
 
-## Automatisk sessionshåndtering — 0.8.1 (ikke udgivet)
+## Automatisk sessionshåndtering — 0.8.2 (ikke udgivet)
 
 Behold én `PortalSession` pr. API-adresse og konto/login. Klienter oprettet fra den fornyer ved brug kort før udløb; samtidige login og fornyelser samles. Der kører ingen baggrundstimer. Dispose af en klient logger ikke den fælles session ud; brug `session.ClearSession()`. Et igangværende login kan ikke genoprette en ryddet session. Log aldrig tokens eller adgangskoder.
 

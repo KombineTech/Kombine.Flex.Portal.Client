@@ -703,6 +703,16 @@ export class PortalClient extends BaseClient {
     return this.send("GetPublicMachineErrors", {"pageSize": options.pageSize, "cursor": options.cursor}, undefined, request) as Promise<Models.PublicMachineErrorsPage>;
   }
 
+  /** Get the ten newest photos, including Live Photo stills, newest first. */
+  getPublicRecentCameraPhotos(request: RequestOptions = {}): Promise<Models.PublicCameraPhoto[]> {
+    return this.send("GetPublicRecentCameraPhotos", {}, undefined, request) as Promise<Models.PublicCameraPhoto[]>;
+  }
+
+  /** Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket. */
+  getPublicCameraThumbnail(id: string, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetPublicCameraThumbnail", {"id": id}, undefined, request) as Promise<PortalDownload>;
+  }
+
   /** Draws purchase counts for the last hour in twelve five-minute intervals. */
   getPublicPurchasesChart(color: string, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("GetPublicPurchasesChart", {"color": color}, undefined, request) as Promise<PortalDownload>;

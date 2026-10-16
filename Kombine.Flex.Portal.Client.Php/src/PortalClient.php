@@ -180,6 +180,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ApiStatusResponse array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|null}
  * @phpstan-type IconPresentationResponse array{'iconKid'?: string|null}
  * @phpstan-type LiveMachineResponse array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'temperature'?: int|float|null}
+ * @phpstan-type PublicCameraPhoto array{'thumbnailUrl'?: string|null, 'workspacePath'?: string|null}
  * @phpstan-type PublicMachineError array{'kid'?: string|null, 'name'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'errorId'?: string|null}
  * @phpstan-type PublicMachineErrorsPage array{'items'?: list<PublicMachineError>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
  * @phpstan-type PublicScopedProgressItem array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string|null, 'doneAtUtc'?: string|null, 'progress'?: UnitProgressResponse}
@@ -1728,6 +1729,26 @@ final class PortalClient extends BaseClient
     public function getPublicMachineErrors(array $options = []): mixed
     {
         return $this->request('GetPublicMachineErrors', [] + $options, null);
+    }
+
+    /**
+     * Get the ten newest photos, including Live Photo stills, newest first.
+     * @return list<PublicCameraPhoto>
+     */
+    public function getPublicRecentCameraPhotos(): mixed
+    {
+        return $this->request('GetPublicRecentCameraPhotos', [], null);
+    }
+
+    /**
+     * Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket.
+     * @param string $id
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getPublicCameraThumbnail(mixed $id, mixed $destination): mixed
+    {
+        return $this->request('GetPublicCameraThumbnail', ['id' => $id], null, $destination);
     }
 
     /**

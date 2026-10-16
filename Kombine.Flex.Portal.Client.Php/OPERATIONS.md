@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `f55189d24bdcefea5514b246e8eb93eb3255617de891edcc5b762fb9f0327a07`).
-149 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `6e41e87787fa2619fcbed082a78529c9467098d7ec28e438179fbdd4c1244578`).
+151 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -95,11 +95,13 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `f55189d24bdcefea551
 | `getPortalAppDownloadPage` | `GetPortalAppDownloadPage` | GET | `/download` | Anonymous |
 | `getPortalStatus` | `GetPortalStatus` | GET | `/api/v1/status` | Anonymous |
 | `getPublicActiveUsers` | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` | Anonymous |
+| `getPublicCameraThumbnail` | `GetPublicCameraThumbnail` | GET | `/api/v1/public/camera/photos/{id}/thumbnail` | Anonymous |
 | `getPublicDisp73` | `GetPublicDisp73` | GET | `/api/v1/public/displays/Map1` | Anonymous |
 | `getPublicLiveMachines` | `GetPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` | Anonymous |
 | `getPublicMachineErrors` | `GetPublicMachineErrors` | GET | `/api/v1/public/widgets/machine-errors` | Anonymous |
 | `getPublicPurchasesChart` | `GetPublicPurchasesChart` | GET | `/api/v1/public/statistics/purchases/chart/{color}.svg` | Anonymous |
 | `getPublicPurchases` | `GetPublicPurchases` | GET | `/api/v1/public/statistics/purchases` | Anonymous |
+| `getPublicRecentCameraPhotos` | `GetPublicRecentCameraPhotos` | GET | `/api/v1/public/camera/photos` | Anonymous |
 | `getPublicReservations` | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` | Anonymous |
 | `getPublicRunningMachines` | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` | Anonymous |
 | `getPublicScopedUnitProgress` | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` | Anonymous |

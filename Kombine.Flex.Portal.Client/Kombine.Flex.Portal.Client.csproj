@@ -6,7 +6,7 @@
     <RestoreConfigFile>$(MSBuildThisFileDirectory)..\NuGet.Client.Config</RestoreConfigFile>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.8.1</Version>
+    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.8.2</Version>
     <IsPackable>true</IsPackable><PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Kombine Technology ApS</Authors><Company>Kombine Technology ApS</Company>
     <Copyright>Kombine Technology ApS</Copyright>
@@ -15,7 +15,7 @@
     <PackageProjectUrl>https://kombinetech.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KombineTech/Kombine.Flex.Portal.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Add typed current weather for authorized locations, including explicit unavailable states and nullable measurements.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add tenant-bound public recent camera photos and short-lived thumbnail downloads.</PackageReleaseNotes>
     <PackageTags>Flex;Portal;API;Client</PackageTags>
   </PropertyGroup>
   <ItemGroup>

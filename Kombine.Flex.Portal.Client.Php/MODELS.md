@@ -1052,6 +1052,12 @@ array{'iconKid'?: string|null}
 array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'temperature'?: int|float|null}
 ```
 
+### PublicCameraPhoto
+
+```php
+array{'thumbnailUrl'?: string|null, 'workspacePath'?: string|null}
+```
+
 ### PublicMachineError
 
 ```php
