@@ -20337,6 +20337,155 @@
         }
       }
     },
+    "/api/v1/public/camera/photos": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get the ten newest photos, including Live Photo stills, newest first.",
+        "description": "No login or tenant parameter. Includes existing captures from both regional indexes, deduplicated. Cached for 60 seconds. Only thumbnails are public; original media, owner, filenames and sensor metadata remain protected. Workspace paths require normal manager Camera1 and resource Read permissions when opened. Returns 503 if a complete bounded snapshot cannot be established (10,000 index entries or 200 candidate manifests maximum). Videos are excluded.",
+        "operationId": "GetPublicRecentCameraPhotos",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicCameraPhoto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicCameraPhoto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicCameraPhoto"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/camera/photos/{id}/thumbnail": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket.",
+        "description": "Tickets from GetPublicRecentCameraPhotos cannot read original files or private camera operations. No arbitrary path or part is accepted. Invalid, expired and cross-tenant tickets return 400, missing thumbnails 404, unavailable storage 503.",
+        "operationId": "GetPublicCameraThumbnail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
     "/api/v1/public/statistics/purchases/chart/{color}.svg": {
       "get": {
         "tags": [
@@ -26234,6 +26383,21 @@
         },
         "additionalProperties": false,
         "description": "Minimal public site-tenant machine display, without resident or payment fields."
+      },
+      "PublicCameraPhoto": {
+        "type": "object",
+        "properties": {
+          "thumbnailUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "workspacePath": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Public thumbnail URL and relative portal destination; no original or sensor metadata."
       },
       "PublicMachineError": {
         "type": "object",

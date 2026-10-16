@@ -567,6 +567,14 @@ class PortalClient(BaseClient):
         'List machines with a positive AutoOutOfOrder Id without login.'
         return self._request('GetPublicMachineErrors', {'pageSize': page_size, 'cursor': cursor}, None)
 
+    def get_public_recent_camera_photos(self) -> list[PublicCameraPhoto]:
+        'Get the ten newest photos, including Live Photo stills, newest first.'
+        return self._request('GetPublicRecentCameraPhotos', {}, None)
+
+    def get_public_camera_thumbnail(self, id: str) -> PortalDownload:
+        'Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket.'
+        return self._request('GetPublicCameraThumbnail', {'id': id}, None)
+
     def get_public_purchases_chart(self, color: str) -> PortalDownload:
         'Draws purchase counts for the last hour in twelve five-minute intervals.'
         return self._request('GetPublicPurchasesChart', {'color': color}, None)

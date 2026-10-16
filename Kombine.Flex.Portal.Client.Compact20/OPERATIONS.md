@@ -92,11 +92,13 @@
 | `GetPortalAppDownloadPage` | GET | `/download` |
 | `GetPortalStatus` | GET | `/api/v1/status` |
 | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
+| `GetPublicCameraThumbnail` | GET | `/api/v1/public/camera/photos/{id}/thumbnail` |
 | `GetPublicDisp73` | GET | `/api/v1/public/displays/Map1` |
 | `GetPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` |
 | `GetPublicMachineErrors` | GET | `/api/v1/public/widgets/machine-errors` |
 | `GetPublicPurchasesChart` | GET | `/api/v1/public/statistics/purchases/chart/{color}.svg` |
 | `GetPublicPurchases` | GET | `/api/v1/public/statistics/purchases` |
+| `GetPublicRecentCameraPhotos` | GET | `/api/v1/public/camera/photos` |
 | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |

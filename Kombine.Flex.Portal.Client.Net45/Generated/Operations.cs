@@ -1944,6 +1944,23 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (PublicMachineErrorsPage)SendJson("GET", path, null, headers, 200, typeof(PublicMachineErrorsPage));
         }
 
+        /// <summary>Get the ten newest photos, including Live Photo stills, newest first.</summary>
+        public PublicCameraPhoto[] GetPublicRecentCameraPhotos()
+        {
+            string path = "api/v1/public/camera/photos";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PublicCameraPhoto[])SendJson("GET", path, null, headers, 200, typeof(PublicCameraPhoto[]));
+        }
+
+        /// <summary>Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket.</summary>
+        public PortalDownload GetPublicCameraThumbnail(string @id)
+        {
+            string path = "api/v1/public/camera/photos/{id}/thumbnail";
+            path = path.Replace("{id}", PathValue(@id));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
         /// <summary>Draws purchase counts for the last hour in twelve five-minute intervals.</summary>
         public PortalDownload GetPublicPurchasesChart(string @color)
         {

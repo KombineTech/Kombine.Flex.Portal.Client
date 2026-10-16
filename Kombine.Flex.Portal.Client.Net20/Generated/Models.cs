@@ -5244,6 +5244,21 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Public thumbnail URL and relative portal destination; no original or sensor metadata.</summary>
+    public sealed class PublicCameraPhoto
+    {
+        /// <summary>thumbnailUrl</summary>
+        [JsonField("thumbnailUrl")]
+        public string ThumbnailUrl { get { return _ThumbnailUrl; } set { _ThumbnailUrl = value; } }
+        private string _ThumbnailUrl;
+
+        /// <summary>workspacePath</summary>
+        [JsonField("workspacePath")]
+        public string WorkspacePath { get { return _WorkspacePath; } set { _WorkspacePath = value; } }
+        private string _WorkspacePath;
+
+    }
+
     /// <summary>Public identity, display names and error code; no raw state payload.</summary>
     public sealed class PublicMachineError
     {

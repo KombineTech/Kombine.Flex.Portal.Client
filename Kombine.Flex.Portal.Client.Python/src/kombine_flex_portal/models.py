@@ -1400,6 +1400,11 @@ LiveMachineResponse = TypedDict('LiveMachineResponse', {
     'temperature': 'float | None',
 }, total=False)
 
+PublicCameraPhoto = TypedDict('PublicCameraPhoto', {
+    'thumbnailUrl': 'str | None',
+    'workspacePath': 'str | None',
+}, total=False)
+
 PublicMachineError = TypedDict('PublicMachineError', {
     'kid': 'str | None',
     'name': 'str | None',

@@ -142,6 +142,8 @@
 | `GetKombineLogoTextWithBackground` | `get_kombine_logo_text_with_background` | `getKombineLogoTextWithBackground` | GET | `/api/v1/logos/kombine-logo-text/{color}/{background}/{width}.svg` |
 | `GetPublicLiveMachines` | `get_public_live_machines` | `getPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` |
 | `GetPublicMachineErrors` | `get_public_machine_errors` | `getPublicMachineErrors` | GET | `/api/v1/public/widgets/machine-errors` |
+| `GetPublicRecentCameraPhotos` | `get_public_recent_camera_photos` | `getPublicRecentCameraPhotos` | GET | `/api/v1/public/camera/photos` |
+| `GetPublicCameraThumbnail` | `get_public_camera_thumbnail` | `getPublicCameraThumbnail` | GET | `/api/v1/public/camera/photos/{id}/thumbnail` |
 | `GetPublicPurchasesChart` | `get_public_purchases_chart` | `getPublicPurchasesChart` | GET | `/api/v1/public/statistics/purchases/chart/{color}.svg` |
 | `GetPublicDisp73` | `get_public_disp73` | `getPublicDisp73` | GET | `/api/v1/public/displays/Map1` |
 | `GetPublicScopedUnitProgress` | `get_public_scoped_unit_progress` | `getPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |

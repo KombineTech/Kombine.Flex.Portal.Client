@@ -94,11 +94,13 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetPortalAppDownloadPageAsync` | GET | `/download` |
 | `GetPortalStatusAsync` | GET | `/api/v1/status` |
 | `GetPublicActiveUsersAsync` | GET | `/api/v1/public/statistics/active-users` |
+| `GetPublicCameraThumbnailAsync` | GET | `/api/v1/public/camera/photos/{id}/thumbnail` |
 | `GetPublicDisp73Async` | GET | `/api/v1/public/displays/Map1` |
 | `GetPublicLiveMachinesAsync` | GET | `/api/v1/public/statistics/live-machines` |
 | `GetPublicMachineErrorsAsync` | GET | `/api/v1/public/widgets/machine-errors` |
 | `GetPublicPurchasesAsync` | GET | `/api/v1/public/statistics/purchases` |
 | `GetPublicPurchasesChartAsync` | GET | `/api/v1/public/statistics/purchases/chart/{color}.svg` |
+| `GetPublicRecentCameraPhotosAsync` | GET | `/api/v1/public/camera/photos` |
 | `GetPublicReservationsAsync` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachinesAsync` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPublicScopedUnitProgressAsync` | GET | `/api/v1/public/widgets/progress/{kid}` |

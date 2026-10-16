@@ -7848,6 +7848,60 @@
     "example": {}
   },
   {
+    "operation": "GetPublicRecentCameraPhotos",
+    "python": "get_public_recent_camera_photos",
+    "javascript": "getPublicRecentCameraPhotos",
+    "method": "GET",
+    "path": "api/v1/public/camera/photos",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/PublicCameraPhoto"
+      }
+    },
+    "binary": false,
+    "example": []
+  },
+  {
+    "operation": "GetPublicCameraThumbnail",
+    "python": "get_public_camera_thumbnail",
+    "javascript": "getPublicCameraThumbnail",
+    "method": "GET",
+    "path": "api/v1/public/camera/photos/{id}/thumbnail",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "id",
+        "where": "path",
+        "py": "id",
+        "js": "id",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
     "operation": "GetPublicPurchasesChart",
     "python": "get_public_purchases_chart",
     "javascript": "getPublicPurchasesChart",
