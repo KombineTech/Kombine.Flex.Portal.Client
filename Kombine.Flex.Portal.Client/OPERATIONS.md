@@ -43,6 +43,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetCameraAvailabilityAsync` | GET | `/api/v1/camera/availability` |
 | `GetCameraCaptureContentAsync` | GET | `/api/v1/camera/{id}/content` |
 | `GetCameraCapturesAsync` | GET | `/api/v1/camera` |
+| `GetCameraNearestLocationAsync` | GET | `/api/v1/camera/nearest-location` |
 | `GetCameraResourceAsync` | GET | `/api/v1/camera/resource` |
 | `GetCircleGradientAsync` | GET | `/api/v1/circles/gradient/{colors}.svg` |
 | `GetCircleGradientSizedAsync` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` |
@@ -105,6 +106,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetPublicRunningMachinesAsync` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPublicScopedUnitProgressAsync` | GET | `/api/v1/public/widgets/progress/{kid}` |
 | `GetPublicWidgetPresentationAsync` | GET | `/api/v1/public/widgets` |
+| `GetRecentCameraPhotoMetadataAsync` | GET | `/api/v1/camera/recent/{id}/metadata` |
 | `GetSearchBankAsync` | GET | `/api/v1/search/banks/{bankKid}` |
 | `GetServiceAsync` | GET | `/api/v1/services/{serviceKid}` |
 | `GetServiceCountAsync` | GET | `/api/v1/services/count` |

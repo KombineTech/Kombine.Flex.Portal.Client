@@ -296,6 +296,9 @@ CameraResourceResponse = TypedDict('CameraResourceResponse', {
     'resourceKid': 'str | None',
     'name': 'str | None',
     'iconKid': 'str | None',
+    'requiresProximityCheck': 'bool',
+    'latitude': 'float | None',
+    'longitude': 'float | None',
 }, total=False)
 
 CameraSaveResponse = TypedDict('CameraSaveResponse', {

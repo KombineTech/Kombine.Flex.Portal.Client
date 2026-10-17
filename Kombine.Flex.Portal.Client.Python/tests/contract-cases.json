@@ -1219,6 +1219,57 @@
     "example": {}
   },
   {
+    "operation": "GetCameraNearestLocation",
+    "python": "get_camera_nearest_location",
+    "javascript": "getCameraNearestLocation",
+    "method": "GET",
+    "path": "api/v1/camera/nearest-location",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "latitude",
+        "where": "query",
+        "py": "latitude",
+        "js": "latitude",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      {
+        "name": "longitude",
+        "where": "query",
+        "py": "longitude",
+        "js": "longitude",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      {
+        "name": "accuracyMeters",
+        "where": "query",
+        "py": "accuracy_meters",
+        "js": "accuracyMeters",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraResourceResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetCameraResource",
     "python": "get_camera_resource",
     "javascript": "getCameraResource",
@@ -1417,6 +1468,37 @@
         "where": "header",
         "py": "range",
         "js": "range",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetRecentCameraPhotoMetadata",
+    "python": "get_recent_camera_photo_metadata",
+    "javascript": "getRecentCameraPhotoMetadata",
+    "method": "GET",
+    "path": "api/v1/camera/recent/{id}/metadata",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "id",
+        "where": "path",
+        "py": "id",
+        "js": "id",
         "schema": {
           "type": "string"
         }

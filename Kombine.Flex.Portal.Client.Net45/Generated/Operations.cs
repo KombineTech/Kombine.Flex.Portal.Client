@@ -342,6 +342,26 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (BookingResponse)SendJson("POST", path, body, headers, 200, typeof(BookingResponse));
         }
 
+        /// <summary>Resolve the nearest writable location within 100 metres for tenant-level camera capture.</summary>
+        public CameraResourceResponse GetCameraNearestLocation()
+        {
+            return GetCameraNearestLocation(null);
+        }
+
+        /// <summary>Resolve the nearest writable location within 100 metres for tenant-level camera capture.</summary>
+        public CameraResourceResponse GetCameraNearestLocation(GetCameraNearestLocationOptions options)
+        {
+            string path = "api/v1/camera/nearest-location";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "latitude", options.Latitude);
+                path = AddQuery(path, "longitude", options.Longitude);
+                path = AddQuery(path, "accuracyMeters", options.AccuracyMeters);
+            }
+            return (CameraResourceResponse)SendJson("GET", path, null, headers, 200, typeof(CameraResourceResponse));
+        }
+
         /// <summary>Read the display identity of one authorized camera resource.</summary>
         public CameraResourceResponse GetCameraResource()
         {
@@ -430,6 +450,15 @@ namespace Kombine.Flex.Portal.Client.Net45
                 path = AddQuery(path, "part", options.Part);
                 if (options.Range != null) headers.Add("Range", options.Range);
             }
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Read private capture metadata for a public recent-photo thumbnail.</summary>
+        public PortalDownload GetRecentCameraPhotoMetadata(string @id)
+        {
+            string path = "api/v1/camera/recent/{id}/metadata";
+            path = path.Replace("{id}", PathValue(@id));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
             return SendDownload("GET", path, null, headers, 200);
         }
 

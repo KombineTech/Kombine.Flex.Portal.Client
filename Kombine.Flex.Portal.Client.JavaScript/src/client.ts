@@ -113,6 +113,11 @@ export class PortalClient extends BaseClient {
     return this.send("ExecuteBankBookingCommand", {"bankKid": bankKid, "bookingKid": bookingKid}, body, request) as Promise<Models.BookingResponse>;
   }
 
+  /** Resolve the nearest writable location within 100 metres for tenant-level camera capture. */
+  getCameraNearestLocation(options: Models.GetCameraNearestLocationOptions = {}, request: RequestOptions = {}): Promise<Models.CameraResourceResponse> {
+    return this.send("GetCameraNearestLocation", {"latitude": options.latitude, "longitude": options.longitude, "accuracyMeters": options.accuracyMeters}, undefined, request) as Promise<Models.CameraResourceResponse>;
+  }
+
   /** Read the display identity of one authorized camera resource. */
   getCameraResource(options: Models.GetCameraResourceOptions = {}, request: RequestOptions = {}): Promise<Models.CameraResourceResponse> {
     return this.send("GetCameraResource", {"resourceKid": options.resourceKid}, undefined, request) as Promise<Models.CameraResourceResponse>;
@@ -141,6 +146,11 @@ export class PortalClient extends BaseClient {
   /** Stream one capture component through the API, with current resource authorization. */
   getCameraCaptureContent(id: string, options: Models.GetCameraCaptureContentOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("GetCameraCaptureContent", {"id": id, "part": options.part, "Range": options.range}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Read private capture metadata for a public recent-photo thumbnail. */
+  getRecentCameraPhotoMetadata(id: string, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetRecentCameraPhotoMetadata", {"id": id}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Downloads the complete filtered selection as CSV or a genuine Excel workbook. */

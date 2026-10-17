@@ -1,10 +1,12 @@
-## Recent camera photos · 0.8.2
+Version 0.8.3 adds GetCameraNearestLocation for GPS-based location capture and GetRecentCameraPhotoMetadata for authenticated thumbnail information. Camera resources include proximity-check and nullable location coordinates. New capture filenames are opaque GUIDs; never parse region or original names from filenames. Location selection requires Camera1 and Location Read/Write; metadata requires resource Read. Handle unavailable GPS and 404/409 by choosing the location manually. See /docs#camera-captures and /docs#changelog.
+
+## Recent camera photos · 0.8.3
 
 Adds `GetPublicRecentCameraPhotos` and `GetPublicCameraThumbnail`. These public operations need no login and are bound to the site tenant. The list returns at most ten photos, with short-lived thumbnail URLs and portal workspace paths. Thumbnails are public; originals and metadata remain protected. Opening a workspace requires normal manager permissions. Handle 503 when the complete list is unavailable and 400/404 for invalid, expired or missing thumbnails. See [public widgets](/docs#public-widgets).
 
-## Location weather · 0.8.2
+## Location weather · 0.8.3
 
-Version 0.8.2 exposes all 151 operations, adding `GetLocationWeather` for a canonical location KID. Reuse the manager session. The API requires the assigned Tab, Bank Read, Location Read, matching scope and visible location/parent bank. It resolves stored coordinates or the location address; clients never supply provider keys or coordinates. Check `status`: `Available` has `current`; `LocationUnknown` or `Unavailable` has no measurements. Unknown values are null, never zero. Temperature is Celsius, wind m/s, precipitation mm and humidity percent; times are UTC. Address-based positions may be approximate. Display attribution: Weather data by Open-Meteo, CC BY 4.0. Handle HTTP 400/401/403/404/503 normally and retry only deliberately; provider failure may also return HTTP 200 with `Unavailable`. See [location weather](/docs#location-weather).
+Version 0.8.3 exposes all 153 operations, adding `GetLocationWeather` for a canonical location KID. Reuse the manager session. The API requires the assigned Tab, Bank Read, Location Read, matching scope and visible location/parent bank. It resolves stored coordinates or the location address; clients never supply provider keys or coordinates. Check `status`: `Available` has `current`; `LocationUnknown` or `Unavailable` has no measurements. Unknown values are null, never zero. Temperature is Celsius, wind m/s, precipitation mm and humidity percent; times are UTC. Address-based positions may be approximate. Display attribution: Weather data by Open-Meteo, CC BY 4.0. Handle HTTP 400/401/403/404/503 normally and retry only deliberately; provider failure may also return HTTP 200 with `Unavailable`. See [location weather](/docs#location-weather).
 
 ```javascript
 const weather = await api.getLocationWeather(locationKid);
@@ -56,10 +58,10 @@ Use the same tenant and environment as your client: append /docs#changelog to it
 The package is **not yet published to npm**. Install the supplied local distribution:
 
 ```sh
-npm install ./kombine-flex-portal-client-0.8.2.tgz
+npm install ./kombine-flex-portal-client-0.8.3.tgz
 ```
 
-Version 0.8.2 targets the current beta candidate (151 operations). Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.
+Version 0.8.3 targets the current beta candidate (153 operations). Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.
 
 Version 0.2.5 adds GetLocationOpeningHours and GetLocationBookingRules. Both require Location Read, Unit Read and the authorized location scope. Reservation rules contain plain text plus ordered parts with text/isValue for optional value emphasis; never render these strings as HTML. Keep text as the fallback for older responses. See /docs#location-opening-hours and /docs#location-booking-rules for permissions, examples and limits.
 

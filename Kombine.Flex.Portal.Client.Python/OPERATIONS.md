@@ -24,12 +24,14 @@
 | `CreateBankUser` | `create_bank_user` | `createBankUser` | POST | `/api/v1/banks/{bankKid}/users` |
 | `GetBankBookings` | `get_bank_bookings` | `getBankBookings` | GET | `/api/v1/banks/{bankKid}/bookings` |
 | `ExecuteBankBookingCommand` | `execute_bank_booking_command` | `executeBankBookingCommand` | POST | `/api/v1/banks/{bankKid}/bookings/{bookingKid}/commands` |
+| `GetCameraNearestLocation` | `get_camera_nearest_location` | `getCameraNearestLocation` | GET | `/api/v1/camera/nearest-location` |
 | `GetCameraResource` | `get_camera_resource` | `getCameraResource` | GET | `/api/v1/camera/resource` |
 | `GetCameraAvailability` | `get_camera_availability` | `getCameraAvailability` | GET | `/api/v1/camera/availability` |
 | `PrepareCameraCapture` | `prepare_camera_capture` | `prepareCameraCapture` | POST | `/api/v1/camera/prepare` |
 | `SaveCameraCapture` | `save_camera_capture` | `saveCameraCapture` | POST | `/api/v1/camera` |
 | `GetCameraCaptures` | `get_camera_captures` | `getCameraCaptures` | GET | `/api/v1/camera` |
 | `GetCameraCaptureContent` | `get_camera_capture_content` | `getCameraCaptureContent` | GET | `/api/v1/camera/{id}/content` |
+| `GetRecentCameraPhotoMetadata` | `get_recent_camera_photo_metadata` | `getRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` |
 | `ExportBankAccount` | `export_bank_account` | `exportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsers` | `export_bank_users` | `exportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` |
 | `DownloadBankSettlement` | `download_bank_settlement` | `downloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |

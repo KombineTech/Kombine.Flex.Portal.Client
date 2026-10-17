@@ -20,12 +20,14 @@ GetBankUsers	GET	/api/v1/banks/{bankKid}/users	200	{"items":[{"kid":"3E7Q3Co2Ab3
 CreateBankUser	POST	/api/v1/banks/{bankKid}/users	201	{}
 GetBankBookings	GET	/api/v1/banks/{bankKid}/bookings	200	{}
 ExecuteBankBookingCommand	POST	/api/v1/banks/{bankKid}/bookings/{bookingKid}/commands	200	{}
+GetCameraNearestLocation	GET	/api/v1/camera/nearest-location	200	{}
 GetCameraResource	GET	/api/v1/camera/resource	200	{}
 GetCameraAvailability	GET	/api/v1/camera/availability	200	{}
 PrepareCameraCapture	POST	/api/v1/camera/prepare	200	{}
 SaveCameraCapture	POST	/api/v1/camera	200	{}
 GetCameraCaptures	GET	/api/v1/camera	200	{}
 GetCameraCaptureContent	GET	/api/v1/camera/{id}/content	200	{}
+GetRecentCameraPhotoMetadata	GET	/api/v1/camera/recent/{id}/metadata	200	{}
 ExportBankAccount	GET	/api/v1/banks/{bankKid}/account/export	200	{}
 ExportBankUsers	GET	/api/v1/banks/{bankKid}/users/export	200	{}
 DownloadBankSettlement	GET	/api/v1/banks/{bankKid}/settlements/{period}/download	200	{}

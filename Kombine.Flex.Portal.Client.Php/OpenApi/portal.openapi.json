@@ -3668,13 +3668,179 @@
         ]
       }
     },
+    "/api/v1/camera/nearest-location": {
+      "get": {
+        "tags": [
+          "Camera"
+        ],
+        "summary": "Resolve the nearest writable location within 100 metres for tenant-level camera capture.",
+        "description": "Requires Camera1 and Location Read/Write within the trusted tenant scope. Only enabled, retained locations with valid stored coordinates qualify. GPS accuracy must be at most 100 metres. No bank or unit is returned. Returns 404 if none qualify, 409 if the two nearest locations cannot be distinguished within GPS accuracy, 400 for invalid coordinates and 503 for an incomplete lookup. The returned location must still pass normal capture authorization.",
+        "operationId": "GetCameraNearestLocation",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "accuracyMeters",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraResourceResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraResourceResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraResourceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/camera/resource": {
       "get": {
         "tags": [
           "Camera"
         ],
         "summary": "Read the display identity of one authorized camera resource.",
-        "description": "Requires an active manager, Camera1, the exact resource\u0027s Read permission, site-bound resource scope and retention visibility. A location does not require Unit Read; a unit does not require Location Read. Returns only resourceKid, name and an API-computed iconKid for the requested bank, location or unit, without parent or child metadata. Invalid or cross-tenant KIDs return 400, invalid sessions 401, denied access 403, missing/invisible resources 404 and unavailable storage 503.",
+        "description": "Requires an active manager, Camera1, the exact resource\u0027s Read permission, site-bound resource scope and retention visibility. A location does not require Unit Read; a unit does not require Location Read. Returns resourceKid, name, iconKid and requiresProximityCheck. Locations and units include nullable latitude/longitude in decimal degrees; units inherit the location coordinates. Banks have no proximity check. These coordinates support an advisory 100-metre warning, not authorization. Invalid or cross-tenant KIDs return 400, invalid sessions 401, denied access 403, missing/invisible resources 404 and unavailable storage 503.",
         "operationId": "GetCameraResource",
         "parameters": [
           {
@@ -4741,6 +4907,139 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/camera/recent/{id}/metadata": {
+      "get": {
+        "tags": [
+          "Camera"
+        ],
+        "summary": "Read private capture metadata for a public recent-photo thumbnail.",
+        "description": "Use the opaque id from the public thumbnail URL. Requires an active manager, Camera1, resource Read, scope and retention visibility. The public thumbnail ticket alone grants no metadata access. Returns 400 for invalid/expired tickets, 401/403 for denied access, 404 for missing metadata and 503 for unavailable storage.",
+        "operationId": "GetRecentCameraPhotoMetadata",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
           }
         },
         "security": [
@@ -22106,6 +22405,22 @@
           "iconKid": {
             "type": "string",
             "description": "API-computed icon identity including the resource number; use unchanged in icon URLs.",
+            "nullable": true
+          },
+          "requiresProximityCheck": {
+            "type": "boolean",
+            "description": "True for locations and units; false for banks. Advisory only."
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Nullable location latitude in decimal degrees, inherited by units.",
+            "format": "double",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Nullable location longitude in decimal degrees, inherited by units.",
+            "format": "double",
             "nullable": true
           }
         },
