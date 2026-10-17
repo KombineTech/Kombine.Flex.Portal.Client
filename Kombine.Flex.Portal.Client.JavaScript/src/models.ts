@@ -467,6 +467,12 @@ export interface CameraCaptureItem {
   "hasMotion"?: boolean;
   /** hasPlayback */
   "hasPlayback"?: boolean;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
 }
 
 /** One bounded page. A degraded page may omit captures from an unavailable region; refresh from the beginning after recovery. */

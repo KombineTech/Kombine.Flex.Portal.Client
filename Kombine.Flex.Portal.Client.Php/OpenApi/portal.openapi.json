@@ -4512,7 +4512,7 @@
           "Camera"
         ],
         "summary": "List own tenant captures, or all authorized captures on one exact bank, location or unit.",
-        "description": "Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. No storage URLs or credentials are returned.",
+        "description": "Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. Nullable bankName, locationName and unitName describe the current resource hierarchy; each name requires that object\u0027s Read permission, scope and retention visibility. Inapplicable or unauthorized names are null. Unit names resolve localized placeholders. No storage URLs or credentials are returned.",
         "operationId": "GetCameraCaptures",
         "parameters": [
           {
@@ -22305,6 +22305,18 @@
           },
           "hasPlayback": {
             "type": "boolean"
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
