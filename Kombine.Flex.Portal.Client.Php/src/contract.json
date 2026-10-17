@@ -933,6 +933,18 @@
         },
         "hasPlayback": {
           "type": "boolean"
+        },
+        "bankName": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationName": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitName": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false

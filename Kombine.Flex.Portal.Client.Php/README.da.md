@@ -1,6 +1,6 @@
-## Lokationens vejr · 0.8.4
+## Lokationens vejr · 0.8.5
 
-Version 0.8.4 omfatter alle 153 operationer og tilføjer `GetLocationWeather` til et kanonisk lokations-KID. Genbrug administratorsessionen. API’et kræver tildelt Tab, Bank Læs, Lokation Læs, matchende adgangsområde samt synlig lokation og bank. Den bruger gemte koordinater eller lokationens adresse; klienten sender aldrig udbydernøgler eller koordinater. Kontrollér `status`: `Available` har `current`; `LocationUnknown` og `Unavailable` har ingen målinger. Ukendte værdier er null, aldrig nul. Temperatur er Celsius, vind m/s, nedbør mm og fugtighed procent; tidspunkter er UTC. Adressebaseret position kan være omtrentlig. Vis kildeangivelsen: Weather data by Open-Meteo, CC BY 4.0. Håndter HTTP 400/401/403/404/503 normalt, og gentag kun bevidst; udbyderfejl kan også give HTTP 200 med `Unavailable`. Se [lokationens vejr](/docs#location-weather).
+Version 0.8.5 omfatter alle 153 operationer og tilføjer `GetLocationWeather` til et kanonisk lokations-KID. Genbrug administratorsessionen. API’et kræver tildelt Tab, Bank Læs, Lokation Læs, matchende adgangsområde samt synlig lokation og bank. Den bruger gemte koordinater eller lokationens adresse; klienten sender aldrig udbydernøgler eller koordinater. Kontrollér `status`: `Available` har `current`; `LocationUnknown` og `Unavailable` har ingen målinger. Ukendte værdier er null, aldrig nul. Temperatur er Celsius, vind m/s, nedbør mm og fugtighed procent; tidspunkter er UTC. Adressebaseret position kan være omtrentlig. Vis kildeangivelsen: Weather data by Open-Meteo, CC BY 4.0. Håndter HTTP 400/401/403/404/503 normalt, og gentag kun bevidst; udbyderfejl kan også give HTTP 200 med `Unavailable`. Se [lokationens vejr](/docs#location-weather).
 
 ```php
 $weather = $api->getLocationWeather($locationKid);
@@ -24,7 +24,7 @@ $saved = $api->saveCameraCapture([
 Add a `motion` CURLFile for Live Photos. Only readable local files are accepted; cURL streams them. Payloads together are limited to 139 MiB plus framing; text fields: 512 KiB each.
 
 
-Version 0.8.4 tilføjer GetCameraNearestLocation til GPS-baseret lokationsvalg og GetRecentCameraPhotoMetadata til beskyttet billedinformation. Kameraressourcer indeholder afstandskontrol og nullable lokationskoordinater. Nye filnavne er uigennemsigtige GUID’er; udled ikke region eller oprindeligt navn. Lokationsvalg kræver Camera1 og Location Læs/Skriv; metadata kræver ressourcens Læs. Ved manglende GPS og 404/409 vælges lokationen manuelt. Se /docs#camera-captures og /docs#changelog.
+Version 0.8.5 tilføjer GetCameraNearestLocation til GPS-baseret lokationsvalg og GetRecentCameraPhotoMetadata til beskyttet billedinformation. Kameraressourcer indeholder afstandskontrol og nullable lokationskoordinater. Nye filnavne er uigennemsigtige GUID’er; udled ikke region eller oprindeligt navn. Lokationsvalg kræver Camera1 og Location Læs/Skriv; metadata kræver ressourcens Læs. Ved manglende GPS og 404/409 vælges lokationen manuelt. Se /docs#camera-captures og /docs#changelog.
 
 [English](README.md) · [Dansk](README.da.md) · [Español](README.es.md)
 
@@ -32,7 +32,7 @@ Version 0.8.4 tilføjer GetCameraNearestLocation til GPS-baseret lokationsvalg o
 
 [API-kontraktens changelog](https://api.team.kombine.technology/docs#changelog) — brug `/docs#changelog` på samme tenant-API og miljø som klienten. Changelog er kun på engelsk.
 
-Version **0.8.4**, klargjort lokalt; ikke deployet eller udgivet på Packagist. Indeholder 153 offentlige operationer fra den medfølgende OpenAPI-kontrakt. Kræver **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS og betroede CA-certifikater. Ingen ekstra PHP-biblioteker eller interne Kombine-DLL'er kræves. Transporten understøtter Windows, Linux og macOS; denne version er testet med Windows CLI. Brug en PHP-version, der fortsat understøttes.
+Version **0.8.5**, klargjort lokalt; ikke deployet eller udgivet på Packagist. Indeholder 153 offentlige operationer fra den medfølgende OpenAPI-kontrakt. Kræver **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS og betroede CA-certifikater. Ingen ekstra PHP-biblioteker eller interne Kombine-DLL'er kræves. Transporten understøtter Windows, Linux og macOS; denne version er testet med Windows CLI. Brug en PHP-version, der fortsat understøttes.
 
 Version 0.3.1 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer. Version 0.2.5 tilføjer de valgfrie felter latestPostingMs2000 og hasActiveSubscription til GetBankUserBalances. Posteringstidspunktet er et 64-bit antal UTC-millisekunder siden 2000-01-01; nul betyder ingen posteringer. Null eller et manglende felt betyder ukendt, og manglende eller skjulte beboere giver null. Abonnementsstatus bekræfter ikke en betaling. Bevar eksisterende saldohåndtering og rettigheder; se /docs#user-balances. Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser. Version 0.2.5 tilføjer GetUserReceipts og GetHostingMetrics til API-releases, som tilbyder disse operationer. Indlæs kvitteringer efter behov fra offset 0. Fortsæt med nextOffset og samme revision; ved HTTP 409 (receipts-changed) skal tidligere sider kasseres, og indlæsningen genstartes ved offset 0. Hold valutaer adskilt og beløb som 64-bit heltal i mindste valutaenhed. Se /docs#user-receipts og /docs#hosting for rettigheder og grænser.
 
@@ -40,11 +40,11 @@ Til denne beta-kandidat skal svarfelterne icon/bankIcon/unitIcon ændres til ico
 
 ## Installation
 
-Hent `kombine-flex-portal-client-php-0.8.4.zip` fra API-vejledningens PHP-afsnit. Med Composer lægges ZIP-filen i applikationens `packages/`-mappe:
+Hent `kombine-flex-portal-client-php-0.8.5.zip` fra API-vejledningens PHP-afsnit. Med Composer lægges ZIP-filen i applikationens `packages/`-mappe:
 
 ```sh
 composer config repositories.kombine artifact ./packages
-composer require kombine/flex-portal-client:0.8.4
+composer require kombine/flex-portal-client:0.8.5
 ```
 
 Composers artifact-kilde kræver `ext-zip` under installationen. Uden Composer udpakkes ZIP-filen i `flex-portal-client/`; erstat autoload-linjen nedenfor med `require __DIR__ . '/flex-portal-client/autoload.php';`. Behold hele `src/`, inklusive `contract.json`. Begge pakker kan indlæses sammen.

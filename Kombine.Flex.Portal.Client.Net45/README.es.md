@@ -1,12 +1,12 @@
-La versión 0.8.3 añade GetCameraNearestLocation para seleccionar ubicación mediante GPS y GetRecentCameraPhotoMetadata para información protegida. Los recursos incluyen control de proximidad y coordenadas anulables. Los nuevos nombres son GUID opacos; no extraigas región ni nombre original. La selección exige Camera1 y Location Read/Write; los metadatos exigen Read del recurso. Sin GPS o con 404/409, elige la ubicación manualmente. Consulta /docs#camera-captures y /docs#changelog.
+La versión 0.8.5 añade GetCameraNearestLocation para seleccionar ubicación mediante GPS y GetRecentCameraPhotoMetadata para información protegida. Los recursos incluyen control de proximidad y coordenadas anulables. Los nuevos nombres son GUID opacos; no extraigas región ni nombre original. La selección exige Camera1 y Location Read/Write; los metadatos exigen Read del recurso. Sin GPS o con 404/409, elige la ubicación manualmente. Consulta /docs#camera-captures y /docs#changelog.
 
-## Fotos recientes de la cámara · 0.8.3
+## Fotos recientes de la cámara · 0.8.5
 
 Añade `GetPublicRecentCameraPhotos` y `GetPublicCameraThumbnail`. Estas operaciones públicas no requieren inicio de sesión y están vinculadas al tenant del sitio. La lista devuelve hasta diez fotos con URL temporales de miniaturas y rutas del portal. Las miniaturas son públicas; los originales y metadatos siguen protegidos. Abrir el espacio requiere los permisos normales del administrador. Gestione 503 si la lista no está disponible y 400/404 para miniaturas no válidas, caducadas o ausentes. Consulte [widgets públicos](/docs#public-widgets).
 
-## Tiempo de la ubicación · 0.8.3
+## Tiempo de la ubicación · 0.8.5
 
-La versión 0.8.3 incluye las 153 operaciones y añade `GetLocationWeather` para un KID canónico de ubicación. Reutilice la sesión del administrador. La API exige Tab asignado, Bank Read, Location Read, ámbito autorizado y ubicación/banco visibles. Resuelve coordenadas guardadas o la dirección de la ubicación; el cliente nunca envía claves del proveedor ni coordenadas. Compruebe `status`: `Available` contiene `current`; `LocationUnknown` y `Unavailable` no contienen mediciones. Los valores desconocidos son null, nunca cero. Temperatura en Celsius, viento en m/s, precipitación en mm, humedad en porcentaje y horas UTC. La posición obtenida de la dirección puede ser aproximada. Muestre: Weather data by Open-Meteo, CC BY 4.0. Gestione HTTP 400/401/403/404/503 normalmente y reintente de forma deliberada; un fallo del proveedor también puede devolver HTTP 200 con `Unavailable`. Consulte [tiempo de la ubicación](/docs#location-weather).
+La versión 0.8.5 incluye las 153 operaciones y añade `GetLocationWeather` para un KID canónico de ubicación. Reutilice la sesión del administrador. La API exige Tab asignado, Bank Read, Location Read, ámbito autorizado y ubicación/banco visibles. Resuelve coordenadas guardadas o la dirección de la ubicación; el cliente nunca envía claves del proveedor ni coordenadas. Compruebe `status`: `Available` contiene `current`; `LocationUnknown` y `Unavailable` no contienen mediciones. Los valores desconocidos son null, nunca cero. Temperatura en Celsius, viento en m/s, precipitación en mm, humedad en porcentaje y horas UTC. La posición obtenida de la dirección puede ser aproximada. Muestre: Weather data by Open-Meteo, CC BY 4.0. Gestione HTTP 400/401/403/404/503 normalmente y reintente de forma deliberada; un fallo del proveedor también puede devolver HTTP 200 con `Unavailable`. Consulte [tiempo de la ubicación](/docs#location-weather).
 
 ```csharp
 LocationWeatherResponse weather = api.GetLocationWeather(locationKid);
@@ -74,13 +74,13 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 
 `Kombine.Flex.Portal.Client.Net45` ofrece métodos síncronos y tipados para las **153 operaciones públicas**. No requiere NuGet, bibliotecas Kombine, acceso a bases de datos ni cálculos de KID. Las reglas de negocio y los permisos se aplican en la API. Consulte [OPERATIONS.md](OPERATIONS.md).
 
-La versión 0.8.3 corresponde al candidato beta actual (153 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
+La versión 0.8.5 corresponde al candidato beta actual (153 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
 
 La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites.
 
 ## Instalación
 
-Extraiga `Kombine.Flex.Portal.Client.Net45.0.8.3.zip` y seleccione **Add Reference → Browse → Kombine.Flex.Portal.Client.Net45.dll**. Conserve el XML junto a la DLL para IntelliSense y distribuya la DLL con su aplicación. `Source` contiene el código y `Kombine.Flex.Portal.Client.2012.sln`. La DLL solo referencia mscorlib y System 4.5; es un proyecto clásico independiente.
+Extraiga `Kombine.Flex.Portal.Client.Net45.0.8.5.zip` y seleccione **Add Reference → Browse → Kombine.Flex.Portal.Client.Net45.dll**. Conserve el XML junto a la DLL para IntelliSense y distribuya la DLL con su aplicación. `Source` contiene el código y `Kombine.Flex.Portal.Client.2012.sln`. La DLL solo referencia mscorlib y System 4.5; es un proyecto clásico independiente.
 
 ## Primero la URL de la API, después las credenciales
 
@@ -158,7 +158,7 @@ El script de desarrollo obtiene las referencias de Microsoft 1.0.3 solo si falta
 
 En el repositorio de desarrollo, `scripts/Test-PortalClientNet45.ps1` compila, prueba y empaqueta el ZIP; PowerShell 7 no es necesario en el equipo cliente. `scripts/Generate-PortalClientNet20.py --net45` regenera los contratos desde OpenAPI. Para usar o compilar la DLL, el cliente no necesita Python, generadores ni una API en ejecución. El idioma principal de la documentación es inglés; se incluyen alternativas en danés y español.
 
-## Gestión automática de sesiones — 0.8.3 (sin publicar)
+## Gestión automática de sesiones — 0.8.5 (sin publicar)
 
 Mantenga una `PortalSession` por dirección API y cuenta/inicio de sesión. Los clientes creados a partir de ella renuevan al usarse poco antes de caducar; la autenticación simultánea se coordina. No hay temporizador en segundo plano. Dispose del cliente no cierra la sesión compartida; use `session.ClearSession()`. La autenticación pendiente no puede restaurar una sesión borrada. No registre tokens ni contraseñas.
 

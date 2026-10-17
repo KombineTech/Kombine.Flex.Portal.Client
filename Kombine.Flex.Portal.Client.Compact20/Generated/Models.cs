@@ -1017,6 +1017,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public bool? HasPlayback { get { return _HasPlayback; } set { _HasPlayback = value; } }
         private bool? _HasPlayback;
 
+        /// <summary>bankName</summary>
+        [JsonField("bankName")]
+        public string BankName { get { return _BankName; } set { _BankName = value; } }
+        private string _BankName;
+
+        /// <summary>locationName</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>unitName</summary>
+        [JsonField("unitName")]
+        public string UnitName { get { return _UnitName; } set { _UnitName = value; } }
+        private string _UnitName;
+
     }
 
     /// <summary>One bounded page. A degraded page may omit captures from an unavailable region; refresh from the beginning after recovery.</summary>

@@ -672,7 +672,7 @@ namespace Kombine.Flex.Portal.Client
         /// List own tenant captures, or all authorized captures on one exact bank, location or unit.
         /// </summary>
         /// <remarks>
-        /// Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. No storage URLs or credentials are returned.
+        /// Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. Nullable bankName, locationName and unitName describe the current resource hierarchy; each name requires that object's Read permission, scope and retention visibility. Inapplicable or unauthorized names are null. Unit names resolve localized placeholders. No storage URLs or credentials are returned.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -7589,7 +7589,7 @@ namespace Kombine.Flex.Portal.Client
         /// List own tenant captures, or all authorized captures on one exact bank, location or unit.
         /// </summary>
         /// <remarks>
-        /// Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. No storage URLs or credentials are returned.
+        /// Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. Nullable bankName, locationName and unitName describe the current resource hierarchy; each name requires that object's Read permission, scope and retention visibility. Inapplicable or unauthorized names are null. Unit names resolve localized placeholders. No storage URLs or credentials are returned.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -25311,6 +25311,15 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("hasPlayback")]
         public bool? HasPlayback { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankName")]
+        public string? BankName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
+        public string? LocationName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
+        public string? UnitName { get; set; } = default!;
 
     }
 

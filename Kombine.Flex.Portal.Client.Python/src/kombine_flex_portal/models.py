@@ -267,6 +267,9 @@ CameraCaptureItem = TypedDict('CameraCaptureItem', {
     'hasPreview': 'bool',
     'hasMotion': 'bool',
     'hasPlayback': 'bool',
+    'bankName': 'str | None',
+    'locationName': 'str | None',
+    'unitName': 'str | None',
 }, total=False)
 
 CameraCapturePage = TypedDict('CameraCapturePage', {
