@@ -215,7 +215,7 @@ array{'uploadToken'?: string|null}
 ### CameraResourceResponse
 
 ```php
-array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
+array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'requiresProximityCheck'?: bool, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
 ```
 
 ### CameraSaveResponse

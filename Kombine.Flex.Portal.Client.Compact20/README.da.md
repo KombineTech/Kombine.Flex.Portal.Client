@@ -1,10 +1,12 @@
-## Seneste kamerabilleder · 0.8.2
+Version 0.8.3 tilføjer GetCameraNearestLocation til GPS-baseret lokationsvalg og GetRecentCameraPhotoMetadata til beskyttet billedinformation. Kameraressourcer indeholder afstandskontrol og nullable lokationskoordinater. Nye filnavne er uigennemsigtige GUID’er; udled ikke region eller oprindeligt navn. Lokationsvalg kræver Camera1 og Location Læs/Skriv; metadata kræver ressourcens Læs. Ved manglende GPS og 404/409 vælges lokationen manuelt. Se /docs#camera-captures og /docs#changelog.
+
+## Seneste kamerabilleder · 0.8.3
 
 Tilføjer `GetPublicRecentCameraPhotos` og `GetPublicCameraThumbnail`. De offentlige operationer kræver ikke login og er bundet til sitets tenant. Listen returnerer højst ti billeder med kortlivede miniature-URL’er og arbejdsområdestier. Miniaturer er offentlige; originaler og metadata forbliver beskyttede. Åbning af arbejdsområdet kræver normale administratorrettigheder. Håndtér 503 ved utilgængelig liste og 400/404 ved ugyldige, udløbne eller manglende miniaturer. Se [offentlige widgets](/docs#public-widgets).
 
-## Lokationens vejr · 0.8.2
+## Lokationens vejr · 0.8.3
 
-Version 0.8.2 omfatter alle 151 operationer og tilføjer `GetLocationWeather` til et kanonisk lokations-KID. Genbrug administratorsessionen. API’et kræver tildelt Tab, Bank Læs, Lokation Læs, matchende adgangsområde samt synlig lokation og bank. Den bruger gemte koordinater eller lokationens adresse; klienten sender aldrig udbydernøgler eller koordinater. Kontrollér `status`: `Available` har `current`; `LocationUnknown` og `Unavailable` har ingen målinger. Ukendte værdier er null, aldrig nul. Temperatur er Celsius, vind m/s, nedbør mm og fugtighed procent; tidspunkter er UTC. Adressebaseret position kan være omtrentlig. Vis kildeangivelsen: Weather data by Open-Meteo, CC BY 4.0. Håndter HTTP 400/401/403/404/503 normalt, og gentag kun bevidst; udbyderfejl kan også give HTTP 200 med `Unavailable`. Se [lokationens vejr](/docs#location-weather).
+Version 0.8.3 omfatter alle 153 operationer og tilføjer `GetLocationWeather` til et kanonisk lokations-KID. Genbrug administratorsessionen. API’et kræver tildelt Tab, Bank Læs, Lokation Læs, matchende adgangsområde samt synlig lokation og bank. Den bruger gemte koordinater eller lokationens adresse; klienten sender aldrig udbydernøgler eller koordinater. Kontrollér `status`: `Available` har `current`; `LocationUnknown` og `Unavailable` har ingen målinger. Ukendte værdier er null, aldrig nul. Temperatur er Celsius, vind m/s, nedbør mm og fugtighed procent; tidspunkter er UTC. Adressebaseret position kan være omtrentlig. Vis kildeangivelsen: Weather data by Open-Meteo, CC BY 4.0. Håndter HTTP 400/401/403/404/503 normalt, og gentag kun bevidst; udbyderfejl kan også give HTTP 200 med `Unavailable`. Se [lokationens vejr](/docs#location-weather).
 
 ```csharp
 LocationWeatherResponse weather = api.GetLocationWeather(locationKid);
@@ -74,7 +76,7 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 Ingen NuGet-pakker, databaseforbindelser, Kombine-biblioteker eller reference til desktop-klienten. Kun Compact Frameworks egne `mscorlib` og `System`, version 2.0, kræves. Biblioteket indeholder kommunikation og serialisering; forretningsregler og adgangskontrol ligger fortsat i API'et.
 
-Version 0.8.2 følger den aktuelle beta-kandidat (151 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
+Version 0.8.3 følger den aktuelle beta-kandidat (153 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
 
 Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser.
 
@@ -209,9 +211,9 @@ Solutionen indeholder:
 
 I udviklingsrepoet bygger/tester/pakker `scripts/Test-PortalClientCompact20.ps1`. Scriptet kræver PowerShell 7 på udviklings-pc'en; kunder og enheder behøver det ikke. `scripts/Generate-PortalClientNet20.py --compact` opdaterer de indtjekkede kontraktklasser fra det fælles OpenAPI-snapshot.
 
-**Verificeret:** Release-build med de originale VS2008/MSBuild 3.5-værktøjer og CF 2.0-referencebiblioteker; alle 151 operationer og syntetiske kontroller på desktop-testværten. Tests kontrollerer også, at DLL'en refererer til Compact Frameworks assembly-identiteter. Device-testprogrammet er bygget mod CF 2.0. **Ikke verificeret:** kørsel eller HTTPS på en fysisk CE/Mobile-enhed eller emulator. Der er ikke udført rigtige login eller databaseændringer.
+**Verificeret:** Release-build med de originale VS2008/MSBuild 3.5-værktøjer og CF 2.0-referencebiblioteker; alle 153 operationer og syntetiske kontroller på desktop-testværten. Tests kontrollerer også, at DLL'en refererer til Compact Frameworks assembly-identiteter. Device-testprogrammet er bygget mod CF 2.0. **Ikke verificeret:** kørsel eller HTTPS på en fysisk CE/Mobile-enhed eller emulator. Der er ikke udført rigtige login eller databaseændringer.
 
-## Automatisk sessionshåndtering — 0.8.2 (ikke udgivet)
+## Automatisk sessionshåndtering — 0.8.3 (ikke udgivet)
 
 Behold én `PortalSession` pr. API-adresse og konto/login. Klienter oprettet fra den fornyer ved brug kort før udløb; samtidige login og fornyelser samles. Der kører ingen baggrundstimer. Dispose af en klient logger ikke den fælles session ud; brug `session.ClearSession()`. Et igangværende login kan ikke genoprette en ryddet session. Log aldrig tokens eller adgangskoder.
 

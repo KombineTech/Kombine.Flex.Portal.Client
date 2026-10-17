@@ -40,7 +40,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type CameraCapturePage array{'items'?: list<CameraCaptureItem>|null, 'nextCursor'?: string|null, 'isDegraded'?: bool}
  * @phpstan-type CameraPrepareRequest array{'resourceKid'?: string|null, 'kind'?: string|null, 'originalFileName'?: string|null, 'originalNameAvailable'?: bool, 'capturedAtUtc'?: string, 'mediaLength'?: int, 'mediaSha256'?: string|null, 'sensorData'?: array<string,mixed>, 'motionLength'?: int|null, 'motionSha256'?: string|null}
  * @phpstan-type CameraPrepareResponse array{'uploadToken'?: string|null}
- * @phpstan-type CameraResourceResponse array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
+ * @phpstan-type CameraResourceResponse array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'requiresProximityCheck'?: bool, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
  * @phpstan-type CameraSaveResponse array{'captureId'?: string|null, 'resourceKid'?: string|null}
  * @phpstan-type DatabaseAccessResponse array{'canWrite'?: bool|null, 'checkedAtUtc'?: string}
  * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
@@ -441,6 +441,16 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Resolve the nearest writable location within 100 metres for tenant-level camera capture.
+     * @param array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float} $options
+     * @return CameraResourceResponse
+     */
+    public function getCameraNearestLocation(array $options = []): mixed
+    {
+        return $this->request('GetCameraNearestLocation', [] + $options, null);
+    }
+
+    /**
      * Read the display identity of one authorized camera resource.
      * @param array{'resourceKid'?: string} $options
      * @return CameraResourceResponse
@@ -500,6 +510,17 @@ final class PortalClient extends BaseClient
     public function getCameraCaptureContent(mixed $id, mixed $destination, array $options = []): mixed
     {
         return $this->request('GetCameraCaptureContent', ['id' => $id] + $options, null, $destination);
+    }
+
+    /**
+     * Read private capture metadata for a public recent-photo thumbnail.
+     * @param string $id
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function getRecentCameraPhotoMetadata(mixed $id, mixed $destination): mixed
+    {
+        return $this->request('GetRecentCameraPhotoMetadata', ['id' => $id], null, $destination);
     }
 
     /**

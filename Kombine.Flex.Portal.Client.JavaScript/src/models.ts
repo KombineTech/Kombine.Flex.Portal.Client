@@ -517,6 +517,12 @@ export interface CameraResourceResponse {
   "name"?: string | null;
   /** API-computed icon identity including the resource number; use unchanged in icon URLs. */
   "iconKid"?: string | null;
+  /** True for locations and units; false for banks. Advisory only. */
+  "requiresProximityCheck"?: boolean;
+  /** Nullable location latitude in decimal degrees, inherited by units. */
+  "latitude"?: number | null;
+  /** Nullable location longitude in decimal degrees, inherited by units. */
+  "longitude"?: number | null;
 }
 
 /** A complete media set exists in at least one region; the second copy continues independently. */
@@ -2697,6 +2703,12 @@ export interface GetBankBookingsOptions {
   search?: string;
   offset?: number;
   limit?: number;
+}
+
+export interface GetCameraNearestLocationOptions {
+  latitude?: number;
+  longitude?: number;
+  accuracyMeters?: number;
 }
 
 export interface GetCameraResourceOptions {

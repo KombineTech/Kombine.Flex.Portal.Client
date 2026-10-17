@@ -41,6 +41,7 @@
 | `GetCameraAvailability` | GET | `/api/v1/camera/availability` |
 | `GetCameraCaptureContent` | GET | `/api/v1/camera/{id}/content` |
 | `GetCameraCaptures` | GET | `/api/v1/camera` |
+| `GetCameraNearestLocation` | GET | `/api/v1/camera/nearest-location` |
 | `GetCameraResource` | GET | `/api/v1/camera/resource` |
 | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` |
 | `GetCircleGradient` | GET | `/api/v1/circles/gradient/{colors}.svg` |
@@ -103,6 +104,7 @@
 | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |
 | `GetPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
+| `GetRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` |
 | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` |
 | `GetServiceCount` | GET | `/api/v1/services/count` |
 | `GetService` | GET | `/api/v1/services/{serviceKid}` |

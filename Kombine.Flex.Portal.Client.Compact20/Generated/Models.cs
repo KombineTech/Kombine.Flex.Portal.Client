@@ -1122,6 +1122,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
         private string _IconKid;
 
+        /// <summary>True for locations and units; false for banks. Advisory only.</summary>
+        [JsonField("requiresProximityCheck")]
+        public bool? RequiresProximityCheck { get { return _RequiresProximityCheck; } set { _RequiresProximityCheck = value; } }
+        private bool? _RequiresProximityCheck;
+
+        /// <summary>Nullable location latitude in decimal degrees, inherited by units.</summary>
+        [JsonField("latitude")]
+        public double? Latitude { get { return _Latitude; } set { _Latitude = value; } }
+        private double? _Latitude;
+
+        /// <summary>Nullable location longitude in decimal degrees, inherited by units.</summary>
+        [JsonField("longitude")]
+        public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
+        private double? _Longitude;
+
     }
 
     /// <summary>A complete media set exists in at least one region; the second copy continues independently.</summary>
@@ -5876,6 +5891,23 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>limit</summary>
         public int? Limit { get { return _Limit; } set { _Limit = value; } }
         private int? _Limit;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetCameraNearestLocation. Null values use API defaults.</summary>
+    public sealed class GetCameraNearestLocationOptions
+    {
+        /// <summary>latitude</summary>
+        public double? Latitude { get { return _Latitude; } set { _Latitude = value; } }
+        private double? _Latitude;
+
+        /// <summary>longitude</summary>
+        public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
+        private double? _Longitude;
+
+        /// <summary>accuracyMeters</summary>
+        public double? AccuracyMeters { get { return _AccuracyMeters; } set { _AccuracyMeters = value; } }
+        private double? _AccuracyMeters;
 
     }
 

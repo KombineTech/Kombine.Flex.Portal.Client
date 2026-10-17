@@ -1,6 +1,6 @@
-## Location weather · 0.8.2
+## Location weather · 0.8.4
 
-Version 0.8.2 exposes all 151 operations, adding `GetLocationWeather` for a canonical location KID. Reuse the manager session. The API requires the assigned Tab, Bank Read, Location Read, matching scope and visible location/parent bank. It resolves stored coordinates or the location address; clients never supply provider keys or coordinates. Check `status`: `Available` has `current`; `LocationUnknown` or `Unavailable` has no measurements. Unknown values are null, never zero. Temperature is Celsius, wind m/s, precipitation mm and humidity percent; times are UTC. Address-based positions may be approximate. Display attribution: Weather data by Open-Meteo, CC BY 4.0. Handle HTTP 400/401/403/404/503 normally and retry only deliberately; provider failure may also return HTTP 200 with `Unavailable`. See [location weather](/docs#location-weather).
+Version 0.8.4 exposes all 153 operations, adding `GetLocationWeather` for a canonical location KID. Reuse the manager session. The API requires the assigned Tab, Bank Read, Location Read, matching scope and visible location/parent bank. It resolves stored coordinates or the location address; clients never supply provider keys or coordinates. Check `status`: `Available` has `current`; `LocationUnknown` or `Unavailable` has no measurements. Unknown values are null, never zero. Temperature is Celsius, wind m/s, precipitation mm and humidity percent; times are UTC. Address-based positions may be approximate. Display attribution: Weather data by Open-Meteo, CC BY 4.0. Handle HTTP 400/401/403/404/503 normally and retry only deliberately; provider failure may also return HTTP 200 with `Unavailable`. See [location weather](/docs#location-weather).
 
 ```php
 $weather = $api->getLocationWeather($locationKid);
@@ -24,13 +24,15 @@ $saved = $api->saveCameraCapture([
 Add a `motion` CURLFile for Live Photos. Only readable local files are accepted; cURL streams them. Payloads together are limited to 139 MiB plus framing; text fields: 512 KiB each.
 
 
+Version 0.8.4 adds GetCameraNearestLocation for GPS-based location capture and GetRecentCameraPhotoMetadata for authenticated thumbnail information. Camera resources include proximity-check and nullable location coordinates. New capture filenames are opaque GUIDs; never parse region or original names from filenames. Location selection requires Camera1 and Location Read/Write; metadata requires resource Read. Handle unavailable GPS and 404/409 by choosing the location manually. See /docs#camera-captures and /docs#changelog.
+
 [English](README.md) · [Dansk](README.da.md) · [Español](README.es.md)
 
 # Kombine Flex Portal PHP client
 
 [API contract changelog](https://api.team.kombine.technology/docs#changelog) — use `/docs#changelog` on the same tenant API and environment as your client. The changelog is English-only.
 
-Version **0.8.2**, prepared locally; not deployed or published to Packagist. Covers 151 public operations from the included OpenAPI snapshot. Requires **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS support and trusted CA certificates. No external PHP library or internal Kombine assembly is required. Windows, Linux and macOS are supported by the transport; this version was tested on Windows CLI. Use a currently supported PHP release.
+Version **0.8.4**, prepared locally; not deployed or published to Packagist. Covers 153 public operations from the included OpenAPI snapshot. Requires **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS support and trusted CA certificates. No external PHP library or internal Kombine assembly is required. Windows, Linux and macOS are supported by the transport; this version was tested on Windows CLI. Use a currently supported PHP release.
 
 Version 0.3.1 synchronizes GetBankUserBalances documentation with its 20-second database deadline. Request and response fields are unchanged. Allow extra time for transport and authorization; HTTP 503 still returns no partial balances. Version 0.2.5 adds optional latestPostingMs2000 and hasActiveSubscription fields to GetBankUserBalances. The posting time is a 64-bit UTC millisecond count since 2000-01-01; zero means no postings. Null or an absent field means unknown, and missing or hidden residents return null. Subscription status is not payment confirmation. Keep existing balance handling and permissions; see /docs#user-balances. Version 0.2.5 adds GetLocationOpeningHours and GetLocationBookingRules. Both require Location Read, Unit Read and the authorized location scope. Reservation rules contain plain text plus ordered parts with text/isValue for optional value emphasis; never render these strings as HTML. Keep text as the fallback for older responses. See /docs#location-opening-hours and /docs#location-booking-rules for permissions, examples and limits. Version 0.2.5 adds GetUserReceipts and GetHostingMetrics for API releases that expose these operations. Load receipts on demand, starting at offset 0. Continue with nextOffset and the same revision; on HTTP 409 (receipts-changed), discard earlier pages and restart at offset 0. Keep currencies separate and minor-unit amounts as 64-bit integers. See /docs#user-receipts and /docs#hosting for permissions and limits.
 
@@ -38,11 +40,11 @@ For this beta candidate, migrate response fields icon/bankIcon/unitIcon to iconK
 
 ## Install
 
-Download `kombine-flex-portal-client-php-0.8.2.zip` from the API guide's PHP section. For Composer, save the ZIP under your application's `packages/` directory, then run:
+Download `kombine-flex-portal-client-php-0.8.4.zip` from the API guide's PHP section. For Composer, save the ZIP under your application's `packages/` directory, then run:
 
 ```sh
 composer config repositories.kombine artifact ./packages
-composer require kombine/flex-portal-client:0.8.2
+composer require kombine/flex-portal-client:0.8.4
 ```
 
 Composer's artifact repository requires `ext-zip` during installation. For installation without Composer, extract the ZIP into `flex-portal-client/` and replace the autoload line below with `require __DIR__ . '/flex-portal-client/autoload.php';`. Keep the entire `src/` directory, including `contract.json`. Both packages can be loaded together.

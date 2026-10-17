@@ -95,6 +95,10 @@ class PortalClient(BaseClient):
         'Appends a cancellation or restoration, preserving history and requesting backend synchronization.'
         return self._request('ExecuteBankBookingCommand', {'bankKid': bank_kid, 'bookingKid': booking_kid}, body)
 
+    def get_camera_nearest_location(self, *, latitude: float | None = None, longitude: float | None = None, accuracy_meters: float | None = None) -> CameraResourceResponse:
+        'Resolve the nearest writable location within 100 metres for tenant-level camera capture.'
+        return self._request('GetCameraNearestLocation', {'latitude': latitude, 'longitude': longitude, 'accuracyMeters': accuracy_meters}, None)
+
     def get_camera_resource(self, *, resource_kid: str | None = None) -> CameraResourceResponse:
         'Read the display identity of one authorized camera resource.'
         return self._request('GetCameraResource', {'resourceKid': resource_kid}, None)
@@ -118,6 +122,10 @@ class PortalClient(BaseClient):
     def get_camera_capture_content(self, id: str, *, part: str | None = None, range: str | None = None) -> PortalDownload:
         'Stream one capture component through the API, with current resource authorization.'
         return self._request('GetCameraCaptureContent', {'id': id, 'part': part, 'Range': range}, None)
+
+    def get_recent_camera_photo_metadata(self, id: str) -> PortalDownload:
+        'Read private capture metadata for a public recent-photo thumbnail.'
+        return self._request('GetRecentCameraPhotoMetadata', {'id': id}, None)
 
     def export_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None, format: str | None = None) -> PortalDownload:
         'Downloads the complete filtered selection as CSV or a genuine Excel workbook.'

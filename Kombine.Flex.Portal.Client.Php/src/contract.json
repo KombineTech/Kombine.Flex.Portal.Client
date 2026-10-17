@@ -1026,6 +1026,19 @@
         "iconKid": {
           "type": "string",
           "nullable": true
+        },
+        "requiresProximityCheck": {
+          "type": "boolean"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -6261,6 +6274,49 @@
       },
       "binary": false
     },
+    "GetCameraNearestLocation": {
+      "method": "GET",
+      "path": "api/v1/camera/nearest-location",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "latitude",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        {
+          "name": "longitude",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        {
+          "name": "accuracyMeters",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/CameraResourceResponse"
+      },
+      "binary": false
+    },
     "GetCameraResource": {
       "method": "GET",
       "path": "api/v1/camera/resource",
@@ -6424,6 +6480,31 @@
           "name": "Range",
           "where": "header",
           "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
+    "GetRecentCameraPhotoMetadata": {
+      "method": "GET",
+      "path": "api/v1/camera/recent/{id}/metadata",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "id",
+          "where": "path",
+          "required": true,
           "schema": {
             "type": "string"
           }

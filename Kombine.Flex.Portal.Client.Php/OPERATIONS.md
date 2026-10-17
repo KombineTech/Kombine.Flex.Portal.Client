@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `6e41e87787fa2619fcbed082a78529c9467098d7ec28e438179fbdd4c1244578`).
-151 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `c5b8d7a6c17b32e86b23a41f5e4d1badcd0fdc79e22b51b3651172df7f1782a9`).
+153 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -44,6 +44,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `6e41e87787fa2619fcb
 | `getCameraAvailability` | `GetCameraAvailability` | GET | `/api/v1/camera/availability` | Bearer |
 | `getCameraCaptureContent` | `GetCameraCaptureContent` | GET | `/api/v1/camera/{id}/content` | Bearer |
 | `getCameraCaptures` | `GetCameraCaptures` | GET | `/api/v1/camera` | Bearer |
+| `getCameraNearestLocation` | `GetCameraNearestLocation` | GET | `/api/v1/camera/nearest-location` | Bearer |
 | `getCameraResource` | `GetCameraResource` | GET | `/api/v1/camera/resource` | Bearer |
 | `getCircleGradientSized` | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` | Anonymous |
 | `getCircleGradient` | `GetCircleGradient` | GET | `/api/v1/circles/gradient/{colors}.svg` | Anonymous |
@@ -106,6 +107,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `6e41e87787fa2619fcb
 | `getPublicRunningMachines` | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` | Anonymous |
 | `getPublicScopedUnitProgress` | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` | Anonymous |
 | `getPublicWidgetPresentation` | `GetPublicWidgetPresentation` | GET | `/api/v1/public/widgets` | Anonymous |
+| `getRecentCameraPhotoMetadata` | `GetRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` | Bearer |
 | `getSearchBank` | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` | Bearer |
 | `getServiceCount` | `GetServiceCount` | GET | `/api/v1/services/count` | Bearer |
 | `getService` | `GetService` | GET | `/api/v1/services/{serviceKid}` | Bearer |
