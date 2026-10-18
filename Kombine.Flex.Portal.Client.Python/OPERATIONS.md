@@ -30,6 +30,7 @@
 | `PrepareCameraCapture` | `prepare_camera_capture` | `prepareCameraCapture` | POST | `/api/v1/camera/prepare` |
 | `SaveCameraCapture` | `save_camera_capture` | `saveCameraCapture` | POST | `/api/v1/camera` |
 | `GetCameraCaptures` | `get_camera_captures` | `getCameraCaptures` | GET | `/api/v1/camera` |
+| `ConfirmCameraCapture` | `confirm_camera_capture` | `confirmCameraCapture` | POST | `/api/v1/camera/confirmation` |
 | `GetCameraCaptureContent` | `get_camera_capture_content` | `getCameraCaptureContent` | GET | `/api/v1/camera/{id}/content` |
 | `GetRecentCameraPhotoMetadata` | `get_recent_camera_photo_metadata` | `getRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` |
 | `ExportBankAccount` | `export_bank_account` | `exportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |

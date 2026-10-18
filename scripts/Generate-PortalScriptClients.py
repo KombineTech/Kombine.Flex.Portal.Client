@@ -97,7 +97,10 @@ for path, methods in contract['paths'].items():
         body = request_content.get('application/json', {}).get('schema')
         successes = [(int(k), v) for k, v in op['responses'].items() if k.startswith('2')]
         # Generated methods do not send Range, so full downloads expect HTTP 200.
-        assert len(successes) == 1 or {s for s, _ in successes} == {200, 206}
+        background_capture = oid == 'SaveCameraCapture' and {s for s, _ in successes} == {200, 202}
+        assert len(successes) == 1 or {s for s, _ in successes} == {200, 206} or background_capture
+        if background_capture:
+            assert len({json.dumps(v.get('content', {}), sort_keys=True) for _, v in successes}) == 1
         successes.sort(key=lambda item: item[0])
         status, success = successes[0]
         content = success.get('content', {})

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -39,7 +39,7 @@ internal static class Program
             LoopbackCamera(false); LoopbackCamera(true); LoopbackTransport();
             LoopbackPost(false);
             LoopbackPost(true);
-            Console.WriteLine("PASS: " + _assertions + " checks, 153 API operations; CLR " + Environment.Version + ".");
+            Console.WriteLine("PASS: " + _assertions + " checks, 154 API operations; CLR " + Environment.Version + ".");
             return 0;
         }
         catch (Exception error)
@@ -85,6 +85,10 @@ internal static class Program
         input.Position = 0;
         using (PortalApiClient api = Client(fake)) { api.SaveCameraCapture(body); }
         Check(fake.Last.Multipart == body && fake.Last.Body == null, "Multipart bypasses JSON serialization");
+        Fake accepted = new Fake(202, "{\"captureId\":\"pending\",\"resourceKid\":\"kid\"}");
+        SaveCameraCaptureOptions backgroundOptions = new SaveCameraCaptureOptions(); backgroundOptions.Background = true;
+        using (PortalApiClient api = Client(accepted)) { Equal("pending", api.SaveCameraCapture(body, backgroundOptions).CaptureId, "Background accepts 202"); }
+        Check(accepted.Last.Uri.Query.IndexOf("background=true") >= 0, "Background option sent");
         input.Close(); output.Close();
     }
 #if !PORTAL_COMPACT20 || DESKTOP_TEST_HOST
@@ -185,7 +189,7 @@ internal static class Program
     private static void Contracts()
     {
         string[] rows = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ContractCases.tsv"));
-        Equal(153, rows.Length, "Published operation count");
+        Equal(154, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });

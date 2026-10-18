@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -23,7 +23,7 @@ internal static class Program
 #if DESKTOP_TEST_HOST
         LoopbackCamera(false); LoopbackCamera(true); LoopbackTransport(); LoopbackPost(false); LoopbackPost(true); StalledTransport(false); StalledTransport(true);
 #endif
-        return "PASS: " + _assertions + " checks, 153 API operations; runtime " + Environment.Version + ".";
+        return "PASS: " + _assertions + " checks, 154 API operations; runtime " + Environment.Version + ".";
     }
     private static string _directory;
     private static void Check(bool ok, string label) { _assertions++; if (!ok) throw new Exception(label); }
@@ -74,6 +74,10 @@ internal static class Program
         input.Position = 0;
         using (PortalApiClient api = Client(fake)) { api.SaveCameraCapture(body); }
         Check(fake.Last.Multipart == body && fake.Last.Body == null, "Multipart bypasses JSON serialization");
+        Fake accepted = new Fake(202, "{\"captureId\":\"pending\",\"resourceKid\":\"kid\"}");
+        SaveCameraCaptureOptions backgroundOptions = new SaveCameraCaptureOptions(); backgroundOptions.Background = true;
+        using (PortalApiClient api = Client(accepted)) { Equal("pending", api.SaveCameraCapture(body, backgroundOptions).CaptureId, "Background accepts 202"); }
+        Check(accepted.Last.Uri.Query.IndexOf("background=true") >= 0, "Background option sent");
         input.Close(); output.Close();
     }
 #if !PORTAL_COMPACT20 || DESKTOP_TEST_HOST
@@ -174,7 +178,7 @@ internal static class Program
     private static void Contracts()
     {
         string[] rows = ReadRows(Path.Combine(_directory, "ContractCases.tsv"));
-        Equal(153, rows.Length, "Published operation count");
+        Equal(154, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });

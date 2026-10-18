@@ -1054,6 +1054,36 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>The unchanged signed ticket returned by PrepareCameraCapture.</summary>
+    public sealed class CameraConfirmationRequest
+    {
+        /// <summary>uploadToken</summary>
+        [JsonField("uploadToken")]
+        public string UploadToken { get { return _UploadToken; } set { _UploadToken = value; } }
+        private string _UploadToken;
+
+    }
+
+    /// <summary>Only Confirmed=true acknowledges durable publication. ProcessingPercent is a weighted completed-stage estimate, not elapsed time; null means unknown and 100 requires confirmation. ErrorCode may report a transient processing failure.</summary>
+    public sealed class CameraConfirmationResponse
+    {
+        /// <summary>confirmed</summary>
+        [JsonField("confirmed")]
+        public bool? Confirmed { get { return _Confirmed; } set { _Confirmed = value; } }
+        private bool? _Confirmed;
+
+        /// <summary>errorCode</summary>
+        [JsonField("errorCode")]
+        public string ErrorCode { get { return _ErrorCode; } set { _ErrorCode = value; } }
+        private string _ErrorCode;
+
+        /// <summary>processingPercent</summary>
+        [JsonField("processingPercent")]
+        public int? ProcessingPercent { get { return _ProcessingPercent; } set { _ProcessingPercent = value; } }
+        private int? _ProcessingPercent;
+
+    }
+
     /// <summary>Immutable input for recorded photo, video or a paired Live Photo; tenant and owner are never client parameters.</summary>
     public sealed class CameraPrepareRequest
     {
@@ -5941,6 +5971,15 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>resourceKid</summary>
         public string ResourceKid { get { return _ResourceKid; } set { _ResourceKid = value; } }
         private string _ResourceKid;
+
+    }
+
+    /// <summary>Optional query/header parameters for SaveCameraCapture. Null values use API defaults.</summary>
+    public sealed class SaveCameraCaptureOptions
+    {
+        /// <summary>When true, 202 acknowledges validated temporary staging only. Poll ConfirmCameraCapture with the same ticket; retain original bytes until confirmed. Host restart may require retry. Default false retains synchronous 200 confirmation.</summary>
+        public bool? Background { get { return _Background; } set { _Background = value; } }
+        private bool? _Background;
 
     }
 

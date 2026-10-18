@@ -38,6 +38,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type CameraAvailabilityResponse array{'hasCaptures'?: bool, 'isDegraded'?: bool, 'canCapture'?: bool}
  * @phpstan-type CameraCaptureItem array{'id'?: string|null, 'captureId'?: string|null, 'resourceKid'?: string|null, 'ownerKid'?: string|null, 'fileName'?: string|null, 'kind'?: string|null, 'capturedAtUtc'?: string, 'hasPreview'?: bool, 'hasMotion'?: bool, 'hasPlayback'?: bool, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null}
  * @phpstan-type CameraCapturePage array{'items'?: list<CameraCaptureItem>|null, 'nextCursor'?: string|null, 'isDegraded'?: bool}
+ * @phpstan-type CameraConfirmationRequest array{'uploadToken'?: string|null}
+ * @phpstan-type CameraConfirmationResponse array{'confirmed'?: bool, 'errorCode'?: string|null, 'processingPercent'?: int|null}
  * @phpstan-type CameraPrepareRequest array{'resourceKid'?: string|null, 'kind'?: string|null, 'originalFileName'?: string|null, 'originalNameAvailable'?: bool, 'capturedAtUtc'?: string, 'mediaLength'?: int, 'mediaSha256'?: string|null, 'sensorData'?: array<string,mixed>, 'motionLength'?: int|null, 'motionSha256'?: string|null}
  * @phpstan-type CameraPrepareResponse array{'uploadToken'?: string|null}
  * @phpstan-type CameraResourceResponse array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'requiresProximityCheck'?: bool, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
@@ -481,13 +483,14 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * Save new camera media immediately and replicate after the first complete regional copy.
+     * Save camera media synchronously, or accept bounded background processing.
      * @param array<string,string|\CURLFile> $body Multipart fields and caller-owned file paths.
+     * @param array{'background'?: bool} $options
      * @return CameraSaveResponse
      */
-    public function saveCameraCapture(#[\SensitiveParameter] array $body): mixed
+    public function saveCameraCapture(#[\SensitiveParameter] array $body, array $options = []): mixed
     {
-        return $this->request('SaveCameraCapture', [], $body);
+        return $this->request('SaveCameraCapture', [] + $options, $body);
     }
 
     /**
@@ -498,6 +501,16 @@ final class PortalClient extends BaseClient
     public function getCameraCaptures(array $options = []): mixed
     {
         return $this->request('GetCameraCaptures', [] + $options, null);
+    }
+
+    /**
+     * Confirm publication of an exact prepared capture after an uncertain upload response.
+     * @param CameraConfirmationRequest $body
+     * @return CameraConfirmationResponse
+     */
+    public function confirmCameraCapture(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('ConfirmCameraCapture', [], $body);
     }
 
     /**

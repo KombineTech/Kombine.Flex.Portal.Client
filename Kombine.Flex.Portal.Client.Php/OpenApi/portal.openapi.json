@@ -4326,9 +4326,20 @@
         "tags": [
           "Camera"
         ],
-        "summary": "Save new camera media immediately and replicate after the first complete regional copy.",
+        "summary": "Save camera media synchronously, or accept bounded background processing.",
         "description": "Multipart fields: uploadToken from PrepareCameraCapture and original (binary file); live-photo additionally requires motion (original JPEG plus QuickTime MOV). Every component is bounded, hashed and decoded server-side. Success confirms the full set, generated thumbnail, optional playback derivative and JSON in one private region. FRA/AMS origin filenames remain unchanged when replicated. No camera database or public storage link is used.",
         "operationId": "SaveCameraCapture",
+        "parameters": [
+          {
+            "name": "background",
+            "in": "query",
+            "description": "When true, 202 acknowledges validated temporary staging only. Poll ConfirmCameraCapture with the same ticket; retain original bytes until confirmed. Host restart may require retry. Default false retains synchronous 200 confirmation.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -4362,6 +4373,26 @@
         "responses": {
           "200": {
             "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraSaveResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraSaveResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraSaveResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
             "content": {
               "text/plain": {
                 "schema": {
@@ -4547,6 +4578,162 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CameraCapturePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/camera/confirmation": {
+      "post": {
+        "tags": [
+          "Camera"
+        ],
+        "summary": "Confirm publication of an exact prepared capture after an uncertain upload response.",
+        "description": "Requires the original uploadToken, its authenticated owner and current Camera1/resource Read and Write. confirmed=false is not proof of failure; retain the original bytes and ticket for retry. No media is uploaded by this operation.",
+        "operationId": "ConfirmCameraCapture",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CameraConfirmationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CameraConfirmationRequest"
+              }
+            },
+            "application/*\u002Bjson": {
+              "schema": {
+                "$ref": "#/components/schemas/CameraConfirmationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraConfirmationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraConfirmationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraConfirmationResponse"
                 }
               }
             }
@@ -22342,6 +22529,36 @@
         },
         "additionalProperties": false,
         "description": "One bounded page. A degraded page may omit captures from an unavailable region; refresh from the beginning after recovery."
+      },
+      "CameraConfirmationRequest": {
+        "type": "object",
+        "properties": {
+          "uploadToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The unchanged signed ticket returned by PrepareCameraCapture."
+      },
+      "CameraConfirmationResponse": {
+        "type": "object",
+        "properties": {
+          "confirmed": {
+            "type": "boolean"
+          },
+          "errorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "processingPercent": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Only Confirmed=true acknowledges durable publication. ProcessingPercent is a weighted completed-stage estimate, not elapsed time; null means unknown and 100 requires confirmation. ErrorCode may report a transient processing failure."
       },
       "CameraPrepareRequest": {
         "type": "object",

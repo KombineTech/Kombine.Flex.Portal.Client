@@ -220,7 +220,7 @@ export class BaseClient {
         return new PortalDownload(response, abort, finish);
       }
       const text = await this.readJsonBody(response, abort.signal);
-      if (response.status !== spec.status) throw new PortalApiError(response.status, text, new Headers(response.headers));
+      if (!spec.statuses.includes(response.status)) throw new PortalApiError(response.status, text, new Headers(response.headers));
       const result = parseJson(text);
       if (result === null) throw new PortalProtocolError("Missing response data.");
       return checkShape(result, spec.response, true);

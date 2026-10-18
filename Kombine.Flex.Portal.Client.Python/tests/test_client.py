@@ -72,7 +72,7 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(api.get_location_weather("opaque-location")["current"], current)
 
     def test_every_public_operation(self):
-        self.assertEqual(len(CASES), 153)
+        self.assertEqual(len(CASES), 154)
         for case in CASES:
             with self.subTest(operation=case['operation']):
                 response_data = b'PK\x00\xff' if case['binary'] else json.dumps(sample(case['response']), ensure_ascii=False).encode()
@@ -332,6 +332,20 @@ class MultipartTests(unittest.TestCase):
         with api.get_camera_capture_content('opaque', range='bytes=1-2') as result:
             self.assertEqual(result.status, 206)
             self.assertEqual(b''.join(result.iter_bytes()), b'\x00\xff')
+
+    def test_background_upload_accepts_202_and_confirmation_preserves_null(self):
+        def handler(request):
+            if urlsplit(request.full_url).path.endswith('/confirmation'):
+                return Response(b'{"confirmed":false,"errorCode":null,"processingPercent":null}')
+            self.assertEqual(parse_qs(urlsplit(request.full_url).query)['background'], ['true'])
+            return Response(b'{"captureId":"pending","resourceKid":"kid"}', status=202)
+        api = client(handler)
+        api.access_token = 'fixture-token'
+        result = api.save_camera_capture({'uploadToken': 'ticket', 'original': PortalUploadFile(io.BytesIO(b'photo'), 'photo.jpg')}, background=True)
+        self.assertEqual(result['captureId'], 'pending')
+        result = api.confirm_camera_capture({'uploadToken': 'ticket'})
+        self.assertFalse(result['confirmed'])
+        self.assertIsNone(result['processingPercent'])
 
     def test_real_http_streams_multipart_with_explicit_length(self):
         observed = []

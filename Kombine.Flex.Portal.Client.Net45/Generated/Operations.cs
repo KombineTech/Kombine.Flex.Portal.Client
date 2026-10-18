@@ -406,12 +406,22 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (CameraPrepareResponse)SendJson("POST", path, body, headers, 200, typeof(CameraPrepareResponse));
         }
 
-        /// <summary>Save new camera media immediately and replicate after the first complete regional copy.</summary>
+        /// <summary>Save camera media synchronously, or accept bounded background processing.</summary>
         public CameraSaveResponse SaveCameraCapture(PortalMultipart body)
+        {
+            return SaveCameraCapture(body, null);
+        }
+
+        /// <summary>Save camera media synchronously, or accept bounded background processing.</summary>
+        public CameraSaveResponse SaveCameraCapture(PortalMultipart body, SaveCameraCaptureOptions options)
         {
             string path = "api/v1/camera";
             Dictionary<string, string> headers = new Dictionary<string, string>();
-            return (CameraSaveResponse)SendJson("POST", path, body, headers, 200, typeof(CameraSaveResponse));
+            if (options != null)
+            {
+                path = AddQuery(path, "background", options.Background);
+            }
+            return (CameraSaveResponse)SendJson("POST", path, body, headers, options != null && options.Background == true ? 202 : 200, typeof(CameraSaveResponse));
         }
 
         /// <summary>List own tenant captures, or all authorized captures on one exact bank, location or unit.</summary>
@@ -431,6 +441,14 @@ namespace Kombine.Flex.Portal.Client.Net45
                 path = AddQuery(path, "cursor", options.Cursor);
             }
             return (CameraCapturePage)SendJson("GET", path, null, headers, 200, typeof(CameraCapturePage));
+        }
+
+        /// <summary>Confirm publication of an exact prepared capture after an uncertain upload response.</summary>
+        public CameraConfirmationResponse ConfirmCameraCapture(CameraConfirmationRequest body)
+        {
+            string path = "api/v1/camera/confirmation";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (CameraConfirmationResponse)SendJson("POST", path, body, headers, 200, typeof(CameraConfirmationResponse));
         }
 
         /// <summary>Stream one capture component through the API, with current resource authorization.</summary>

@@ -111,13 +111,17 @@ class PortalClient(BaseClient):
         'Prepare a bounded, immutable capture plan including optional weather.'
         return self._request('PrepareCameraCapture', {}, body)
 
-    def save_camera_capture(self, body: dict[str, str | PortalUploadFile]) -> CameraSaveResponse:
-        'Save new camera media immediately and replicate after the first complete regional copy.'
-        return self._request('SaveCameraCapture', {}, body)
+    def save_camera_capture(self, body: dict[str, str | PortalUploadFile], *, background: bool | None = None) -> CameraSaveResponse:
+        'Save camera media synchronously, or accept bounded background processing.'
+        return self._request('SaveCameraCapture', {'background': background}, body)
 
     def get_camera_captures(self, *, resource_kid: str | None = None, cursor: str | None = None) -> CameraCapturePage:
         'List own tenant captures, or all authorized captures on one exact bank, location or unit.'
         return self._request('GetCameraCaptures', {'resourceKid': resource_kid, 'cursor': cursor}, None)
+
+    def confirm_camera_capture(self, body: CameraConfirmationRequest) -> CameraConfirmationResponse:
+        'Confirm publication of an exact prepared capture after an uncertain upload response.'
+        return self._request('ConfirmCameraCapture', {}, body)
 
     def get_camera_capture_content(self, id: str, *, part: str | None = None, range: str | None = None) -> PortalDownload:
         'Stream one capture component through the API, with current resource authorization.'

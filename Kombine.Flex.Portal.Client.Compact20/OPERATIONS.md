@@ -4,6 +4,7 @@
 | --- | --- | --- |
 | `AskPortalAssistant` | POST | `/api/v1/assistant/query` |
 | `ChangeMyManagerPassword` | POST | `/api/v1/session/me/password` |
+| `ConfirmCameraCapture` | POST | `/api/v1/camera/confirmation` |
 | `ConfirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` |
 | `ConfirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` |
 | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` |
