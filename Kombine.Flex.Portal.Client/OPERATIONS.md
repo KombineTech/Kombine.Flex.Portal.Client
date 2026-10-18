@@ -6,6 +6,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | --- | --- | --- |
 | `AskPortalAssistantAsync` | POST | `/api/v1/assistant/query` |
 | `ChangeMyManagerPasswordAsync` | POST | `/api/v1/session/me/password` |
+| `ConfirmCameraCaptureAsync` | POST | `/api/v1/camera/confirmation` |
 | `ConfirmManagerSignUpAsync` | POST | `/api/v1/session/signup-confirmation` |
 | `ConfirmMyManagerEmailAsync` | POST | `/api/v1/session/me/email-confirmation` |
 | `CreateBankUserAsync` | POST | `/api/v1/banks/{bankKid}/users` |

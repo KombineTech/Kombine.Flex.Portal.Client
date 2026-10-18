@@ -90,7 +90,10 @@ for path, methods in contract['paths'].items():
         body = op.get('requestBody', {}).get('content', {}).get('application/json', {}).get('schema')
         successes = [(int(k), v) for k, v in op['responses'].items() if k.startswith('2')]
         # These clients request complete downloads; 206 is only used when a caller sends Range.
-        assert len(successes) == 1 or {s for s, _ in successes} == {200, 206}, (method, successes)
+        background_capture = method == 'SaveCameraCapture' and {s for s, _ in successes} == {200, 202}
+        assert len(successes) == 1 or {s for s, _ in successes} == {200, 206} or background_capture, (method, successes)
+        if background_capture:
+            assert len({json.dumps(v.get('content', {}), sort_keys=True) for _, v in successes}) == 1
         successes.sort(key=lambda item: item[0])
         status, response = successes[0]
         content = response.get('content', {})
@@ -128,7 +131,8 @@ for path, methods in contract['paths'].items():
                 else: client += '                if (' + v + ' != null) headers.Add(' + cs(p['name']) + ', ' + v + ');\n'
             client += '            }\n'
         invocation = 'SendDownload' if binary else 'SendJson'
-        call_args = [cs(verb.upper()), 'path', 'body' if body or multipart else 'null', 'headers', str(status)]
+        expected_status = 'options != null && options.Background == true ? 202 : 200' if background_capture else str(status)
+        call_args = [cs(verb.upper()), 'path', 'body' if body or multipart else 'null', 'headers', expected_status]
         if not binary: call_args.append('typeof(' + ('object' if result == 'void' else result) + ')')
         client += '            ' + ('' if result == 'void' else 'return ' + ('' if binary else '(' + result + ')')) + invocation + '(' + ', '.join(call_args) + ');\n        }\n\n'
         operations.append('| `' + method + '` | ' + verb.upper() + ' | `' + path + '` |')

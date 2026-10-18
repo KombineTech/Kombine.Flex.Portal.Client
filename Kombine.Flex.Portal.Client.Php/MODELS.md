@@ -200,6 +200,18 @@ array{'id'?: string|null, 'captureId'?: string|null, 'resourceKid'?: string|null
 array{'items'?: list<CameraCaptureItem>|null, 'nextCursor'?: string|null, 'isDegraded'?: bool}
 ```
 
+### CameraConfirmationRequest
+
+```php
+array{'uploadToken'?: string|null}
+```
+
+### CameraConfirmationResponse
+
+```php
+array{'confirmed'?: bool, 'errorCode'?: string|null, 'processingPercent'?: int|null}
+```
+
 ### CameraPrepareRequest
 
 ```php

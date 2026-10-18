@@ -21,7 +21,22 @@ function sample(spec) {
   }
 }
 
-assert.equal(cases.length, 153);
+assert.equal(cases.length, 154);
+test('background upload accepts 202 and confirmation preserves unknown progress', async () => {
+  const client = new PortalClient('https://api.example.test/', { fetch: async (url) => {
+    const request = new URL(url);
+    if (request.pathname.endsWith('/confirmation')) return json({confirmed: false, errorCode: null, processingPercent: null});
+    assert.equal(request.searchParams.get('background'), 'true');
+    return json({captureId: 'pending', resourceKid: 'kid'}, 202);
+  }});
+  client.accessToken = 'fixture-token';
+  const body = new FormData(); body.set('uploadToken', 'ticket'); body.set('original', new Blob(['photo']), 'photo.jpg');
+  assert.equal((await client.saveCameraCapture(body, {background: true})).captureId, 'pending');
+  const confirmation = await client.confirmCameraCapture({uploadToken: 'ticket'});
+  assert.equal(confirmation.confirmed, false);
+  assert.equal(confirmation.errorCode, null);
+  assert.equal(confirmation.processingPercent, null);
+});
 for (const spec of cases) {
   test('wire contract: ' + spec.operation, async () => {
     let observed;

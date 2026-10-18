@@ -969,6 +969,34 @@
       },
       "additionalProperties": false
     },
+    "CameraConfirmationRequest": {
+      "type": "object",
+      "properties": {
+        "uploadToken": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "CameraConfirmationResponse": {
+      "type": "object",
+      "properties": {
+        "confirmed": {
+          "type": "boolean"
+        },
+        "errorCode": {
+          "type": "string",
+          "nullable": true
+        },
+        "processingPercent": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "CameraPrepareRequest": {
       "type": "object",
       "properties": {
@@ -6398,10 +6426,20 @@
       "method": "POST",
       "path": "api/v1/camera",
       "statuses": [
-        200
+        200,
+        202
       ],
       "auth": true,
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "background",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
       "body": null,
       "multipart": {
         "required": [
@@ -6460,6 +6498,23 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/CameraCapturePage"
+      },
+      "binary": false
+    },
+    "ConfirmCameraCapture": {
+      "method": "POST",
+      "path": "api/v1/camera/confirmation",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": {
+        "$ref": "#/components/schemas/CameraConfirmationRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/CameraConfirmationResponse"
       },
       "binary": false
     },

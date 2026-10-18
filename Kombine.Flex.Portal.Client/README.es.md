@@ -1,6 +1,8 @@
-La versión 0.8.5 añade GetCameraNearestLocation para seleccionar ubicación mediante GPS y GetRecentCameraPhotoMetadata para información protegida. Los recursos incluyen control de proximidad y coordenadas anulables. Los nuevos nombres son GUID opacos; no extraigas región ni nombre original. La selección exige Camera1 y Location Read/Write; los metadatos exigen Read del recurso. Sin GPS o con 404/409, elige la ubicación manualmente. Consulta /docs#camera-captures y /docs#changelog.
+La versión 0.9.0 incluye 154 operaciones. SaveCameraCapture admite procesamiento opcional en segundo plano; HTTP 202 solo confirma almacenamiento temporal. Conserve los archivos originales y el token de carga y llame a ConfirmCameraCapture hasta que confirmed sea true. processingPercent es una estimación y puede ser null; errorCode puede indicar un fallo. Tras reiniciar el servidor, reintente con los mismos archivos y token si la publicación no está confirmada. Recompile las llamadas con las firmas actualizadas de SaveCameraCapture y use argumentos con nombre cuando estén disponibles. El comportamiento síncrono predeterminado de la API no cambia. Consulte /docs#camera-captures y /docs#changelog.
 
-## Fotos recientes de la cámara · 0.8.5
+La versión 0.9.0 añade GetCameraNearestLocation para seleccionar ubicación mediante GPS y GetRecentCameraPhotoMetadata para información protegida. Los recursos incluyen control de proximidad y coordenadas anulables. Los nuevos nombres son GUID opacos; no extraigas región ni nombre original. La selección exige Camera1 y Location Read/Write; los metadatos exigen Read del recurso. Sin GPS o con 404/409, elige la ubicación manualmente. Consulta /docs#camera-captures y /docs#changelog.
+
+## Fotos recientes de la cámara · 0.9.0
 
 Añade `GetPublicRecentCameraPhotos` y `GetPublicCameraThumbnail`. Estas operaciones públicas no requieren inicio de sesión y están vinculadas al tenant del sitio. La lista devuelve hasta diez fotos con URL temporales de miniaturas y rutas del portal. Las miniaturas son públicas; los originales y metadatos siguen protegidos. Abrir el espacio requiere los permisos normales del administrador. Gestione 503 si la lista no está disponible y 400/404 para miniaturas no válidas, caducadas o ausentes. Consulte [widgets públicos](/docs#public-widgets).
 
@@ -8,7 +10,7 @@ Todos los cambios de rol de administrador requieren Read y Write tanto de Tabs c
 
 GetTerminals usa el ComputerName comunicado para el nombre, el filtro y la ordenación; los nombres ausentes están vacíos. Solicite fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight para los datos del terminal. Son cadenas, null si no se seleccionan y vacías si faltan. Mantenga fields al paginar y reinicie los cursores anteriores. Cada fila incluye el nombre de la ubicación. Consulte /docs#changelog para todos los requisitos de migración.
 
-La versión 0.8.5 incluye 153 operaciones. GetUnits añade el directorio de unidades autorizado: mantenga filtros y fields al paginar y reinicie ante invalid-cursor. Los roles de administrador requieren las nueve categorías de expectedFlags, incluidas Tabs y Kids; gestione sus permisos independientes y las respuestas 403. Se eliminan las asignaciones de acceso de servicios: deje de enviar esas solicitudes y de leer el objeto access. Las partes del logotipo se indican en la ruta antes del color, no en parámetros de consulta. UserBalance sigue siendo compatible. Consulte /docs#changelog para la migración y /docs#unit-directory para paginación y ejemplos.
+La versión 0.9.0 incluye 154 operaciones. GetUnits añade el directorio de unidades autorizado: mantenga filtros y fields al paginar y reinicie ante invalid-cursor. Los roles de administrador requieren las nueve categorías de expectedFlags, incluidas Tabs y Kids; gestione sus permisos independientes y las respuestas 403. Se eliminan las asignaciones de acceso de servicios: deje de enviar esas solicitudes y de leer el objeto access. Las partes del logotipo se indican en la ruta antes del color, no en parámetros de consulta. UserBalance sigue siendo compatible. Consulte /docs#changelog para la migración y /docs#unit-directory para paginación y ejemplos.
 
 Versión 0.8.0: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.
 
@@ -28,15 +30,15 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 
 # Kombine Flex Portal — cliente .NET
 
-Cliente HTTPS/JSON tipado para las 153 operaciones públicas. No depende de otros paquetes Kombine, no accede a bases de datos ni contiene reglas de negocio. La referencia principal detallada está en [inglés](README.md); [OPERATIONS.md](OPERATIONS.md) enumera todas las operaciones.
+Cliente HTTPS/JSON tipado para las 154 operaciones públicas. No depende de otros paquetes Kombine, no accede a bases de datos ni contiene reglas de negocio. La referencia principal detallada está en [inglés](README.md); [OPERATIONS.md](OPERATIONS.md) enumera todas las operaciones.
 
-La versión 0.8.5 corresponde al contrato API actual (153 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
+La versión 0.9.0 corresponde al contrato API actual (154 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
 
 La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites.
 
 ## Tiempo actual de una ubicación
 
-La versión 0.8.5 añade `GetLocationWeatherAsync`; el SDK incluye 153 operaciones. La API usa las coordenadas guardadas de la ubicación autorizada o su dirección/código postal guardados. Solo se acepta `locationKid`; el cliente no puede enviar coordenadas ni seleccionar otro tenant. Se requieren administrador activo, Tab asignada, Bank Read, Location Read, ámbito correcto y visibilidad según retención. No se requieren Unit Read ni Write.
+La versión 0.9.0 añade `GetLocationWeatherAsync`; el SDK incluye 154 operaciones. La API usa las coordenadas guardadas de la ubicación autorizada o su dirección/código postal guardados. Solo se acepta `locationKid`; el cliente no puede enviar coordenadas ni seleccionar otro tenant. Se requieren administrador activo, Tab asignada, Bank Read, Location Read, ámbito correcto y visibilidad según retención. No se requieren Unit Read ni Write.
 
 ```csharp
 var weather = await api.GetLocationWeatherAsync(locationKid, cancellationToken);
@@ -99,11 +101,11 @@ Guardar correctamente significa que el conjunto completo de medios/JSON existe e
 
 ## Instalación y plataformas
 
-Las versiones de producción se publican en [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Instale una versión publicada con el comando siguiente y nuget.org como fuente. Si una versión beta aún no está disponible allí, añada el archivo revisado Kombine.Flex.Portal.Client.0.8.5.nupkg de la documentación API a una fuente NuGet local.
+Las versiones de producción se publican en [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Instale una versión publicada con el comando siguiente y nuget.org como fuente. Si una versión beta aún no está disponible allí, añada el archivo revisado Kombine.Flex.Portal.Client.0.9.0.nupkg de la documentación API a una fuente NuGet local.
 
 ```powershell
 dotnet nuget add source ./packages --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.8.5
+dotnet add package Kombine.Flex.Portal.Client --version 0.9.0
 ```
 
 .NET Framework 4.7.2/4.8/4.8.1 usa netstandard2.0 con Microsoft System.Text.Json 10.0.12 y sus dependencias. .NET 8/9 usa net8.0; .NET 10 usa net10.0 sin paquetes adicionales. Mantenga nuget.org o un mirror aprobado para dependencias Microsoft. Framework puede necesitar binding redirects automáticos y System.Net.Http al inyectar HttpClient. Las pruebas Framework compilan contra 4.7.2/4.8 y se ejecutan en 4.8.1 instalado; no se ha probado una instalación original de 4.7.2.
@@ -151,7 +153,7 @@ CVR: 44637928
 [support@kombinetech.com](mailto:support@kombinetech.com)  
 [kombinetech.com](https://kombinetech.com/)
 
-## Gestión automática de sesiones — 0.8.5 (sin publicar)
+## Gestión automática de sesiones — 0.9.0 (sin publicar)
 
 `SendRequestAsync` también admite descargas, respuestas en streaming y operaciones añadidas después del contrato generado incluido. Comprueba que la solicitud permanezca dentro de la dirección fija de la API, conserva las cabeceras de la aplicación y nunca reintenta. El código que llama es responsable de la solicitud y la respuesta. Use `HttpCompletionOption.ResponseHeadersRead` para streaming. La aplicación puede utilizar sus propios modelos de respuesta; la API sigue aplicando los permisos.
 

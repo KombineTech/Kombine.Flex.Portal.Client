@@ -278,6 +278,16 @@ CameraCapturePage = TypedDict('CameraCapturePage', {
     'isDegraded': 'bool',
 }, total=False)
 
+CameraConfirmationRequest = TypedDict('CameraConfirmationRequest', {
+    'uploadToken': 'str | None',
+}, total=False)
+
+CameraConfirmationResponse = TypedDict('CameraConfirmationResponse', {
+    'confirmed': 'bool',
+    'errorCode': 'str | None',
+    'processingPercent': 'int | None',
+}, total=False)
+
 CameraPrepareRequest = TypedDict('CameraPrepareRequest', {
     'resourceKid': 'str | None',
     'kind': 'str | None',

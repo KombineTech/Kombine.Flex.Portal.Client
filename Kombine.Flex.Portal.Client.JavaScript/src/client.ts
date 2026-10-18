@@ -133,14 +133,19 @@ export class PortalClient extends BaseClient {
     return this.send("PrepareCameraCapture", {}, body, request) as Promise<Models.CameraPrepareResponse>;
   }
 
-  /** Save new camera media immediately and replicate after the first complete regional copy. */
-  saveCameraCapture(body: FormData, request: RequestOptions = {}): Promise<Models.CameraSaveResponse> {
-    return this.send("SaveCameraCapture", {}, body, request) as Promise<Models.CameraSaveResponse>;
+  /** Save camera media synchronously, or accept bounded background processing. */
+  saveCameraCapture(body: FormData, options: Models.SaveCameraCaptureOptions = {}, request: RequestOptions = {}): Promise<Models.CameraSaveResponse> {
+    return this.send("SaveCameraCapture", {"background": options.background}, body, request) as Promise<Models.CameraSaveResponse>;
   }
 
   /** List own tenant captures, or all authorized captures on one exact bank, location or unit. */
   getCameraCaptures(options: Models.GetCameraCapturesOptions = {}, request: RequestOptions = {}): Promise<Models.CameraCapturePage> {
     return this.send("GetCameraCaptures", {"resourceKid": options.resourceKid, "cursor": options.cursor}, undefined, request) as Promise<Models.CameraCapturePage>;
+  }
+
+  /** Confirm publication of an exact prepared capture after an uncertain upload response. */
+  confirmCameraCapture(body: Models.CameraConfirmationRequest, request: RequestOptions = {}): Promise<Models.CameraConfirmationResponse> {
+    return this.send("ConfirmCameraCapture", {}, body, request) as Promise<Models.CameraConfirmationResponse>;
   }
 
   /** Stream one capture component through the API, with current resource authorization. */

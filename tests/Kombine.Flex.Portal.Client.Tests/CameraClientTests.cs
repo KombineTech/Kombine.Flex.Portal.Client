@@ -8,6 +8,26 @@ namespace Kombine.Flex.Portal.Client.Tests;
 
 public sealed class CameraClientTests
 {
+    [Fact]
+    public async Task BackgroundUploadReturnsAcceptedIdentityAndConfirmationKeepsUnknownProgress()
+    {
+        using var original = new MemoryStream(new byte[] { 255, 216, 255, 217 });
+        using var http = Transport(new Handler((request, _) =>
+        {
+            if (request.RequestUri!.AbsolutePath.EndsWith("/confirmation"))
+                return Task.FromResult(Json("{\"confirmed\":false,\"errorCode\":null,\"processingPercent\":null}"));
+            Assert.Contains("background=true", request.RequestUri.Query);
+            return Task.FromResult(Json("{\"captureId\":\"pending\",\"resourceKid\":\"kid\"}", HttpStatusCode.Accepted));
+        }));
+        var client = new PortalApiClient(http);
+        client.AccessToken = "fixture-token";
+        var accepted = await client.SaveCameraCaptureAsync(background: true, uploadToken: "ticket", original: new FileParameter(original, "photo.jpg"));
+        Assert.Equal("pending", accepted.CaptureId);
+        var confirmation = await client.ConfirmCameraCaptureAsync(new CameraConfirmationRequest { UploadToken = "ticket" });
+        Assert.False(confirmation.Confirmed);
+        Assert.Null(confirmation.ProcessingPercent);
+    }
+
     private static HttpResponseMessage Json(string value, HttpStatusCode status = HttpStatusCode.OK)
         => new(status) { Content = new StringContent(value, Encoding.UTF8, "application/json") };
     private static HttpClient Transport(HttpMessageHandler handler)
@@ -46,7 +66,7 @@ public sealed class CameraClientTests
             return Json("{\"captureId\":\"capture-one\",\"resourceKid\":\"CaseSensitive-KID\"}");
         }));
         using var client = new PortalApiClient(http) { AccessToken = "fixture-token" };
-        var result = await client.SaveCameraCaptureAsync("signed+ticket/==",
+        var result = await client.SaveCameraCaptureAsync(null, "signed+ticket/==",
             new FileParameter(original, "IMG_001.JPG", "image/jpeg"),
             livePhoto ? new FileParameter(motion, "IMG_001.MOV", "video/quicktime") : null);
         Assert.Equal("capture-one", result.CaptureId);
@@ -136,7 +156,7 @@ public sealed class CameraClientTests
         }));
         using var client = new PortalApiClient(http);
         using var original = new MemoryStream([1, 2, 3]);
-        var failure = await Assert.ThrowsAnyAsync<PortalApiException>(() => client.SaveCameraCaptureAsync("signed-ticket", new FileParameter(original, "photo.jpg", "image/jpeg")));
+        var failure = await Assert.ThrowsAnyAsync<PortalApiException>(() => client.SaveCameraCaptureAsync(null, "signed-ticket", new FileParameter(original, "photo.jpg", "image/jpeg")));
         Assert.Equal(status, failure.StatusCode);
         Assert.Equal(1, calls);
         Assert.DoesNotContain("private-secret", failure.ToString());
@@ -156,7 +176,7 @@ public sealed class CameraClientTests
         using var client = new PortalApiClient(http);
         using var original = new MemoryStream([1]);
         using var cancellation = new CancellationTokenSource();
-        var pending = client.SaveCameraCaptureAsync("ticket", new FileParameter(original, "photo.jpg"), cancellationToken: cancellation.Token);
+        var pending = client.SaveCameraCaptureAsync(null, "ticket", new FileParameter(original, "photo.jpg"), cancellationToken: cancellation.Token);
         cancellation.Cancel();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending);
         Assert.Equal(1, calls);
@@ -171,7 +191,7 @@ public sealed class CameraClientTests
         using var http = Transport(new Handler((_, _) => { calls++; return Task.FromResult(Json("{}")); }));
         using var client = new PortalApiClient(http);
         using var original = new MemoryStream([1]);
-        var error = await Assert.ThrowsAsync<ArgumentNullException>(() => client.SaveCameraCaptureAsync(
+        var error = await Assert.ThrowsAsync<ArgumentNullException>(() => client.SaveCameraCaptureAsync(null,
             missingToken ? null : "ticket", missingToken ? new FileParameter(original, "photo.jpg") : null!));
         Assert.Equal(missingToken ? "uploadToken" : "original", error.ParamName);
         Assert.Equal(0, calls);

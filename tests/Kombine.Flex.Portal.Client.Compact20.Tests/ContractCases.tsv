@@ -26,6 +26,7 @@ GetCameraAvailability	GET	/api/v1/camera/availability	200	{}
 PrepareCameraCapture	POST	/api/v1/camera/prepare	200	{}
 SaveCameraCapture	POST	/api/v1/camera	200	{}
 GetCameraCaptures	GET	/api/v1/camera	200	{}
+ConfirmCameraCapture	POST	/api/v1/camera/confirmation	200	{}
 GetCameraCaptureContent	GET	/api/v1/camera/{id}/content	200	{}
 GetRecentCameraPhotoMetadata	GET	/api/v1/camera/recent/{id}/metadata	200	{}
 ExportBankAccount	GET	/api/v1/banks/{bankKid}/account/export	200	{}

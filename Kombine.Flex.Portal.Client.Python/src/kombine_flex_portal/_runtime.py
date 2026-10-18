@@ -383,7 +383,7 @@ class BaseClient:
             payload = b''.join(chunks)
             if len(payload) > self._max_json_bytes:
                 raise PortalProtocolError('JSON response exceeds configured limit.')
-            if status != spec['status']:
+            if status not in spec['statuses']:
                 raise PortalApiError(status, payload.decode('utf-8', errors='replace'), response_headers)
             try:
                 result = _parse(payload.decode('utf-8-sig', errors='strict'))

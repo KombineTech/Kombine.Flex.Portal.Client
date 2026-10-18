@@ -1,12 +1,13 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `a958f184afbf06dc2a2f675aebc4e7131e3891a446d01114f1d6db09976ca950`).
-153 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `063c232a689cf74ae8c6a1564d56729f08affae44e56241583d8578e730822c5`).
+154 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
 | `askPortalAssistant` | `AskPortalAssistant` | POST | `/api/v1/assistant/query` | Bearer |
 | `changeMyManagerPassword` | `ChangeMyManagerPassword` | POST | `/api/v1/session/me/password` | Bearer |
+| `confirmCameraCapture` | `ConfirmCameraCapture` | POST | `/api/v1/camera/confirmation` | Bearer |
 | `confirmManagerSignUp` | `ConfirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` | Anonymous |
 | `confirmMyManagerEmail` | `ConfirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` | Anonymous |
 | `createBankUser` | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` | Bearer |

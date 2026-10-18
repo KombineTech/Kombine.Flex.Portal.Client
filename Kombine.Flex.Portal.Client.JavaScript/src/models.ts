@@ -485,6 +485,22 @@ export interface CameraCapturePage {
   "isDegraded"?: boolean;
 }
 
+/** The unchanged signed ticket returned by PrepareCameraCapture. */
+export interface CameraConfirmationRequest {
+  /** uploadToken */
+  "uploadToken"?: string | null;
+}
+
+/** Only Confirmed=true acknowledges durable publication. ProcessingPercent is a weighted completed-stage estimate, not elapsed time; null means unknown and 100 requires confirmation. ErrorCode may report a transient processing failure. */
+export interface CameraConfirmationResponse {
+  /** confirmed */
+  "confirmed"?: boolean;
+  /** errorCode */
+  "errorCode"?: string | null;
+  /** processingPercent */
+  "processingPercent"?: number | null;
+}
+
 /** Immutable input for recorded photo, video or a paired Live Photo; tenant and owner are never client parameters. */
 export interface CameraPrepareRequest {
   /** resourceKid */
@@ -2723,6 +2739,10 @@ export interface GetCameraResourceOptions {
 
 export interface GetCameraAvailabilityOptions {
   resourceKid?: string;
+}
+
+export interface SaveCameraCaptureOptions {
+  background?: boolean;
 }
 
 export interface GetCameraCapturesOptions {
