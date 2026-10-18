@@ -647,7 +647,7 @@ namespace Kombine.Flex.Portal.Client
         /// Prepare a bounded, immutable capture plan including optional weather.
         /// </summary>
         /// <remarks>
-        /// Requires Camera1 plus resource Read and Write. Hash original bytes with SHA-256. For kind live-photo, provide motionLength and motionSha256 for the original QuickTime movie companion. The signed uploadToken binds both files, metadata, owner and tenant. Retain the token and identical bytes for retries; tokens expire after 24 hours. Weather failure does not prevent capture.
+        /// Requires Camera1 plus resource Read and Write. Hash original bytes with SHA-256. For kind live-photo, provide motionLength and motionSha256 for the original QuickTime movie companion. The signed uploadToken binds both files, metadata, owner and tenant. Retain the token and identical bytes for retries; tokens expire after 24 hours. Weather failure does not prevent capture. Imported media may use capturedAtUtc from Unix epoch through five minutes ahead of server time. Declare inferred timestamps in sensorData.timestampSource and do not attach current device sensors to historical media.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -1614,7 +1614,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
         /// <br/>            - Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.
         /// <br/>
-        /// <br/>            The additional technical-support and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
+        /// <br/>            The additional technical-support, tenant-installer and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
         /// <br/>
         /// <br/>            ### Presets
         /// <br/>
@@ -7280,7 +7280,7 @@ namespace Kombine.Flex.Portal.Client
         /// Prepare a bounded, immutable capture plan including optional weather.
         /// </summary>
         /// <remarks>
-        /// Requires Camera1 plus resource Read and Write. Hash original bytes with SHA-256. For kind live-photo, provide motionLength and motionSha256 for the original QuickTime movie companion. The signed uploadToken binds both files, metadata, owner and tenant. Retain the token and identical bytes for retries; tokens expire after 24 hours. Weather failure does not prevent capture.
+        /// Requires Camera1 plus resource Read and Write. Hash original bytes with SHA-256. For kind live-photo, provide motionLength and motionSha256 for the original QuickTime movie companion. The signed uploadToken binds both files, metadata, owner and tenant. Retain the token and identical bytes for retries; tokens expire after 24 hours. Weather failure does not prevent capture. Imported media may use capturedAtUtc from Unix epoch through five minutes ahead of server time. Declare inferred timestamps in sensorData.timestampSource and do not attach current device sensors to historical media.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -13000,7 +13000,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
         /// <br/>            - Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.
         /// <br/>
-        /// <br/>            The additional technical-support and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
+        /// <br/>            The additional technical-support, tenant-installer and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
         /// <br/>
         /// <br/>            ### Presets
         /// <br/>
@@ -27074,7 +27074,7 @@ namespace Kombine.Flex.Portal.Client
     {
 
         /// <summary>
-        /// accounting, caretaker, operator, technical-support, tenant-accounting or combine; case-sensitive, required.
+        /// accounting, caretaker, operator, technical-support, tenant-installer, tenant-accounting or combine; case-sensitive, required.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("role")]
         public string? Role { get; set; } = default!;
