@@ -1229,7 +1229,7 @@ export interface ManagerPermissionChangeRequest {
 
 /** Apply a server-defined role to the complete permission matrix. */
 export interface ManagerPermissionRoleRequest {
-  /** accounting, caretaker, operator, technical-support, tenant-accounting or combine; case-sensitive, required. */
+  /** accounting, caretaker, operator, technical-support, tenant-installer, tenant-accounting or combine; case-sensitive, required. */
   "role": string | null;
   /** Exactly Managers, Installer, Service, Bank, Location, Unit, User, Tabs and Kids with last displayed flags. Explicit null represents an invalid stored mask. */
   "expectedFlags": Record<string, number | null> | null;

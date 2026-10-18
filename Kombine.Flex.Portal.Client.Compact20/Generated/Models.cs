@@ -2642,7 +2642,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
     /// <summary>Apply a server-defined role to the complete permission matrix.</summary>
     public sealed class ManagerPermissionRoleRequest
     {
-        /// <summary>accounting, caretaker, operator, technical-support, tenant-accounting or combine; case-sensitive, required.</summary>
+        /// <summary>accounting, caretaker, operator, technical-support, tenant-installer, tenant-accounting or combine; case-sensitive, required.</summary>
         [JsonField("role")]
         public string Role { get { return _Role; } set { _Role = value; } }
         private string _Role;
