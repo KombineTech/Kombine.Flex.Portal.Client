@@ -1,14 +1,18 @@
-Version 0.9.1 omfatter 154 operationer. SaveCameraCapture understøtter valgfri baggrundsbehandling; HTTP 202 bekræfter kun midlertidig lagring. Behold originalfiler og uploadtoken, og kald ConfirmCameraCapture, indtil confirmed er true. processingPercent er et skøn og kan være null; errorCode kan angive fejl. Efter genstart af værten gentages upload med de samme originalfiler og token, hvis publicering ikke er bekræftet. Genbyg kald mod de opdaterede SaveCameraCapture-signaturer, og brug navngivne argumenter, hvor det er muligt. API-standardens synkrone adfærd er uændret. Se /docs#camera-captures og /docs#changelog.
+## Lokationens reservationskalendere · 0.9.3
 
-Version 0.9.1 tilføjer GetCameraNearestLocation til GPS-baseret lokationsvalg og GetRecentCameraPhotoMetadata til beskyttet billedinformation. Kameraressourcer indeholder afstandskontrol og nullable lokationskoordinater. Nye filnavne er uigennemsigtige GUID’er; udled ikke region eller oprindeligt navn. Lokationsvalg kræver Camera1 og Location Læs/Skriv; metadata kræver ressourcens Læs. Ved manglende GPS og 404/409 vælges lokationen manuelt. Se /docs#camera-captures og /docs#changelog.
+`GetLocationBookingCalendars` returnerer tilbagevendende version-3-kalendere for den autoriserede lokation. Det kræver Bookings1, Lokation Læs, Enhed Læs og korrekt ressourceadgang. Grupper indeholder enheder, eksplicit status Configured/Invalid og ugedage med søndag som 0 (0–6). Start og varighed angives i minutter; type 0 er reservation, 1 chance og 2 lukket. Negative starttidspunkter og intervaller over flere dage er gyldige. Vis hver enhed separat, også når de deler kalender. Dette er kalenderplaner, ikke reservationer eller ledighed. Håndter 400/401/403/404/503 normalt. Se [reservationskalendere](/docs#location-booking-calendars) for eksempler og grænser.
 
-## Seneste kamerabilleder · 0.9.1
+Version 0.9.3 omfatter 155 operationer. SaveCameraCapture understøtter valgfri baggrundsbehandling; HTTP 202 bekræfter kun midlertidig lagring. Behold originalfiler og uploadtoken, og kald ConfirmCameraCapture, indtil confirmed er true. processingPercent er et skøn og kan være null; errorCode kan angive fejl. Efter genstart af værten gentages upload med de samme originalfiler og token, hvis publicering ikke er bekræftet. Genbyg kald mod de opdaterede SaveCameraCapture-signaturer, og brug navngivne argumenter, hvor det er muligt. API-standardens synkrone adfærd er uændret. Se /docs#camera-captures og /docs#changelog.
+
+Version 0.9.3 indeholder GetCameraNearestLocation til GPS-baseret lokationsvalg og GetRecentCameraPhotoMetadata til beskyttet billedinformation. Kameraressourcer indeholder afstandskontrol og nullable lokationskoordinater. Nye filnavne er uigennemsigtige GUID’er; udled ikke region eller oprindeligt navn. Lokationsvalg kræver Camera1 og Location Læs/Skriv; metadata kræver ressourcens Læs. Ved manglende GPS og 404/409 vælges lokationen manuelt. Se /docs#camera-captures og /docs#changelog.
+
+## Seneste kamerabilleder · 0.9.3
 
 Tilføjer `GetPublicRecentCameraPhotos` og `GetPublicCameraThumbnail`. De offentlige operationer kræver ikke login og er bundet til sitets tenant. Listen returnerer højst ti billeder med kortlivede miniature-URL’er og arbejdsområdestier. Miniaturer er offentlige; originaler og metadata forbliver beskyttede. Åbning af arbejdsområdet kræver normale administratorrettigheder. Håndtér 503 ved utilgængelig liste og 400/404 ved ugyldige, udløbne eller manglende miniaturer. Se [offentlige widgets](/docs#public-widgets).
 
-## Lokationens vejr · 0.9.1
+## Lokationens vejr · 0.9.3
 
-Version 0.9.1 omfatter alle 154 operationer og tilføjer `GetLocationWeather` til et kanonisk lokations-KID. Genbrug administratorsessionen. API’et kræver tildelt Tab, Bank Læs, Lokation Læs, matchende adgangsområde samt synlig lokation og bank. Den bruger gemte koordinater eller lokationens adresse; klienten sender aldrig udbydernøgler eller koordinater. Kontrollér `status`: `Available` har `current`; `LocationUnknown` og `Unavailable` har ingen målinger. Ukendte værdier er null, aldrig nul. Temperatur er Celsius, vind m/s, nedbør mm og fugtighed procent; tidspunkter er UTC. Adressebaseret position kan være omtrentlig. Vis kildeangivelsen: Weather data by Open-Meteo, CC BY 4.0. Håndter HTTP 400/401/403/404/503 normalt, og gentag kun bevidst; udbyderfejl kan også give HTTP 200 med `Unavailable`. Se [lokationens vejr](/docs#location-weather).
+Version 0.9.3 omfatter alle 155 operationer og indeholder `GetLocationWeather` til et kanonisk lokations-KID. Genbrug administratorsessionen. API’et kræver tildelt Tab, Bank Læs, Lokation Læs, matchende adgangsområde samt synlig lokation og bank. Den bruger gemte koordinater eller lokationens adresse; klienten sender aldrig udbydernøgler eller koordinater. Kontrollér `status`: `Available` har `current`; `LocationUnknown` og `Unavailable` har ingen målinger. Ukendte værdier er null, aldrig nul. Temperatur er Celsius, vind m/s, nedbør mm og fugtighed procent; tidspunkter er UTC. Adressebaseret position kan være omtrentlig. Vis kildeangivelsen: Weather data by Open-Meteo, CC BY 4.0. Håndter HTTP 400/401/403/404/503 normalt, og gentag kun bevidst; udbyderfejl kan også give HTTP 200 med `Unavailable`. Se [lokationens vejr](/docs#location-weather).
 
 ```csharp
 LocationWeatherResponse weather = api.GetLocationWeather(locationKid);
@@ -74,11 +78,11 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 # Flex Portal-klient til Windows CE / Windows Mobile
 
-`Kombine.Flex.Portal.Client.Compact20.dll` er et selvstændigt bibliotek til **.NET Compact Framework 2.0**. Det indeholder alle 151 offentlige API-operationer med typede request-/response-klasser. Se [OPERATIONS.md](OPERATIONS.md).
+`Kombine.Flex.Portal.Client.Compact20.dll` er et selvstændigt bibliotek til **.NET Compact Framework 2.0**. Det indeholder alle 155 offentlige API-operationer med typede request-/response-klasser. Se [OPERATIONS.md](OPERATIONS.md).
 
 Ingen NuGet-pakker, databaseforbindelser, Kombine-biblioteker eller reference til desktop-klienten. Kun Compact Frameworks egne `mscorlib` og `System`, version 2.0, kræves. Biblioteket indeholder kommunikation og serialisering; forretningsregler og adgangskontrol ligger fortsat i API'et.
 
-Version 0.9.1 følger den aktuelle beta-kandidat (154 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
+Version 0.9.3 følger den aktuelle beta-kandidat (155 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
 
 Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser.
 
@@ -213,9 +217,9 @@ Solutionen indeholder:
 
 I udviklingsrepoet bygger/tester/pakker `scripts/Test-PortalClientCompact20.ps1`. Scriptet kræver PowerShell 7 på udviklings-pc'en; kunder og enheder behøver det ikke. `scripts/Generate-PortalClientNet20.py --compact` opdaterer de indtjekkede kontraktklasser fra det fælles OpenAPI-snapshot.
 
-**Verificeret:** Release-build med de originale VS2008/MSBuild 3.5-værktøjer og CF 2.0-referencebiblioteker; alle 154 operationer og syntetiske kontroller på desktop-testværten. Tests kontrollerer også, at DLL'en refererer til Compact Frameworks assembly-identiteter. Device-testprogrammet er bygget mod CF 2.0. **Ikke verificeret:** kørsel eller HTTPS på en fysisk CE/Mobile-enhed eller emulator. Der er ikke udført rigtige login eller databaseændringer.
+**Verificeret:** Release-build med de originale VS2008/MSBuild 3.5-værktøjer og CF 2.0-referencebiblioteker; alle 155 operationer og syntetiske kontroller på desktop-testværten. Tests kontrollerer også, at DLL'en refererer til Compact Frameworks assembly-identiteter. Device-testprogrammet er bygget mod CF 2.0. **Ikke verificeret:** kørsel eller HTTPS på en fysisk CE/Mobile-enhed eller emulator. Der er ikke udført rigtige login eller databaseændringer.
 
-## Automatisk sessionshåndtering — 0.9.1 (ikke udgivet)
+## Automatisk sessionshåndtering — 0.9.3 (ikke udgivet)
 
 Behold én `PortalSession` pr. API-adresse og konto/login. Klienter oprettet fra den fornyer ved brug kort før udløb; samtidige login og fornyelser samles. Der kører ingen baggrundstimer. Dispose af en klient logger ikke den fælles session ud; brug `session.ClearSession()`. Et igangværende login kan ikke genoprette en ryddet session. Log aldrig tokens eller adgangskoder.
 

@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "Kombine Flex Portal API",
-    "description": "Build your own portal or agent using **HTTPS and JSON**.\r\n\r\n### Get started\r\n\r\n1. Call \u0060LoginManager\u0060 with your manager credentials.\r\n2. Copy \u0060accessToken\u0060 into **Authorize \u2192 ManagerBearer**. Paste only the token; Swagger adds the \u0060Bearer\u0060 prefix.\r\n3. Call \u0060GetCurrentManager\u0060 to read your profile, tabs, scopes and operation rights.\r\n\r\nNo API key, OAuth client registration or special agent protocol is required.\r\n\r\n**MCP (unreleased):** \u0060POST /mcp\u0060 exposes approved JSON read and write operations through stateless Streamable HTTP. Configure the same manager bearer token on every request; each tool retains the API\u0027s tenant, Tab, KID and operation checks. See [MCP setup and examples](../docs#mcp). Login and token renewal remain ordinary HTTPS operations; OAuth discovery and browser consent are not provided.\r\n\r\n**Internal assistant (MCP migration, unreleased):** \u0060AskPortalAssistant\u0060 discovers and calls its eight approved read tools through the same MCP endpoint. Its host exposes their MCP names and JSON schemas to the model, keeps the manager token in server-side HTTP headers, and retains existing skills and read limits. The broader MCP write catalogue is not available to the internal assistant. Swagger remains available for API exploration and contract tooling.\r\n\r\n### Tenant and language\r\n\r\n- **Host:** \u0060api.{tenant}.kombine.technology\u0060 or \u0060beta.api.{tenant}.kombine.technology\u0060. Tokens are bound to the tenant hostname and deployment environment. Unknown hosts return HTTP 400.\r\n- **Language:** send \u0060Accept-Language\u0060, for example \u0060da-DK\u0060 or \u0060en-GB\u0060, to localize unit-name placeholders. \u0060Content-Language\u0060 identifies the selected language; English is the default.\r\n- **Anonymous access:** select **Public v1 (no login)** above for status, statistics, the purchase map and icon images rendered from local assets.\r\n- **File downloads:** select **Downloads v1** above for resident CSV, account CSV/Excel, settlement ZIP and document CSV/XLS exports. Reuse your manager bearer token.\r\n\r\n### Available operations\r\n\r\nServices1 adds \u0060GetServices\u0060, \u0060GetService\u0060 and \u0060SetServiceProfileField\u0060 for predefined services. Only names and icons can be edited directly; API-key hashes are read-only. \u0060GenerateServiceApiKey\u0060 creates a key starting with \u0060kt_\u0060 and stores its password-compatible hash. Requires Service Read and tenant-wide access; editing/generation also requires Service Write. Key generation does not issue bearer tokens.\r\n\r\n| Area | Operations and access |\r\n| --- | --- |\r\n| Hosting | \u0060GetHostingMetrics\u0060 reads DigitalOcean app and Managed MySQL metrics. Requires Hosting1, Managers Read and a whole-tenant KID grant. Metrics cover the shared infrastructure across customers. See [hosting metrics](../docs#hosting). |\r\n| Tenant status | \u0060GetTenantStatus\u0060 runs Offline and AutoOutOfOrder lookups in parallel. Requires TenantStatus1, Bank/Location/Unit Read and matching KID scope. Check each source for failure or truncation. See [operational alerts](../docs#tenant-status). |\r\n| Profile | \u0060GetCurrentManager\u0060 returns your current access. \u0060GetMyManagerProfile\u0060 / \u0060SetMyManagerProfileField\u0060 read/edit your own name, organisation, person icon, theme and RetentionDays (deleted-record visibility within existing access). \u0060RequestMyManagerEmailVerification\u0060 / \u0060ConfirmMyManagerEmail\u0060 verify a new mailbox; \u0060ChangeMyManagerPassword\u0060 requires the current password and matching new entries. \u0060SetCurrentManagerTheme\u0060 also saves your preference: System = 0, Light = 1, Dark = 2. See [personal settings](../docs#my-settings). |\r\n| Installers | \u0060GetInstallers\u0060 lists installer IDs, names, email, locations, tags, state and activity with filtering and paging. \u0060GetInstaller\u0060 reads details and the Person icon catalogue. Both reads require Installers1, Installer Read and tenant-wide access; \u0060SetInstallerIcon\u0060 additionally requires Installer Write and the current icon revision. |\r\n| Administrators | \u0060GetManagers\u0060 lists administrators; \u0060GetManager\u0060 reads one canonical manager KID. Both require Managers1, Managers Read and tenant-wide access. \u0060SetManagerPermission\u0060 edits one bit; \u0060SetManagerPermissionRole\u0060 applies a complete predefined matrix atomically. Both writes additionally require Managers Write; own permissions are editable only for the sole active tenant-wide manager. |\r\n| Residents | \u0060GetBankUsers\u0060, \u0060GetBankUserWorkspace\u0060 and \u0060ExportBankUsers\u0060 provide authorized Users2 lists, workspace details and bounded CSV export. \u0060CreateBankUser\u0060 and \u0060ExecuteBankUserCommand\u0060 require bank-wide scope, revision checks and the operation-specific User flags. \u0060GetBankUserActivation\u0060 requires User Create. |\r\n| Resident receipts | \u0060GetUserReceipts\u0060 returns complete receipts with currency-separated totals and balances, twenty at a time. Requires Users2, User Read and bank-wide scope. Continue with the returned revision and nextOffset. See [receipts](../docs#user-receipts). |\r\n| Locations and units | \u0060GetBankLocations\u0060 and \u0060GetLocationUnits\u0060 provide authorized overviews, including unit types. \u0060GetUnitIcons\u0060 lazily adds online/offline status; \u0060GetLocationIcons\u0060 aggregates authorized units into a location status icon; \u0060GetBankIcons\u0060 does the same across the bank\u0027s authorized locations. \u0060GetUnitOverview\u0060 returns the unit\u0027s setting/state groups; \u0060GetUnitGroup\u0060 reads values, sync flags, editors and edit constraints. \u0060GetUnitSettingHistory\u0060 pages through a setting\u0027s changes on demand. \u0060SetUnitSetting\u0060 saves with Unit Write and revision protection. States remain read-only. |\r\n| Settlements | \u0060GetBankSettlements\u0060, \u0060GetBankSettlementPeriod\u0060 and \u0060DownloadBankSettlement\u0060 provide read-only history, provisional totals and ZIP downloads. |\r\n| Opening hours | \u0060GetLocationOpeningHours\u0060 returns grouped weekly schedules, dated exceptions, nullable opening status and the next change in the location time zone. Same scope and read permissions as the location/unit overview. See [opening hours](../docs#location-opening-hours). |\r\n| Reservation rules | \u0060GetLocationBookingRules\u0060 returns configured rules for visible units, grouped by calendar and complete policy. Localized plain text, stable codes and explicit warnings; not a resident-specific availability check. Same scope and read permissions as the location/unit overview. See [reservation rules](../docs#location-booking-rules). |\r\n| Reservations | \u0060GetBankBookings\u0060 and \u0060ExecuteBankBookingCommand\u0060 support Bookings1 lists, cancellation and restoration. Commands require Unit Write; event KIDs supply concurrency checks. |\r\n| Consumption | \u0060GetBankAccount\u0060 and \u0060ExportBankAccount\u0060 honor location grants. \u0060ReverseBankAccountEntry\u0060 requires bank-wide scope and Bank/User Write. |\r\n\r\n\u0060GetCurrentManager.databaseAccess\u0060 is a cached indicator for the workspace footer. It does not grant manager permissions or guarantee writes to every bank. See each operation for its complete access requirements.\r\n\r\n**Integration guides:** [English](../docs) \u00B7 [Dansk](../docs/da) \u00B7 [Espa\u00F1ol](../docs/es)",
+    "description": "Build your own portal or agent using **HTTPS and JSON**.\r\n\r\n### Get started\r\n\r\n1. Call \u0060LoginManager\u0060 with your manager credentials.\r\n2. Copy \u0060accessToken\u0060 into **Authorize \u2192 ManagerBearer**. Paste only the token; Swagger adds the \u0060Bearer\u0060 prefix.\r\n3. Call \u0060GetCurrentManager\u0060 to read your profile, tabs, scopes and operation rights.\r\n\r\nNo API key, OAuth client registration or special agent protocol is required.\r\n\r\n**MCP (unreleased):** \u0060POST /mcp\u0060 exposes approved JSON read and write operations through stateless Streamable HTTP. Configure the same manager bearer token on every request; each tool retains the API\u0027s tenant, Tab, KID and operation checks. See [MCP setup and examples](../docs#mcp). Login and token renewal remain ordinary HTTPS operations; OAuth discovery and browser consent are not provided.\r\n\r\n**Internal assistant (MCP migration, unreleased):** \u0060AskPortalAssistant\u0060 discovers and calls its eight approved read tools through the same MCP endpoint. Its host exposes their MCP names and JSON schemas to the model, keeps the manager token in server-side HTTP headers, and retains existing skills and read limits. The broader MCP write catalogue is not available to the internal assistant. Swagger remains available for API exploration and contract tooling.\r\n\r\n### Tenant and language\r\n\r\n- **Host:** \u0060api.{tenant}.kombine.technology\u0060 or \u0060beta.api.{tenant}.kombine.technology\u0060. Tokens are bound to the tenant hostname and deployment environment. Unknown hosts return HTTP 400.\r\n- **Language:** send \u0060Accept-Language\u0060, for example \u0060da-DK\u0060 or \u0060en-GB\u0060, to localize unit-name placeholders. \u0060Content-Language\u0060 identifies the selected language; English is the default.\r\n- **Anonymous access:** select **Public v1 (no login)** above for status, statistics, the purchase map and icon images rendered from local assets.\r\n- **File downloads:** select **Downloads v1** above for resident CSV, account CSV/Excel, settlement ZIP and document CSV/XLS exports. Reuse your manager bearer token.\r\n\r\n### Available operations\r\n\r\nServices1 adds \u0060GetServices\u0060, \u0060GetService\u0060 and \u0060SetServiceProfileField\u0060 for predefined services. Only names and icons can be edited directly; API-key hashes are read-only. \u0060GenerateServiceApiKey\u0060 creates a key starting with \u0060kt_\u0060 and stores its password-compatible hash. Requires Service Read and tenant-wide access; editing/generation also requires Service Write. Key generation does not issue bearer tokens.\r\n\r\n| Area | Operations and access |\r\n| --- | --- |\r\n| Hosting | \u0060GetHostingMetrics\u0060 reads DigitalOcean app and Managed MySQL metrics. Requires Hosting1, Managers Read and a whole-tenant KID grant. Metrics cover the shared infrastructure across customers. See [hosting metrics](../docs#hosting). |\r\n| Tenant status | \u0060GetTenantStatus\u0060 runs Offline and AutoOutOfOrder lookups in parallel. Requires TenantStatus1, Bank/Location/Unit Read and matching KID scope. Check each source for failure or truncation. See [operational alerts](../docs#tenant-status). |\r\n| Profile | \u0060GetCurrentManager\u0060 returns your current access. \u0060GetMyManagerProfile\u0060 / \u0060SetMyManagerProfileField\u0060 read/edit your own name, organisation, person icon, theme and RetentionDays (deleted-record visibility within existing access). \u0060RequestMyManagerEmailVerification\u0060 / \u0060ConfirmMyManagerEmail\u0060 verify a new mailbox; \u0060ChangeMyManagerPassword\u0060 requires the current password and matching new entries. \u0060SetCurrentManagerTheme\u0060 also saves your preference: System = 0, Light = 1, Dark = 2. See [personal settings](../docs#my-settings). |\r\n| Installers | \u0060GetInstallers\u0060 lists installer IDs, names, email, locations, tags, state and activity with filtering and paging. \u0060GetInstaller\u0060 reads details and the Person icon catalogue. Both reads require Installers1, Installer Read and tenant-wide access; \u0060SetInstallerIcon\u0060 additionally requires Installer Write and the current icon revision. |\r\n| Administrators | \u0060GetManagers\u0060 lists administrators; \u0060GetManager\u0060 reads one canonical manager KID. Both require Managers1, Managers Read and tenant-wide access. \u0060SetManagerPermission\u0060 edits one bit; \u0060SetManagerPermissionRole\u0060 applies a complete predefined matrix atomically. Both writes additionally require Managers Write; own permissions are editable only for the sole active tenant-wide manager. |\r\n| Residents | \u0060GetBankUsers\u0060, \u0060GetBankUserWorkspace\u0060 and \u0060ExportBankUsers\u0060 provide authorized Users2 lists, workspace details and bounded CSV export. \u0060CreateBankUser\u0060 and \u0060ExecuteBankUserCommand\u0060 require bank-wide scope, revision checks and the operation-specific User flags. \u0060GetBankUserActivation\u0060 requires User Create. |\r\n| Resident receipts | \u0060GetUserReceipts\u0060 returns complete receipts with currency-separated totals and balances, twenty at a time. Requires Users2, User Read and bank-wide scope. Continue with the returned revision and nextOffset. See [receipts](../docs#user-receipts). |\r\n| Locations and units | \u0060GetBankLocations\u0060 and \u0060GetLocationUnits\u0060 provide authorized overviews, including unit types. \u0060GetUnitIcons\u0060 lazily adds online/offline status; \u0060GetLocationIcons\u0060 aggregates authorized units into a location status icon; \u0060GetBankIcons\u0060 does the same across the bank\u0027s authorized locations. \u0060GetUnitOverview\u0060 returns the unit\u0027s setting/state groups; \u0060GetUnitGroup\u0060 reads values, sync flags, editors and edit constraints. \u0060GetUnitSettingHistory\u0060 pages through a setting\u0027s changes on demand. \u0060SetUnitSetting\u0060 saves with Unit Write and revision protection. States remain read-only. |\r\n| Settlements | \u0060GetBankSettlements\u0060, \u0060GetBankSettlementPeriod\u0060 and \u0060DownloadBankSettlement\u0060 provide read-only history, provisional totals and ZIP downloads. |\r\n| Opening hours | \u0060GetLocationOpeningHours\u0060 returns grouped weekly schedules, dated exceptions, nullable opening status and the next change in the location time zone. Same scope and read permissions as the location/unit overview. See [opening hours](../docs#location-opening-hours). |\r\n| Reservation rules | \u0060GetLocationBookingRules\u0060 returns configured rules for visible units, grouped by calendar and complete policy. Localized plain text, stable codes and explicit warnings; not a resident-specific availability check. Same scope and read permissions as the location/unit overview. See [reservation rules](../docs#location-booking-rules). |\r\n| Reservation calendars | \u0060GetLocationBookingCalendars\u0060 returns version-3 weekly schedules, grouping visible units by their stored calendar identity. Requires Bookings1, Location/Unit Read and matching scope. Configuration only; no occupancy or booking rights. See [reservation calendars](../docs#location-booking-calendars). |\r\n| Reservations | \u0060GetBankBookings\u0060 and \u0060ExecuteBankBookingCommand\u0060 support Bookings1 lists, cancellation and restoration. Commands require Unit Write; event KIDs supply concurrency checks. |\r\n| Consumption | \u0060GetBankAccount\u0060 and \u0060ExportBankAccount\u0060 honor location grants. \u0060ReverseBankAccountEntry\u0060 requires bank-wide scope and Bank/User Write. |\r\n\r\n\u0060GetCurrentManager.databaseAccess\u0060 is a cached indicator for the workspace footer. It does not grant manager permissions or guarantee writes to every bank. See each operation for its complete access requirements.\r\n\r\n**Integration guides:** [English](../docs) \u00B7 [Dansk](../docs/da) \u00B7 [Espa\u00F1ol](../docs/es)",
     "version": "v1"
   },
   "paths": {
@@ -7938,6 +7938,160 @@
           },
           "429": {
             "description": "Too Many Requests",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/locations/{locationKid}/booking-calendars": {
+      "get": {
+        "tags": [
+          "LocationUnits"
+        ],
+        "summary": "Read configured weekly reservation calendars, grouped by identical schedules.",
+        "description": "Requires an active manager with Bookings1, Location Read, Unit Read and matching site/bank/location scope.\r\nThe location and every returned unit must be visible within RetentionDays. Bookings1 is checked before\r\nreading any location, unit or calendar data. This read-only operation does not require User Read.\r\n            \r\nReads the visible units\u0027 eSetting.BookCalendar values from bounded Log24 settings. Supports version 3.\r\nUnits sharing the exact decoded, trimmed calendar value are grouped together. Preserve separate groups\r\neven when their visible times match: legacy trailing zeroes can distinguish calendar identities.\r\nDays with no stored turns inherit the preceding configured day, circularly\r\nthrough the week, as in FlexTouchCE. Each configured group has seven days, dayOfWeek 0=Sunday through 6=Saturday.\r\nSlots contain startMinute (minutes after that day\u0027s midnight), durationMinutes and type:\r\n0=ordinary reservation period, 1=chance period, 2=closed. Negative starts refer to the previous day.\r\nTimes can extend past midnight; do not reduce\r\nstartMinute or end=startMinute\u002BdurationMinutes modulo 1440 without also moving to the following day.\r\nThese are recurring local wall-clock times, with no dates or UTC offsets.\r\n            \r\nMissing/empty calendars and the legacy no-calendar sentinel are omitted. Malformed or unsupported\r\ncalendars produce status Invalid with empty days, grouped only with the same malformed value.\r\nValid schedules use status Configured. No raw settings, legacy pixel fields, resident identities,\r\nreservations or occupancy are returned. A configured period does not imply that it is available to book.\r\nAccept-Language localizes unit names; numeric weekday/type identifiers and statuses remain stable.\r\n            \r\nAt most 255 authorized units, 8192 setting rows, an eight-second settings deadline and two concurrent\r\nsettings reads. Location/unit snapshots retain their normal cache limits. Refresh on page navigation.\r\n400 invalid KID/site; 401 expired/inactive session; 403 missing Bookings1/scope/read permission;\r\n404 missing/retention-hidden location; 503 unavailable, ambiguous or oversized storage. Never use a 503\r\nas an empty or unrestricted calendar. No reservations or settings are changed.",
+        "operationId": "GetLocationBookingCalendars",
+        "parameters": [
+          {
+            "name": "locationKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationBookingCalendarsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationBookingCalendarsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationBookingCalendarsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
@@ -23289,6 +23443,101 @@
         "additionalProperties": false,
         "description": "Authorized current-tenant snapshot for three server cards."
       },
+      "LocationBookingCalendarDayResponse": {
+        "type": "object",
+        "properties": {
+          "dayOfWeek": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationBookingCalendarSlotResponse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "DayOfWeek is 0=Sunday through 6=Saturday; times are relative to this day\u0027s midnight."
+      },
+      "LocationBookingCalendarGroup": {
+        "type": "object",
+        "properties": {
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationBookingCalendarUnit"
+            },
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationBookingCalendarDayResponse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Units with the same decoded stored calendar identity; status is Configured or Invalid."
+      },
+      "LocationBookingCalendarSlotResponse": {
+        "type": "object",
+        "properties": {
+          "startMinute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed."
+      },
+      "LocationBookingCalendarUnit": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Authorized canonical unit KID and localized plain-text name."
+      },
+      "LocationBookingCalendarsResponse": {
+        "type": "object",
+        "properties": {
+          "locationKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationBookingCalendarGroup"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The authorized location\u0027s configured weekly calendars; no occupancy or booking rights."
+      },
       "LocationBookingRule": {
         "type": "object",
         "properties": {
@@ -26182,7 +26431,7 @@
           },
           "iconKid": {
             "type": "string",
-            "description": "API-computed main-unit icon identity, including its unit number.",
+            "description": "API-computed terminal icon identity, including its controller number.",
             "nullable": true
           }
         },

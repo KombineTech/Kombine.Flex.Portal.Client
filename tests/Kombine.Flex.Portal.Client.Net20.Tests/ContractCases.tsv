@@ -44,6 +44,7 @@ GetActiveLocationCount	GET	/api/v1/locations/active-count	200	{}
 GetLocations	GET	/api/v1/locations	200	{}
 SearchLocations	GET	/api/v1/search/locations	200	{}
 SearchLocationActivation	GET	/api/v1/search/location-activation	200	{}
+GetLocationBookingCalendars	GET	/api/v1/locations/{locationKid}/booking-calendars	200	{}
 GetLocationBookingRules	GET	/api/v1/locations/{locationKid}/booking-rules	200	{}
 GetControllerOverview	GET	/api/v1/controllers/{controllerKid}	200	{}
 GetControllerGroup	GET	/api/v1/controllers/{controllerKid}/groups/{kind}/{group}	200	{}

@@ -763,6 +763,25 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (SearchResults)SendJson("GET", path, null, headers, 200, typeof(SearchResults));
         }
 
+        /// <summary>Read configured weekly reservation calendars, grouped by identical schedules.</summary>
+        public LocationBookingCalendarsResponse GetLocationBookingCalendars(string @locationKid)
+        {
+            return GetLocationBookingCalendars(@locationKid, null);
+        }
+
+        /// <summary>Read configured weekly reservation calendars, grouped by identical schedules.</summary>
+        public LocationBookingCalendarsResponse GetLocationBookingCalendars(string @locationKid, GetLocationBookingCalendarsOptions options)
+        {
+            string path = "api/v1/locations/{locationKid}/booking-calendars";
+            path = path.Replace("{locationKid}", PathValue(@locationKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                if (options.AcceptLanguage != null) headers.Add("Accept-Language", options.AcceptLanguage);
+            }
+            return (LocationBookingCalendarsResponse)SendJson("GET", path, null, headers, 200, typeof(LocationBookingCalendarsResponse));
+        }
+
         /// <summary>Read localized configured reservation rules for the location's visible units.</summary>
         public LocationBookingRulesResponse GetLocationBookingRules(string @locationKid)
         {

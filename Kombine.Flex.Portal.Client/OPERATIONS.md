@@ -80,6 +80,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetLinearGradientAsync` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` |
 | `GetLinearGradientSizedAsync` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` |
 | `GetLiveLogsAsync` | GET | `/api/v1/diagnostics/live-logs` |
+| `GetLocationBookingCalendarsAsync` | GET | `/api/v1/locations/{locationKid}/booking-calendars` |
 | `GetLocationBookingRulesAsync` | GET | `/api/v1/locations/{locationKid}/booking-rules` |
 | `GetLocationIconsAsync` | GET | `/api/v1/locations/icons` |
 | `GetLocationOpeningHoursAsync` | GET | `/api/v1/locations/{locationKid}/opening-hours` |

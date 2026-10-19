@@ -1,14 +1,18 @@
-La versión 0.9.1 incluye 154 operaciones. SaveCameraCapture admite procesamiento opcional en segundo plano; HTTP 202 solo confirma almacenamiento temporal. Conserve los archivos originales y el token de carga y llame a ConfirmCameraCapture hasta que confirmed sea true. processingPercent es una estimación y puede ser null; errorCode puede indicar un fallo. Tras reiniciar el servidor, reintente con los mismos archivos y token si la publicación no está confirmada. Recompile las llamadas con las firmas actualizadas de SaveCameraCapture y use argumentos con nombre cuando estén disponibles. El comportamiento síncrono predeterminado de la API no cambia. Consulte /docs#camera-captures y /docs#changelog.
+## Calendarios de reservas de la ubicación · 0.9.3
 
-La versión 0.9.1 añade GetCameraNearestLocation para seleccionar ubicación mediante GPS y GetRecentCameraPhotoMetadata para información protegida. Los recursos incluyen control de proximidad y coordenadas anulables. Los nuevos nombres son GUID opacos; no extraigas región ni nombre original. La selección exige Camera1 y Location Read/Write; los metadatos exigen Read del recurso. Sin GPS o con 404/409, elige la ubicación manualmente. Consulta /docs#camera-captures y /docs#changelog.
+`GetLocationBookingCalendars` devuelve calendarios recurrentes de versión 3 para la ubicación autorizada. Requiere Bookings1, Location Read, Unit Read y acceso al recurso. Los grupos contienen unidades, estado explícito Configured/Invalid y días de la semana con domingo igual a 0 (0–6). El inicio y la duración se expresan en minutos; el tipo 0 es reserva, 1 oportunidad y 2 cerrado. Se admiten inicios negativos e intervalos de varios días. Muestre cada unidad por separado aunque compartan calendario. Son horarios, no reservas ni disponibilidad. Gestione 400/401/403/404/503 normalmente. Consulte [calendarios de reservas](/docs#location-booking-calendars) para ejemplos y límites.
 
-## Fotos recientes de la cámara · 0.9.1
+La versión 0.9.3 incluye 155 operaciones. SaveCameraCapture admite procesamiento opcional en segundo plano; HTTP 202 solo confirma almacenamiento temporal. Conserve los archivos originales y el token de carga y llame a ConfirmCameraCapture hasta que confirmed sea true. processingPercent es una estimación y puede ser null; errorCode puede indicar un fallo. Tras reiniciar el servidor, reintente con los mismos archivos y token si la publicación no está confirmada. Recompile las llamadas con las firmas actualizadas de SaveCameraCapture y use argumentos con nombre cuando estén disponibles. El comportamiento síncrono predeterminado de la API no cambia. Consulte /docs#camera-captures y /docs#changelog.
+
+La versión 0.9.3 incluye GetCameraNearestLocation para seleccionar ubicación mediante GPS y GetRecentCameraPhotoMetadata para información protegida. Los recursos incluyen control de proximidad y coordenadas anulables. Los nuevos nombres son GUID opacos; no extraigas región ni nombre original. La selección exige Camera1 y Location Read/Write; los metadatos exigen Read del recurso. Sin GPS o con 404/409, elige la ubicación manualmente. Consulta /docs#camera-captures y /docs#changelog.
+
+## Fotos recientes de la cámara · 0.9.3
 
 Añade `GetPublicRecentCameraPhotos` y `GetPublicCameraThumbnail`. Estas operaciones públicas no requieren inicio de sesión y están vinculadas al tenant del sitio. La lista devuelve hasta diez fotos con URL temporales de miniaturas y rutas del portal. Las miniaturas son públicas; los originales y metadatos siguen protegidos. Abrir el espacio requiere los permisos normales del administrador. Gestione 503 si la lista no está disponible y 400/404 para miniaturas no válidas, caducadas o ausentes. Consulte [widgets públicos](/docs#public-widgets).
 
-## Tiempo de la ubicación · 0.9.1
+## Tiempo de la ubicación · 0.9.3
 
-La versión 0.9.1 incluye las 154 operaciones y añade `GetLocationWeather` para un KID canónico de ubicación. Reutilice la sesión del administrador. La API exige Tab asignado, Bank Read, Location Read, ámbito autorizado y ubicación/banco visibles. Resuelve coordenadas guardadas o la dirección de la ubicación; el cliente nunca envía claves del proveedor ni coordenadas. Compruebe `status`: `Available` contiene `current`; `LocationUnknown` y `Unavailable` no contienen mediciones. Los valores desconocidos son null, nunca cero. Temperatura en Celsius, viento en m/s, precipitación en mm, humedad en porcentaje y horas UTC. La posición obtenida de la dirección puede ser aproximada. Muestre: Weather data by Open-Meteo, CC BY 4.0. Gestione HTTP 400/401/403/404/503 normalmente y reintente de forma deliberada; un fallo del proveedor también puede devolver HTTP 200 con `Unavailable`. Consulte [tiempo de la ubicación](/docs#location-weather).
+La versión 0.9.3 incluye las 155 operaciones y contiene `GetLocationWeather` para un KID canónico de ubicación. Reutilice la sesión del administrador. La API exige Tab asignado, Bank Read, Location Read, ámbito autorizado y ubicación/banco visibles. Resuelve coordenadas guardadas o la dirección de la ubicación; el cliente nunca envía claves del proveedor ni coordenadas. Compruebe `status`: `Available` contiene `current`; `LocationUnknown` y `Unavailable` no contienen mediciones. Los valores desconocidos son null, nunca cero. Temperatura en Celsius, viento en m/s, precipitación en mm, humedad en porcentaje y horas UTC. La posición obtenida de la dirección puede ser aproximada. Muestre: Weather data by Open-Meteo, CC BY 4.0. Gestione HTTP 400/401/403/404/503 normalmente y reintente de forma deliberada; un fallo del proveedor también puede devolver HTTP 200 con `Unavailable`. Consulte [tiempo de la ubicación](/docs#location-weather).
 
 ```python
 weather = api.get_location_weather(location_kid)
@@ -57,15 +61,15 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 
 # Kombine Flex Portal — cliente Python
 
-`kombine-flex-portal-client` admite **Python 3.11+** y las **154 operaciones públicas**. No necesita dependencias de ejecución, .NET, NuGet ni otras bibliotecas Kombine. Solo usa la biblioteca estándar de Python. Los permisos y las reglas de negocio siguen en la API.
+`kombine-flex-portal-client` admite **Python 3.11+** y las **155 operaciones públicas**. No necesita dependencias de ejecución, .NET, NuGet ni otras bibliotecas Kombine. Solo usa la biblioteca estándar de Python. Los permisos y las reglas de negocio siguen en la API.
 
 El paquete **todavía no está publicado en PyPI**. Instale la distribución local:
 
 ```sh
-python -m pip install ./kombine_flex_portal_client-0.9.1-py3-none-any.whl
+python -m pip install ./kombine_flex_portal_client-0.9.3-py3-none-any.whl
 ```
 
-La versión 0.9.1 corresponde al candidato beta actual (154 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
+La versión 0.9.3 corresponde al candidato beta actual (155 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
 
 La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites.
 

@@ -2851,6 +2851,45 @@
     "example": {}
   },
   {
+    "operation": "GetLocationBookingCalendars",
+    "python": "get_location_booking_calendars",
+    "javascript": "getLocationBookingCalendars",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/booking-calendars",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationBookingCalendarsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetLocationBookingRules",
     "python": "get_location_booking_rules",
     "javascript": "getLocationBookingRules",

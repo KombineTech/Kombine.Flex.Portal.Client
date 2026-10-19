@@ -1149,6 +1149,42 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read configured weekly reservation calendars, grouped by identical schedules.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager with Bookings1, Location Read, Unit Read and matching site/bank/location scope.
+        /// <br/>The location and every returned unit must be visible within RetentionDays. Bookings1 is checked before
+        /// <br/>reading any location, unit or calendar data. This read-only operation does not require User Read.
+        /// <br/>
+        /// <br/>Reads the visible units' eSetting.BookCalendar values from bounded Log24 settings. Supports version 3.
+        /// <br/>Units sharing the exact decoded, trimmed calendar value are grouped together. Preserve separate groups
+        /// <br/>even when their visible times match: legacy trailing zeroes can distinguish calendar identities.
+        /// <br/>Days with no stored turns inherit the preceding configured day, circularly
+        /// <br/>through the week, as in FlexTouchCE. Each configured group has seven days, dayOfWeek 0=Sunday through 6=Saturday.
+        /// <br/>Slots contain startMinute (minutes after that day's midnight), durationMinutes and type:
+        /// <br/>0=ordinary reservation period, 1=chance period, 2=closed. Negative starts refer to the previous day.
+        /// <br/>Times can extend past midnight; do not reduce
+        /// <br/>startMinute or end=startMinute+durationMinutes modulo 1440 without also moving to the following day.
+        /// <br/>These are recurring local wall-clock times, with no dates or UTC offsets.
+        /// <br/>
+        /// <br/>Missing/empty calendars and the legacy no-calendar sentinel are omitted. Malformed or unsupported
+        /// <br/>calendars produce status Invalid with empty days, grouped only with the same malformed value.
+        /// <br/>Valid schedules use status Configured. No raw settings, legacy pixel fields, resident identities,
+        /// <br/>reservations or occupancy are returned. A configured period does not imply that it is available to book.
+        /// <br/>Accept-Language localizes unit names; numeric weekday/type identifiers and statuses remain stable.
+        /// <br/>
+        /// <br/>At most 255 authorized units, 8192 setting rows, an eight-second settings deadline and two concurrent
+        /// <br/>settings reads. Location/unit snapshots retain their normal cache limits. Refresh on page navigation.
+        /// <br/>400 invalid KID/site; 401 expired/inactive session; 403 missing Bookings1/scope/read permission;
+        /// <br/>404 missing/retention-hidden location; 503 unavailable, ambiguous or oversized storage. Never use a 503
+        /// <br/>as an empty or unrestricted calendar. No reservations or settings are changed.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<LocationBookingCalendarsResponse> GetLocationBookingCalendarsAsync(string locationKid, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read localized configured reservation rules for the location's visible units.
         /// </summary>
         /// <remarks>
@@ -10473,6 +10509,166 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read configured weekly reservation calendars, grouped by identical schedules.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager with Bookings1, Location Read, Unit Read and matching site/bank/location scope.
+        /// <br/>The location and every returned unit must be visible within RetentionDays. Bookings1 is checked before
+        /// <br/>reading any location, unit or calendar data. This read-only operation does not require User Read.
+        /// <br/>
+        /// <br/>Reads the visible units' eSetting.BookCalendar values from bounded Log24 settings. Supports version 3.
+        /// <br/>Units sharing the exact decoded, trimmed calendar value are grouped together. Preserve separate groups
+        /// <br/>even when their visible times match: legacy trailing zeroes can distinguish calendar identities.
+        /// <br/>Days with no stored turns inherit the preceding configured day, circularly
+        /// <br/>through the week, as in FlexTouchCE. Each configured group has seven days, dayOfWeek 0=Sunday through 6=Saturday.
+        /// <br/>Slots contain startMinute (minutes after that day's midnight), durationMinutes and type:
+        /// <br/>0=ordinary reservation period, 1=chance period, 2=closed. Negative starts refer to the previous day.
+        /// <br/>Times can extend past midnight; do not reduce
+        /// <br/>startMinute or end=startMinute+durationMinutes modulo 1440 without also moving to the following day.
+        /// <br/>These are recurring local wall-clock times, with no dates or UTC offsets.
+        /// <br/>
+        /// <br/>Missing/empty calendars and the legacy no-calendar sentinel are omitted. Malformed or unsupported
+        /// <br/>calendars produce status Invalid with empty days, grouped only with the same malformed value.
+        /// <br/>Valid schedules use status Configured. No raw settings, legacy pixel fields, resident identities,
+        /// <br/>reservations or occupancy are returned. A configured period does not imply that it is available to book.
+        /// <br/>Accept-Language localizes unit names; numeric weekday/type identifiers and statuses remain stable.
+        /// <br/>
+        /// <br/>At most 255 authorized units, 8192 setting rows, an eight-second settings deadline and two concurrent
+        /// <br/>settings reads. Location/unit snapshots retain their normal cache limits. Refresh on page navigation.
+        /// <br/>400 invalid KID/site; 401 expired/inactive session; 403 missing Bookings1/scope/read permission;
+        /// <br/>404 missing/retention-hidden location; 503 unavailable, ambiguous or oversized storage. Never use a 503
+        /// <br/>as an empty or unrestricted calendar. No reservations or settings are changed.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<LocationBookingCalendarsResponse> GetLocationBookingCalendarsAsync(string locationKid, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (locationKid == null)
+                throw new System.ArgumentNullException("locationKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (accept_Language != null)
+                        request_.Headers.TryAddWithoutValidation("Accept-Language", ConvertToString(accept_Language, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/{locationKid}/booking-calendars"
+                    urlBuilder_.Append("api/v1/locations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/booking-calendars");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<LocationBookingCalendarsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -26232,6 +26428,87 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// DayOfWeek is 0=Sunday through 6=Saturday; times are relative to this day's midnight.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarDayResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("dayOfWeek")]
+        public int? DayOfWeek { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("slots")]
+        public System.Collections.Generic.ICollection<LocationBookingCalendarSlotResponse>? Slots { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Units with the same decoded stored calendar identity; status is Configured or Invalid.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarGroup
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("units")]
+        public System.Collections.Generic.ICollection<LocationBookingCalendarUnit>? Units { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("days")]
+        public System.Collections.Generic.ICollection<LocationBookingCalendarDayResponse>? Days { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarSlotResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("startMinute")]
+        public int? StartMinute { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("durationMinutes")]
+        public int? DurationMinutes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        public int? Type { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Authorized canonical unit KID and localized plain-text name.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarUnit
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// The authorized location's configured weekly calendars; no occupancy or booking rights.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarsResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationKid")]
+        public string? LocationKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("groups")]
+        public System.Collections.Generic.ICollection<LocationBookingCalendarGroup>? Groups { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Stable code, localized plain text and whether the row needs attention. Never HTML.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -28938,7 +29215,7 @@ namespace Kombine.Flex.Portal.Client
         public string? Name { get; set; } = default!;
 
         /// <summary>
-        /// API-computed main-unit icon identity, including its unit number.
+        /// API-computed terminal icon identity, including its controller number.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
         public string? IconKid { get; set; } = default!;
