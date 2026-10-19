@@ -78,6 +78,7 @@
 | `GetLinearGradientSized` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` |
 | `GetLinearGradient` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` |
 | `GetLiveLogs` | GET | `/api/v1/diagnostics/live-logs` |
+| `GetLocationBookingCalendars` | GET | `/api/v1/locations/{locationKid}/booking-calendars` |
 | `GetLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` |
 | `GetLocationIcons` | GET | `/api/v1/locations/icons` |
 | `GetLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` |

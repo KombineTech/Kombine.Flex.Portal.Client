@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `ecb63aea768038fc17e47a6d68bd6e7f5b5939884d2c4cc415db4caa30f7ff0a`).
-154 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `5f162831cc138e0b5b052ccaa06c7fc6f896f3272115b26c0844042aa29abab0`).
+155 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -81,6 +81,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `ecb63aea768038fc17e
 | `getLinearGradientSized` | `GetLinearGradientSized` | GET | `/api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg` | Anonymous |
 | `getLinearGradient` | `GetLinearGradient` | GET | `/api/v1/gradients/linear/{colors}/{angle}.svg` | Anonymous |
 | `getLiveLogs` | `GetLiveLogs` | GET | `/api/v1/diagnostics/live-logs` | Bearer |
+| `getLocationBookingCalendars` | `GetLocationBookingCalendars` | GET | `/api/v1/locations/{locationKid}/booking-calendars` | Bearer |
 | `getLocationBookingRules` | `GetLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` | Bearer |
 | `getLocationIcons` | `GetLocationIcons` | GET | `/api/v1/locations/icons` | Bearer |
 | `getLocationOpeningHours` | `GetLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` | Bearer |

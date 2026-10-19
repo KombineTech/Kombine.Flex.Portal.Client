@@ -48,6 +48,7 @@
 | `GetLocations` | `get_locations` | `getLocations` | GET | `/api/v1/locations` |
 | `SearchLocations` | `search_locations` | `searchLocations` | GET | `/api/v1/search/locations` |
 | `SearchLocationActivation` | `search_location_activation` | `searchLocationActivation` | GET | `/api/v1/search/location-activation` |
+| `GetLocationBookingCalendars` | `get_location_booking_calendars` | `getLocationBookingCalendars` | GET | `/api/v1/locations/{locationKid}/booking-calendars` |
 | `GetLocationBookingRules` | `get_location_booking_rules` | `getLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` |
 | `GetControllerOverview` | `get_controller_overview` | `getControllerOverview` | GET | `/api/v1/controllers/{controllerKid}` |
 | `GetControllerGroup` | `get_controller_group` | `getControllerGroup` | GET | `/api/v1/controllers/{controllerKid}/groups/{kind}/{group}` |

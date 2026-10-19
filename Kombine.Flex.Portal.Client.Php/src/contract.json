@@ -1660,6 +1660,96 @@
       },
       "additionalProperties": false
     },
+    "LocationBookingCalendarDayResponse": {
+      "type": "object",
+      "properties": {
+        "dayOfWeek": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/LocationBookingCalendarSlotResponse"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocationBookingCalendarGroup": {
+      "type": "object",
+      "properties": {
+        "units": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/LocationBookingCalendarUnit"
+          },
+          "nullable": true
+        },
+        "status": {
+          "type": "string",
+          "nullable": true
+        },
+        "days": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/LocationBookingCalendarDayResponse"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocationBookingCalendarSlotResponse": {
+      "type": "object",
+      "properties": {
+        "startMinute": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "durationMinutes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocationBookingCalendarUnit": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocationBookingCalendarsResponse": {
+      "type": "object",
+      "properties": {
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/LocationBookingCalendarGroup"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "LocationBookingRule": {
       "type": "object",
       "properties": {
@@ -7277,6 +7367,38 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
+      },
+      "binary": false
+    },
+    "GetLocationBookingCalendars": {
+      "method": "GET",
+      "path": "api/v1/locations/{locationKid}/booking-calendars",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "locationKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Accept-Language",
+          "where": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/LocationBookingCalendarsResponse"
       },
       "binary": false
     },

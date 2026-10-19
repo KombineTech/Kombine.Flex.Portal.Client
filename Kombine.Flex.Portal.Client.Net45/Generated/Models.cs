@@ -1784,6 +1784,91 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>DayOfWeek is 0=Sunday through 6=Saturday; times are relative to this day's midnight.</summary>
+    public sealed class LocationBookingCalendarDayResponse
+    {
+        /// <summary>dayOfWeek</summary>
+        [JsonField("dayOfWeek")]
+        public int? DayOfWeek { get { return _DayOfWeek; } set { _DayOfWeek = value; } }
+        private int? _DayOfWeek;
+
+        /// <summary>slots</summary>
+        [JsonField("slots")]
+        public LocationBookingCalendarSlotResponse[] Slots { get { return _Slots; } set { _Slots = value; } }
+        private LocationBookingCalendarSlotResponse[] _Slots;
+
+    }
+
+    /// <summary>Units with the same decoded stored calendar identity; status is Configured or Invalid.</summary>
+    public sealed class LocationBookingCalendarGroup
+    {
+        /// <summary>units</summary>
+        [JsonField("units")]
+        public LocationBookingCalendarUnit[] Units { get { return _Units; } set { _Units = value; } }
+        private LocationBookingCalendarUnit[] _Units;
+
+        /// <summary>status</summary>
+        [JsonField("status")]
+        public string Status { get { return _Status; } set { _Status = value; } }
+        private string _Status;
+
+        /// <summary>days</summary>
+        [JsonField("days")]
+        public LocationBookingCalendarDayResponse[] Days { get { return _Days; } set { _Days = value; } }
+        private LocationBookingCalendarDayResponse[] _Days;
+
+    }
+
+    /// <summary>Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed.</summary>
+    public sealed class LocationBookingCalendarSlotResponse
+    {
+        /// <summary>startMinute</summary>
+        [JsonField("startMinute")]
+        public int? StartMinute { get { return _StartMinute; } set { _StartMinute = value; } }
+        private int? _StartMinute;
+
+        /// <summary>durationMinutes</summary>
+        [JsonField("durationMinutes")]
+        public int? DurationMinutes { get { return _DurationMinutes; } set { _DurationMinutes = value; } }
+        private int? _DurationMinutes;
+
+        /// <summary>type</summary>
+        [JsonField("type")]
+        public int? Type { get { return _Type; } set { _Type = value; } }
+        private int? _Type;
+
+    }
+
+    /// <summary>Authorized canonical unit KID and localized plain-text name.</summary>
+    public sealed class LocationBookingCalendarUnit
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+    }
+
+    /// <summary>The authorized location's configured weekly calendars; no occupancy or booking rights.</summary>
+    public sealed class LocationBookingCalendarsResponse
+    {
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>groups</summary>
+        [JsonField("groups")]
+        public LocationBookingCalendarGroup[] Groups { get { return _Groups; } set { _Groups = value; } }
+        private LocationBookingCalendarGroup[] _Groups;
+
+    }
+
     /// <summary>Stable code, localized plain text and whether the row needs attention. Never HTML.</summary>
     public sealed class LocationBookingRule
     {
@@ -4572,7 +4657,7 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string Name { get { return _Name; } set { _Name = value; } }
         private string _Name;
 
-        /// <summary>API-computed main-unit icon identity, including its unit number.</summary>
+        /// <summary>API-computed terminal icon identity, including its controller number.</summary>
         [JsonField("iconKid")]
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
         private string _IconKid;
@@ -6254,6 +6339,15 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>q</summary>
         public string Q { get { return _Q; } set { _Q = value; } }
         private string _Q;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetLocationBookingCalendars. Null values use API defaults.</summary>
+    public sealed class GetLocationBookingCalendarsOptions
+    {
+        /// <summary>Accept-Language</summary>
+        public string AcceptLanguage { get { return _AcceptLanguage; } set { _AcceptLanguage = value; } }
+        private string _AcceptLanguage;
 
     }
 

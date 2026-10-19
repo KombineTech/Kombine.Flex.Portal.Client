@@ -833,6 +833,50 @@ export interface LiveLogsResponse {
   "servers"?: (LiveLogCard)[] | null;
 }
 
+/** DayOfWeek is 0=Sunday through 6=Saturday; times are relative to this day's midnight. */
+export interface LocationBookingCalendarDayResponse {
+  /** dayOfWeek */
+  "dayOfWeek"?: number;
+  /** slots */
+  "slots"?: (LocationBookingCalendarSlotResponse)[] | null;
+}
+
+/** Units with the same decoded stored calendar identity; status is Configured or Invalid. */
+export interface LocationBookingCalendarGroup {
+  /** units */
+  "units"?: (LocationBookingCalendarUnit)[] | null;
+  /** status */
+  "status"?: string | null;
+  /** days */
+  "days"?: (LocationBookingCalendarDayResponse)[] | null;
+}
+
+/** Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed. */
+export interface LocationBookingCalendarSlotResponse {
+  /** startMinute */
+  "startMinute"?: number;
+  /** durationMinutes */
+  "durationMinutes"?: number;
+  /** type */
+  "type"?: number;
+}
+
+/** Authorized canonical unit KID and localized plain-text name. */
+export interface LocationBookingCalendarUnit {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+}
+
+/** The authorized location's configured weekly calendars; no occupancy or booking rights. */
+export interface LocationBookingCalendarsResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** groups */
+  "groups"?: (LocationBookingCalendarGroup)[] | null;
+}
+
 /** Stable code, localized plain text and whether the row needs attention. Never HTML. */
 export interface LocationBookingRule {
   /** code */
@@ -2129,7 +2173,7 @@ export interface UnitTerminalResponse {
   "kid"?: string | null;
   /** name */
   "name"?: string | null;
-  /** API-computed main-unit icon identity, including its unit number. */
+  /** API-computed terminal icon identity, including its controller number. */
   "iconKid"?: string | null;
 }
 
@@ -2836,6 +2880,10 @@ export interface SearchLocationsOptions {
 
 export interface SearchLocationActivationOptions {
   q?: string;
+}
+
+export interface GetLocationBookingCalendarsOptions {
+  acceptLanguage?: string;
 }
 
 export interface GetLocationBookingRulesOptions {

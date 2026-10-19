@@ -368,6 +368,36 @@ array{'timestamp'?: string, 'level'?: string|null, 'message'?: string|null, 'cat
 array{'tenantKid'?: string|null, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'servers'?: list<LiveLogCard>|null}
 ```
 
+### LocationBookingCalendarDayResponse
+
+```php
+array{'dayOfWeek'?: int, 'slots'?: list<LocationBookingCalendarSlotResponse>|null}
+```
+
+### LocationBookingCalendarGroup
+
+```php
+array{'units'?: list<LocationBookingCalendarUnit>|null, 'status'?: string|null, 'days'?: list<LocationBookingCalendarDayResponse>|null}
+```
+
+### LocationBookingCalendarSlotResponse
+
+```php
+array{'startMinute'?: int, 'durationMinutes'?: int, 'type'?: int}
+```
+
+### LocationBookingCalendarUnit
+
+```php
+array{'kid'?: string|null, 'name'?: string|null}
+```
+
+### LocationBookingCalendarsResponse
+
+```php
+array{'locationKid'?: string|null, 'groups'?: list<LocationBookingCalendarGroup>|null}
+```
+
 ### LocationBookingRule
 
 ```php
