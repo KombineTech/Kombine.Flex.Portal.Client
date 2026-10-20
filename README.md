@@ -1,5 +1,5 @@
 # Kombine.Flex.Portal.Client
-Official client libraries for the Kombine Flex Portal API: C# and VB.NET (.NET, .NET Standard, .NET Framework and .NET Compact Framework), JavaScript/TypeScript, Python and PHP. Includes typed models, authentication, documentation and integration examples.
+Official client libraries for the Kombine Flex Portal API: C# and VB.NET (.NET, .NET Standard, .NET Framework and .NET Compact Framework), JavaScript/TypeScript, Python, PHP and Dart/Flutter. Includes API models, authentication, documentation and integration examples. Dart object models retain wire-map field names.
 
 | Client | Documentation |
 | --- | --- |
@@ -10,6 +10,7 @@ Official client libraries for the Kombine Flex Portal API: C# and VB.NET (.NET, 
 | JavaScript / TypeScript | [Guide](Kombine.Flex.Portal.Client.JavaScript/README.md) |
 | Python | [Guide](Kombine.Flex.Portal.Client.Python/README.md) |
 | PHP | [Guide](Kombine.Flex.Portal.Client.Php/README.md) |
+| Dart / Flutter | [English](Kombine.Flex.Portal.Client.Dart/README.md) · [Dansk](Kombine.Flex.Portal.Client.Dart/README.da.md) · [Español](Kombine.Flex.Portal.Client.Dart/README.es.md) |
 
 Each client directory includes Danish and Spanish README alternatives. C# and
 VB.NET use the same .NET library. No private Kombine packages or server checkout
@@ -28,6 +29,13 @@ For Node 22+ and pnpm, run `pnpm install --frozen-lockfile --ignore-scripts`
 and `pnpm test` from `Kombine.Flex.Portal.Client.JavaScript`.
 For PHP 8.2+ with curl and Python, run `python scripts/Test-PhpClients.py`.
 All tests use synthetic data; no tenant account or database is needed.
+
+For Dart 3.6+, run `pwsh -NoProfile -File scripts/Test-PortalDartClient.ps1`.
+It analyzes the library, tests every generated operation and the HTTP runtime,
+and compiles/runs a JavaScript precision check with Node.js.
+Use `python scripts/Generate-PortalDartClient.py --check` to check generation and
+`python scripts/Build-PortalDartPackage.py` to build the versioned source ZIP.
+The Dart workflow checks the minimum supported SDK and stable; it never publishes.
 
 Legacy solutions (`.2008.sln`, `.2012.sln`, `.Compact2008.sln`) require their
 original Windows/Visual Studio build tools. Compact Framework runtime validation
