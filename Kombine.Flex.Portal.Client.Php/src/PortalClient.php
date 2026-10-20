@@ -66,11 +66,11 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type LiveLogCard array{'server'?: string|null, 'errorCode'?: string|null, 'events'?: list<LiveLogEvent>|null}
  * @phpstan-type LiveLogEvent array{'timestamp'?: string, 'level'?: string|null, 'message'?: string|null, 'category'?: string|null, 'statusCode'?: int|null, 'elapsedMilliseconds'?: int|null, 'bankId'?: int|null, 'userIds'?: list<int>|null, 'traceId'?: string|null, 'question'?: string|null, 'fields'?: array<string,mixed>|null}
  * @phpstan-type LiveLogsResponse array{'tenantKid'?: string|null, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'servers'?: list<LiveLogCard>|null}
- * @phpstan-type LocationBookingCalendarDayResponse array{'dayOfWeek'?: int, 'slots'?: list<LocationBookingCalendarSlotResponse>|null}
+ * @phpstan-type LocationBookingCalendarDayResponse array{'dayOfWeek'?: int, 'slots'?: list<LocationBookingCalendarSlotResponse>|null, 'date'?: string}
  * @phpstan-type LocationBookingCalendarGroup array{'units'?: list<LocationBookingCalendarUnit>|null, 'status'?: string|null, 'days'?: list<LocationBookingCalendarDayResponse>|null}
  * @phpstan-type LocationBookingCalendarSlotResponse array{'startMinute'?: int, 'durationMinutes'?: int, 'type'?: int}
  * @phpstan-type LocationBookingCalendarUnit array{'kid'?: string|null, 'name'?: string|null}
- * @phpstan-type LocationBookingCalendarsResponse array{'locationKid'?: string|null, 'groups'?: list<LocationBookingCalendarGroup>|null}
+ * @phpstan-type LocationBookingCalendarsResponse array{'locationKid'?: string|null, 'groups'?: list<LocationBookingCalendarGroup>|null, 'timeZone'?: string|null, 'from'?: string, 'days'?: int}
  * @phpstan-type LocationBookingRule array{'code'?: string|null, 'text'?: string|null, 'warning'?: bool, 'parts'?: list<LocationBookingRulePart>|null}
  * @phpstan-type LocationBookingRuleGroup array{'name'?: string|null, 'units'?: list<BookingRuleUnit>|null, 'rules'?: list<LocationBookingRule>|null, 'common'?: bool, 'help'?: string|null}
  * @phpstan-type LocationBookingRulePart array{'text'?: string|null, 'isValue'?: bool}
@@ -703,9 +703,9 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * Read configured weekly reservation calendars, grouped by identical schedules.
+     * Read dated reservation calendars with location opening hours already applied.
      * @param string $locationKid
-     * @param array{'Accept-Language'?: string} $options
+     * @param array{'Accept-Language'?: string, 'from'?: string, 'days'?: int} $options
      * @return LocationBookingCalendarsResponse
      */
     public function getLocationBookingCalendars(mixed $locationKid, array $options = []): mixed

@@ -233,9 +233,9 @@ export class PortalClient extends BaseClient {
     return this.send("SearchLocationActivation", {"q": options.q}, undefined, request) as Promise<Models.SearchResults>;
   }
 
-  /** Read configured weekly reservation calendars, grouped by identical schedules. */
+  /** Read dated reservation calendars with location opening hours already applied. */
   getLocationBookingCalendars(locationKid: string, options: Models.GetLocationBookingCalendarsOptions = {}, request: RequestOptions = {}): Promise<Models.LocationBookingCalendarsResponse> {
-    return this.send("GetLocationBookingCalendars", {"locationKid": locationKid, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.LocationBookingCalendarsResponse>;
+    return this.send("GetLocationBookingCalendars", {"locationKid": locationKid, "Accept-Language": options.acceptLanguage, "from": options.from, "days": options.days}, undefined, request) as Promise<Models.LocationBookingCalendarsResponse>;
   }
 
   /** Read localized configured reservation rules for the location's visible units. */

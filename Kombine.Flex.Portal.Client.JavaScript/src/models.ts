@@ -839,9 +839,11 @@ export interface LocationBookingCalendarDayResponse {
   "dayOfWeek"?: number;
   /** slots */
   "slots"?: (LocationBookingCalendarSlotResponse)[] | null;
+  /** date */
+  "date"?: string;
 }
 
-/** Units with the same decoded stored calendar identity; status is Configured or Invalid. */
+/** Units with the same valid stored calendar identity and effective dated schedule; status is Configured. */
 export interface LocationBookingCalendarGroup {
   /** units */
   "units"?: (LocationBookingCalendarUnit)[] | null;
@@ -851,7 +853,7 @@ export interface LocationBookingCalendarGroup {
   "days"?: (LocationBookingCalendarDayResponse)[] | null;
 }
 
-/** Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed. */
+/** Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed, 3=unknown. */
 export interface LocationBookingCalendarSlotResponse {
   /** startMinute */
   "startMinute"?: number;
@@ -869,12 +871,18 @@ export interface LocationBookingCalendarUnit {
   "name"?: string | null;
 }
 
-/** The authorized location's configured weekly calendars; no occupancy or booking rights. */
+/** The authorized location's effective dated calendars; no occupancy or booking rights. */
 export interface LocationBookingCalendarsResponse {
   /** locationKid */
   "locationKid"?: string | null;
   /** groups */
   "groups"?: (LocationBookingCalendarGroup)[] | null;
+  /** timeZone */
+  "timeZone"?: string | null;
+  /** from */
+  "from"?: string;
+  /** days */
+  "days"?: number;
 }
 
 /** Stable code, localized plain text and whether the row needs attention. Never HTML. */
@@ -2884,6 +2892,8 @@ export interface SearchLocationActivationOptions {
 
 export interface GetLocationBookingCalendarsOptions {
   acceptLanguage?: string;
+  from?: string;
+  days?: number;
 }
 
 export interface GetLocationBookingRulesOptions {

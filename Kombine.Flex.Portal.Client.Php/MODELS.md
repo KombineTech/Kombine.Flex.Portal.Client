@@ -371,7 +371,7 @@ array{'tenantKid'?: string|null, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?
 ### LocationBookingCalendarDayResponse
 
 ```php
-array{'dayOfWeek'?: int, 'slots'?: list<LocationBookingCalendarSlotResponse>|null}
+array{'dayOfWeek'?: int, 'slots'?: list<LocationBookingCalendarSlotResponse>|null, 'date'?: string}
 ```
 
 ### LocationBookingCalendarGroup
@@ -395,7 +395,7 @@ array{'kid'?: string|null, 'name'?: string|null}
 ### LocationBookingCalendarsResponse
 
 ```php
-array{'locationKid'?: string|null, 'groups'?: list<LocationBookingCalendarGroup>|null}
+array{'locationKid'?: string|null, 'groups'?: list<LocationBookingCalendarGroup>|null, 'timeZone'?: string|null, 'from'?: string, 'days'?: int}
 ```
 
 ### LocationBookingRule

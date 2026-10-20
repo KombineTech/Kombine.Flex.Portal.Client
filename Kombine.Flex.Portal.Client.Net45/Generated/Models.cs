@@ -1797,9 +1797,14 @@ namespace Kombine.Flex.Portal.Client.Net45
         public LocationBookingCalendarSlotResponse[] Slots { get { return _Slots; } set { _Slots = value; } }
         private LocationBookingCalendarSlotResponse[] _Slots;
 
+        /// <summary>date ISO 8601 text, sent unchanged.</summary>
+        [JsonField("date")]
+        public string Date { get { return _Date; } set { _Date = value; } }
+        private string _Date;
+
     }
 
-    /// <summary>Units with the same decoded stored calendar identity; status is Configured or Invalid.</summary>
+    /// <summary>Units with the same valid stored calendar identity and effective dated schedule; status is Configured.</summary>
     public sealed class LocationBookingCalendarGroup
     {
         /// <summary>units</summary>
@@ -1819,7 +1824,7 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
-    /// <summary>Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed.</summary>
+    /// <summary>Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed, 3=unknown.</summary>
     public sealed class LocationBookingCalendarSlotResponse
     {
         /// <summary>startMinute</summary>
@@ -1854,7 +1859,7 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
-    /// <summary>The authorized location's configured weekly calendars; no occupancy or booking rights.</summary>
+    /// <summary>The authorized location's effective dated calendars; no occupancy or booking rights.</summary>
     public sealed class LocationBookingCalendarsResponse
     {
         /// <summary>locationKid</summary>
@@ -1866,6 +1871,21 @@ namespace Kombine.Flex.Portal.Client.Net45
         [JsonField("groups")]
         public LocationBookingCalendarGroup[] Groups { get { return _Groups; } set { _Groups = value; } }
         private LocationBookingCalendarGroup[] _Groups;
+
+        /// <summary>timeZone</summary>
+        [JsonField("timeZone")]
+        public string TimeZone { get { return _TimeZone; } set { _TimeZone = value; } }
+        private string _TimeZone;
+
+        /// <summary>from ISO 8601 text, sent unchanged.</summary>
+        [JsonField("from")]
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>days</summary>
+        [JsonField("days")]
+        public int? Days { get { return _Days; } set { _Days = value; } }
+        private int? _Days;
 
     }
 
@@ -6348,6 +6368,14 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>Accept-Language</summary>
         public string AcceptLanguage { get { return _AcceptLanguage; } set { _AcceptLanguage = value; } }
         private string _AcceptLanguage;
+
+        /// <summary>from ISO 8601 text, sent unchanged.</summary>
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>days</summary>
+        public int? Days { get { return _Days; } set { _Days = value; } }
+        private int? _Days;
 
     }
 
