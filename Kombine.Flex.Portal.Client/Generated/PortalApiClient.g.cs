@@ -1149,39 +1149,28 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Read configured weekly reservation calendars, grouped by identical schedules.
+        /// Read dated reservation calendars with location opening hours already applied.
         /// </summary>
         /// <remarks>
-        /// Requires an active manager with Bookings1, Location Read, Unit Read and matching site/bank/location scope.
-        /// <br/>The location and every returned unit must be visible within RetentionDays. Bookings1 is checked before
-        /// <br/>reading any location, unit or calendar data. This read-only operation does not require User Read.
-        /// <br/>
-        /// <br/>Reads the visible units' eSetting.BookCalendar values from bounded Log24 settings. Supports version 3.
-        /// <br/>Units sharing the exact decoded, trimmed calendar value are grouped together. Preserve separate groups
-        /// <br/>even when their visible times match: legacy trailing zeroes can distinguish calendar identities.
-        /// <br/>Days with no stored turns inherit the preceding configured day, circularly
-        /// <br/>through the week, as in FlexTouchCE. Each configured group has seven days, dayOfWeek 0=Sunday through 6=Saturday.
-        /// <br/>Slots contain startMinute (minutes after that day's midnight), durationMinutes and type:
-        /// <br/>0=ordinary reservation period, 1=chance period, 2=closed. Negative starts refer to the previous day.
-        /// <br/>Times can extend past midnight; do not reduce
-        /// <br/>startMinute or end=startMinute+durationMinutes modulo 1440 without also moving to the following day.
-        /// <br/>These are recurring local wall-clock times, with no dates or UTC offsets.
-        /// <br/>
-        /// <br/>Missing/empty calendars and the legacy no-calendar sentinel are omitted. Malformed or unsupported
-        /// <br/>calendars produce status Invalid with empty days, grouped only with the same malformed value.
-        /// <br/>Valid schedules use status Configured. No raw settings, legacy pixel fields, resident identities,
-        /// <br/>reservations or occupancy are returned. A configured period does not imply that it is available to book.
-        /// <br/>Accept-Language localizes unit names; numeric weekday/type identifiers and statuses remain stable.
-        /// <br/>
-        /// <br/>At most 255 authorized units, 8192 setting rows, an eight-second settings deadline and two concurrent
-        /// <br/>settings reads. Location/unit snapshots retain their normal cache limits. Refresh on page navigation.
-        /// <br/>400 invalid KID/site; 401 expired/inactive session; 403 missing Bookings1/scope/read permission;
-        /// <br/>404 missing/retention-hidden location; 503 unavailable, ambiguous or oversized storage. Never use a 503
-        /// <br/>as an empty or unrestricted calendar. No reservations or settings are changed.
+        /// Requires an active manager, Bookings1, Location Read, Unit Read and matching site/bank/location
+        /// <br/>scope and RetentionDays visibility. Authorization precedes all settings reads. No User Read required.
+        /// <br/>From is an optional local yyyy-MM-dd date, default today in the location time zone; days is 1–31, default 14.
+        /// <br/>The API expands BookCalendar v3 and applies the same opening plan as GetLocationOpeningHours,
+        /// <br/>including controller inheritance, overnight spill, holidays and custom date exceptions.
+        /// <br/>Days carry concrete dates and weekday 0=Sunday. Slots use local startMinute and durationMinutes,
+        /// <br/>clipped to 0–1440 within each date. Type 0=reservation period, 1=chance, 2=closed, 3=unknown opening hours.
+        /// <br/>Missing/hidden/cyclic opening owners remain unknown, never unrestricted. Invalid date exceptions are ignored individually.
+        /// <br/>The no-calendar sentinel is omitted;
+        /// <br/>malformed calendars are omitted. Configured calendars may have empty open days.
+        /// <br/>Grouping preserves stored calendar identity and also separates different effective dated schedules.
+        /// <br/>These are wall-clock schedules, not UTC reservations, occupancy or a guarantee of bookability.
+        /// <br/>Two bounded Log24 reads share an eight-second deadline; only the authorized units may own schedules.
+        /// <br/>No writes. 400 invalid KID/range, 401 inactive session, 403 denied, 404 hidden location, 503 unavailable data.
+        /// <br/>Do not interpret 503 or unknown as closed or unrestricted. Refresh on navigation.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<LocationBookingCalendarsResponse> GetLocationBookingCalendarsAsync(string locationKid, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<LocationBookingCalendarsResponse> GetLocationBookingCalendarsAsync(string locationKid, string? accept_Language = null, System.DateTimeOffset? from = null, int? days = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1409,10 +1398,12 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>inherit schedules. The tenant is selected by site configuration, never by the caller.
         /// <br/>
         /// <br/>One bounded Log24 read, at most 255 units / 32,768 values, an eight-second deadline and two concurrent reads.
-        /// <br/>No Alive reads or writes. MasterUnitId comes from Log24 states. Missing/hidden/cyclic owners yield Unknown,
-        /// <br/>never assumed 24/7. A known controller with no weekly limits is AllDay. Open/close fields inherit independently
-        /// <br/>backwards through the week; an entirely unset unit week inherits its controller's plan. Explicit unit exceptions
-        /// <br/>remain in effect. Equal explicit times are Closed; short openings are preserved. Overnight intervals are supported.
+        /// <br/>Owner identity comes from the authorized same-location Alive.MainId hierarchy; opening settings remain in Log24.
+        /// <br/>Missing/hidden/cyclic owners yield Unknown,
+        /// <br/>never assumed 24/7. Invalid date exceptions are ignored individually, preserving weekly hours and other valid exceptions.
+        /// <br/>A known controller with no weekly limits is AllDay. Open/close fields inherit independently
+        /// <br/>backwards through the main terminal's week; child-unit hours and exceptions do not override that owner.
+        /// <br/>Equal explicit times are Closed; short openings are preserved. Overnight intervals are supported.
         /// <br/>
         /// <br/>Weekly rows use ISO weekdays 1–7. Exceptions are concrete local dates from today through two calendar months,
         /// <br/>including year boundaries. First Wednesday, configured holidays (including the legacy Great Prayer Day), then
@@ -10542,39 +10533,28 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Read configured weekly reservation calendars, grouped by identical schedules.
+        /// Read dated reservation calendars with location opening hours already applied.
         /// </summary>
         /// <remarks>
-        /// Requires an active manager with Bookings1, Location Read, Unit Read and matching site/bank/location scope.
-        /// <br/>The location and every returned unit must be visible within RetentionDays. Bookings1 is checked before
-        /// <br/>reading any location, unit or calendar data. This read-only operation does not require User Read.
-        /// <br/>
-        /// <br/>Reads the visible units' eSetting.BookCalendar values from bounded Log24 settings. Supports version 3.
-        /// <br/>Units sharing the exact decoded, trimmed calendar value are grouped together. Preserve separate groups
-        /// <br/>even when their visible times match: legacy trailing zeroes can distinguish calendar identities.
-        /// <br/>Days with no stored turns inherit the preceding configured day, circularly
-        /// <br/>through the week, as in FlexTouchCE. Each configured group has seven days, dayOfWeek 0=Sunday through 6=Saturday.
-        /// <br/>Slots contain startMinute (minutes after that day's midnight), durationMinutes and type:
-        /// <br/>0=ordinary reservation period, 1=chance period, 2=closed. Negative starts refer to the previous day.
-        /// <br/>Times can extend past midnight; do not reduce
-        /// <br/>startMinute or end=startMinute+durationMinutes modulo 1440 without also moving to the following day.
-        /// <br/>These are recurring local wall-clock times, with no dates or UTC offsets.
-        /// <br/>
-        /// <br/>Missing/empty calendars and the legacy no-calendar sentinel are omitted. Malformed or unsupported
-        /// <br/>calendars produce status Invalid with empty days, grouped only with the same malformed value.
-        /// <br/>Valid schedules use status Configured. No raw settings, legacy pixel fields, resident identities,
-        /// <br/>reservations or occupancy are returned. A configured period does not imply that it is available to book.
-        /// <br/>Accept-Language localizes unit names; numeric weekday/type identifiers and statuses remain stable.
-        /// <br/>
-        /// <br/>At most 255 authorized units, 8192 setting rows, an eight-second settings deadline and two concurrent
-        /// <br/>settings reads. Location/unit snapshots retain their normal cache limits. Refresh on page navigation.
-        /// <br/>400 invalid KID/site; 401 expired/inactive session; 403 missing Bookings1/scope/read permission;
-        /// <br/>404 missing/retention-hidden location; 503 unavailable, ambiguous or oversized storage. Never use a 503
-        /// <br/>as an empty or unrestricted calendar. No reservations or settings are changed.
+        /// Requires an active manager, Bookings1, Location Read, Unit Read and matching site/bank/location
+        /// <br/>scope and RetentionDays visibility. Authorization precedes all settings reads. No User Read required.
+        /// <br/>From is an optional local yyyy-MM-dd date, default today in the location time zone; days is 1–31, default 14.
+        /// <br/>The API expands BookCalendar v3 and applies the same opening plan as GetLocationOpeningHours,
+        /// <br/>including controller inheritance, overnight spill, holidays and custom date exceptions.
+        /// <br/>Days carry concrete dates and weekday 0=Sunday. Slots use local startMinute and durationMinutes,
+        /// <br/>clipped to 0–1440 within each date. Type 0=reservation period, 1=chance, 2=closed, 3=unknown opening hours.
+        /// <br/>Missing/hidden/cyclic opening owners remain unknown, never unrestricted. Invalid date exceptions are ignored individually.
+        /// <br/>The no-calendar sentinel is omitted;
+        /// <br/>malformed calendars are omitted. Configured calendars may have empty open days.
+        /// <br/>Grouping preserves stored calendar identity and also separates different effective dated schedules.
+        /// <br/>These are wall-clock schedules, not UTC reservations, occupancy or a guarantee of bookability.
+        /// <br/>Two bounded Log24 reads share an eight-second deadline; only the authorized units may own schedules.
+        /// <br/>No writes. 400 invalid KID/range, 401 inactive session, 403 denied, 404 hidden location, 503 unavailable data.
+        /// <br/>Do not interpret 503 or unknown as closed or unrestricted. Refresh on navigation.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<LocationBookingCalendarsResponse> GetLocationBookingCalendarsAsync(string locationKid, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<LocationBookingCalendarsResponse> GetLocationBookingCalendarsAsync(string locationKid, string? accept_Language = null, System.DateTimeOffset? from = null, int? days = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (locationKid == null)
                 throw new System.ArgumentNullException("locationKid");
@@ -10597,6 +10577,16 @@ namespace Kombine.Flex.Portal.Client
                     urlBuilder_.Append("api/v1/locations/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/booking-calendars");
+                    urlBuilder_.Append('?');
+                    if (from != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("from")).Append('=').Append(System.Uri.EscapeDataString(from.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (days != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("days")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(days, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -12003,10 +11993,12 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>inherit schedules. The tenant is selected by site configuration, never by the caller.
         /// <br/>
         /// <br/>One bounded Log24 read, at most 255 units / 32,768 values, an eight-second deadline and two concurrent reads.
-        /// <br/>No Alive reads or writes. MasterUnitId comes from Log24 states. Missing/hidden/cyclic owners yield Unknown,
-        /// <br/>never assumed 24/7. A known controller with no weekly limits is AllDay. Open/close fields inherit independently
-        /// <br/>backwards through the week; an entirely unset unit week inherits its controller's plan. Explicit unit exceptions
-        /// <br/>remain in effect. Equal explicit times are Closed; short openings are preserved. Overnight intervals are supported.
+        /// <br/>Owner identity comes from the authorized same-location Alive.MainId hierarchy; opening settings remain in Log24.
+        /// <br/>Missing/hidden/cyclic owners yield Unknown,
+        /// <br/>never assumed 24/7. Invalid date exceptions are ignored individually, preserving weekly hours and other valid exceptions.
+        /// <br/>A known controller with no weekly limits is AllDay. Open/close fields inherit independently
+        /// <br/>backwards through the main terminal's week; child-unit hours and exceptions do not override that owner.
+        /// <br/>Equal explicit times are Closed; short openings are preserved. Overnight intervals are supported.
         /// <br/>
         /// <br/>Weekly rows use ISO weekdays 1–7. Exceptions are concrete local dates from today through two calendar months,
         /// <br/>including year boundaries. First Wednesday, configured holidays (including the legacy Great Prayer Day), then
@@ -26440,10 +26432,14 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("slots")]
         public System.Collections.Generic.ICollection<LocationBookingCalendarSlotResponse>? Slots { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("date")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(DateFormatConverter))]
+        public System.DateTimeOffset? Date { get; set; } = default!;
+
     }
 
     /// <summary>
-    /// Units with the same decoded stored calendar identity; status is Configured or Invalid.
+    /// Units with the same valid stored calendar identity and effective dated schedule; status is Configured.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class LocationBookingCalendarGroup
@@ -26461,7 +26457,7 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
-    /// Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed.
+    /// Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed, 3=unknown.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class LocationBookingCalendarSlotResponse
@@ -26494,7 +26490,7 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
-    /// The authorized location's configured weekly calendars; no occupancy or booking rights.
+    /// The authorized location's effective dated calendars; no occupancy or booking rights.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class LocationBookingCalendarsResponse
@@ -26505,6 +26501,16 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("groups")]
         public System.Collections.Generic.ICollection<LocationBookingCalendarGroup>? Groups { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("timeZone")]
+        public string? TimeZone { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("from")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(DateFormatConverter))]
+        public System.DateTimeOffset? From { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("days")]
+        public int? Days { get; set; } = default!;
 
     }
 

@@ -191,9 +191,9 @@ class PortalClient(BaseClient):
         'Decode a location activation code and resolve its visible name and icon in Log24.'
         return self._request('SearchLocationActivation', {'q': q}, None)
 
-    def get_location_booking_calendars(self, location_kid: str, *, accept_language: str | None = None) -> LocationBookingCalendarsResponse:
-        'Read configured weekly reservation calendars, grouped by identical schedules.'
-        return self._request('GetLocationBookingCalendars', {'locationKid': location_kid, 'Accept-Language': accept_language}, None)
+    def get_location_booking_calendars(self, location_kid: str, *, accept_language: str | None = None, from_: str | None = None, days: int | None = None) -> LocationBookingCalendarsResponse:
+        'Read dated reservation calendars with location opening hours already applied.'
+        return self._request('GetLocationBookingCalendars', {'locationKid': location_kid, 'Accept-Language': accept_language, 'from': from_, 'days': days}, None)
 
     def get_location_booking_rules(self, location_kid: str, *, accept_language: str | None = None) -> LocationBookingRulesResponse:
         "Read localized configured reservation rules for the location's visible units."

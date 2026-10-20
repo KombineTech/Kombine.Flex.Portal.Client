@@ -483,6 +483,7 @@ LiveLogsResponse = TypedDict('LiveLogsResponse', {
 LocationBookingCalendarDayResponse = TypedDict('LocationBookingCalendarDayResponse', {
     'dayOfWeek': 'int',
     'slots': 'list[LocationBookingCalendarSlotResponse] | None',
+    'date': 'str',
 }, total=False)
 
 LocationBookingCalendarGroup = TypedDict('LocationBookingCalendarGroup', {
@@ -505,6 +506,9 @@ LocationBookingCalendarUnit = TypedDict('LocationBookingCalendarUnit', {
 LocationBookingCalendarsResponse = TypedDict('LocationBookingCalendarsResponse', {
     'locationKid': 'str | None',
     'groups': 'list[LocationBookingCalendarGroup] | None',
+    'timeZone': 'str | None',
+    'from': 'str',
+    'days': 'int',
 }, total=False)
 
 LocationBookingRule = TypedDict('LocationBookingRule', {
