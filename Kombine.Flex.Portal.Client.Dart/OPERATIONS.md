@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-155 operations. OpenAPI SHA-256: `a7cca79b41446f8dfc4aeaa599cc0b35cb98ca58593c487921b22699af15c40a`.
+178 operations. OpenAPI SHA-256: `9f1b18bb94c2e392e8bbad7c831284db1e19818c3e82734fd8fe97159ee5fdf0`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -14,6 +14,7 @@
 | `SetObjectCoordinates` | `setObjectCoordinates` | PUT | `/api/v1/addresses/{kid}/coordinates` |
 | `SetObjectCoordinateProvenance` | `setObjectCoordinateProvenance` | PUT | `/api/v1/addresses/{kid}/provenance` |
 | `AskPortalAssistant` | `askPortalAssistant` | POST | `/api/v1/assistant/query` |
+| `GetBankExportCount` | `getBankExportCount` | GET | `/api/v1/banks/export-count` |
 | `GetBanks` | `getBanks` | GET | `/api/v1/banks` |
 | `GetActiveBankCount` | `getActiveBankCount` | GET | `/api/v1/banks/active-count` |
 | `GetBankDocuments` | `getBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` |
@@ -22,6 +23,7 @@
 | `SearchBanks` | `searchBanks` | GET | `/api/v1/search/banks` |
 | `SearchBankActivation` | `searchBankActivation` | GET | `/api/v1/search/bank-activation` |
 | `GetSearchBank` | `getSearchBank` | GET | `/api/v1/search/banks/{bankKid}` |
+| `GetBankUserExportCount` | `getBankUserExportCount` | GET | `/api/v1/banks/{bankKid}/users/export-count` |
 | `GetBankUsers` | `getBankUsers` | GET | `/api/v1/banks/{bankKid}/users` |
 | `CreateBankUser` | `createBankUser` | POST | `/api/v1/banks/{bankKid}/users` |
 | `GetBankBookings` | `getBankBookings` | GET | `/api/v1/banks/{bankKid}/bookings` |
@@ -43,11 +45,13 @@
 | `GetHostingLogs` | `getHostingLogs` | GET | `/api/v1/hosting/logs` |
 | `GetHostingMetrics` | `getHostingMetrics` | GET | `/api/v1/hosting/metrics` |
 | `SetInstallerIcon` | `setInstallerIcon` | POST | `/api/v1/installers/{installerKid}/icon` |
+| `GetInstallerExportCount` | `getInstallerExportCount` | GET | `/api/v1/installers/export-count` |
 | `GetInstallers` | `getInstallers` | GET | `/api/v1/installers` |
 | `GetInstaller` | `getInstaller` | GET | `/api/v1/installers/{installerKid}` |
 | `GetLiveLogs` | `getLiveLogs` | GET | `/api/v1/diagnostics/live-logs` |
 | `GetActiveLocationCount` | `getActiveLocationCount` | GET | `/api/v1/locations/active-count` |
 | `GetLocations` | `getLocations` | GET | `/api/v1/locations` |
+| `GetLocationCount` | `getLocationCount` | GET | `/api/v1/locations/count` |
 | `SearchLocations` | `searchLocations` | GET | `/api/v1/search/locations` |
 | `SearchLocationActivation` | `searchLocationActivation` | GET | `/api/v1/search/location-activation` |
 | `GetLocationBookingCalendars` | `getLocationBookingCalendars` | GET | `/api/v1/locations/{locationKid}/booking-calendars` |
@@ -61,6 +65,8 @@
 | `GetUnitIcons` | `getUnitIcons` | GET | `/api/v1/units/icons` |
 | `GetLocationIcons` | `getLocationIcons` | GET | `/api/v1/locations/icons` |
 | `GetLocationOpeningHours` | `getLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` |
+| `GetLocationReservationHistory` | `getLocationReservationHistory` | GET | `/api/v1/locations/{locationKid}/reservation-history` |
+| `GetLocationReservations` | `getLocationReservations` | GET | `/api/v1/locations/{locationKid}/reservations` |
 | `GetLocationWeather` | `getLocationWeather` | GET | `/api/v1/locations/{locationKid}/weather` |
 | `CreateManager` | `createManager` | POST | `/api/v1/managers` |
 | `GetManagers` | `getManagers` | GET | `/api/v1/managers` |
@@ -71,6 +77,7 @@
 | `SetManagerPermissionRole` | `setManagerPermissionRole` | POST | `/api/v1/managers/{managerKid}/permission-role` |
 | `SetManagerPermission` | `setManagerPermission` | POST | `/api/v1/managers/{managerKid}/permissions/{resource}` |
 | `SetManagerProfileField` | `setManagerProfileField` | POST | `/api/v1/managers/{managerKid}/profile/{field}` |
+| `GetManagerExportCount` | `getManagerExportCount` | GET | `/api/v1/managers/export-count` |
 | `GetManager` | `getManager` | GET | `/api/v1/managers/{managerKid}` |
 | `GetManagersWithSameEmail` | `getManagersWithSameEmail` | GET | `/api/v1/managers/{managerKid}/same-email` |
 | `LoginManager` | `loginManager` | POST | `/api/v1/session/login` |
@@ -80,15 +87,19 @@
 | `ConfirmManagerSignUp` | `confirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` |
 | `SetManagerTab` | `setManagerTab` | POST | `/api/v1/managers/{managerKid}/tabs/{tabId}` |
 | `SetCurrentManagerTheme` | `setCurrentManagerTheme` | POST | `/api/v1/session/me/theme` |
+| `GetNearestLocations` | `getNearestLocations` | GET | `/api/v1/locations/nearest` |
 | `GetManagerCount` | `getManagerCount` | GET | `/api/v1/managers/count` |
 | `GetInstallerCount` | `getInstallerCount` | GET | `/api/v1/installers/count` |
 | `GetMyManagerProfile` | `getMyManagerProfile` | GET | `/api/v1/session/me/profile` |
+| `GetMyManagerApiKey` | `getMyManagerApiKey` | GET | `/api/v1/session/me/api-key` |
+| `GenerateMyManagerApiKey` | `generateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` |
 | `GetMyManagerTabs` | `getMyManagerTabs` | GET | `/api/v1/session/me/tabs` |
 | `SetMyManagerTab` | `setMyManagerTab` | POST | `/api/v1/session/me/tabs/{tabId}` |
 | `SetMyManagerProfileField` | `setMyManagerProfileField` | POST | `/api/v1/session/me/profile/{field}` |
 | `RequestMyManagerEmailVerification` | `requestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` |
 | `ConfirmMyManagerEmail` | `confirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` |
 | `ChangeMyManagerPassword` | `changeMyManagerPassword` | POST | `/api/v1/session/me/password` |
+| `GetServiceExportCount` | `getServiceExportCount` | GET | `/api/v1/services/export-count` |
 | `GetServices` | `getServices` | GET | `/api/v1/services` |
 | `GetServiceCount` | `getServiceCount` | GET | `/api/v1/services/count` |
 | `GetService` | `getService` | GET | `/api/v1/services/{serviceKid}` |
@@ -98,9 +109,19 @@
 | `GetBankSettlementPeriod` | `getBankSettlementPeriod` | GET | `/api/v1/banks/{bankKid}/settlements/{period}` |
 | `GetTenantStatus` | `getTenantStatus` | GET | `/api/v1/tenant/status` |
 | `GetTenantStatusPage` | `getTenantStatusPage` | GET | `/api/v1/tenant/status/page` |
+| `ConvertToolTime` | `convertToolTime` | POST | `/api/v1/banks/{bankKid}/tools/time` |
+| `InspectToolKid` | `inspectToolKid` | POST | `/api/v1/banks/{bankKid}/tools/kid` |
+| `GetUnitDocuments` | `getUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |
+| `GetUnitDocumentsCount` | `getUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` |
 | `GetUnitDocumentTable` | `getUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` |
 | `GetUnitDocumentHtml` | `getUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` |
 | `GetUnitDocumentSvg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
+| `GetUnitDocumentSvg2` | `getUnitDocumentSvg2` | GET | `/api/v1/documents/{documentKid}/graph2.svg` |
+| `GetUnitDocumentGraph` | `getUnitDocumentGraph` | GET | `/api/v1/documents/{documentKid}/graph` |
+| `GetUnitDocumentPng` | `getUnitDocumentPng` | GET | `/api/v1/documents/{documentKid}/graph.png` |
+| `GetUnitDocumentIcon` | `getUnitDocumentIcon` | GET | `/api/v1/documents/{documentKid}/icon.svg` |
+| `GetUnitExportCount` | `getUnitExportCount` | GET | `/api/v1/units/export-count` |
+| `GetTerminalExportCount` | `getTerminalExportCount` | GET | `/api/v1/terminals/export-count` |
 | `GetActiveUnitCount` | `getActiveUnitCount` | GET | `/api/v1/units/active-count` |
 | `GetActiveTerminalCount` | `getActiveTerminalCount` | GET | `/api/v1/terminals/active-count` |
 | `GetUnits` | `getUnits` | GET | `/api/v1/units` |
@@ -112,6 +133,7 @@
 | `GetBankUserWorkspace` | `getBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` |
 | `GetBankUserActivation` | `getBankUserActivation` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` |
 | `ExecuteBankUserCommand` | `executeBankUserCommand` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` |
+| `GetUserExportCount` | `getUserExportCount` | GET | `/api/v1/users/export-count` |
 | `GetUsers` | `getUsers` | GET | `/api/v1/users` |
 | `GetUserCount` | `getUserCount` | GET | `/api/v1/users/count` |
 | `GetUserReceipts` | `getUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
@@ -155,6 +177,7 @@
 | `GetPublicScopedUnitProgress` | `getPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |
 | `GetPublicPurchases` | `getPublicPurchases` | GET | `/api/v1/public/statistics/purchases` |
 | `GetPublicActiveUsers` | `getPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
+| `GetPublicWashDocWidget` | `getPublicWashDocWidget` | GET | `/api/v1/public/widgets/washdoc` |
 | `GetPublicWidgetPresentation` | `getPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
 | `GetPublicReservations` | `getPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachines` | `getPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |

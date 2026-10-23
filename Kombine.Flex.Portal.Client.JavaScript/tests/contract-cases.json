@@ -555,6 +555,81 @@
     "example": {}
   },
   {
+    "operation": "GetBankExportCount",
+    "python": "get_bank_export_count",
+    "javascript": "getBankExportCount",
+    "method": "GET",
+    "path": "api/v1/banks/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "bankType",
+        "where": "query",
+        "py": "bank_type",
+        "js": "bankType",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetBanks",
     "python": "get_banks",
     "javascript": "getBanks",
@@ -906,6 +981,81 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetBankUserExportCount",
+    "python": "get_bank_user_export_count",
+    "javascript": "getBankUserExportCount",
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/users/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "deleted",
+        "where": "query",
+        "py": "deleted",
+        "js": "deleted",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
     },
     "binary": false,
     "example": {}
@@ -1872,6 +2022,15 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
@@ -1920,6 +2079,15 @@
         "js": "settings",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
         }
       }
     ],
@@ -2269,6 +2437,63 @@
     }
   },
   {
+    "operation": "GetInstallerExportCount",
+    "python": "get_installer_export_count",
+    "javascript": "getInstallerExportCount",
+    "method": "GET",
+    "path": "api/v1/installers/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeActivationCode",
+        "where": "query",
+        "py": "include_activation_code",
+        "js": "includeActivationCode",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetInstallers",
     "python": "get_installers",
     "javascript": "getInstallers",
@@ -2364,7 +2589,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
         }
       ],
       "nextCursor": null
@@ -2419,7 +2644,7 @@
         "enabled": true,
         "deleted": false,
         "deletedAt": null,
-        "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+        "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
       },
       "canEditIcon": true,
       "iconRevision": "5CE7200DE215F47D73E8C782F447813306BD7DD66F0C468AD961D92D0C950FDE",
@@ -2786,6 +3011,81 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationCount",
+    "python": "get_location_count",
+    "javascript": "getLocationCount",
+    "method": "GET",
+    "path": "api/v1/locations/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "bankKid",
+        "where": "query",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationCountResponse"
     },
     "binary": false,
     "example": {}
@@ -3353,6 +3653,124 @@
     "example": {}
   },
   {
+    "operation": "GetLocationReservationHistory",
+    "python": "get_location_reservation_history",
+    "javascript": "getLocationReservationHistory",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/reservation-history",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "from",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "py": "days",
+        "js": "days",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationReservationHistoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationReservations",
+    "python": "get_location_reservations",
+    "javascript": "getLocationReservations",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/reservations",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "from",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "py": "days",
+        "js": "days",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationReservationsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetLocationWeather",
     "python": "get_location_weather",
     "javascript": "getLocationWeather",
@@ -3478,7 +3896,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
           "retentionDays": 30,
           "canEditPermissions": true,
           "canEditTabs": true,
@@ -4195,6 +4613,54 @@
     }
   },
   {
+    "operation": "GetManagerExportCount",
+    "python": "get_manager_export_count",
+    "javascript": "getManagerExportCount",
+    "method": "GET",
+    "path": "api/v1/managers/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetManager",
     "python": "get_manager",
     "javascript": "getManager",
@@ -4231,7 +4697,7 @@
       "enabled": true,
       "deleted": false,
       "deletedAt": null,
-      "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
       "retentionDays": 30,
       "canEditPermissions": true,
       "canEditTabs": true,
@@ -5125,6 +5591,50 @@
     }
   },
   {
+    "operation": "GetNearestLocations",
+    "python": "get_nearest_locations",
+    "javascript": "getNearestLocations",
+    "method": "GET",
+    "path": "api/v1/locations/nearest",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "latitude",
+        "where": "query",
+        "py": "latitude",
+        "js": "latitude",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      {
+        "name": "longitude",
+        "where": "query",
+        "py": "longitude",
+        "js": "longitude",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/NearestLocationItem"
+      }
+    },
+    "binary": false,
+    "example": []
+  },
+  {
     "operation": "GetManagerCount",
     "python": "get_manager_count",
     "javascript": "getManagerCount",
@@ -5180,6 +5690,48 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerProfile"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyManagerApiKey",
+    "python": "get_my_manager_api_key",
+    "javascript": "getMyManagerApiKey",
+    "method": "GET",
+    "path": "api/v1/session/me/api-key",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalManagerApiKey"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GenerateMyManagerApiKey",
+    "python": "generate_my_manager_api_key",
+    "javascript": "generateMyManagerApiKey",
+    "method": "POST",
+    "path": "api/v1/session/me/api-key",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/PersonalApiKeyRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalApiKeyResponse"
     },
     "binary": false,
     "example": {}
@@ -5331,6 +5883,54 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetServiceExportCount",
+    "python": "get_service_export_count",
+    "javascript": "getServiceExportCount",
+    "method": "GET",
+    "path": "api/v1/services/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
     },
     "binary": false,
     "example": {}
@@ -5709,6 +6309,204 @@
     "example": {}
   },
   {
+    "operation": "ConvertToolTime",
+    "python": "convert_tool_time",
+    "javascript": "convertToolTime",
+    "method": "POST",
+    "path": "api/v1/banks/{bankKid}/tools/time",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/ToolTimeRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ToolTimeResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "InspectToolKid",
+    "python": "inspect_tool_kid",
+    "javascript": "inspectToolKid",
+    "method": "POST",
+    "path": "api/v1/banks/{bankKid}/tools/kid",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/ToolKidInspectionRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ToolKidInspectionResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocuments",
+    "python": "get_unit_documents",
+    "javascript": "getUnitDocuments",
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/documents",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "py": "offset",
+        "js": "offset",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "py": "limit",
+        "js": "limit",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentsCount",
+    "python": "get_unit_documents_count",
+    "javascript": "getUnitDocumentsCount",
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/documents/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetUnitDocumentTable",
     "python": "get_unit_document_table",
     "javascript": "getUnitDocumentTable",
@@ -5745,6 +6543,15 @@
         "js": "settings",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
         }
       }
     ],
@@ -5793,6 +6600,15 @@
         "js": "settings",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
         }
       }
     ],
@@ -5845,6 +6661,15 @@
         }
       },
       {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
         "name": "width",
         "where": "query",
         "py": "width",
@@ -5862,6 +6687,432 @@
       "format": "binary"
     },
     "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentSvg2",
+    "python": "get_unit_document_svg2",
+    "javascript": "getUnitDocumentSvg2",
+    "method": "GET",
+    "path": "api/v1/documents/{documentKid}/graph2.svg",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "path",
+        "py": "document_kid",
+        "js": "documentKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "py": "states",
+        "js": "states",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "py": "settings",
+        "js": "settings",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentGraph",
+    "python": "get_unit_document_graph",
+    "javascript": "getUnitDocumentGraph",
+    "method": "GET",
+    "path": "api/v1/documents/{documentKid}/graph",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "path",
+        "py": "document_kid",
+        "js": "documentKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "py": "states",
+        "js": "states",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "py": "settings",
+        "js": "settings",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WashDocChartResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentPng",
+    "python": "get_unit_document_png",
+    "javascript": "getUnitDocumentPng",
+    "method": "GET",
+    "path": "api/v1/documents/{documentKid}/graph.png",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "path",
+        "py": "document_kid",
+        "js": "documentKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "py": "states",
+        "js": "states",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "py": "settings",
+        "js": "settings",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentIcon",
+    "python": "get_unit_document_icon",
+    "javascript": "getUnitDocumentIcon",
+    "method": "GET",
+    "path": "api/v1/documents/{documentKid}/icon.svg",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "path",
+        "py": "document_kid",
+        "js": "documentKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "py": "states",
+        "js": "states",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "py": "settings",
+        "js": "settings",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitExportCount",
+    "python": "get_unit_export_count",
+    "javascript": "getUnitExportCount",
+    "method": "GET",
+    "path": "api/v1/units/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "py": "terminal_kid",
+        "js": "terminalKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "py": "running_only",
+        "js": "runningOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "autoOutOfOrderOnly",
+        "where": "query",
+        "py": "auto_out_of_order_only",
+        "js": "autoOutOfOrderOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetTerminalExportCount",
+    "python": "get_terminal_export_count",
+    "javascript": "getTerminalExportCount",
+    "method": "GET",
+    "path": "api/v1/terminals/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "py": "terminal_kid",
+        "js": "terminalKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "py": "running_only",
+        "js": "runningOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
     "example": {}
   },
   {
@@ -6448,6 +7699,63 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserWorkspaceResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUserExportCount",
+    "python": "get_user_export_count",
+    "javascript": "getUserExportCount",
+    "method": "GET",
+    "path": "api/v1/users/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
     },
     "binary": false,
     "example": {}
@@ -8220,8 +9528,8 @@
         }
       ],
       "lookbackHours": 1,
-      "sinceUtc": "2026-09-23T11:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-09-23T09:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     }
   },
   {
@@ -8246,9 +9554,48 @@
       "tenantKid": "3E7QAo",
       "count": 12450,
       "lookbackDays": 100,
-      "sinceUtc": "2026-06-15T12:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-06-15T10:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     }
+  },
+  {
+    "operation": "GetPublicWashDocWidget",
+    "python": "get_public_wash_doc_widget",
+    "javascript": "getPublicWashDocWidget",
+    "method": "GET",
+    "path": "api/v1/public/widgets/washdoc",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "query",
+        "py": "document_kid",
+        "js": "documentKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "unitKid",
+        "where": "query",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWashDocWidgetResponse"
+    },
+    "binary": false,
+    "example": {}
   },
   {
     "operation": "GetPublicWidgetPresentation",

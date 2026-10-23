@@ -213,6 +213,29 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetBankExportCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/banks/export-count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["filter"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["enabledOnly"], <Object?>["false"]);
+      expect(request.url.queryParametersAll["fields"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["bankType"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getBankExportCount(filter: "fixture", sort: "fixture", direction: "fixture", enabledOnly: false, fields: "fixture", bankType: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}));
+    expect(sends, 1);
+  });
+
   test("wire GetBanks", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -366,6 +389,28 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getSearchBank(bankKid: "fixture /\u00e6?&");
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "hasMore": false}));
+    expect(sends, 1);
+  });
+
+  test("wire GetBankUserExportCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/banks/fixture%20%2F%C3%A6%3F%26/users/export-count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["filter"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["locationKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["deleted"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getBankUserExportCount(bankKid: "fixture /\u00e6?&", filter: "fixture", sort: "fixture", direction: "fixture", locationKid: "fixture", deleted: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}));
     expect(sends, 1);
   });
 
@@ -708,10 +753,11 @@ void main() {
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.downloadUnitDocumentCsv(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture");
+    final result = await client.downloadUnitDocumentCsv(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -727,10 +773,11 @@ void main() {
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.downloadUnitDocumentXls(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture");
+    final result = await client.downloadUnitDocumentXls(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -790,6 +837,27 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.setInstallerIcon(installerKid: "fixture /\u00e6?&", body: <String, Object?>{"icon": null, "expectedRevision": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "iconRevision": null, "availableIcons": null, "iconKid": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetInstallerExportCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/installers/export-count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["filter"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["includeActivationCode"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getInstallerExportCount(filter: "fixture", sort: "fixture", direction: "fixture", includeActivationCode: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}));
     expect(sends, 1);
   });
 
@@ -893,6 +961,29 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getLocations(pageSize: 7, cursor: "fixture", filter: "fixture", sort: "fixture", direction: "fixture", enabledOnly: false, fields: "fixture", includeCoordinates: false, bankKid: "fixture");
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "nextCursor": null, "hasAllBanksAccess": false, "fields": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetLocationCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/locations/count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["filter"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["enabledOnly"], <Object?>["false"]);
+      expect(request.url.queryParametersAll["fields"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["bankKid"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getLocationCount(filter: "fixture", sort: "fixture", direction: "fixture", enabledOnly: false, fields: "fixture", bankKid: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}));
     expect(sends, 1);
   });
 
@@ -1133,6 +1224,46 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetLocationReservationHistory", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/locations/fixture%20%2F%C3%A6%3F%26/reservation-history");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["from"], <Object?>["2026-10-20"]);
+      expect(request.url.queryParametersAll["days"], <Object?>["7"]);
+      expect(request.headers["Accept-Language"], "fixture");
+      return http.Response(encodeApiJson(<String, Object?>{"locationKid": null, "from": "2026-10-20", "days": 7, "items": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getLocationReservationHistory(locationKid: "fixture /\u00e6?&", from: "2026-10-20", days: 7, acceptLanguage: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"locationKid": null, "from": "2026-10-20", "days": 7, "items": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetLocationReservations", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/locations/fixture%20%2F%C3%A6%3F%26/reservations");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["from"], <Object?>["2026-10-20"]);
+      expect(request.url.queryParametersAll["days"], <Object?>["7"]);
+      expect(request.headers["Accept-Language"], "fixture");
+      return http.Response(encodeApiJson(<String, Object?>{"locationKid": null, "from": "2026-10-20", "days": 7, "items": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getLocationReservations(locationKid: "fixture /\u00e6?&", from: "2026-10-20", days: 7, acceptLanguage: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"locationKid": null, "from": "2026-10-20", "days": 7, "items": null}));
+    expect(sends, 1);
+  });
+
   test("wire GetLocationWeather", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -1324,6 +1455,26 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetManagerExportCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/managers/export-count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["filter"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["direction"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getManagerExportCount(filter: "fixture", sort: "fixture", direction: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}));
+    expect(sends, 1);
+  });
+
   test("wire GetManager", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -1370,12 +1521,12 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], isNull);
       expect(request.headers["X-Portal-Login-Client-IP"], "fixture");
-      expect(request.body, encodeApiJson(<String, Object?>{"email": "fixture", "password": "fixture"}));
+      expect(request.body, encodeApiJson(<String, Object?>{"email": null, "password": null, "kid": null, "apiKey": null}));
       expect(request.headers['content-type'], contains('application/json'));
       return http.Response(encodeApiJson(<String, Object?>{"accessToken": null, "expiresIn": BigInt.parse('9007199254740993'), "tokenType": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.loginManager(xPortalLoginClientIP: "fixture", body: <String, Object?>{"email": "fixture", "password": "fixture"});
+    final result = await client.loginManager(xPortalLoginClientIP: "fixture", body: <String, Object?>{"email": null, "password": null, "kid": null, "apiKey": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"accessToken": null, "expiresIn": BigInt.parse('9007199254740993'), "tokenType": null}));
     expect(sends, 1);
   });
@@ -1492,6 +1643,25 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetNearestLocations", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/locations/nearest");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["latitude"], <Object?>["1.25"]);
+      expect(request.url.queryParametersAll["longitude"], <Object?>["1.25"]);
+      return http.Response(encodeApiJson(<Object?>[<String, Object?>{"kid": null, "name": null, "bankName": null, "iconKid": null, "distanceMeters": 1.25}]), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getNearestLocations(latitude: 1.25, longitude: 1.25);
+    expect(encodeApiJson(result), encodeApiJson(<Object?>[<String, Object?>{"kid": null, "name": null, "bankName": null, "iconKid": null, "distanceMeters": 1.25}]));
+    expect(sends, 1);
+  });
+
   test("wire GetManagerCount", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -1543,6 +1713,43 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getMyManagerProfile();
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "name": null, "organisation": null, "iconKid": null, "email": null, "emailVerified": false, "themeMode": 7, "revision": null, "availableIcons": null, "retentionDays": 7, "iconSet": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetMyManagerApiKey", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/api-key");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"hasApiKey": false, "revision": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyManagerApiKey();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"hasApiKey": false, "revision": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GenerateMyManagerApiKey", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/api-key");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{"revision": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"apiKey": null, "details": <String, Object?>{"hasApiKey": false, "revision": null}}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.generateMyManagerApiKey(body: <String, Object?>{"revision": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"apiKey": null, "details": <String, Object?>{"hasApiKey": false, "revision": null}}));
     expect(sends, 1);
   });
 
@@ -1656,6 +1863,26 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.changeMyManagerPassword(body: <String, Object?>{"currentPassword": null, "password": null, "confirmPassword": null, "language": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"code": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetServiceExportCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/services/export-count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["filter"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["direction"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getServiceExportCount(filter: "fixture", sort: "fixture", direction: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}));
     expect(sends, 1);
   });
 
@@ -1828,6 +2055,86 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire ConvertToolTime", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/banks/fixture%20%2F%C3%A6%3F%26/tools/time");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{"format": null, "value": null, "timeZone": null, "offset": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"success": false, "error": null, "result": <String, Object?>{"ms2000": null, "mi2000": null, "ss2000": null, "utc": null, "local": null, "timeZone": null, "offset": null, "dateInputRounded": false, "millisecondRemainder": null, "secondRemainder": null}, "offsetChoices": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.convertToolTime(bankKid: "fixture /\u00e6?&", body: <String, Object?>{"format": null, "value": null, "timeZone": null, "offset": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"success": false, "error": null, "result": <String, Object?>{"ms2000": null, "mi2000": null, "ss2000": null, "utc": null, "local": null, "timeZone": null, "offset": null, "dateInputRounded": false, "millisecondRemainder": null, "secondRemainder": null}, "offsetChoices": null}));
+    expect(sends, 1);
+  });
+
+  test("wire InspectToolKid", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/banks/fixture%20%2F%C3%A6%3F%26/tools/kid");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{"kid": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"canonicalKid": null, "fields": null, "normalized": false}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.inspectToolKid(bankKid: "fixture /\u00e6?&", body: <String, Object?>{"kid": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"canonicalKid": null, "fields": null, "normalized": false}));
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitDocuments", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/units/fixture%20%2F%C3%A6%3F%26/documents");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["Sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Offset"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["Limit"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["Search"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Date"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"items": null, "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z", "sort": null, "direction": null, "offset": 7, "limit": 7, "hasMore": false}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitDocuments(unitKid: "fixture /\u00e6?&", sort: "fixture", direction: "fixture", offset: 7, limit: 7, search: "fixture", date: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z", "sort": null, "direction": null, "offset": 7, "limit": 7, "hasMore": false}));
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitDocumentsCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/units/fixture%20%2F%C3%A6%3F%26/documents/count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["Search"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Date"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z"}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitDocumentsCount(unitKid: "fixture /\u00e6?&", search: "fixture", date: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z"}));
+    expect(sends, 1);
+  });
+
   test("wire GetUnitDocumentTable", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -1839,10 +2146,11 @@ void main() {
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
       return http.Response(encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "columns": null, "rows": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentTable(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture");
+    final result = await client.getUnitDocumentTable(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "columns": null, "rows": null}));
     expect(sends, 1);
   });
@@ -1858,10 +2166,11 @@ void main() {
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentHtml(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture");
+    final result = await client.getUnitDocumentHtml(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -1877,12 +2186,144 @@ void main() {
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
       expect(request.url.queryParametersAll["width"], <Object?>["7"]);
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentSvg(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", width: 7);
+    final result = await client.getUnitDocumentSvg(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false, width: 7);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitDocumentSvg2", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/documents/fixture%20%2F%C3%A6%3F%26/graph2.svg");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
+      return http.Response.bytes([1, 2, 3], 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitDocumentSvg2(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitDocumentGraph", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/documents/fixture%20%2F%C3%A6%3F%26/graph");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "startedMs2000": null, "endedMs2000": null, "series": null, "events": null, "signals": null, "dosing": null, "presentation": <String, Object?>{"unitType": null, "kind": null, "groupOrder": null}}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitDocumentGraph(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "startedMs2000": null, "endedMs2000": null, "series": null, "events": null, "signals": null, "dosing": null, "presentation": <String, Object?>{"unitType": null, "kind": null, "groupOrder": null}}));
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitDocumentPng", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/documents/fixture%20%2F%C3%A6%3F%26/graph.png");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
+      return http.Response.bytes([1, 2, 3], 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitDocumentPng(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitDocumentIcon", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/documents/fixture%20%2F%C3%A6%3F%26/icon.svg");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
+      return http.Response.bytes([1, 2, 3], 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitDocumentIcon(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitExportCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/units/export-count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["filter"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["enabledOnly"], <Object?>["false"]);
+      expect(request.url.queryParametersAll["fields"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["locationKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["terminalKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["runningOnly"], <Object?>["false"]);
+      expect(request.url.queryParametersAll["autoOutOfOrderOnly"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitExportCount(filter: "fixture", sort: "fixture", direction: "fixture", enabledOnly: false, fields: "fixture", locationKid: "fixture", terminalKid: "fixture", runningOnly: false, autoOutOfOrderOnly: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}));
+    expect(sends, 1);
+  });
+
+  test("wire GetTerminalExportCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/terminals/export-count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["filter"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["enabledOnly"], <Object?>["false"]);
+      expect(request.url.queryParametersAll["fields"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["locationKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["terminalKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["runningOnly"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getTerminalExportCount(filter: "fixture", sort: "fixture", direction: "fixture", enabledOnly: false, fields: "fixture", locationKid: "fixture", terminalKid: "fixture", runningOnly: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}));
     expect(sends, 1);
   });
 
@@ -2105,6 +2546,27 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.executeBankUserCommand(bankKid: "fixture /\u00e6?&", userKid: "fixture /\u00e6?&", body: <String, Object?>{"action": null, "revision": null, "name": null, "number": null, "deleteAtUtc": null, "tagKid": null, "state": null, "locationKid": null, "attributes": null, "icon": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "revision": null, "name": null, "number": null, "deletedAtUtc": null, "deleteAtUtc": null, "locations": null, "tags": null, "attributes": null, "canWrite": false, "canCreate": false, "synchronization": null, "canDelete": false, "canRenameExternalId": false, "canRename": false, "iconKid": null, "availableIcons": null, "canEditIcon": false}));
+    expect(sends, 1);
+  });
+
+  test("wire GetUserExportCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/users/export-count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["filter"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["enabledOnly"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUserExportCount(filter: "fixture", sort: "fixture", direction: "fixture", enabledOnly: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993')}));
     expect(sends, 1);
   });
 
@@ -2891,6 +3353,25 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getPublicActiveUsers();
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"tenantKid": null, "count": BigInt.parse('9007199254740993'), "lookbackDays": 7, "sinceUtc": "2026-10-20T10:00:00Z", "measuredAtUtc": "2026-10-20T10:00:00Z"}));
+    expect(sends, 1);
+  });
+
+  test("wire GetPublicWashDocWidget", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/public/widgets/washdoc");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+      expect(request.url.queryParametersAll["documentKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["unitKid"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getPublicWashDocWidget(documentKid: "fixture", unitKid: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7}));
     expect(sends, 1);
   });
 

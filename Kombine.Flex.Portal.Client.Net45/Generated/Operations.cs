@@ -141,6 +141,29 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (AssistantResponse)SendJson("POST", path, body, headers, 200, typeof(AssistantResponse));
         }
 
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetBankExportCount()
+        {
+            return GetBankExportCount(null);
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetBankExportCount(GetBankExportCountOptions options)
+        {
+            string path = "api/v1/banks/export-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+                path = AddQuery(path, "fields", options.Fields);
+                path = AddQuery(path, "bankType", options.BankType);
+            }
+            return (DirectoryExportCountResponse)SendJson("GET", path, null, headers, 200, typeof(DirectoryExportCountResponse));
+        }
+
         /// <summary>List authorized bank identities for Banks2 with selected metadata and stable global ordering.</summary>
         public BankDirectoryResponse GetBanks()
         {
@@ -268,6 +291,29 @@ namespace Kombine.Flex.Portal.Client.Net45
             path = path.Replace("{bankKid}", PathValue(@bankKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (SearchResults)SendJson("GET", path, null, headers, 200, typeof(SearchResults));
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetBankUserExportCount(string @bankKid)
+        {
+            return GetBankUserExportCount(@bankKid, null);
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetBankUserExportCount(string @bankKid, GetBankUserExportCountOptions options)
+        {
+            string path = "api/v1/banks/{bankKid}/users/export-count";
+            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "locationKid", options.LocationKid);
+                path = AddQuery(path, "deleted", options.Deleted);
+            }
+            return (DirectoryExportCountResponse)SendJson("GET", path, null, headers, 200, typeof(DirectoryExportCountResponse));
         }
 
         /// <summary>Read one page of users for a bank.</summary>
@@ -571,6 +617,7 @@ namespace Kombine.Flex.Portal.Client.Net45
             {
                 path = AddQuery(path, "States", options.States);
                 path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
             }
             return SendDownload("GET", path, null, headers, 200);
         }
@@ -591,6 +638,7 @@ namespace Kombine.Flex.Portal.Client.Net45
             {
                 path = AddQuery(path, "States", options.States);
                 path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
             }
             return SendDownload("GET", path, null, headers, 200);
         }
@@ -641,6 +689,27 @@ namespace Kombine.Flex.Portal.Client.Net45
             path = path.Replace("{installerKid}", PathValue(@installerKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (InstallerIconResponse)SendJson("POST", path, body, headers, 200, typeof(InstallerIconResponse));
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetInstallerExportCount()
+        {
+            return GetInstallerExportCount(null);
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetInstallerExportCount(GetInstallerExportCountOptions options)
+        {
+            string path = "api/v1/installers/export-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "includeActivationCode", options.IncludeActivationCode);
+            }
+            return (DirectoryExportCountResponse)SendJson("GET", path, null, headers, 200, typeof(DirectoryExportCountResponse));
         }
 
         /// <summary>List installers with locations, tags, account state and last activity.</summary>
@@ -725,6 +794,29 @@ namespace Kombine.Flex.Portal.Client.Net45
                 path = AddQuery(path, "bankKid", options.BankKid);
             }
             return (LocationDirectoryResponse)SendJson("GET", path, null, headers, 200, typeof(LocationDirectoryResponse));
+        }
+
+        /// <summary>Count every location matching the same filters, selected search columns and permissions as GetLocations.</summary>
+        public LocationCountResponse GetLocationCount()
+        {
+            return GetLocationCount(null);
+        }
+
+        /// <summary>Count every location matching the same filters, selected search columns and permissions as GetLocations.</summary>
+        public LocationCountResponse GetLocationCount(GetLocationCountOptions options)
+        {
+            string path = "api/v1/locations/count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+                path = AddQuery(path, "fields", options.Fields);
+                path = AddQuery(path, "bankKid", options.BankKid);
+            }
+            return (LocationCountResponse)SendJson("GET", path, null, headers, 200, typeof(LocationCountResponse));
         }
 
         /// <summary>Search location Name, Bank (alternative bank name), Zip, Address, VismaCustNo and TeltonikaSMS in Log24.</summary>
@@ -979,6 +1071,48 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (LocationOpeningHoursResponse)SendJson("GET", path, null, headers, 200, typeof(LocationOpeningHoursResponse));
         }
 
+        /// <summary>Read bank Log5 reservation history for the location's authorized visible units.</summary>
+        public LocationReservationHistoryResponse GetLocationReservationHistory(string @locationKid)
+        {
+            return GetLocationReservationHistory(@locationKid, null);
+        }
+
+        /// <summary>Read bank Log5 reservation history for the location's authorized visible units.</summary>
+        public LocationReservationHistoryResponse GetLocationReservationHistory(string @locationKid, GetLocationReservationHistoryOptions options)
+        {
+            string path = "api/v1/locations/{locationKid}/reservation-history";
+            path = path.Replace("{locationKid}", PathValue(@locationKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "from", options.From);
+                path = AddQuery(path, "days", options.Days);
+                if (options.AcceptLanguage != null) headers.Add("Accept-Language", options.AcceptLanguage);
+            }
+            return (LocationReservationHistoryResponse)SendJson("GET", path, null, headers, 200, typeof(LocationReservationHistoryResponse));
+        }
+
+        /// <summary>Read active tenant Log5 reservations for the location's authorized visible units.</summary>
+        public LocationReservationsResponse GetLocationReservations(string @locationKid)
+        {
+            return GetLocationReservations(@locationKid, null);
+        }
+
+        /// <summary>Read active tenant Log5 reservations for the location's authorized visible units.</summary>
+        public LocationReservationsResponse GetLocationReservations(string @locationKid, GetLocationReservationsOptions options)
+        {
+            string path = "api/v1/locations/{locationKid}/reservations";
+            path = path.Replace("{locationKid}", PathValue(@locationKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "from", options.From);
+                path = AddQuery(path, "days", options.Days);
+                if (options.AcceptLanguage != null) headers.Add("Accept-Language", options.AcceptLanguage);
+            }
+            return (LocationReservationsResponse)SendJson("GET", path, null, headers, 200, typeof(LocationReservationsResponse));
+        }
+
         /// <summary>Get current weather for the authorized location's stored position or address.</summary>
         public LocationWeatherResponse GetLocationWeather(string @locationKid)
         {
@@ -1081,6 +1215,26 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (ManagerProfileChangeResponse)SendJson("POST", path, body, headers, 200, typeof(ManagerProfileChangeResponse));
         }
 
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetManagerExportCount()
+        {
+            return GetManagerExportCount(null);
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetManagerExportCount(GetManagerExportCountOptions options)
+        {
+            string path = "api/v1/managers/export-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+            }
+            return (DirectoryExportCountResponse)SendJson("GET", path, null, headers, 200, typeof(DirectoryExportCountResponse));
+        }
+
         /// <summary>Read one administrator by canonical manager KID for a workspace shortcut.</summary>
         public ManagerDirectoryItem GetManager(string @managerKid)
         {
@@ -1099,13 +1253,13 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (ManagerEmailMatch[])SendJson("GET", path, null, headers, 200, typeof(ManagerEmailMatch[]));
         }
 
-        /// <summary>Log in with a manager email and password.</summary>
+        /// <summary>Log in with manager email/password or manager username/API key.</summary>
         public ManagerSessionResponse LoginManager(ManagerLoginRequest body)
         {
             return LoginManager(body, null);
         }
 
-        /// <summary>Log in with a manager email and password.</summary>
+        /// <summary>Log in with manager email/password or manager username/API key.</summary>
         public ManagerSessionResponse LoginManager(ManagerLoginRequest body, LoginManagerOptions options)
         {
             string path = "api/v1/session/login";
@@ -1167,6 +1321,25 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (ManagerThemeResponse)SendJson("POST", path, body, headers, 200, typeof(ManagerThemeResponse));
         }
 
+        /// <summary>Get up to ten authorized locations nearest to a supplied position.</summary>
+        public NearestLocationItem[] GetNearestLocations()
+        {
+            return GetNearestLocations(null);
+        }
+
+        /// <summary>Get up to ten authorized locations nearest to a supplied position.</summary>
+        public NearestLocationItem[] GetNearestLocations(GetNearestLocationsOptions options)
+        {
+            string path = "api/v1/locations/nearest";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "latitude", options.Latitude);
+                path = AddQuery(path, "longitude", options.Longitude);
+            }
+            return (NearestLocationItem[])SendJson("GET", path, null, headers, 200, typeof(NearestLocationItem[]));
+        }
+
         /// <summary>Count all visible administrators, independently of the current page/filter.</summary>
         public PeopleDirectoryCount GetManagerCount()
         {
@@ -1189,6 +1362,22 @@ namespace Kombine.Flex.Portal.Client.Net45
             string path = "api/v1/session/me/profile";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (PersonalManagerProfile)SendJson("GET", path, null, headers, 200, typeof(PersonalManagerProfile));
+        }
+
+        /// <summary>Read your own API-key configuration status and revision without exposing credentials.</summary>
+        public PersonalManagerApiKey GetMyManagerApiKey()
+        {
+            string path = "api/v1/session/me/api-key";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PersonalManagerApiKey)SendJson("GET", path, null, headers, 200, typeof(PersonalManagerApiKey));
+        }
+
+        /// <summary>Generate your own API key and commit its hash to eSetting.ApiKeyHash.</summary>
+        public PersonalApiKeyResponse GenerateMyManagerApiKey(PersonalApiKeyRequest body)
+        {
+            string path = "api/v1/session/me/api-key";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PersonalApiKeyResponse)SendJson("POST", path, body, headers, 200, typeof(PersonalApiKeyResponse));
         }
 
         /// <summary>Read your own tab selection, available tabs and editing eligibility.</summary>
@@ -1239,6 +1428,26 @@ namespace Kombine.Flex.Portal.Client.Net45
             string path = "api/v1/session/me/password";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (PersonalAccountResult)SendJson("POST", path, body, headers, 200, typeof(PersonalAccountResult));
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetServiceExportCount()
+        {
+            return GetServiceExportCount(null);
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetServiceExportCount(GetServiceExportCountOptions options)
+        {
+            string path = "api/v1/services/export-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+            }
+            return (DirectoryExportCountResponse)SendJson("GET", path, null, headers, 200, typeof(DirectoryExportCountResponse));
         }
 
         /// <summary>List concrete service enum identities, including services without saved settings.</summary>
@@ -1365,6 +1574,68 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (TenantStatusPageResponse)SendJson("GET", path, null, headers, 200, typeof(TenantStatusPageResponse));
         }
 
+        /// <summary>Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.</summary>
+        public ToolTimeResponse ConvertToolTime(string @bankKid, ToolTimeRequest body)
+        {
+            string path = "api/v1/banks/{bankKid}/tools/time";
+            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ToolTimeResponse)SendJson("POST", path, body, headers, 200, typeof(ToolTimeResponse));
+        }
+
+        /// <summary>Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.</summary>
+        public ToolKidInspectionResponse InspectToolKid(string @bankKid, ToolKidInspectionRequest body)
+        {
+            string path = "api/v1/banks/{bankKid}/tools/kid";
+            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ToolKidInspectionResponse)SendJson("POST", path, body, headers, 200, typeof(ToolKidInspectionResponse));
+        }
+
+        /// <summary>List document identities produced by the selected Unit for WashDoc3.</summary>
+        public UnitDocumentPage GetUnitDocuments(string @unitKid)
+        {
+            return GetUnitDocuments(@unitKid, null);
+        }
+
+        /// <summary>List document identities produced by the selected Unit for WashDoc3.</summary>
+        public UnitDocumentPage GetUnitDocuments(string @unitKid, GetUnitDocumentsOptions options)
+        {
+            string path = "api/v1/units/{unitKid}/documents";
+            path = path.Replace("{unitKid}", PathValue(@unitKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "Sort", options.Sort);
+                path = AddQuery(path, "Direction", options.Direction);
+                path = AddQuery(path, "Offset", options.Offset);
+                path = AddQuery(path, "Limit", options.Limit);
+                path = AddQuery(path, "Search", options.Search);
+                path = AddQuery(path, "Date", options.Date);
+            }
+            return (UnitDocumentPage)SendJson("GET", path, null, headers, 200, typeof(UnitDocumentPage));
+        }
+
+        /// <summary>Count distinct WashDoc3 document identities for exactly one unit, separately from list loading.</summary>
+        public UnitDocumentCount GetUnitDocumentsCount(string @unitKid)
+        {
+            return GetUnitDocumentsCount(@unitKid, null);
+        }
+
+        /// <summary>Count distinct WashDoc3 document identities for exactly one unit, separately from list loading.</summary>
+        public UnitDocumentCount GetUnitDocumentsCount(string @unitKid, GetUnitDocumentsCountOptions options)
+        {
+            string path = "api/v1/units/{unitKid}/documents/count";
+            path = path.Replace("{unitKid}", PathValue(@unitKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "Search", options.Search);
+                path = AddQuery(path, "Date", options.Date);
+            }
+            return (UnitDocumentCount)SendJson("GET", path, null, headers, 200, typeof(UnitDocumentCount));
+        }
+
         /// <summary>Read a document's table as JSON with original values and column metadata.</summary>
         public DocumentTable GetUnitDocumentTable(string @documentKid)
         {
@@ -1381,6 +1652,7 @@ namespace Kombine.Flex.Portal.Client.Net45
             {
                 path = AddQuery(path, "States", options.States);
                 path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
             }
             return (DocumentTable)SendJson("GET", path, null, headers, 200, typeof(DocumentTable));
         }
@@ -1401,6 +1673,7 @@ namespace Kombine.Flex.Portal.Client.Net45
             {
                 path = AddQuery(path, "States", options.States);
                 path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
             }
             return SendDownload("GET", path, null, headers, 200);
         }
@@ -1421,9 +1694,145 @@ namespace Kombine.Flex.Portal.Client.Net45
             {
                 path = AddQuery(path, "States", options.States);
                 path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
                 path = AddQuery(path, "width", options.Width);
             }
             return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Render a responsive WashDoc chart with independent text and graph layers.</summary>
+        public PortalDownload GetUnitDocumentSvg2(string @documentKid)
+        {
+            return GetUnitDocumentSvg2(@documentKid, null);
+        }
+
+        /// <summary>Render a responsive WashDoc chart with independent text and graph layers.</summary>
+        public PortalDownload GetUnitDocumentSvg2(string @documentKid, GetUnitDocumentSvg2Options options)
+        {
+            string path = "api/v1/documents/{documentKid}/graph2.svg";
+            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "States", options.States);
+                path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
+            }
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Read semantic WashDoc graph JSON for interactive charts and image rendering.</summary>
+        public WashDocChartResponse GetUnitDocumentGraph(string @documentKid)
+        {
+            return GetUnitDocumentGraph(@documentKid, null);
+        }
+
+        /// <summary>Read semantic WashDoc graph JSON for interactive charts and image rendering.</summary>
+        public WashDocChartResponse GetUnitDocumentGraph(string @documentKid, GetUnitDocumentGraphOptions options)
+        {
+            string path = "api/v1/documents/{documentKid}/graph";
+            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "States", options.States);
+                path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
+            }
+            return (WashDocChartResponse)SendJson("GET", path, null, headers, 200, typeof(WashDocChartResponse));
+        }
+
+        /// <summary>Render a document KID as a PNG image with the shared local Chart.js renderer.</summary>
+        public PortalDownload GetUnitDocumentPng(string @documentKid)
+        {
+            return GetUnitDocumentPng(@documentKid, null);
+        }
+
+        /// <summary>Render a document KID as a PNG image with the shared local Chart.js renderer.</summary>
+        public PortalDownload GetUnitDocumentPng(string @documentKid, GetUnitDocumentPngOptions options)
+        {
+            string path = "api/v1/documents/{documentKid}/graph.png";
+            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "States", options.States);
+                path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
+            }
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Render a text-free visual WashDoc preview for document lists and icon grids.</summary>
+        public PortalDownload GetUnitDocumentIcon(string @documentKid)
+        {
+            return GetUnitDocumentIcon(@documentKid, null);
+        }
+
+        /// <summary>Render a text-free visual WashDoc preview for document lists and icon grids.</summary>
+        public PortalDownload GetUnitDocumentIcon(string @documentKid, GetUnitDocumentIconOptions options)
+        {
+            string path = "api/v1/documents/{documentKid}/icon.svg";
+            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "States", options.States);
+                path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
+            }
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetUnitExportCount()
+        {
+            return GetUnitExportCount(null);
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetUnitExportCount(GetUnitExportCountOptions options)
+        {
+            string path = "api/v1/units/export-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+                path = AddQuery(path, "fields", options.Fields);
+                path = AddQuery(path, "locationKid", options.LocationKid);
+                path = AddQuery(path, "terminalKid", options.TerminalKid);
+                path = AddQuery(path, "runningOnly", options.RunningOnly);
+                path = AddQuery(path, "autoOutOfOrderOnly", options.AutoOutOfOrderOnly);
+            }
+            return (DirectoryExportCountResponse)SendJson("GET", path, null, headers, 200, typeof(DirectoryExportCountResponse));
+        }
+
+        /// <summary>Count authorized main terminals matching the export filters.</summary>
+        public DirectoryExportCountResponse GetTerminalExportCount()
+        {
+            return GetTerminalExportCount(null);
+        }
+
+        /// <summary>Count authorized main terminals matching the export filters.</summary>
+        public DirectoryExportCountResponse GetTerminalExportCount(GetTerminalExportCountOptions options)
+        {
+            string path = "api/v1/terminals/export-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+                path = AddQuery(path, "fields", options.Fields);
+                path = AddQuery(path, "locationKid", options.LocationKid);
+                path = AddQuery(path, "terminalKid", options.TerminalKid);
+                path = AddQuery(path, "runningOnly", options.RunningOnly);
+            }
+            return (DirectoryExportCountResponse)SendJson("GET", path, null, headers, 200, typeof(DirectoryExportCountResponse));
         }
 
         /// <summary>Count accessible active units for the Units1 navigation icon.</summary>
@@ -1575,6 +1984,27 @@ namespace Kombine.Flex.Portal.Client.Net45
             path = path.Replace("{userKid}", PathValue(@userKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (UserWorkspaceResponse)SendJson("POST", path, body, headers, 200, typeof(UserWorkspaceResponse));
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetUserExportCount()
+        {
+            return GetUserExportCount(null);
+        }
+
+        /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
+        public DirectoryExportCountResponse GetUserExportCount(GetUserExportCountOptions options)
+        {
+            string path = "api/v1/users/export-count";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "filter", options.Filter);
+                path = AddQuery(path, "sort", options.Sort);
+                path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "enabledOnly", options.EnabledOnly);
+            }
+            return (DirectoryExportCountResponse)SendJson("GET", path, null, headers, 200, typeof(DirectoryExportCountResponse));
         }
 
         /// <summary>List authorized residents for UserFinder1 (77).</summary>
@@ -2090,6 +2520,25 @@ namespace Kombine.Flex.Portal.Client.Net45
             string path = "api/v1/public/statistics/active-users";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (ActiveUsersResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveUsersResponse));
+        }
+
+        /// <summary>Get a square WashDoc widget's graph, machine/location names and document times.</summary>
+        public PublicWashDocWidgetResponse GetPublicWashDocWidget()
+        {
+            return GetPublicWashDocWidget(null);
+        }
+
+        /// <summary>Get a square WashDoc widget's graph, machine/location names and document times.</summary>
+        public PublicWashDocWidgetResponse GetPublicWashDocWidget(GetPublicWashDocWidgetOptions options)
+        {
+            string path = "api/v1/public/widgets/washdoc";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "documentKid", options.DocumentKid);
+                path = AddQuery(path, "unitKid", options.UnitKid);
+            }
+            return (PublicWashDocWidgetResponse)SendJson("GET", path, null, headers, 200, typeof(PublicWashDocWidgetResponse));
         }
 
         /// <summary>Get localized labels and the site's palette for the shared JavaScript widgets.</summary>

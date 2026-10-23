@@ -10,8 +10,10 @@ const amount: UserCurrencyBalanceItem = { currentBalanceMinor: 92233720368547758
 void amount;
 // @ts-expect-error int64 values deliberately use bigint, never a potentially rounded number.
 const invalid: UserCurrencyBalanceItem = { currentBalanceMinor: 9007199254740993 };
-// @ts-expect-error Password is a required request field.
-void client.loginManager({ email: "x@example.test" });
+// Alternative manager credentials have no globally required email/password pair.
+void client.loginManager({ kid: "manager-kid", apiKey: "fixture-key" });
+// @ts-expect-error API keys are strings even though the alternative login fields are optional.
+void client.loginManager({ kid: "manager-kid", apiKey: 123 });
 // @ts-expect-error Query options use idiomatic camelCase rather than wire PascalCase.
 void client.getBankAccount("kid", { IncludeZero: false });
 const error = new PortalApiError(403, '{"code":"forbidden"}', new Headers());

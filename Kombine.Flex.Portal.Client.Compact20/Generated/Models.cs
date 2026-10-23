@@ -1214,6 +1214,16 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>The complete number of rows matching the authorized export selection.</summary>
+    public sealed class DirectoryExportCountResponse
+    {
+        /// <summary>count</summary>
+        [JsonField("count")]
+        public long? Count { get { return _Count; } set { _Count = value; } }
+        private long? _Count;
+
+    }
+
     /// <summary>Finite numeric interpretation alongside original text; calculated values have no original text.</summary>
     public sealed class DocumentCell
     {
@@ -1269,7 +1279,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
-    /// <summary>Values are indexed by column position. A missing cell is null; a stored null is a cell with null text/value.</summary>
+    /// <summary>Only columns with data are returned, with values indexed by column position. A missing cell is null; a stored null is a cell with null text/value.</summary>
     public sealed class DocumentTable
     {
         /// <summary>documentKid</summary>
@@ -1979,6 +1989,16 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Exact number of locations matching the authorized, filtered directory at count time.</summary>
+    public sealed class LocationCountResponse
+    {
+        /// <summary>count</summary>
+        [JsonField("count")]
+        public long? Count { get { return _Count; } set { _Count = value; } }
+        private long? _Count;
+
+    }
+
     /// <summary>Bank and location identifiers are canonical KIDs. Activation codes are null without the required Create permission and scope.</summary>
     public sealed class LocationDirectoryItem
     {
@@ -2187,6 +2207,11 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string GiftPN { get { return _GiftPN; } set { _GiftPN = value; } }
         private string _GiftPN;
 
+        /// <summary>soapEnd</summary>
+        [JsonField("soapEnd")]
+        public string SoapEnd { get { return _SoapEnd; } set { _SoapEnd = value; } }
+        private string _SoapEnd;
+
         /// <summary>API-computed icon identity; use unchanged in the icon image URL.</summary>
         [JsonField("iconKid")]
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
@@ -2281,6 +2306,136 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("groups")]
         public OpeningHoursGroup[] Groups { get { return _Groups; } set { _Groups = value; } }
         private OpeningHoursGroup[] _Groups;
+
+    }
+
+    /// <summary>Unit KID, local epoch start minute, absolute duration, UTC event revision and cancellation state.</summary>
+    public sealed class LocationReservationHistoryItem
+    {
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>startMinute</summary>
+        [JsonField("startMinute")]
+        public int? StartMinute { get { return _StartMinute; } set { _StartMinute = value; } }
+        private int? _StartMinute;
+
+        /// <summary>durationMinutes</summary>
+        [JsonField("durationMinutes")]
+        public int? DurationMinutes { get { return _DurationMinutes; } set { _DurationMinutes = value; } }
+        private int? _DurationMinutes;
+
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public long? Revision { get { return _Revision; } set { _Revision = value; } }
+        private long? _Revision;
+
+        /// <summary>cancelled</summary>
+        [JsonField("cancelled")]
+        public bool? Cancelled { get { return _Cancelled; } set { _Cancelled = value; } }
+        private bool? _Cancelled;
+
+        /// <summary>userNumber</summary>
+        [JsonField("userNumber")]
+        public string UserNumber { get { return _UserNumber; } set { _UserNumber = value; } }
+        private string _UserNumber;
+
+        /// <summary>userName</summary>
+        [JsonField("userName")]
+        public string UserName { get { return _UserName; } set { _UserName = value; } }
+        private string _UserName;
+
+        /// <summary>userKid</summary>
+        [JsonField("userKid")]
+        public string UserKid { get { return _UserKid; } set { _UserKid = value; } }
+        private string _UserKid;
+
+    }
+
+    /// <summary>Bank reservation history with resident display metadata.</summary>
+    public sealed class LocationReservationHistoryResponse
+    {
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>from ISO 8601 text, sent unchanged.</summary>
+        [JsonField("from")]
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>days</summary>
+        [JsonField("days")]
+        public int? Days { get { return _Days; } set { _Days = value; } }
+        private int? _Days;
+
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public LocationReservationHistoryItem[] Items { get { return _Items; } set { _Items = value; } }
+        private LocationReservationHistoryItem[] _Items;
+
+    }
+
+    /// <summary>Unit KID, local epoch/weekly start minute and positive duration. No slot rounding.</summary>
+    public sealed class LocationReservationResponse
+    {
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>startMinute</summary>
+        [JsonField("startMinute")]
+        public int? StartMinute { get { return _StartMinute; } set { _StartMinute = value; } }
+        private int? _StartMinute;
+
+        /// <summary>durationMinutes</summary>
+        [JsonField("durationMinutes")]
+        public int? DurationMinutes { get { return _DurationMinutes; } set { _DurationMinutes = value; } }
+        private int? _DurationMinutes;
+
+        /// <summary>userNumber</summary>
+        [JsonField("userNumber")]
+        public string UserNumber { get { return _UserNumber; } set { _UserNumber = value; } }
+        private string _UserNumber;
+
+        /// <summary>userName</summary>
+        [JsonField("userName")]
+        public string UserName { get { return _UserName; } set { _UserName = value; } }
+        private string _UserName;
+
+        /// <summary>userKid</summary>
+        [JsonField("userKid")]
+        public string UserKid { get { return _UserKid; } set { _UserKid = value; } }
+        private string _UserKid;
+
+    }
+
+    /// <summary>Current active reservations, independent of calendar configuration, with resident display metadata.</summary>
+    public sealed class LocationReservationsResponse
+    {
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>from ISO 8601 text, sent unchanged.</summary>
+        [JsonField("from")]
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>days</summary>
+        [JsonField("days")]
+        public int? Days { get { return _Days; } set { _Days = value; } }
+        private int? _Days;
+
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public LocationReservationResponse[] Items { get { return _Items; } set { _Items = value; } }
+        private LocationReservationResponse[] _Items;
 
     }
 
@@ -2649,18 +2804,28 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
-    /// <summary>Credentials submitted over HTTPS; never log request bodies for this endpoint.</summary>
+    /// <summary>Exactly one manager credential pair submitted over HTTPS. Never log this body.</summary>
     public sealed class ManagerLoginRequest
     {
-        /// <summary>The manager's email address.</summary>
+        /// <summary>Manager email for password login.</summary>
         [JsonField("email")]
         public string Email { get { return _Email; } set { _Email = value; } }
         private string _Email;
 
-        /// <summary>The original password, normalized only by the documented legacy verifier.</summary>
+        /// <summary>Original manager password.</summary>
         [JsonField("password")]
         public string Password { get { return _Password; } set { _Password = value; } }
         private string _Password;
+
+        /// <summary>Manager login username from Kid.ToUserId (tenant.0-userId), or canonical bank-zero manager KID, on this API's tenant.</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>Original case-sensitive API key, never its hash.</summary>
+        [JsonField("apiKey")]
+        public string ApiKey { get { return _ApiKey; } set { _ApiKey = value; } }
+        private string _ApiKey;
 
     }
 
@@ -3169,6 +3334,36 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Authorized display identity and great-circle distance in metres, without the caller's position.</summary>
+    public sealed class NearestLocationItem
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>bankName</summary>
+        [JsonField("bankName")]
+        public string BankName { get { return _BankName; } set { _BankName = value; } }
+        private string _BankName;
+
+        /// <summary>iconKid</summary>
+        [JsonField("iconKid")]
+        public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
+        private string _IconKid;
+
+        /// <summary>distanceMeters</summary>
+        [JsonField("distanceMeters")]
+        public double? DistanceMeters { get { return _DistanceMeters; } set { _DistanceMeters = value; } }
+        private double? _DistanceMeters;
+
+    }
+
     /// <summary>Current own settings, stable revision and safe operation outcome; no inherited address.</summary>
     public sealed class ObjectAddressResponse
     {
@@ -3339,6 +3534,31 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Generate a replacement against the last acknowledged API-key revision.</summary>
+    public sealed class PersonalApiKeyRequest
+    {
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+    }
+
+    /// <summary>One-time plaintext key returned only after the hash was committed. Never log this response.</summary>
+    public sealed class PersonalApiKeyResponse
+    {
+        /// <summary>apiKey</summary>
+        [JsonField("apiKey")]
+        public string ApiKey { get { return _ApiKey; } set { _ApiKey = value; } }
+        private string _ApiKey;
+
+        /// <summary>details</summary>
+        [JsonField("details")]
+        public PersonalManagerApiKey Details { get { return _Details; } set { _Details = value; } }
+        private PersonalManagerApiKey _Details;
+
+    }
+
     /// <summary>The single-use proof from the new mailbox.</summary>
     public sealed class PersonalEmailConfirmation
     {
@@ -3366,6 +3586,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("language")]
         public string Language { get { return _Language; } set { _Language = value; } }
         private string _Language;
+
+    }
+
+    /// <summary>Own API-key status; never contains the hash or plaintext key.</summary>
+    public sealed class PersonalManagerApiKey
+    {
+        /// <summary>hasApiKey</summary>
+        [JsonField("hasApiKey")]
+        public bool? HasApiKey { get { return _HasApiKey; } set { _HasApiKey = value; } }
+        private bool? _HasApiKey;
+
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
 
     }
 
@@ -3649,7 +3884,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
-    /// <summary>ApiKeyHash is the hash stored in eSetting.Password and is included only for callers with Service Write. The published JSON names are preserved; this is never a plaintext API key. CanEdit is only a display hint; every mutation independently reauthorizes.</summary>
+    /// <summary>ApiKeyHash is the hash stored in eSetting.ApiKeyHash (or an existing legacy Password-only service record) and is included only for callers with Service Write. The published JSON names are preserved; this is never a plaintext API key. CanEdit is only a display hint; every mutation independently reauthorizes.</summary>
     public sealed class ServiceDetailsResponse
     {
         /// <summary>service</summary>
@@ -4064,6 +4299,186 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>One nondefault, nonzero data property returned by the installed Flex KID parser.</summary>
+    public sealed class ToolKidField
+    {
+        /// <summary>Exact Kid property name, independent of display language.</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>Exact invariant numeric value or decoded text; numbers remain strings to avoid JavaScript precision loss.</summary>
+        [JsonField("value")]
+        public string Value { get { return _Value; } set { _Value = value; } }
+        private string _Value;
+
+        /// <summary>The actual enum ToString() name, or null when the enum value has no name.</summary>
+        [JsonField("enumName")]
+        public string EnumName { get { return _EnumName; } set { _EnumName = value; } }
+        private string _EnumName;
+
+        /// <summary>Exact enum numeric value as a string; null for properties that are not enums.</summary>
+        [JsonField("enumNumber")]
+        public string EnumNumber { get { return _EnumNumber; } set { _EnumNumber = value; } }
+        private string _EnumNumber;
+
+        /// <summary>Zero-based original list position for Settings and Icons, otherwise null.</summary>
+        [JsonField("index")]
+        public int? Index { get { return _Index; } set { _Index = value; } }
+        private int? _Index;
+
+    }
+
+    /// <summary>Input to the KID inspection tool. Parsing never resolves resources or grants access.</summary>
+    public sealed class ToolKidInspectionRequest
+    {
+        /// <summary>A Flex KID in a representation accepted by the installed Kid parser, up to 2048 characters.</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+    }
+
+    /// <summary>Parsed KID data only, without database lookups, inferred scope, or derived display identities.</summary>
+    public sealed class ToolKidInspectionResponse
+    {
+        /// <summary>The installed parser's ToString() output.</summary>
+        [JsonField("canonicalKid")]
+        public string CanonicalKid { get { return _CanonicalKid; } set { _CanonicalKid = value; } }
+        private string _CanonicalKid;
+
+        /// <summary>Nondefault, nonzero properties, with all nonzero Settings and Icons preserved in their original order.</summary>
+        [JsonField("fields")]
+        public ToolKidField[] Fields { get { return _Fields; } set { _Fields = value; } }
+        private ToolKidField[] _Fields;
+
+        /// <summary>True when the installed parser reserialized the input differently, including ignored input or whitespace.</summary>
+        [JsonField("normalized")]
+        public bool? Normalized { get { return _Normalized; } set { _Normalized = value; } }
+        private bool? _Normalized;
+
+    }
+
+    /// <summary>One possible offset for a local time repeated at the end of daylight saving time.</summary>
+    public sealed class ToolTimeOffsetChoice
+    {
+        /// <summary>offset</summary>
+        [JsonField("offset")]
+        public string Offset { get { return _Offset; } set { _Offset = value; } }
+        private string _Offset;
+
+        /// <summary>utc</summary>
+        [JsonField("utc")]
+        public string Utc { get { return _Utc; } set { _Utc = value; } }
+        private string _Utc;
+
+    }
+
+    /// <summary>Pure conversion input. Format is ms2000, mi2000, ss2000, utc or local; all numbers travel as strings.</summary>
+    public sealed class ToolTimeRequest
+    {
+        /// <summary>format</summary>
+        [JsonField("format")]
+        public string Format { get { return _Format; } set { _Format = value; } }
+        private string _Format;
+
+        /// <summary>value</summary>
+        [JsonField("value")]
+        public string Value { get { return _Value; } set { _Value = value; } }
+        private string _Value;
+
+        /// <summary>timeZone</summary>
+        [JsonField("timeZone")]
+        public string TimeZone { get { return _TimeZone; } set { _TimeZone = value; } }
+        private string _TimeZone;
+
+        /// <summary>offset</summary>
+        [JsonField("offset")]
+        public string Offset { get { return _Offset; } set { _Offset = value; } }
+        private string _Offset;
+
+    }
+
+    /// <summary>A validation outcome, or one instant expressed in all supported reversible formats.</summary>
+    public sealed class ToolTimeResponse
+    {
+        /// <summary>success</summary>
+        [JsonField("success")]
+        public bool? Success { get { return _Success; } set { _Success = value; } }
+        private bool? _Success;
+
+        /// <summary>error</summary>
+        [JsonField("error")]
+        public string Error { get { return _Error; } set { _Error = value; } }
+        private string _Error;
+
+        /// <summary>result</summary>
+        [JsonField("result")]
+        public ToolTimeResult Result { get { return _Result; } set { _Result = value; } }
+        private ToolTimeResult _Result;
+
+        /// <summary>offsetChoices</summary>
+        [JsonField("offsetChoices")]
+        public ToolTimeOffsetChoice[] OffsetChoices { get { return _OffsetChoices; } set { _OffsetChoices = value; } }
+        private ToolTimeOffsetChoice[] _OffsetChoices;
+
+    }
+
+    /// <summary>MS2000 preserves input milliseconds. Date input follows Kombine.Flex.Time's two-millisecond truncation; DateInputRounded reports any lost ticks. MI2000 and SS2000 are null outside their reversible Int32 range. MillisecondRemainder is the part lost by SS2000; SecondRemainder is the seconds lost by MI2000. Local is an offset-free ISO wall time in the explicitly supplied IANA TimeZone; Offset identifies the instant.</summary>
+    public sealed class ToolTimeResult
+    {
+        /// <summary>ms2000</summary>
+        [JsonField("ms2000")]
+        public string Ms2000 { get { return _Ms2000; } set { _Ms2000 = value; } }
+        private string _Ms2000;
+
+        /// <summary>mi2000</summary>
+        [JsonField("mi2000")]
+        public string Mi2000 { get { return _Mi2000; } set { _Mi2000 = value; } }
+        private string _Mi2000;
+
+        /// <summary>ss2000</summary>
+        [JsonField("ss2000")]
+        public string Ss2000 { get { return _Ss2000; } set { _Ss2000 = value; } }
+        private string _Ss2000;
+
+        /// <summary>utc</summary>
+        [JsonField("utc")]
+        public string Utc { get { return _Utc; } set { _Utc = value; } }
+        private string _Utc;
+
+        /// <summary>local</summary>
+        [JsonField("local")]
+        public string Local { get { return _Local; } set { _Local = value; } }
+        private string _Local;
+
+        /// <summary>timeZone</summary>
+        [JsonField("timeZone")]
+        public string TimeZone { get { return _TimeZone; } set { _TimeZone = value; } }
+        private string _TimeZone;
+
+        /// <summary>offset</summary>
+        [JsonField("offset")]
+        public string Offset { get { return _Offset; } set { _Offset = value; } }
+        private string _Offset;
+
+        /// <summary>dateInputRounded</summary>
+        [JsonField("dateInputRounded")]
+        public bool? DateInputRounded { get { return _DateInputRounded; } set { _DateInputRounded = value; } }
+        private bool? _DateInputRounded;
+
+        /// <summary>millisecondRemainder</summary>
+        [JsonField("millisecondRemainder")]
+        public string MillisecondRemainder { get { return _MillisecondRemainder; } set { _MillisecondRemainder = value; } }
+        private string _MillisecondRemainder;
+
+        /// <summary>secondRemainder</summary>
+        [JsonField("secondRemainder")]
+        public string SecondRemainder { get { return _SecondRemainder; } set { _SecondRemainder = value; } }
+        private string _SecondRemainder;
+
+    }
+
     /// <summary>Authorized unit with the declared groups for its resolved type. No setting/state values or write permissions are returned.</summary>
     public sealed class UnitDetailsResponse
     {
@@ -4261,6 +4676,71 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("fields")]
         public string[] Fields { get { return _Fields; } set { _Fields = value; } }
         private string[] _Fields;
+
+    }
+
+    /// <summary>Distinct document count and effective inclusive UTC history bounds for the exact authorized unit.</summary>
+    public sealed class UnitDocumentCount
+    {
+        /// <summary>count</summary>
+        [JsonField("count")]
+        public long? Count { get { return _Count; } set { _Count = value; } }
+        private long? _Count;
+
+        /// <summary>from ISO 8601 text, sent unchanged.</summary>
+        [JsonField("from")]
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>through ISO 8601 text, sent unchanged.</summary>
+        [JsonField("through")]
+        public string Through { get { return _Through; } set { _Through = value; } }
+        private string _Through;
+
+    }
+
+    /// <summary>One bounded, sorted document page for the exact authorized unit.</summary>
+    public sealed class UnitDocumentPage
+    {
+        /// <summary>Document identities and authorized unit display metadata.</summary>
+        [JsonField("items")]
+        public BankDocumentItem[] Items { get { return _Items; } set { _Items = value; } }
+        private BankDocumentItem[] _Items;
+
+        /// <summary>Effective inclusive UTC search start. ISO 8601 text, sent unchanged.</summary>
+        [JsonField("from")]
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>Effective inclusive UTC search end. ISO 8601 text, sent unchanged.</summary>
+        [JsonField("through")]
+        public string Through { get { return _Through; } set { _Through = value; } }
+        private string _Through;
+
+        /// <summary>Effective sort field.</summary>
+        [JsonField("sort")]
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>Effective sort direction.</summary>
+        [JsonField("direction")]
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>Effective offset.</summary>
+        [JsonField("offset")]
+        public int? Offset { get { return _Offset; } set { _Offset = value; } }
+        private int? _Offset;
+
+        /// <summary>Effective page size.</summary>
+        [JsonField("limit")]
+        public int? Limit { get { return _Limit; } set { _Limit = value; } }
+        private int? _Limit;
+
+        /// <summary>Another page existed when this query ran.</summary>
+        [JsonField("hasMore")]
+        public bool? HasMore { get { return _HasMore; } set { _HasMore = value; } }
+        private bool? _HasMore;
 
     }
 
@@ -5314,6 +5794,296 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Actual SoapInfo event. Missing duration/amounts remain null; quantity is never inferred from duration.</summary>
+    public sealed class WashDocChartDosing
+    {
+        /// <summary>ms2000</summary>
+        [JsonField("ms2000")]
+        public long? Ms2000 { get { return _Ms2000; } set { _Ms2000 = value; } }
+        private long? _Ms2000;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>durationMs</summary>
+        [JsonField("durationMs")]
+        public long? DurationMs { get { return _DurationMs; } set { _DurationMs = value; } }
+        private long? _DurationMs;
+
+        /// <summary>volumeMl</summary>
+        [JsonField("volumeMl")]
+        public double? VolumeMl { get { return _VolumeMl; } set { _VolumeMl = value; } }
+        private double? _VolumeMl;
+
+        /// <summary>massGrams</summary>
+        [JsonField("massGrams")]
+        public double? MassGrams { get { return _MassGrams; } set { _MassGrams = value; } }
+        private double? _MassGrams;
+
+        /// <summary>process</summary>
+        [JsonField("process")]
+        public string Process { get { return _Process; } set { _Process = value; } }
+        private string _Process;
+
+        /// <summary>step</summary>
+        [JsonField("step")]
+        public string Step { get { return _Step; } set { _Step = value; } }
+        private string _Step;
+
+    }
+
+    /// <summary>A stored Cycle, CycleSub or Error transition. Stable name/value and localization key are independent of the display label.</summary>
+    public sealed class WashDocChartEvent
+    {
+        /// <summary>ms2000</summary>
+        [JsonField("ms2000")]
+        public long? Ms2000 { get { return _Ms2000; } set { _Ms2000 = value; } }
+        private long? _Ms2000;
+
+        /// <summary>kind</summary>
+        [JsonField("kind")]
+        public string Kind { get { return _Kind; } set { _Kind = value; } }
+        private string _Kind;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>value</summary>
+        [JsonField("value")]
+        public double? Value { get { return _Value; } set { _Value = value; } }
+        private double? _Value;
+
+        /// <summary>label</summary>
+        [JsonField("label")]
+        public string Label { get { return _Label; } set { _Label = value; } }
+        private string _Label;
+
+        /// <summary>localization</summary>
+        [JsonField("localization")]
+        public string Localization { get { return _Localization; } set { _Localization = value; } }
+        private string _Localization;
+
+        /// <summary>isCalculated</summary>
+        [JsonField("isCalculated")]
+        public bool? IsCalculated { get { return _IsCalculated; } set { _IsCalculated = value; } }
+        private bool? _IsCalculated;
+
+    }
+
+    /// <summary>One stored timestamp. Null values break curves. Edge samples anchor drawing but are outside the visible window.</summary>
+    public sealed class WashDocChartPoint
+    {
+        /// <summary>ms2000</summary>
+        [JsonField("ms2000")]
+        public long? Ms2000 { get { return _Ms2000; } set { _Ms2000 = value; } }
+        private long? _Ms2000;
+
+        /// <summary>value</summary>
+        [JsonField("value")]
+        public double? Value { get { return _Value; } set { _Value = value; } }
+        private double? _Value;
+
+        /// <summary>isCalculated</summary>
+        [JsonField("isCalculated")]
+        public bool? IsCalculated { get { return _IsCalculated; } set { _IsCalculated = value; } }
+        private bool? _IsCalculated;
+
+        /// <summary>isEdge</summary>
+        [JsonField("isEdge")]
+        public bool? IsEdge { get { return _IsEdge; } set { _IsEdge = value; } }
+        private bool? _IsEdge;
+
+        /// <summary>unit</summary>
+        [JsonField("unit")]
+        public string Unit { get { return _Unit; } set { _Unit = value; } }
+        private string _Unit;
+
+    }
+
+    /// <summary>Renderer-independent WashDoc measurements. All times are UTC milliseconds since 2000-01-01.</summary>
+    public sealed class WashDocChartResponse
+    {
+        /// <summary>documentKid</summary>
+        [JsonField("documentKid")]
+        public string DocumentKid { get { return _DocumentKid; } set { _DocumentKid = value; } }
+        private string _DocumentKid;
+
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>unitName</summary>
+        [JsonField("unitName")]
+        public string UnitName { get { return _UnitName; } set { _UnitName = value; } }
+        private string _UnitName;
+
+        /// <summary>finished</summary>
+        [JsonField("finished")]
+        public bool? Finished { get { return _Finished; } set { _Finished = value; } }
+        private bool? _Finished;
+
+        /// <summary>fromMs2000</summary>
+        [JsonField("fromMs2000")]
+        public long? FromMs2000 { get { return _FromMs2000; } set { _FromMs2000 = value; } }
+        private long? _FromMs2000;
+
+        /// <summary>toMs2000</summary>
+        [JsonField("toMs2000")]
+        public long? ToMs2000 { get { return _ToMs2000; } set { _ToMs2000 = value; } }
+        private long? _ToMs2000;
+
+        /// <summary>startedMs2000</summary>
+        [JsonField("startedMs2000")]
+        public long? StartedMs2000 { get { return _StartedMs2000; } set { _StartedMs2000 = value; } }
+        private long? _StartedMs2000;
+
+        /// <summary>endedMs2000</summary>
+        [JsonField("endedMs2000")]
+        public long? EndedMs2000 { get { return _EndedMs2000; } set { _EndedMs2000 = value; } }
+        private long? _EndedMs2000;
+
+        /// <summary>series</summary>
+        [JsonField("series")]
+        public WashDocChartSeries[] Series { get { return _Series; } set { _Series = value; } }
+        private WashDocChartSeries[] _Series;
+
+        /// <summary>events</summary>
+        [JsonField("events")]
+        public WashDocChartEvent[] Events { get { return _Events; } set { _Events = value; } }
+        private WashDocChartEvent[] _Events;
+
+        /// <summary>signals</summary>
+        [JsonField("signals")]
+        public WashDocChartSignal[] Signals { get { return _Signals; } set { _Signals = value; } }
+        private WashDocChartSignal[] _Signals;
+
+        /// <summary>dosing</summary>
+        [JsonField("dosing")]
+        public WashDocChartDosing[] Dosing { get { return _Dosing; } set { _Dosing = value; } }
+        private WashDocChartDosing[] _Dosing;
+
+        /// <summary>presentation</summary>
+        [JsonField("presentation")]
+        public WashDocPresentation Presentation { get { return _Presentation; } set { _Presentation = value; } }
+        private WashDocPresentation _Presentation;
+
+    }
+
+    /// <summary>A sparse measurement or target series. Unit is null when not known or not uniform. Raw values are not visual band coordinates.</summary>
+    public sealed class WashDocChartSeries
+    {
+        /// <summary>kind</summary>
+        [JsonField("kind")]
+        public string Kind { get { return _Kind; } set { _Kind = value; } }
+        private string _Kind;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>label</summary>
+        [JsonField("label")]
+        public string Label { get { return _Label; } set { _Label = value; } }
+        private string _Label;
+
+        /// <summary>localization</summary>
+        [JsonField("localization")]
+        public string Localization { get { return _Localization; } set { _Localization = value; } }
+        private string _Localization;
+
+        /// <summary>group</summary>
+        [JsonField("group")]
+        public string Group { get { return _Group; } set { _Group = value; } }
+        private string _Group;
+
+        /// <summary>role</summary>
+        [JsonField("role")]
+        public string Role { get { return _Role; } set { _Role = value; } }
+        private string _Role;
+
+        /// <summary>unit</summary>
+        [JsonField("unit")]
+        public string Unit { get { return _Unit; } set { _Unit = value; } }
+        private string _Unit;
+
+        /// <summary>step</summary>
+        [JsonField("step")]
+        public bool? Step { get { return _Step; } set { _Step = value; } }
+        private bool? _Step;
+
+        /// <summary>points</summary>
+        [JsonField("points")]
+        public WashDocChartPoint[] Points { get { return _Points; } set { _Points = value; } }
+        private WashDocChartPoint[] _Points;
+
+    }
+
+    /// <summary>Actual InOutletHeat changes interpreted by the trusted machine profile. Null means unknown or inapplicable, never off. Holds until next stored change.</summary>
+    public sealed class WashDocChartSignal
+    {
+        /// <summary>ms2000</summary>
+        [JsonField("ms2000")]
+        public long? Ms2000 { get { return _Ms2000; } set { _Ms2000 = value; } }
+        private long? _Ms2000;
+
+        /// <summary>flags</summary>
+        [JsonField("flags")]
+        public int? Flags { get { return _Flags; } set { _Flags = value; } }
+        private int? _Flags;
+
+        /// <summary>heat</summary>
+        [JsonField("heat")]
+        public bool? Heat { get { return _Heat; } set { _Heat = value; } }
+        private bool? _Heat;
+
+        /// <summary>inlet</summary>
+        [JsonField("inlet")]
+        public bool? Inlet { get { return _Inlet; } set { _Inlet = value; } }
+        private bool? _Inlet;
+
+        /// <summary>outlet</summary>
+        [JsonField("outlet")]
+        public bool? Outlet { get { return _Outlet; } set { _Outlet = value; } }
+        private bool? _Outlet;
+
+        /// <summary>isCalculated</summary>
+        [JsonField("isCalculated")]
+        public bool? IsCalculated { get { return _IsCalculated; } set { _IsCalculated = value; } }
+        private bool? _IsCalculated;
+
+        /// <summary>Alliance dryer airflow switch. Null for other protocols or unknown input.</summary>
+        [JsonField("airflow")]
+        public bool? Airflow { get { return _Airflow; } set { _Airflow = value; } }
+        private bool? _Airflow;
+
+    }
+
+    /// <summary>Server-selected presentation for the original, decoded UnitType. Group order is a preference, not a measurement filter.</summary>
+    public sealed class WashDocPresentation
+    {
+        /// <summary>unitType</summary>
+        [JsonField("unitType")]
+        public int? UnitType { get { return _UnitType; } set { _UnitType = value; } }
+        private int? _UnitType;
+
+        /// <summary>kind</summary>
+        [JsonField("kind")]
+        public string Kind { get { return _Kind; } set { _Kind = value; } }
+        private string _Kind;
+
+        /// <summary>groupOrder</summary>
+        [JsonField("groupOrder")]
+        public string[] GroupOrder { get { return _GroupOrder; } set { _GroupOrder = value; } }
+        private string[] _GroupOrder;
+
+    }
+
     /// <summary>Public tenant-wide count; does not expose or grant access to any individual account.</summary>
     public sealed class ActiveUsersResponse
     {
@@ -5541,6 +6311,56 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("nextCursor")]
         public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
         private string _NextCursor;
+
+    }
+
+    /// <summary>Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table.</summary>
+    public sealed class PublicWashDocWidgetResponse
+    {
+        /// <summary>documentKid</summary>
+        [JsonField("documentKid")]
+        public string DocumentKid { get { return _DocumentKid; } set { _DocumentKid = value; } }
+        private string _DocumentKid;
+
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>unitName</summary>
+        [JsonField("unitName")]
+        public string UnitName { get { return _UnitName; } set { _UnitName = value; } }
+        private string _UnitName;
+
+        /// <summary>locationName</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>startedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("startedAtUtc")]
+        public string StartedAtUtc { get { return _StartedAtUtc; } set { _StartedAtUtc = value; } }
+        private string _StartedAtUtc;
+
+        /// <summary>endedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("endedAtUtc")]
+        public string EndedAtUtc { get { return _EndedAtUtc; } set { _EndedAtUtc = value; } }
+        private string _EndedAtUtc;
+
+        /// <summary>finished</summary>
+        [JsonField("finished")]
+        public bool? Finished { get { return _Finished; } set { _Finished = value; } }
+        private bool? _Finished;
+
+        /// <summary>graphSvg</summary>
+        [JsonField("graphSvg")]
+        public string GraphSvg { get { return _GraphSvg; } set { _GraphSvg = value; } }
+        private string _GraphSvg;
+
+        /// <summary>refreshAfterSeconds</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
 
     }
 
@@ -5873,6 +6693,35 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Optional query/header parameters for GetBankExportCount. Null values use API defaults.</summary>
+    public sealed class GetBankExportCountOptions
+    {
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>enabledOnly</summary>
+        public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
+        private bool? _EnabledOnly;
+
+        /// <summary>fields</summary>
+        public string Fields { get { return _Fields; } set { _Fields = value; } }
+        private string _Fields;
+
+        /// <summary>bankType</summary>
+        public string BankType { get { return _BankType; } set { _BankType = value; } }
+        private string _BankType;
+
+    }
+
     /// <summary>Optional query/header parameters for GetBanks. Null values use API defaults.</summary>
     public sealed class GetBanksOptions
     {
@@ -5963,6 +6812,31 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>q</summary>
         public string Q { get { return _Q; } set { _Q = value; } }
         private string _Q;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetBankUserExportCount. Null values use API defaults.</summary>
+    public sealed class GetBankUserExportCountOptions
+    {
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>locationKid</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>deleted</summary>
+        public string Deleted { get { return _Deleted; } set { _Deleted = value; } }
+        private string _Deleted;
 
     }
 
@@ -6220,6 +7094,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string Settings { get { return _Settings; } set { _Settings = value; } }
         private string _Settings;
 
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
+
     }
 
     /// <summary>Optional query/header parameters for DownloadUnitDocumentXls. Null values use API defaults.</summary>
@@ -6232,6 +7110,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>Exact comma-separated eSetting names; omit for permitted settings or empty for none.</summary>
         public string Settings { get { return _Settings; } set { _Settings = value; } }
         private string _Settings;
+
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
 
     }
 
@@ -6262,6 +7144,27 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>hours</summary>
         public int? Hours { get { return _Hours; } set { _Hours = value; } }
         private int? _Hours;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetInstallerExportCount. Null values use API defaults.</summary>
+    public sealed class GetInstallerExportCountOptions
+    {
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>includeActivationCode</summary>
+        public bool? IncludeActivationCode { get { return _IncludeActivationCode; } set { _IncludeActivationCode = value; } }
+        private bool? _IncludeActivationCode;
 
     }
 
@@ -6337,6 +7240,35 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>includeCoordinates</summary>
         public bool? IncludeCoordinates { get { return _IncludeCoordinates; } set { _IncludeCoordinates = value; } }
         private bool? _IncludeCoordinates;
+
+        /// <summary>bankKid</summary>
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetLocationCount. Null values use API defaults.</summary>
+    public sealed class GetLocationCountOptions
+    {
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>enabledOnly</summary>
+        public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
+        private bool? _EnabledOnly;
+
+        /// <summary>fields</summary>
+        public string Fields { get { return _Fields; } set { _Fields = value; } }
+        private string _Fields;
 
         /// <summary>bankKid</summary>
         public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
@@ -6473,10 +7405,44 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Optional query/header parameters for GetLocationReservationHistory. Null values use API defaults.</summary>
+    public sealed class GetLocationReservationHistoryOptions
+    {
+        /// <summary>from ISO 8601 text, sent unchanged.</summary>
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>days</summary>
+        public int? Days { get { return _Days; } set { _Days = value; } }
+        private int? _Days;
+
+        /// <summary>Accept-Language</summary>
+        public string AcceptLanguage { get { return _AcceptLanguage; } set { _AcceptLanguage = value; } }
+        private string _AcceptLanguage;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetLocationReservations. Null values use API defaults.</summary>
+    public sealed class GetLocationReservationsOptions
+    {
+        /// <summary>from ISO 8601 text, sent unchanged.</summary>
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>days</summary>
+        public int? Days { get { return _Days; } set { _Days = value; } }
+        private int? _Days;
+
+        /// <summary>Accept-Language</summary>
+        public string AcceptLanguage { get { return _AcceptLanguage; } set { _AcceptLanguage = value; } }
+        private string _AcceptLanguage;
+
+    }
+
     /// <summary>Optional query/header parameters for GetManagers. Null values use API defaults.</summary>
     public sealed class GetManagersOptions
     {
-        /// <summary>Candidate batch size, 1–100, default 50. Keep unchanged while following a cursor.</summary>
+        /// <summary>Candidate batch size, 1–250, default 50. May change while following a cursor.</summary>
         public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
         private int? _PageSize;
 
@@ -6498,12 +7464,59 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Optional query/header parameters for GetManagerExportCount. Null values use API defaults.</summary>
+    public sealed class GetManagerExportCountOptions
+    {
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+    }
+
     /// <summary>Optional query/header parameters for LoginManager. Null values use API defaults.</summary>
     public sealed class LoginManagerOptions
     {
         /// <summary>Optional IPv4/IPv6 address observed by a server-side portal for its browser client. Logged only as caller-reported metadata on failed logins, alongside the API-observed IP. Invalid/multiple values are ignored. Never changes authentication, tenant scope, local-login checks or rate limits.</summary>
         public string XPortalLoginClientIP { get { return _XPortalLoginClientIP; } set { _XPortalLoginClientIP = value; } }
         private string _XPortalLoginClientIP;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetNearestLocations. Null values use API defaults.</summary>
+    public sealed class GetNearestLocationsOptions
+    {
+        /// <summary>latitude</summary>
+        public double? Latitude { get { return _Latitude; } set { _Latitude = value; } }
+        private double? _Latitude;
+
+        /// <summary>longitude</summary>
+        public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
+        private double? _Longitude;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetServiceExportCount. Null values use API defaults.</summary>
+    public sealed class GetServiceExportCountOptions
+    {
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
 
     }
 
@@ -6563,6 +7576,48 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Optional query/header parameters for GetUnitDocuments. Null values use API defaults.</summary>
+    public sealed class GetUnitDocumentsOptions
+    {
+        /// <summary>activity (default) or documentId. Document IDs sort numerically.</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>asc or desc (default).</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>Zero-based offset, up to 100000.</summary>
+        public int? Offset { get { return _Offset; } set { _Offset = value; } }
+        private int? _Offset;
+
+        /// <summary>Page size, 1–100; defaults to 25.</summary>
+        public int? Limit { get { return _Limit; } set { _Limit = value; } }
+        private int? _Limit;
+
+        /// <summary>Optional exact numeric Doc ID or canonical document KID belonging to the selected unit. Applies within the selected date cutoff.</summary>
+        public string Search { get { return _Search; } set { _Search = value; } }
+        private string _Search;
+
+        /// <summary>UTC calendar date (yyyy-MM-dd), inclusive through its last millisecond; defaults to UTC today.</summary>
+        public string Date { get { return _Date; } set { _Date = value; } }
+        private string _Date;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUnitDocumentsCount. Null values use API defaults.</summary>
+    public sealed class GetUnitDocumentsCountOptions
+    {
+        /// <summary>Optional exact numeric Doc ID or canonical document KID belonging to the selected unit. Applies within the selected date cutoff.</summary>
+        public string Search { get { return _Search; } set { _Search = value; } }
+        private string _Search;
+
+        /// <summary>UTC calendar date (yyyy-MM-dd), inclusive through its last millisecond; defaults to UTC today.</summary>
+        public string Date { get { return _Date; } set { _Date = value; } }
+        private string _Date;
+
+    }
+
     /// <summary>Optional query/header parameters for GetUnitDocumentTable. Null values use API defaults.</summary>
     public sealed class GetUnitDocumentTableOptions
     {
@@ -6573,6 +7628,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>Exact comma-separated eSetting names; omit for permitted settings or empty for none.</summary>
         public string Settings { get { return _Settings; } set { _Settings = value; } }
         private string _Settings;
+
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
 
     }
 
@@ -6587,6 +7646,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string Settings { get { return _Settings; } set { _Settings = value; } }
         private string _Settings;
 
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
+
     }
 
     /// <summary>Optional query/header parameters for GetUnitDocumentSvg. Null values use API defaults.</summary>
@@ -6600,9 +7663,159 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string Settings { get { return _Settings; } set { _Settings = value; } }
         private string _Settings;
 
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
+
         /// <summary>width</summary>
         public int? Width { get { return _Width; } set { _Width = value; } }
         private int? _Width;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUnitDocumentSvg2. Null values use API defaults.</summary>
+    public sealed class GetUnitDocumentSvg2Options
+    {
+        /// <summary>Exact comma-separated eState names; omit for permitted states or empty for none.</summary>
+        public string States { get { return _States; } set { _States = value; } }
+        private string _States;
+
+        /// <summary>Exact comma-separated eSetting names; omit for permitted settings or empty for none.</summary>
+        public string Settings { get { return _Settings; } set { _Settings = value; } }
+        private string _Settings;
+
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUnitDocumentGraph. Null values use API defaults.</summary>
+    public sealed class GetUnitDocumentGraphOptions
+    {
+        /// <summary>Exact comma-separated eState names; omit for permitted states or empty for none.</summary>
+        public string States { get { return _States; } set { _States = value; } }
+        private string _States;
+
+        /// <summary>Exact comma-separated eSetting names; omit for permitted settings or empty for none.</summary>
+        public string Settings { get { return _Settings; } set { _Settings = value; } }
+        private string _Settings;
+
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUnitDocumentPng. Null values use API defaults.</summary>
+    public sealed class GetUnitDocumentPngOptions
+    {
+        /// <summary>Exact comma-separated eState names; omit for permitted states or empty for none.</summary>
+        public string States { get { return _States; } set { _States = value; } }
+        private string _States;
+
+        /// <summary>Exact comma-separated eSetting names; omit for permitted settings or empty for none.</summary>
+        public string Settings { get { return _Settings; } set { _Settings = value; } }
+        private string _Settings;
+
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUnitDocumentIcon. Null values use API defaults.</summary>
+    public sealed class GetUnitDocumentIconOptions
+    {
+        /// <summary>Exact comma-separated eState names; omit for permitted states or empty for none.</summary>
+        public string States { get { return _States; } set { _States = value; } }
+        private string _States;
+
+        /// <summary>Exact comma-separated eSetting names; omit for permitted settings or empty for none.</summary>
+        public string Settings { get { return _Settings; } set { _Settings = value; } }
+        private string _Settings;
+
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUnitExportCount. Null values use API defaults.</summary>
+    public sealed class GetUnitExportCountOptions
+    {
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>enabledOnly</summary>
+        public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
+        private bool? _EnabledOnly;
+
+        /// <summary>fields</summary>
+        public string Fields { get { return _Fields; } set { _Fields = value; } }
+        private string _Fields;
+
+        /// <summary>locationKid</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>terminalKid</summary>
+        public string TerminalKid { get { return _TerminalKid; } set { _TerminalKid = value; } }
+        private string _TerminalKid;
+
+        /// <summary>runningOnly</summary>
+        public bool? RunningOnly { get { return _RunningOnly; } set { _RunningOnly = value; } }
+        private bool? _RunningOnly;
+
+        /// <summary>autoOutOfOrderOnly</summary>
+        public bool? AutoOutOfOrderOnly { get { return _AutoOutOfOrderOnly; } set { _AutoOutOfOrderOnly = value; } }
+        private bool? _AutoOutOfOrderOnly;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetTerminalExportCount. Null values use API defaults.</summary>
+    public sealed class GetTerminalExportCountOptions
+    {
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>enabledOnly</summary>
+        public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
+        private bool? _EnabledOnly;
+
+        /// <summary>fields</summary>
+        public string Fields { get { return _Fields; } set { _Fields = value; } }
+        private string _Fields;
+
+        /// <summary>locationKid</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>terminalKid</summary>
+        public string TerminalKid { get { return _TerminalKid; } set { _TerminalKid = value; } }
+        private string _TerminalKid;
+
+        /// <summary>runningOnly</summary>
+        public bool? RunningOnly { get { return _RunningOnly; } set { _RunningOnly = value; } }
+        private bool? _RunningOnly;
 
     }
 
@@ -6714,6 +7927,27 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>userNumber</summary>
         public string UserNumber { get { return _UserNumber; } set { _UserNumber = value; } }
         private string _UserNumber;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUserExportCount. Null values use API defaults.</summary>
+    public sealed class GetUserExportCountOptions
+    {
+        /// <summary>filter</summary>
+        public string Filter { get { return _Filter; } set { _Filter = value; } }
+        private string _Filter;
+
+        /// <summary>sort</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>direction</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>enabledOnly</summary>
+        public bool? EnabledOnly { get { return _EnabledOnly; } set { _EnabledOnly = value; } }
+        private bool? _EnabledOnly;
 
     }
 
@@ -6843,6 +8077,19 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>cursor</summary>
         public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
         private string _Cursor;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetPublicWashDocWidget. Null values use API defaults.</summary>
+    public sealed class GetPublicWashDocWidgetOptions
+    {
+        /// <summary>documentKid</summary>
+        public string DocumentKid { get { return _DocumentKid; } set { _DocumentKid = value; } }
+        private string _DocumentKid;
+
+        /// <summary>unitKid</summary>
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
 
     }
 

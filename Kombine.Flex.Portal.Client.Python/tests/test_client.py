@@ -72,7 +72,7 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(api.get_location_weather("opaque-location")["current"], current)
 
     def test_every_public_operation(self):
-        self.assertEqual(len(CASES), 155)
+        self.assertEqual(len(CASES), 178)
         for case in CASES:
             with self.subTest(operation=case['operation']):
                 response_data = b'PK\x00\xff' if case['binary'] else json.dumps(sample(case['response']), ensure_ascii=False).encode()
@@ -138,7 +138,9 @@ class ContractTests(unittest.TestCase):
         for value in vars(models).values():
             if is_typeddict(value):
                 get_type_hints(value)
-        self.assertEqual(models.ManagerLoginRequest.__required_keys__, frozenset({'email', 'password'}))
+        # Login accepts either email/password or manager KID/API key; no individual field is globally required.
+        self.assertEqual(models.ManagerLoginRequest.__required_keys__, frozenset())
+        self.assertEqual(models.ManagerLoginRequest.__optional_keys__, frozenset({'email', 'password', 'kid', 'apiKey'}))
         current_types = get_args(get_type_hints(models.LocationWeatherResponse)['current'])
         self.assertIn(type(None), current_types)
         self.assertIn(models.LocationWeatherCurrent, current_types)

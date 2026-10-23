@@ -47,6 +47,10 @@ class PortalClient(BaseClient):
         'Ask the portal assistant to discover and combine approved read operations.'
         return self._request('AskPortalAssistant', {}, body)
 
+    def get_bank_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, bank_type: str | None = None) -> DirectoryExportCountResponse:
+        'Count the complete filtered export selection using the same directory authorization and visibility.'
+        return self._request('GetBankExportCount', {'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'bankType': bank_type}, None)
+
     def get_banks(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, bank_type: str | None = None) -> BankDirectoryResponse:
         'List authorized bank identities for Banks2 with selected metadata and stable global ordering.'
         return self._request('GetBanks', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'bankType': bank_type}, None)
@@ -78,6 +82,10 @@ class PortalClient(BaseClient):
     def get_search_bank(self, bank_kid: str) -> SearchResults:
         'Resolve a search result before opening its bank overview, including tenant-wide managers.'
         return self._request('GetSearchBank', {'bankKid': bank_kid}, None)
+
+    def get_bank_user_export_count(self, bank_kid: str, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, location_kid: str | None = None, deleted: str | None = None) -> DirectoryExportCountResponse:
+        'Count the complete filtered export selection using the same directory authorization and visibility.'
+        return self._request('GetBankUserExportCount', {'bankKid': bank_kid, 'filter': filter, 'sort': sort, 'direction': direction, 'locationKid': location_kid, 'deleted': deleted}, None)
 
     def get_bank_users(self, bank_kid: str, *, page_size: int | None = None, cursor: str | None = None, sort: str | None = None, direction: str | None = None, filter: str | None = None, user_kid: str | None = None, location_kid: str | None = None, deleted: str | None = None) -> BankUsersResponse:
         'Read one page of users for a bank.'
@@ -143,13 +151,13 @@ class PortalClient(BaseClient):
         'Downloads a ZIP with one settlement file per group and currency, plus a reconciliation manifest.'
         return self._request('DownloadBankSettlement', {'bankKid': bank_kid, 'period': period, 'format': format}, None)
 
-    def download_unit_document_csv(self, document_kid: str, *, states: str | None = None, settings: str | None = None) -> PortalDownload:
+    def download_unit_document_csv(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'Download a UTF-8 CSV table for one document.'
-        return self._request('DownloadUnitDocumentCsv', {'documentKid': document_kid, 'States': states, 'Settings': settings}, None)
+        return self._request('DownloadUnitDocumentCsv', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
-    def download_unit_document_xls(self, document_kid: str, *, states: str | None = None, settings: str | None = None) -> PortalDownload:
+    def download_unit_document_xls(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'Download an Excel 97–2003 binary .xls workbook for one document.'
-        return self._request('DownloadUnitDocumentXls', {'documentKid': document_kid, 'States': states, 'Settings': settings}, None)
+        return self._request('DownloadUnitDocumentXls', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
     def get_hosting_logs(self, *, environment: str | None = None, application: str | None = None) -> HostingLogsResponse:
         'Read recent DigitalOcean runtime logs for a configured shared app.'
@@ -162,6 +170,10 @@ class PortalClient(BaseClient):
     def set_installer_icon(self, installer_kid: str, body: InstallerIconRequest) -> InstallerIconResponse:
         "Save an installer's selected Person icon."
         return self._request('SetInstallerIcon', {'installerKid': installer_kid}, body)
+
+    def get_installer_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, include_activation_code: bool | None = None) -> DirectoryExportCountResponse:
+        'Count the complete filtered export selection using the same directory authorization and visibility.'
+        return self._request('GetInstallerExportCount', {'filter': filter, 'sort': sort, 'direction': direction, 'includeActivationCode': include_activation_code}, None)
 
     def get_installers(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, include_activation_code: bool | None = None) -> InstallerDirectoryResponse:
         'List installers with locations, tags, account state and last activity.'
@@ -182,6 +194,10 @@ class PortalClient(BaseClient):
     def get_locations(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, include_coordinates: bool | None = None, bank_kid: str | None = None) -> LocationDirectoryResponse:
         'List accessible locations with parent banks, Visma customer numbers and authorized activation codes.'
         return self._request('GetLocations', {'pageSize': page_size, 'cursor': cursor, 'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'includeCoordinates': include_coordinates, 'bankKid': bank_kid}, None)
+
+    def get_location_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, bank_kid: str | None = None) -> LocationCountResponse:
+        'Count every location matching the same filters, selected search columns and permissions as GetLocations.'
+        return self._request('GetLocationCount', {'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'bankKid': bank_kid}, None)
 
     def search_locations(self, *, q: str | None = None) -> SearchResults:
         'Search location Name, Bank (alternative bank name), Zip, Address, VismaCustNo and TeltonikaSMS in Log24.'
@@ -235,6 +251,14 @@ class PortalClient(BaseClient):
         'Read grouped opening hours, upcoming exceptions and the current opening status for a location.'
         return self._request('GetLocationOpeningHours', {'locationKid': location_kid, 'Accept-Language': accept_language}, None)
 
+    def get_location_reservation_history(self, location_kid: str, *, from_: str | None = None, days: int | None = None, accept_language: str | None = None) -> LocationReservationHistoryResponse:
+        "Read bank Log5 reservation history for the location's authorized visible units."
+        return self._request('GetLocationReservationHistory', {'locationKid': location_kid, 'from': from_, 'days': days, 'Accept-Language': accept_language}, None)
+
+    def get_location_reservations(self, location_kid: str, *, from_: str | None = None, days: int | None = None, accept_language: str | None = None) -> LocationReservationsResponse:
+        "Read active tenant Log5 reservations for the location's authorized visible units."
+        return self._request('GetLocationReservations', {'locationKid': location_kid, 'from': from_, 'days': days, 'Accept-Language': accept_language}, None)
+
     def get_location_weather(self, location_kid: str) -> LocationWeatherResponse:
         "Get current weather for the authorized location's stored position or address."
         return self._request('GetLocationWeather', {'locationKid': location_kid}, None)
@@ -275,6 +299,10 @@ class PortalClient(BaseClient):
         'Change Name, Organisation, Enabled, Deleted, RetentionDays, Icon or Email on an administrator.'
         return self._request('SetManagerProfileField', {'managerKid': manager_kid, 'field': field}, body)
 
+    def get_manager_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None) -> DirectoryExportCountResponse:
+        'Count the complete filtered export selection using the same directory authorization and visibility.'
+        return self._request('GetManagerExportCount', {'filter': filter, 'sort': sort, 'direction': direction}, None)
+
     def get_manager(self, manager_kid: str) -> ManagerDirectoryItem:
         'Read one administrator by canonical manager KID for a workspace shortcut.'
         return self._request('GetManager', {'managerKid': manager_kid}, None)
@@ -284,7 +312,7 @@ class PortalClient(BaseClient):
         return self._request('GetManagersWithSameEmail', {'managerKid': manager_kid}, None)
 
     def login_manager(self, body: ManagerLoginRequest, *, x_portal_login_client_ip: str | None = None) -> ManagerSessionResponse:
-        'Log in with a manager email and password.'
+        'Log in with manager email/password or manager username/API key.'
         return self._request('LoginManager', {'X-Portal-Login-Client-IP': x_portal_login_client_ip}, body)
 
     def renew_manager_session(self) -> ManagerSessionResponse:
@@ -311,6 +339,10 @@ class PortalClient(BaseClient):
         'Save your own theme preference.'
         return self._request('SetCurrentManagerTheme', {}, body)
 
+    def get_nearest_locations(self, *, latitude: float | None = None, longitude: float | None = None) -> list[NearestLocationItem]:
+        'Get up to ten authorized locations nearest to a supplied position.'
+        return self._request('GetNearestLocations', {'latitude': latitude, 'longitude': longitude}, None)
+
     def get_manager_count(self) -> PeopleDirectoryCount:
         'Count all visible administrators, independently of the current page/filter.'
         return self._request('GetManagerCount', {}, None)
@@ -322,6 +354,14 @@ class PortalClient(BaseClient):
     def get_my_manager_profile(self) -> PersonalManagerProfile:
         'Read your own personal settings and available person icons.'
         return self._request('GetMyManagerProfile', {}, None)
+
+    def get_my_manager_api_key(self) -> PersonalManagerApiKey:
+        'Read your own API-key configuration status and revision without exposing credentials.'
+        return self._request('GetMyManagerApiKey', {}, None)
+
+    def generate_my_manager_api_key(self, body: PersonalApiKeyRequest) -> PersonalApiKeyResponse:
+        'Generate your own API key and commit its hash to eSetting.ApiKeyHash.'
+        return self._request('GenerateMyManagerApiKey', {}, body)
 
     def get_my_manager_tabs(self) -> PersonalManagerTabs:
         'Read your own tab selection, available tabs and editing eligibility.'
@@ -346,6 +386,10 @@ class PortalClient(BaseClient):
     def change_my_manager_password(self, body: PersonalPasswordRequest) -> PersonalAccountResult:
         'Change your password after reauthentication and repeated new-password entry.'
         return self._request('ChangeMyManagerPassword', {}, body)
+
+    def get_service_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None) -> DirectoryExportCountResponse:
+        'Count the complete filtered export selection using the same directory authorization and visibility.'
+        return self._request('GetServiceExportCount', {'filter': filter, 'sort': sort, 'direction': direction}, None)
 
     def get_services(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None) -> ServiceDirectoryResponse:
         'List concrete service enum identities, including services without saved settings.'
@@ -383,17 +427,57 @@ class PortalClient(BaseClient):
         'Read 25 status rows at a time with next/previous cursors.'
         return self._request('GetTenantStatusPage', {'pageSize': page_size, 'cursor': cursor, 'offset': offset, 'anchor': anchor}, None)
 
-    def get_unit_document_table(self, document_kid: str, *, states: str | None = None, settings: str | None = None) -> DocumentTable:
+    def convert_tool_time(self, bank_kid: str, body: ToolTimeRequest) -> ToolTimeResponse:
+        'Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.'
+        return self._request('ConvertToolTime', {'bankKid': bank_kid}, body)
+
+    def inspect_tool_kid(self, bank_kid: str, body: ToolKidInspectionRequest) -> ToolKidInspectionResponse:
+        'Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.'
+        return self._request('InspectToolKid', {'bankKid': bank_kid}, body)
+
+    def get_unit_documents(self, unit_kid: str, *, sort: str | None = None, direction: str | None = None, offset: int | None = None, limit: int | None = None, search: str | None = None, date: str | None = None) -> UnitDocumentPage:
+        'List document identities produced by the selected Unit for WashDoc3.'
+        return self._request('GetUnitDocuments', {'unitKid': unit_kid, 'Sort': sort, 'Direction': direction, 'Offset': offset, 'Limit': limit, 'Search': search, 'Date': date}, None)
+
+    def get_unit_documents_count(self, unit_kid: str, *, search: str | None = None, date: str | None = None) -> UnitDocumentCount:
+        'Count distinct WashDoc3 document identities for exactly one unit, separately from list loading.'
+        return self._request('GetUnitDocumentsCount', {'unitKid': unit_kid, 'Search': search, 'Date': date}, None)
+
+    def get_unit_document_table(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> DocumentTable:
         "Read a document's table as JSON with original values and column metadata."
-        return self._request('GetUnitDocumentTable', {'documentKid': document_kid, 'States': states, 'Settings': settings}, None)
+        return self._request('GetUnitDocumentTable', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
-    def get_unit_document_html(self, document_kid: str, *, states: str | None = None, settings: str | None = None) -> PortalDownload:
+    def get_unit_document_html(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'View a document as a printable HTML table.'
-        return self._request('GetUnitDocumentHtml', {'documentKid': document_kid, 'States': states, 'Settings': settings}, None)
+        return self._request('GetUnitDocumentHtml', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
-    def get_unit_document_svg(self, document_kid: str, *, states: str | None = None, settings: str | None = None, width: int | None = None) -> PortalDownload:
+    def get_unit_document_svg(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None, width: int | None = None) -> PortalDownload:
         "Render a document's numeric series as an SVG chart, caching completed documents privately."
-        return self._request('GetUnitDocumentSvg', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'width': width}, None)
+        return self._request('GetUnitDocumentSvg', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements, 'width': width}, None)
+
+    def get_unit_document_svg2(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
+        'Render a responsive WashDoc chart with independent text and graph layers.'
+        return self._request('GetUnitDocumentSvg2', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+
+    def get_unit_document_graph(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> WashDocChartResponse:
+        'Read semantic WashDoc graph JSON for interactive charts and image rendering.'
+        return self._request('GetUnitDocumentGraph', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+
+    def get_unit_document_png(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
+        'Render a document KID as a PNG image with the shared local Chart.js renderer.'
+        return self._request('GetUnitDocumentPng', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+
+    def get_unit_document_icon(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
+        'Render a text-free visual WashDoc preview for document lists and icon grids.'
+        return self._request('GetUnitDocumentIcon', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+
+    def get_unit_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, location_kid: str | None = None, terminal_kid: str | None = None, running_only: bool | None = None, auto_out_of_order_only: bool | None = None) -> DirectoryExportCountResponse:
+        'Count the complete filtered export selection using the same directory authorization and visibility.'
+        return self._request('GetUnitExportCount', {'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'locationKid': location_kid, 'terminalKid': terminal_kid, 'runningOnly': running_only, 'autoOutOfOrderOnly': auto_out_of_order_only}, None)
+
+    def get_terminal_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, location_kid: str | None = None, terminal_kid: str | None = None, running_only: bool | None = None) -> DirectoryExportCountResponse:
+        'Count authorized main terminals matching the export filters.'
+        return self._request('GetTerminalExportCount', {'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'locationKid': location_kid, 'terminalKid': terminal_kid, 'runningOnly': running_only}, None)
 
     def get_active_unit_count(self) -> ActiveUnitCountResponse:
         'Count accessible active units for the Units1 navigation icon.'
@@ -438,6 +522,10 @@ class PortalClient(BaseClient):
     def execute_bank_user_command(self, bank_kid: str, user_kid: str, body: UserCommandRequest) -> UserWorkspaceResponse:
         'Execute profile, icon, attributes, tag, location, delete, restore or replace with the revision from GetBankUserWorkspace.'
         return self._request('ExecuteBankUserCommand', {'bankKid': bank_kid, 'userKid': user_kid}, body)
+
+    def get_user_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None) -> DirectoryExportCountResponse:
+        'Count the complete filtered export selection using the same directory authorization and visibility.'
+        return self._request('GetUserExportCount', {'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only}, None)
 
     def get_users(self, *, page_size: int | None = None, cursor: str | None = None, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None) -> UserDirectoryResponse:
         'List authorized residents for UserFinder1 (77).'
@@ -610,6 +698,10 @@ class PortalClient(BaseClient):
     def get_public_active_users(self) -> ActiveUsersResponse:
         "Counts active users in the site's current Log7 during the last 100 days, without login."
         return self._request('GetPublicActiveUsers', {}, None)
+
+    def get_public_wash_doc_widget(self, *, document_kid: str | None = None, unit_kid: str | None = None) -> PublicWashDocWidgetResponse:
+        "Get a square WashDoc widget's graph, machine/location names and document times."
+        return self._request('GetPublicWashDocWidget', {'documentKid': document_kid, 'unitKid': unit_kid}, None)
 
     def get_public_widget_presentation(self) -> PublicWidgetPresentationResponse:
         "Get localized labels and the site's palette for the shared JavaScript widgets."

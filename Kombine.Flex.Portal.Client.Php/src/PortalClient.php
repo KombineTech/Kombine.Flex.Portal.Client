@@ -45,6 +45,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type CameraResourceResponse array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'requiresProximityCheck'?: bool, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
  * @phpstan-type CameraSaveResponse array{'captureId'?: string|null, 'resourceKid'?: string|null}
  * @phpstan-type DatabaseAccessResponse array{'canWrite'?: bool|null, 'checkedAtUtc'?: string}
+ * @phpstan-type DirectoryExportCountResponse array{'count'?: int}
  * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type DocumentColumn array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
  * @phpstan-type DocumentTable array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'columns'?: list<DocumentColumn>|null, 'rows'?: list<DocumentTableRow>|null}
@@ -75,11 +76,16 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type LocationBookingRuleGroup array{'name'?: string|null, 'units'?: list<BookingRuleUnit>|null, 'rules'?: list<LocationBookingRule>|null, 'common'?: bool, 'help'?: string|null}
  * @phpstan-type LocationBookingRulePart array{'text'?: string|null, 'isValue'?: bool}
  * @phpstan-type LocationBookingRulesResponse array{'locationKid'?: string|null, 'calculatedAt'?: string, 'groups'?: list<LocationBookingRuleGroup>|null}
- * @phpstan-type LocationDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'bankName'?: string|null, 'name'?: string|null, 'vismaCustNo'?: string|null, 'bankActivationCode'?: string|null, 'locationActivationCode'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'longitude'?: int|float|null, 'latitude'?: int|float|null, 'teltonikaSms'?: string|null, 'alternativeBankName'?: string|null, 'mask'?: string|null, 'timeZone'?: string|null, 'online'?: bool|null, 'lastContactAt'?: string|null, 'vismaCrAcNo'?: string|null, 'vismaInvoiceVersion'?: string|null, 'vismaOrdre'?: string|null, 'vismaPNTurnover'?: string|null, 'vismaPNSettlement'?: string|null, 'vismaSettlement'?: string|null, 'vismaVAT'?: string|null, 'vismaServiceKey'?: string|null, 'vismaStart'?: string|null, 'vismaNote'?: string|null, 'hiddenNote'?: string|null, 'vismaGuaranteeMonth'?: string|null, 'vismaGuaranteeUnder'?: string|null, 'vismaGuarantee'?: string|null, 'vismaGuaranteeCustomer'?: string|null, 'vismaGuaranteeOver'?: string|null, 'gift'?: string|null, 'giftBegin'?: string|null, 'giftEnd'?: string|null, 'giftSplit'?: string|null, 'giftPN'?: string|null, 'iconKid'?: string|null, 'bankIconKid'?: string|null}
+ * @phpstan-type LocationCountResponse array{'count'?: int}
+ * @phpstan-type LocationDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'bankName'?: string|null, 'name'?: string|null, 'vismaCustNo'?: string|null, 'bankActivationCode'?: string|null, 'locationActivationCode'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'longitude'?: int|float|null, 'latitude'?: int|float|null, 'teltonikaSms'?: string|null, 'alternativeBankName'?: string|null, 'mask'?: string|null, 'timeZone'?: string|null, 'online'?: bool|null, 'lastContactAt'?: string|null, 'vismaCrAcNo'?: string|null, 'vismaInvoiceVersion'?: string|null, 'vismaOrdre'?: string|null, 'vismaPNTurnover'?: string|null, 'vismaPNSettlement'?: string|null, 'vismaSettlement'?: string|null, 'vismaVAT'?: string|null, 'vismaServiceKey'?: string|null, 'vismaStart'?: string|null, 'vismaNote'?: string|null, 'hiddenNote'?: string|null, 'vismaGuaranteeMonth'?: string|null, 'vismaGuaranteeUnder'?: string|null, 'vismaGuarantee'?: string|null, 'vismaGuaranteeCustomer'?: string|null, 'vismaGuaranteeOver'?: string|null, 'gift'?: string|null, 'giftBegin'?: string|null, 'giftEnd'?: string|null, 'giftSplit'?: string|null, 'giftPN'?: string|null, 'soapEnd'?: string|null, 'iconKid'?: string|null, 'bankIconKid'?: string|null}
  * @phpstan-type LocationDirectoryResponse array{'items'?: list<LocationDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
  * @phpstan-type LocationIconResponse array{'kid'?: string|null, 'iconKid'?: string|null, 'offline'?: bool|null, 'status'?: int}
  * @phpstan-type LocationIconsResponse array{'items'?: list<LocationIconResponse>|null}
  * @phpstan-type LocationOpeningHoursResponse array{'locationKid'?: string|null, 'timeZone'?: string|null, 'calculatedAt'?: string, 'groups'?: list<OpeningHoursGroup>|null}
+ * @phpstan-type LocationReservationHistoryItem array{'unitKid'?: string|null, 'startMinute'?: int, 'durationMinutes'?: int, 'revision'?: int, 'cancelled'?: bool, 'userNumber'?: string|null, 'userName'?: string|null, 'userKid'?: string|null}
+ * @phpstan-type LocationReservationHistoryResponse array{'locationKid'?: string|null, 'from'?: string, 'days'?: int, 'items'?: list<LocationReservationHistoryItem>|null}
+ * @phpstan-type LocationReservationResponse array{'unitKid'?: string|null, 'startMinute'?: int, 'durationMinutes'?: int, 'userNumber'?: string|null, 'userName'?: string|null, 'userKid'?: string|null}
+ * @phpstan-type LocationReservationsResponse array{'locationKid'?: string|null, 'from'?: string, 'days'?: int, 'items'?: list<LocationReservationResponse>|null}
  * @phpstan-type LocationUnitsResponse array{'location'?: BankLocationResponse, 'items'?: list<UnitOverviewResponse>|null}
  * @phpstan-type LocationWeatherCurrent array{'observedAtUtc'?: string, 'retrievedAtUtc'?: string, 'temperatureCelsius'?: int|float, 'apparentTemperatureCelsius'?: int|float|null, 'windSpeedMetresPerSecond'?: int|float|null, 'precipitationMillimetres'?: int|float|null, 'relativeHumidityPercent'?: int|float|null, 'weatherCode'?: int|null, 'isDay'?: bool|null}
  * @phpstan-type LocationWeatherResponse array{'locationKid'?: string|null, 'status'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'positionSource'?: string|null, 'current'?: LocationWeatherCurrent|null}
@@ -93,7 +99,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ManagerKidChangeRequest array{'resourceKid': string|null, 'enabled'?: bool|null, 'expectedRevision': string|null}
  * @phpstan-type ManagerKidChangeResponse array{'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool}
  * @phpstan-type ManagerLoginErrorResponse array{'code'?: string|null}
- * @phpstan-type ManagerLoginRequest array{'email': string, 'password': string}
+ * @phpstan-type ManagerLoginRequest array{'email'?: string|null, 'password'?: string|null, 'kid'?: string|null, 'apiKey'?: string|null}
  * @phpstan-type ManagerOperationPermissionResponse array{'resource'?: string|null, 'level'?: string|null, 'canRead'?: bool, 'canWrite'?: bool, 'canCreate'?: bool, 'flags'?: int|null, 'canDelete'?: bool, 'canRenameExternalId'?: bool, 'canRename'?: bool}
  * @phpstan-type ManagerPasswordResetResponse array{'code'?: string|null}
  * @phpstan-type ManagerPermissionChangeRequest array{'flag'?: int|null, 'enabled'?: bool|null, 'expectedFlags': int|null}
@@ -112,6 +118,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ManagerTabResponse array{'id'?: int, 'name'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type ManagerThemeRequest array{'themeMode': eThemeMode}
  * @phpstan-type ManagerThemeResponse array{'themeMode'?: eThemeMode}
+ * @phpstan-type NearestLocationItem array{'kid'?: string|null, 'name'?: string|null, 'bankName'?: string|null, 'iconKid'?: string|null, 'distanceMeters'?: int|float}
  * @phpstan-type ObjectAddressResponse array{'kid'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'latitude'?: int|null, 'longitude'?: int|null, 'autoLatitudeLongitude'?: int|null, 'revision'?: string|null, 'outcome'?: string|null, 'canWrite'?: bool}
  * @phpstan-type ObjectAddressRevisionRequest array{'expectedRevision': string|null}
  * @phpstan-type OpeningHoursGroup array{'units'?: list<OpeningHoursUnit>|null, 'weekly'?: list<OpeningHoursLine>|null, 'exceptions'?: list<OpeningHoursLine>|null, 'isOpenNow'?: bool|null, 'nextChange'?: string|null}
@@ -119,8 +126,11 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type OpeningHoursUnit array{'kid'?: string|null, 'name'?: string|null}
  * @phpstan-type PeopleDirectoryCount array{'count'?: int, 'iconKid'?: string|null}
  * @phpstan-type PersonalAccountResult array{'code'?: string|null}
+ * @phpstan-type PersonalApiKeyRequest array{'revision': string|null}
+ * @phpstan-type PersonalApiKeyResponse array{'apiKey'?: string|null, 'details'?: PersonalManagerApiKey}
  * @phpstan-type PersonalEmailConfirmation array{'token': string|null}
  * @phpstan-type PersonalEmailRequest array{'email': string|null, 'currentPassword': string|null, 'language'?: string|null}
+ * @phpstan-type PersonalManagerApiKey array{'hasApiKey'?: bool, 'revision'?: string|null}
  * @phpstan-type PersonalManagerProfile array{'kid'?: string|null, 'name'?: string|null, 'organisation'?: string|null, 'iconKid'?: string|null, 'email'?: string|null, 'emailVerified'?: bool, 'themeMode'?: eThemeMode, 'revision'?: string|null, 'availableIcons'?: list<string>|null, 'retentionDays'?: int, 'iconSet'?: string|null}
  * @phpstan-type PersonalManagerTab array{'id'?: int, 'name'?: string|null}
  * @phpstan-type PersonalManagerTabs array{'kid'?: string|null, 'tabs'?: list<PersonalManagerTab>|null, 'availableTabs'?: list<PersonalManagerTab>|null, 'revision'?: string|null, 'canEdit'?: bool}
@@ -146,9 +156,18 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type TenantStatusPageResponse array{'status'?: TenantStatusResponse, 'offset'?: int, 'totalCount'?: int, 'previousCursor'?: string|null, 'nextCursor'?: string|null}
  * @phpstan-type TenantStatusResponse array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'sources'?: list<TenantStatusSourceResult>|null, 'items'?: list<TenantStatusItem>|null}
  * @phpstan-type TenantStatusSourceResult array{'kind'?: string|null, 'count'?: int, 'hasMore'?: bool, 'errorCode'?: string|null}
+ * @phpstan-type ToolKidField array{'name'?: string|null, 'value'?: string|null, 'enumName'?: string|null, 'enumNumber'?: string|null, 'index'?: int|null}
+ * @phpstan-type ToolKidInspectionRequest array{'kid'?: string|null}
+ * @phpstan-type ToolKidInspectionResponse array{'canonicalKid'?: string|null, 'fields'?: list<ToolKidField>|null, 'normalized'?: bool}
+ * @phpstan-type ToolTimeOffsetChoice array{'offset'?: string|null, 'utc'?: string|null}
+ * @phpstan-type ToolTimeRequest array{'format'?: string|null, 'value'?: string|null, 'timeZone'?: string|null, 'offset'?: string|null}
+ * @phpstan-type ToolTimeResponse array{'success'?: bool, 'error'?: string|null, 'result'?: ToolTimeResult, 'offsetChoices'?: list<ToolTimeOffsetChoice>|null}
+ * @phpstan-type ToolTimeResult array{'ms2000'?: string|null, 'mi2000'?: string|null, 'ss2000'?: string|null, 'utc'?: string|null, 'local'?: string|null, 'timeZone'?: string|null, 'offset'?: string|null, 'dateInputRounded'?: bool, 'millisecondRemainder'?: string|null, 'secondRemainder'?: string|null}
  * @phpstan-type UnitDetailsResponse array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'descriptorAvailable'?: bool, 'settingGroups'?: list<string>|null, 'stateGroups'?: list<string>|null}
  * @phpstan-type UnitDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null, 'errorUnit'?: string|null, 'autoOutOfOrder'?: string|null, 'versionMinor'?: string|null, 'bootReason'?: string|null, 'booted'?: string|null, 'firmware'?: string|null, 'storageCardSerialNumber'?: string|null, 'page'?: string|null, 'backLight'?: string|null, 'terminal'?: UnitTerminalResponse, 'progress'?: UnitProgressResponse}
  * @phpstan-type UnitDirectoryResponse array{'items'?: list<UnitDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
+ * @phpstan-type UnitDocumentCount array{'count'?: int, 'from'?: string, 'through'?: string}
+ * @phpstan-type UnitDocumentPage array{'items'?: list<BankDocumentItem>|null, 'from'?: string, 'through'?: string, 'sort'?: string|null, 'direction'?: string|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool}
  * @phpstan-type UnitGroupFieldResponse array{'name'?: string|null, 'valueType'?: string|null, 'scope'?: string|null, 'valueStatus'?: string|null, 'value'?: string|null, 'ms2000'?: int|null, 'canEdit'?: bool, 'revision'?: string|null, 'required'?: bool, 'minimum'?: int|null, 'maximum'?: int|null, 'options'?: list<UnitSettingOption>|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse, 'canReadHistory'?: bool, 'hasHistory'?: bool, 'valueFormat'?: string|null, 'pattern'?: string|null}
  * @phpstan-type UnitGroupResponse array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'kind'?: string|null, 'group'?: string|null, 'items'?: list<UnitGroupFieldResponse>|null}
  * @phpstan-type UnitIconResponse array{'kid'?: string|null, 'iconKid'?: string|null, 'offline'?: bool|null, 'status'?: int}
@@ -182,6 +201,13 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserTagResponse array{'kid'?: string|null, 'state'?: string|null}
  * @phpstan-type UserWorkspaceResponse array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'number'?: string|null, 'deletedAtUtc'?: string|null, 'deleteAtUtc'?: string|null, 'locations'?: list<UserScopeState>|null, 'tags'?: list<UserScopeState>|null, 'attributes'?: list<UserAttributeInput>|null, 'canWrite'?: bool, 'canCreate'?: bool, 'synchronization'?: string|null, 'canDelete'?: bool, 'canRenameExternalId'?: bool, 'canRename'?: bool, 'iconKid'?: string|null, 'availableIcons'?: list<string>|null, 'canEditIcon'?: bool}
  * @phpstan-type ValidationProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
+ * @phpstan-type WashDocChartDosing array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
+ * @phpstan-type WashDocChartEvent array{'ms2000'?: int, 'kind'?: string|null, 'name'?: string|null, 'value'?: int|float|null, 'label'?: string|null, 'localization'?: string|null, 'isCalculated'?: bool}
+ * @phpstan-type WashDocChartPoint array{'ms2000'?: int, 'value'?: int|float|null, 'isCalculated'?: bool, 'isEdge'?: bool, 'unit'?: string|null}
+ * @phpstan-type WashDocChartResponse array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'startedMs2000'?: int|null, 'endedMs2000'?: int|null, 'series'?: list<WashDocChartSeries>|null, 'events'?: list<WashDocChartEvent>|null, 'signals'?: list<WashDocChartSignal>|null, 'dosing'?: list<WashDocChartDosing>|null, 'presentation'?: WashDocPresentation}
+ * @phpstan-type WashDocChartSeries array{'kind'?: string|null, 'name'?: string|null, 'label'?: string|null, 'localization'?: string|null, 'group'?: string|null, 'role'?: string|null, 'unit'?: string|null, 'step'?: bool, 'points'?: list<WashDocChartPoint>|null}
+ * @phpstan-type WashDocChartSignal array{'ms2000'?: int, 'flags'?: int|null, 'heat'?: bool|null, 'inlet'?: bool|null, 'outlet'?: bool|null, 'isCalculated'?: bool, 'airflow'?: bool|null}
+ * @phpstan-type WashDocPresentation array{'unitType'?: int|null, 'kind'?: string|null, 'groupOrder'?: list<string>|null}
  * @phpstan-type eThemeMode int
  * @phpstan-type ActiveUsersResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackDays'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string}
  * @phpstan-type ApiStatusResponse array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|null}
@@ -192,6 +218,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PublicMachineErrorsPage array{'items'?: list<PublicMachineError>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
  * @phpstan-type PublicScopedProgressItem array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string|null, 'doneAtUtc'?: string|null, 'progress'?: UnitProgressResponse}
  * @phpstan-type PublicScopedProgressResponse array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PublicScopedProgressItem>|null, 'nextCursor'?: string|null}
+ * @phpstan-type PublicWashDocWidgetResponse array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'endedAtUtc'?: string|null, 'finished'?: bool, 'graphSvg'?: string|null, 'refreshAfterSeconds'?: int}
  * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null}
  * @phpstan-type PurchaseCurrencySnapshot array{'currency'?: string|null, 'count'?: int, 'amount'?: int|float}
  * @phpstan-type PurchaseHeatmapPoint array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
@@ -323,6 +350,16 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Count the complete filtered export selection using the same directory authorization and visibility.
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'bankType'?: string} $options
+     * @return DirectoryExportCountResponse
+     */
+    public function getBankExportCount(array $options = []): mixed
+    {
+        return $this->request('GetBankExportCount', [] + $options, null);
+    }
+
+    /**
      * List authorized bank identities for Banks2 with selected metadata and stable global ordering.
      * @param array{'pageSize'?: int, 'cursor'?: string, 'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'bankType'?: string} $options
      * @return BankDirectoryResponse
@@ -400,6 +437,17 @@ final class PortalClient extends BaseClient
     public function getSearchBank(mixed $bankKid): mixed
     {
         return $this->request('GetSearchBank', ['bankKid' => $bankKid], null);
+    }
+
+    /**
+     * Count the complete filtered export selection using the same directory authorization and visibility.
+     * @param string $bankKid
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'locationKid'?: string, 'deleted'?: string} $options
+     * @return DirectoryExportCountResponse
+     */
+    public function getBankUserExportCount(mixed $bankKid, array $options = []): mixed
+    {
+        return $this->request('GetBankUserExportCount', ['bankKid' => $bankKid] + $options, null);
     }
 
     /**
@@ -582,7 +630,7 @@ final class PortalClient extends BaseClient
      * Download a UTF-8 CSV table for one document.
      * @param string $documentKid
      * @param resource $destination Writable stream; may contain partial data on failure.
-     * @param array{'States'?: string, 'Settings'?: string} $options
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DownloadResponse
      */
     public function downloadUnitDocumentCsv(mixed $documentKid, mixed $destination, array $options = []): mixed
@@ -594,7 +642,7 @@ final class PortalClient extends BaseClient
      * Download an Excel 97–2003 binary .xls workbook for one document.
      * @param string $documentKid
      * @param resource $destination Writable stream; may contain partial data on failure.
-     * @param array{'States'?: string, 'Settings'?: string} $options
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DownloadResponse
      */
     public function downloadUnitDocumentXls(mixed $documentKid, mixed $destination, array $options = []): mixed
@@ -631,6 +679,16 @@ final class PortalClient extends BaseClient
     public function setInstallerIcon(mixed $installerKid, #[\SensitiveParameter] array $body): mixed
     {
         return $this->request('SetInstallerIcon', ['installerKid' => $installerKid], $body);
+    }
+
+    /**
+     * Count the complete filtered export selection using the same directory authorization and visibility.
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'includeActivationCode'?: bool} $options
+     * @return DirectoryExportCountResponse
+     */
+    public function getInstallerExportCount(array $options = []): mixed
+    {
+        return $this->request('GetInstallerExportCount', [] + $options, null);
     }
 
     /**
@@ -680,6 +738,16 @@ final class PortalClient extends BaseClient
     public function getLocations(array $options = []): mixed
     {
         return $this->request('GetLocations', [] + $options, null);
+    }
+
+    /**
+     * Count every location matching the same filters, selected search columns and permissions as GetLocations.
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'bankKid'?: string} $options
+     * @return LocationCountResponse
+     */
+    public function getLocationCount(array $options = []): mixed
+    {
+        return $this->request('GetLocationCount', [] + $options, null);
     }
 
     /**
@@ -828,6 +896,28 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Read bank Log5 reservation history for the location's authorized visible units.
+     * @param string $locationKid
+     * @param array{'from'?: string, 'days'?: int, 'Accept-Language'?: string} $options
+     * @return LocationReservationHistoryResponse
+     */
+    public function getLocationReservationHistory(mixed $locationKid, array $options = []): mixed
+    {
+        return $this->request('GetLocationReservationHistory', ['locationKid' => $locationKid] + $options, null);
+    }
+
+    /**
+     * Read active tenant Log5 reservations for the location's authorized visible units.
+     * @param string $locationKid
+     * @param array{'from'?: string, 'days'?: int, 'Accept-Language'?: string} $options
+     * @return LocationReservationsResponse
+     */
+    public function getLocationReservations(mixed $locationKid, array $options = []): mixed
+    {
+        return $this->request('GetLocationReservations', ['locationKid' => $locationKid] + $options, null);
+    }
+
+    /**
      * Get current weather for the authorized location's stored position or address.
      * @param string $locationKid
      * @return LocationWeatherResponse
@@ -934,6 +1024,16 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Count the complete filtered export selection using the same directory authorization and visibility.
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string} $options
+     * @return DirectoryExportCountResponse
+     */
+    public function getManagerExportCount(array $options = []): mixed
+    {
+        return $this->request('GetManagerExportCount', [] + $options, null);
+    }
+
+    /**
      * Read one administrator by canonical manager KID for a workspace shortcut.
      * @param string $managerKid
      * @return ManagerDirectoryItem
@@ -954,7 +1054,7 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * Log in with a manager email and password.
+     * Log in with manager email/password or manager username/API key.
      * @param ManagerLoginRequest $body
      * @param array{'X-Portal-Login-Client-IP'?: string} $options
      * @return ManagerSessionResponse
@@ -1025,6 +1125,16 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Get up to ten authorized locations nearest to a supplied position.
+     * @param array{'latitude'?: int|float, 'longitude'?: int|float} $options
+     * @return list<NearestLocationItem>
+     */
+    public function getNearestLocations(array $options = []): mixed
+    {
+        return $this->request('GetNearestLocations', [] + $options, null);
+    }
+
+    /**
      * Count all visible administrators, independently of the current page/filter.
      * @return PeopleDirectoryCount
      */
@@ -1049,6 +1159,25 @@ final class PortalClient extends BaseClient
     public function getMyManagerProfile(): mixed
     {
         return $this->request('GetMyManagerProfile', [], null);
+    }
+
+    /**
+     * Read your own API-key configuration status and revision without exposing credentials.
+     * @return PersonalManagerApiKey
+     */
+    public function getMyManagerApiKey(): mixed
+    {
+        return $this->request('GetMyManagerApiKey', [], null);
+    }
+
+    /**
+     * Generate your own API key and commit its hash to eSetting.ApiKeyHash.
+     * @param PersonalApiKeyRequest $body
+     * @return PersonalApiKeyResponse
+     */
+    public function generateMyManagerApiKey(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('GenerateMyManagerApiKey', [], $body);
     }
 
     /**
@@ -1110,6 +1239,16 @@ final class PortalClient extends BaseClient
     public function changeMyManagerPassword(#[\SensitiveParameter] array $body): mixed
     {
         return $this->request('ChangeMyManagerPassword', [], $body);
+    }
+
+    /**
+     * Count the complete filtered export selection using the same directory authorization and visibility.
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string} $options
+     * @return DirectoryExportCountResponse
+     */
+    public function getServiceExportCount(array $options = []): mixed
+    {
+        return $this->request('GetServiceExportCount', [] + $options, null);
     }
 
     /**
@@ -1207,9 +1346,53 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.
+     * @param string $bankKid
+     * @param ToolTimeRequest $body
+     * @return ToolTimeResponse
+     */
+    public function convertToolTime(mixed $bankKid, #[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('ConvertToolTime', ['bankKid' => $bankKid], $body);
+    }
+
+    /**
+     * Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.
+     * @param string $bankKid
+     * @param ToolKidInspectionRequest $body
+     * @return ToolKidInspectionResponse
+     */
+    public function inspectToolKid(mixed $bankKid, #[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('InspectToolKid', ['bankKid' => $bankKid], $body);
+    }
+
+    /**
+     * List document identities produced by the selected Unit for WashDoc3.
+     * @param string $unitKid
+     * @param array{'Sort'?: string, 'Direction'?: string, 'Offset'?: int, 'Limit'?: int, 'Search'?: string, 'Date'?: string} $options
+     * @return UnitDocumentPage
+     */
+    public function getUnitDocuments(mixed $unitKid, array $options = []): mixed
+    {
+        return $this->request('GetUnitDocuments', ['unitKid' => $unitKid] + $options, null);
+    }
+
+    /**
+     * Count distinct WashDoc3 document identities for exactly one unit, separately from list loading.
+     * @param string $unitKid
+     * @param array{'Search'?: string, 'Date'?: string} $options
+     * @return UnitDocumentCount
+     */
+    public function getUnitDocumentsCount(mixed $unitKid, array $options = []): mixed
+    {
+        return $this->request('GetUnitDocumentsCount', ['unitKid' => $unitKid] + $options, null);
+    }
+
+    /**
      * Read a document's table as JSON with original values and column metadata.
      * @param string $documentKid
-     * @param array{'States'?: string, 'Settings'?: string} $options
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DocumentTable
      */
     public function getUnitDocumentTable(mixed $documentKid, array $options = []): mixed
@@ -1221,7 +1404,7 @@ final class PortalClient extends BaseClient
      * View a document as a printable HTML table.
      * @param string $documentKid
      * @param resource $destination Writable stream; may contain partial data on failure.
-     * @param array{'States'?: string, 'Settings'?: string} $options
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DownloadResponse
      */
     public function getUnitDocumentHtml(mixed $documentKid, mixed $destination, array $options = []): mixed
@@ -1233,12 +1416,79 @@ final class PortalClient extends BaseClient
      * Render a document's numeric series as an SVG chart, caching completed documents privately.
      * @param string $documentKid
      * @param resource $destination Writable stream; may contain partial data on failure.
-     * @param array{'States'?: string, 'Settings'?: string, 'width'?: int} $options
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool, 'width'?: int} $options
      * @return DownloadResponse
      */
     public function getUnitDocumentSvg(mixed $documentKid, mixed $destination, array $options = []): mixed
     {
         return $this->request('GetUnitDocumentSvg', ['documentKid' => $documentKid] + $options, null, $destination);
+    }
+
+    /**
+     * Render a responsive WashDoc chart with independent text and graph layers.
+     * @param string $documentKid
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
+     * @return DownloadResponse
+     */
+    public function getUnitDocumentSvg2(mixed $documentKid, mixed $destination, array $options = []): mixed
+    {
+        return $this->request('GetUnitDocumentSvg2', ['documentKid' => $documentKid] + $options, null, $destination);
+    }
+
+    /**
+     * Read semantic WashDoc graph JSON for interactive charts and image rendering.
+     * @param string $documentKid
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
+     * @return WashDocChartResponse
+     */
+    public function getUnitDocumentGraph(mixed $documentKid, array $options = []): mixed
+    {
+        return $this->request('GetUnitDocumentGraph', ['documentKid' => $documentKid] + $options, null);
+    }
+
+    /**
+     * Render a document KID as a PNG image with the shared local Chart.js renderer.
+     * @param string $documentKid
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
+     * @return DownloadResponse
+     */
+    public function getUnitDocumentPng(mixed $documentKid, mixed $destination, array $options = []): mixed
+    {
+        return $this->request('GetUnitDocumentPng', ['documentKid' => $documentKid] + $options, null, $destination);
+    }
+
+    /**
+     * Render a text-free visual WashDoc preview for document lists and icon grids.
+     * @param string $documentKid
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
+     * @return DownloadResponse
+     */
+    public function getUnitDocumentIcon(mixed $documentKid, mixed $destination, array $options = []): mixed
+    {
+        return $this->request('GetUnitDocumentIcon', ['documentKid' => $documentKid] + $options, null, $destination);
+    }
+
+    /**
+     * Count the complete filtered export selection using the same directory authorization and visibility.
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'locationKid'?: string, 'terminalKid'?: string, 'runningOnly'?: bool, 'autoOutOfOrderOnly'?: bool} $options
+     * @return DirectoryExportCountResponse
+     */
+    public function getUnitExportCount(array $options = []): mixed
+    {
+        return $this->request('GetUnitExportCount', [] + $options, null);
+    }
+
+    /**
+     * Count authorized main terminals matching the export filters.
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'locationKid'?: string, 'terminalKid'?: string, 'runningOnly'?: bool} $options
+     * @return DirectoryExportCountResponse
+     */
+    public function getTerminalExportCount(array $options = []): mixed
+    {
+        return $this->request('GetTerminalExportCount', [] + $options, null);
     }
 
     /**
@@ -1356,6 +1606,16 @@ final class PortalClient extends BaseClient
     public function executeBankUserCommand(mixed $bankKid, mixed $userKid, #[\SensitiveParameter] array $body): mixed
     {
         return $this->request('ExecuteBankUserCommand', ['bankKid' => $bankKid, 'userKid' => $userKid], $body);
+    }
+
+    /**
+     * Count the complete filtered export selection using the same directory authorization and visibility.
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool} $options
+     * @return DirectoryExportCountResponse
+     */
+    public function getUserExportCount(array $options = []): mixed
+    {
+        return $this->request('GetUserExportCount', [] + $options, null);
     }
 
     /**
@@ -1849,6 +2109,16 @@ final class PortalClient extends BaseClient
     public function getPublicActiveUsers(): mixed
     {
         return $this->request('GetPublicActiveUsers', [], null);
+    }
+
+    /**
+     * Get a square WashDoc widget's graph, machine/location names and document times.
+     * @param array{'documentKid'?: string, 'unitKid'?: string} $options
+     * @return PublicWashDocWidgetResponse
+     */
+    public function getPublicWashDocWidget(array $options = []): mixed
+    {
+        return $this->request('GetPublicWashDocWidget', [] + $options, null);
     }
 
     /**

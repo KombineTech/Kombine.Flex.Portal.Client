@@ -1111,6 +1111,16 @@
       },
       "additionalProperties": false
     },
+    "DirectoryExportCountResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "additionalProperties": false
+    },
     "DocumentCell": {
       "type": "object",
       "properties": {
@@ -1855,6 +1865,16 @@
       },
       "additionalProperties": false
     },
+    "LocationCountResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "additionalProperties": false
+    },
     "LocationDirectoryItem": {
       "type": "object",
       "properties": {
@@ -2025,6 +2045,10 @@
           "type": "string",
           "nullable": true
         },
+        "soapEnd": {
+          "type": "string",
+          "nullable": true
+        },
         "iconKid": {
           "type": "string",
           "nullable": true
@@ -2117,6 +2141,123 @@
           "type": "array",
           "items": {
             "$ref": "#/components/schemas/OpeningHoursGroup"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocationReservationHistoryItem": {
+      "type": "object",
+      "properties": {
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "startMinute": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "durationMinutes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "revision": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cancelled": {
+          "type": "boolean"
+        },
+        "userNumber": {
+          "type": "string",
+          "nullable": true
+        },
+        "userName": {
+          "type": "string",
+          "nullable": true
+        },
+        "userKid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocationReservationHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "from": {
+          "type": "string",
+          "format": "date"
+        },
+        "days": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/LocationReservationHistoryItem"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocationReservationResponse": {
+      "type": "object",
+      "properties": {
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "startMinute": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "durationMinutes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "userNumber": {
+          "type": "string",
+          "nullable": true
+        },
+        "userName": {
+          "type": "string",
+          "nullable": true
+        },
+        "userKid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "LocationReservationsResponse": {
+      "type": "object",
+      "properties": {
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "from": {
+          "type": "string",
+          "format": "date"
+        },
+        "days": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/LocationReservationResponse"
           },
           "nullable": true
         }
@@ -2475,18 +2616,24 @@
       "additionalProperties": false
     },
     "ManagerLoginRequest": {
-      "required": [
-        "email",
-        "password"
-      ],
       "type": "object",
       "properties": {
         "email": {
           "type": "string",
-          "format": "email"
+          "format": "email",
+          "nullable": true
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "nullable": true
+        },
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "apiKey": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -2977,6 +3124,32 @@
       },
       "additionalProperties": false
     },
+    "NearestLocationItem": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankName": {
+          "type": "string",
+          "nullable": true
+        },
+        "iconKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "distanceMeters": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "additionalProperties": false
+    },
     "ObjectAddressResponse": {
       "type": "object",
       "properties": {
@@ -3146,6 +3319,32 @@
       },
       "additionalProperties": false
     },
+    "PersonalApiKeyRequest": {
+      "required": [
+        "revision"
+      ],
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PersonalApiKeyResponse": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string",
+          "nullable": true
+        },
+        "details": {
+          "$ref": "#/components/schemas/PersonalManagerApiKey"
+        }
+      },
+      "additionalProperties": false
+    },
     "PersonalEmailConfirmation": {
       "required": [
         "token"
@@ -3175,6 +3374,19 @@
           "nullable": true
         },
         "language": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PersonalManagerApiKey": {
+      "type": "object",
+      "properties": {
+        "hasApiKey": {
+          "type": "boolean"
+        },
+        "revision": {
           "type": "string",
           "nullable": true
         }
@@ -3845,6 +4057,167 @@
       },
       "additionalProperties": false
     },
+    "ToolKidField": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "value": {
+          "type": "string",
+          "nullable": true
+        },
+        "enumName": {
+          "type": "string",
+          "nullable": true
+        },
+        "enumNumber": {
+          "type": "string",
+          "nullable": true
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ToolKidInspectionRequest": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ToolKidInspectionResponse": {
+      "type": "object",
+      "properties": {
+        "canonicalKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ToolKidField"
+          },
+          "nullable": true
+        },
+        "normalized": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ToolTimeOffsetChoice": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "string",
+          "nullable": true
+        },
+        "utc": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ToolTimeRequest": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string",
+          "nullable": true
+        },
+        "value": {
+          "type": "string",
+          "nullable": true
+        },
+        "timeZone": {
+          "type": "string",
+          "nullable": true
+        },
+        "offset": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ToolTimeResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "error": {
+          "type": "string",
+          "nullable": true
+        },
+        "result": {
+          "$ref": "#/components/schemas/ToolTimeResult"
+        },
+        "offsetChoices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ToolTimeOffsetChoice"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ToolTimeResult": {
+      "type": "object",
+      "properties": {
+        "ms2000": {
+          "type": "string",
+          "nullable": true
+        },
+        "mi2000": {
+          "type": "string",
+          "nullable": true
+        },
+        "ss2000": {
+          "type": "string",
+          "nullable": true
+        },
+        "utc": {
+          "type": "string",
+          "nullable": true
+        },
+        "local": {
+          "type": "string",
+          "nullable": true
+        },
+        "timeZone": {
+          "type": "string",
+          "nullable": true
+        },
+        "offset": {
+          "type": "string",
+          "nullable": true
+        },
+        "dateInputRounded": {
+          "type": "boolean"
+        },
+        "millisecondRemainder": {
+          "type": "string",
+          "nullable": true
+        },
+        "secondRemainder": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "UnitDetailsResponse": {
       "type": "object",
       "properties": {
@@ -4015,6 +4388,64 @@
             "type": "string"
           },
           "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "UnitDocumentCount": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "through": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "UnitDocumentPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/BankDocumentItem"
+          },
+          "nullable": true
+        },
+        "from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "through": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sort": {
+          "type": "string",
+          "nullable": true
+        },
+        "direction": {
+          "type": "string",
+          "nullable": true
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "hasMore": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false
@@ -4991,6 +5422,272 @@
       },
       "additionalProperties": {}
     },
+    "WashDocChartDosing": {
+      "type": "object",
+      "properties": {
+        "ms2000": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "durationMs": {
+          "type": "integer",
+          "format": "int64",
+          "nullable": true
+        },
+        "volumeMl": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "massGrams": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "process": {
+          "type": "string",
+          "nullable": true
+        },
+        "step": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WashDocChartEvent": {
+      "type": "object",
+      "properties": {
+        "ms2000": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "kind": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "value": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "label": {
+          "type": "string",
+          "nullable": true
+        },
+        "localization": {
+          "type": "string",
+          "nullable": true
+        },
+        "isCalculated": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WashDocChartPoint": {
+      "type": "object",
+      "properties": {
+        "ms2000": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "value": {
+          "type": "number",
+          "format": "double",
+          "nullable": true
+        },
+        "isCalculated": {
+          "type": "boolean"
+        },
+        "isEdge": {
+          "type": "boolean"
+        },
+        "unit": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WashDocChartResponse": {
+      "type": "object",
+      "properties": {
+        "documentKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitName": {
+          "type": "string",
+          "nullable": true
+        },
+        "finished": {
+          "type": "boolean"
+        },
+        "fromMs2000": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "toMs2000": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "startedMs2000": {
+          "type": "integer",
+          "format": "int64",
+          "nullable": true
+        },
+        "endedMs2000": {
+          "type": "integer",
+          "format": "int64",
+          "nullable": true
+        },
+        "series": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WashDocChartSeries"
+          },
+          "nullable": true
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WashDocChartEvent"
+          },
+          "nullable": true
+        },
+        "signals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WashDocChartSignal"
+          },
+          "nullable": true
+        },
+        "dosing": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WashDocChartDosing"
+          },
+          "nullable": true
+        },
+        "presentation": {
+          "$ref": "#/components/schemas/WashDocPresentation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WashDocChartSeries": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "label": {
+          "type": "string",
+          "nullable": true
+        },
+        "localization": {
+          "type": "string",
+          "nullable": true
+        },
+        "group": {
+          "type": "string",
+          "nullable": true
+        },
+        "role": {
+          "type": "string",
+          "nullable": true
+        },
+        "unit": {
+          "type": "string",
+          "nullable": true
+        },
+        "step": {
+          "type": "boolean"
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WashDocChartPoint"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WashDocChartSignal": {
+      "type": "object",
+      "properties": {
+        "ms2000": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "flags": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "heat": {
+          "type": "boolean",
+          "nullable": true
+        },
+        "inlet": {
+          "type": "boolean",
+          "nullable": true
+        },
+        "outlet": {
+          "type": "boolean",
+          "nullable": true
+        },
+        "isCalculated": {
+          "type": "boolean"
+        },
+        "airflow": {
+          "type": "boolean",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WashDocPresentation": {
+      "type": "object",
+      "properties": {
+        "unitType": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "kind": {
+          "type": "string",
+          "nullable": true
+        },
+        "groupOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "eThemeMode": {
       "type": "integer",
       "format": "int32"
@@ -5202,6 +5899,48 @@
         "nextCursor": {
           "type": "string",
           "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PublicWashDocWidgetResponse": {
+      "type": "object",
+      "properties": {
+        "documentKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitName": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationName": {
+          "type": "string",
+          "nullable": true
+        },
+        "startedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endedAtUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "finished": {
+          "type": "boolean"
+        },
+        "graphSvg": {
+          "type": "string",
+          "nullable": true
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "additionalProperties": false
@@ -5875,6 +6614,70 @@
       },
       "binary": false
     },
+    "GetBankExportCount": {
+      "method": "GET",
+      "path": "api/v1/banks/export-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "enabledOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "fields",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bankType",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DirectoryExportCountResponse"
+      },
+      "binary": false
+    },
     "GetBanks": {
       "method": "GET",
       "path": "api/v1/banks",
@@ -6168,6 +6971,70 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/SearchResults"
+      },
+      "binary": false
+    },
+    "GetBankUserExportCount": {
+      "method": "GET",
+      "path": "api/v1/banks/{bankKid}/users/export-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "bankKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "locationKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "deleted",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DirectoryExportCountResponse"
       },
       "binary": false
     },
@@ -6971,6 +7838,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
         }
       ],
       "body": null,
@@ -7011,6 +7886,14 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
           }
         }
       ],
@@ -7118,6 +8001,54 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/InstallerIconResponse"
+      },
+      "binary": false
+    },
+    "GetInstallerExportCount": {
+      "method": "GET",
+      "path": "api/v1/installers/export-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "includeActivationCode",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DirectoryExportCountResponse"
       },
       "binary": false
     },
@@ -7335,6 +8266,70 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/LocationDirectoryResponse"
+      },
+      "binary": false
+    },
+    "GetLocationCount": {
+      "method": "GET",
+      "path": "api/v1/locations/count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "enabledOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "fields",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bankKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/LocationCountResponse"
       },
       "binary": false
     },
@@ -7804,6 +8799,106 @@
       },
       "binary": false
     },
+    "GetLocationReservationHistory": {
+      "method": "GET",
+      "path": "api/v1/locations/{locationKid}/reservation-history",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "locationKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "from",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "days",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "Accept-Language",
+          "where": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/LocationReservationHistoryResponse"
+      },
+      "binary": false
+    },
+    "GetLocationReservations": {
+      "method": "GET",
+      "path": "api/v1/locations/{locationKid}/reservations",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "locationKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "from",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "days",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "Accept-Language",
+          "where": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/LocationReservationsResponse"
+      },
+      "binary": false
+    },
     "GetLocationWeather": {
       "method": "GET",
       "path": "api/v1/locations/{locationKid}/weather",
@@ -8080,6 +9175,46 @@
       },
       "binary": false
     },
+    "GetManagerExportCount": {
+      "method": "GET",
+      "path": "api/v1/managers/export-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DirectoryExportCountResponse"
+      },
+      "binary": false
+    },
     "GetManager": {
       "method": "GET",
       "path": "api/v1/managers/{managerKid}",
@@ -8273,6 +9408,43 @@
       },
       "binary": false
     },
+    "GetNearestLocations": {
+      "method": "GET",
+      "path": "api/v1/locations/nearest",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "latitude",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        {
+          "name": "longitude",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/NearestLocationItem"
+        }
+      },
+      "binary": false
+    },
     "GetManagerCount": {
       "method": "GET",
       "path": "api/v1/managers/count",
@@ -8315,6 +9487,38 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalManagerProfile"
+      },
+      "binary": false
+    },
+    "GetMyManagerApiKey": {
+      "method": "GET",
+      "path": "api/v1/session/me/api-key",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PersonalManagerApiKey"
+      },
+      "binary": false
+    },
+    "GenerateMyManagerApiKey": {
+      "method": "POST",
+      "path": "api/v1/session/me/api-key",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": {
+        "$ref": "#/components/schemas/PersonalApiKeyRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PersonalApiKeyResponse"
       },
       "binary": false
     },
@@ -8434,6 +9638,46 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalAccountResult"
+      },
+      "binary": false
+    },
+    "GetServiceExportCount": {
+      "method": "GET",
+      "path": "api/v1/services/export-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DirectoryExportCountResponse"
       },
       "binary": false
     },
@@ -8717,6 +9961,172 @@
       },
       "binary": false
     },
+    "ConvertToolTime": {
+      "method": "POST",
+      "path": "api/v1/banks/{bankKid}/tools/time",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "bankKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "$ref": "#/components/schemas/ToolTimeRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ToolTimeResponse"
+      },
+      "binary": false
+    },
+    "InspectToolKid": {
+      "method": "POST",
+      "path": "api/v1/banks/{bankKid}/tools/kid",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "bankKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "$ref": "#/components/schemas/ToolKidInspectionRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ToolKidInspectionResponse"
+      },
+      "binary": false
+    },
+    "GetUnitDocuments": {
+      "method": "GET",
+      "path": "api/v1/units/{unitKid}/documents",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "unitKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Offset",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "Limit",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "Search",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Date",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/UnitDocumentPage"
+      },
+      "binary": false
+    },
+    "GetUnitDocumentsCount": {
+      "method": "GET",
+      "path": "api/v1/units/{unitKid}/documents/count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "unitKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Search",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Date",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/UnitDocumentCount"
+      },
+      "binary": false
+    },
     "GetUnitDocumentTable": {
       "method": "GET",
       "path": "api/v1/documents/{documentKid}/table",
@@ -8747,6 +10157,14 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
           }
         }
       ],
@@ -8787,6 +10205,14 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
           }
         }
       ],
@@ -8831,6 +10257,14 @@
           }
         },
         {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
           "name": "width",
           "where": "query",
           "required": false,
@@ -8847,6 +10281,369 @@
         "format": "binary"
       },
       "binary": true
+    },
+    "GetUnitDocumentSvg2": {
+      "method": "GET",
+      "path": "api/v1/documents/{documentKid}/graph2.svg",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "documentKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "States",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Settings",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
+    "GetUnitDocumentGraph": {
+      "method": "GET",
+      "path": "api/v1/documents/{documentKid}/graph",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "documentKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "States",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Settings",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WashDocChartResponse"
+      },
+      "binary": false
+    },
+    "GetUnitDocumentPng": {
+      "method": "GET",
+      "path": "api/v1/documents/{documentKid}/graph.png",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "documentKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "States",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Settings",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
+    "GetUnitDocumentIcon": {
+      "method": "GET",
+      "path": "api/v1/documents/{documentKid}/icon.svg",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "documentKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "States",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Settings",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
+    "GetUnitExportCount": {
+      "method": "GET",
+      "path": "api/v1/units/export-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "enabledOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "fields",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "locationKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "terminalKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "runningOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "autoOutOfOrderOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DirectoryExportCountResponse"
+      },
+      "binary": false
+    },
+    "GetTerminalExportCount": {
+      "method": "GET",
+      "path": "api/v1/terminals/export-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "enabledOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "fields",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "locationKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "terminalKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "runningOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DirectoryExportCountResponse"
+      },
+      "binary": false
     },
     "GetActiveUnitCount": {
       "method": "GET",
@@ -9315,6 +11112,54 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UserWorkspaceResponse"
+      },
+      "binary": false
+    },
+    "GetUserExportCount": {
+      "method": "GET",
+      "path": "api/v1/users/export-count",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "filter",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "enabledOnly",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DirectoryExportCountResponse"
       },
       "binary": false
     },
@@ -10784,6 +12629,38 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ActiveUsersResponse"
+      },
+      "binary": false
+    },
+    "GetPublicWashDocWidget": {
+      "method": "GET",
+      "path": "api/v1/public/widgets/washdoc",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "documentKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "unitKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PublicWashDocWidgetResponse"
       },
       "binary": false
     },
