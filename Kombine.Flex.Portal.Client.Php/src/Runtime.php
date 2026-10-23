@@ -141,6 +141,10 @@ abstract class BaseClient
                     if (!$value instanceof \CURLFile) throw new \InvalidArgumentException('A CURLFile is required.');
                     $uploadPath = $value->getFilename();
                     if (str_contains($uploadPath, '://') || !is_file($uploadPath) || !is_readable($uploadPath)) throw new \InvalidArgumentException('A readable local file is required.');
+                    $advertisedName = $value->getPostFilename();
+                    if ($advertisedName === '') $advertisedName = basename($uploadPath);
+                    if ($advertisedName === '' || strlen($advertisedName) > 1024 || preg_match('/[\x00-\x1f\x7f"\\\\]/', $advertisedName)) throw new \InvalidArgumentException('Invalid multipart filename.');
+                    if (preg_match('/[\x00-\x1f\x7f]/', $value->getMimeType())) throw new \InvalidArgumentException('Invalid multipart content type.');
                     $bytes = filesize($uploadPath);
                     if ($bytes === false) throw new \InvalidArgumentException('Cannot determine upload file length.');
                     $size += $bytes;

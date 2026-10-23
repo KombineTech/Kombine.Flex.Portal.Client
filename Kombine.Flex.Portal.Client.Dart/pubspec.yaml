@@ -1,6 +1,6 @@
 name: kombine_flex_portal_client
 description: HTTPS/JSON client for the Kombine Flex Portal API for Dart and Flutter.
-version: 0.2.0
+version: 0.2.1
 publish_to: none
 environment:
   sdk: '>=3.6.0 <4.0.0'
