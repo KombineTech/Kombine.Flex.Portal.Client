@@ -1,6 +1,6 @@
 # Kombine Flex Portal Dart-klient
 
-Version **0.2.0** dækker **178 operationer** fra den medfølgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilføj nedenstående sti i `pubspec.yaml`, og kør `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
+Version **0.2.1** dækker **178 operationer** fra den medfølgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilføj nedenstående sti i `pubspec.yaml`, og kør `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
 
 ```yaml
 dependencies:

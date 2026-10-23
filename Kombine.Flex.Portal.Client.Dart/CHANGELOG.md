@@ -1,11 +1,11 @@
-## 0.2.0
+## 0.2.1
 
 - Refresh the reviewed API contract and generated operations for beta preparation on 2026-10-23.
 - No registry publication.
 
 # Changelog
 
-## 0.1.0 â€” 2026-10-20
+## 0.1.0 — 2026-10-20
 
 Initial Dart/Flutter source client: 155 operations from the bundled Portal contract,
 bearer sessions, lossless int64 values, streaming, multipart, cancellation and deadlines.
