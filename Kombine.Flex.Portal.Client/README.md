@@ -1,10 +1,24 @@
+## Location reservation calendars · 0.11.1
+
+`GetLocationBookingCalendars` returns dated calendars with opening hours applied by the API. Pass optional from=yyyy-MM-dd and days=1-31 (default 14); responses include timeZone, from, days and a date on each day. Render these dates directly; fetch another range when navigating instead of repeating weeks or merging opening hours in the client. Groups contain authorized units and Configured status; malformed stored calendars are omitted. Slot startMinute is 0-1439, durationMinutes is positive and their sum is at most 1440. Type 0 is reservation time, 1 chance, 2 closed and 3 unknown opening hours. Show unknown periods as unavailable, never bookable. Requires Bookings1, Location Read, Unit Read and matching scope. Show each machine separately. This is configuration, not occupancy or booking availability. Handle 400/401/403/404/503 explicitly. See [reservation calendars](/docs#location-booking-calendars) and the [changelog](/docs#changelog).
+
+Version 0.11.1 covers 178 operations. SaveCameraCapture accepts optional background processing; HTTP 202 only acknowledges temporary staging. Retain the original bytes and upload token, then call ConfirmCameraCapture until confirmed is true. processingPercent is an estimate and may be null; errorCode can indicate failure. After a host restart, retry with the same original bytes and ticket when publication is unconfirmed. Rebuild callers against the updated SaveCameraCapture signatures and use named arguments where available. The default synchronous API behavior remains unchanged. See /docs#camera-captures and /docs#changelog.
+
+Version 0.11.1 includes GetCameraNearestLocation for GPS-based location capture and GetRecentCameraPhotoMetadata for authenticated thumbnail information. Camera resources include proximity-check and nullable location coordinates. New capture filenames are opaque GUIDs; never parse region or original names from filenames. Location selection requires Camera1 and Location Read/Write; metadata requires resource Read. Handle unavailable GPS and 404/409 by choosing the location manually. See /docs#camera-captures and /docs#changelog.
+
+## Recent camera photos · 0.11.1
+
+Adds `GetPublicRecentCameraPhotos` and `GetPublicCameraThumbnail`. These public operations need no login and are bound to the site tenant. The list returns at most ten photos, with short-lived thumbnail URLs and portal workspace paths. Thumbnails are public; originals and metadata remain protected. Opening a workspace requires normal manager permissions. Handle 503 when the complete list is unavailable and 400/404 for invalid, expired or missing thumbnails. See [public widgets](/docs#public-widgets).
+
 All manager role changes require Read and Write on both Tabs and Kids. Handle missing-tabs-read, missing-tabs-write, missing-kids-read and missing-kids-write (HTTP 403).
 
-Version 0.5.3 targets 120 API operations. GetUnits adds the authorized unit directory: keep filters and fields unchanged while paging and restart after invalid-cursor. Manager role requests require all nine expectedFlags categories, including Tabs and Kids; handle their independent read/write permissions and 403 responses. Service access assignments are removed; stop sending assignment requests and reading the access object. Logo part selectors are path segments before the color, not query parameters. UserBalance remains compatible. See /docs#changelog for migration and /docs#unit-directory for paging and examples.
+GetTerminals uses the reported ComputerName for name, filtering and sorting; missing names are empty. Request fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight for terminal telemetry. Values are strings, null when not selected, and empty when missing. Keep fields unchanged during paging and restart old cursors. Location names remain part of every row. See /docs#changelog for all migration requirements.
 
-Version 0.5.3: GetLocations now requires fields=vismaCustNo,bankActivationCode,locationActivationCode to retain the previous optional values; accept null for unselected fields. Keep fields unchanged while paging and restart old cursors. New resident-number suggestions are read-only and do not reserve a number. Activation responses include qrCodeDataV1 and qrCodeDataV2 (five values with 30-bit noise/checksum); treat both as credentials. See /docs#changelog for migration and /docs for permissions and error handling.
+Version 0.11.1 targets 178 API operations. GetUnits adds the authorized unit directory: keep filters and fields unchanged while paging and restart after invalid-cursor. Manager role requests require all nine expectedFlags categories, including Tabs and Kids; handle their independent read/write permissions and 403 responses. Service access assignments are removed; stop sending assignment requests and reading the access object. Logo part selectors are path segments before the color, not query parameters. UserBalance remains compatible. See /docs#changelog for migration and /docs#unit-directory for paging and examples.
 
-Version 0.5.3 synchronizes GetBankUserBalances documentation with its 20-second database deadline. Request and response fields are unchanged. Allow extra time for transport and authorization; HTTP 503 still returns no partial balances.
+Version 0.8.0: GetLocations now requires fields=vismaCustNo,bankActivationCode,locationActivationCode to retain the previous optional values; accept null for unselected fields. Keep fields unchanged while paging and restart old cursors. New resident-number suggestions are read-only and do not reserve a number. Activation responses include qrCodeDataV1 and qrCodeDataV2 (five values with 30-bit noise/checksum); treat both as credentials. See /docs#changelog for migration and /docs for permissions and error handling.
+
+Version 0.8.0 synchronizes GetBankUserBalances documentation with its 20-second database deadline. Request and response fields are unchanged. Allow extra time for transport and authorization; HTTP 503 still returns no partial balances.
 
 Version 0.3.3 uses the [official Kombine logo](https://static.kombine.services/kombinelogotext1/black.svg), preserved as logo.svg and rendered to icon.png for NuGet. API contracts and client behavior are unchanged.
 
@@ -28,9 +42,72 @@ Use the same tenant and environment as your client: append /docs#changelog to it
 
 Typed .NET Standard 2.0 / .NET 8 / .NET 10 client for the Flex Portal public integration API. **No dependencies on other Kombine packages or projects**: no enums, KID, database, ORM, API-server or Web assemblies. Authentication, data access and business authorization run on the selected tenant's HTTPS API.
 
-Version 0.5.3 targets the current API contract (120 operations). Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.
+Version 0.11.1 targets the current API contract (178 operations). Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.
 
 Version 0.2.5 adds GetLocationOpeningHours and GetLocationBookingRules. Both require Location Read, Unit Read and the authorized location scope. Reservation rules contain plain text plus ordered parts with text/isValue for optional value emphasis; never render these strings as HTML. Keep text as the fallback for older responses. See /docs#location-opening-hours and /docs#location-booking-rules for permissions, examples and limits.
+
+## Current weather for a location
+
+Version 0.11.1 includes `GetLocationWeatherAsync`; the SDK covers 178 operations. The API uses the authorized location's stored coordinates, or its stored address/postal code. It accepts only `locationKid`; callers cannot supply coordinates or select another tenant. An active manager, assigned Tab, Bank Read, Location Read, matching scope and retention visibility are required. Unit Read and Write are not required.
+
+```csharp
+var weather = await api.GetLocationWeatherAsync(locationKid, cancellationToken);
+if (weather.Status == "Available" && weather.Current != null)
+    Console.WriteLine($"{weather.Current.TemperatureCelsius} °C");
+```
+
+```vbnet
+Dim weather = Await api.GetLocationWeatherAsync(locationKid, cancellationToken)
+If weather.Status = "Available" AndAlso weather.Current IsNot Nothing Then
+    Console.WriteLine("{0} °C", weather.Current.TemperatureCelsius)
+End If
+```
+
+Check `status` before using `current`: `Available` has current measurements, while `LocationUnknown` and `Unavailable` have `current = null`. Optional measurements are null when unknown; preserve legitimate zero values. Times are UTC, temperatures Celsius, wind metres/second, precipitation millimetres and humidity percent. `positionSource = "Address"` indicates approximate address/postal positioning. Display **Weather data by Open-Meteo, CC BY 4.0**; this is model data, not an on-site sensor.
+
+Refresh on navigation. The API caches successful results for ten minutes and failures for one minute; HTTP responses are no-store. A provider failure can return HTTP 200 with `Unavailable`; storage failures or the twelve-second deadline return HTTP 503, code `location-weather-unavailable`. Do not replace missing weather with zero or automatically retry. Keep the rest of the application usable. See [location weather](/docs#location-weather) for all permission/error details.
+
+## Camera capture and private media
+
+Version 0.8.0 introduced six typed camera operations. Camera1 and the resource's Read permission are required; preparing and saving also require Write. Obtain `resourceKid` from the API. The server selects the tenant and owner.
+
+The following example sends a newly captured JPEG using its actual capture time. Hash the exact original bytes; do not re-encode the file after preparation. The API validates the file and metadata. Camera capture itself remains the application's responsibility.
+
+```csharp
+using (var original = File.OpenRead(capturedJpegPath))
+using (var sha256 = System.Security.Cryptography.SHA256.Create())
+{
+    var hash = BitConverter.ToString(sha256.ComputeHash(original)).Replace("-", "");
+    original.Position = 0;
+    var prepared = await api.PrepareCameraCaptureAsync(new CameraPrepareRequest
+    {
+        ResourceKid = resourceKid,
+        Kind = "photo",
+        OriginalFileName = Path.GetFileName(capturedJpegPath),
+        OriginalNameAvailable = true,
+        CapturedAtUtc = capturedAtUtc,
+        MediaLength = original.Length,
+        MediaSha256 = hash,
+        SensorData = new Dictionary<string, object>()
+    }, cancellationToken);
+    var saved = await api.SaveCameraCaptureAsync(uploadToken: prepared.UploadToken,
+        original: new FileParameter(original, Path.GetFileName(capturedJpegPath), "image/jpeg"),
+        cancellationToken: cancellationToken);
+}
+
+var gallery = await api.GetCameraCapturesAsync(resourceKid, cancellationToken: cancellationToken);
+foreach (var item in gallery.Items ?? Array.Empty<CameraCaptureItem>())
+{
+    using (var download = await api.GetCameraCaptureContentAsync(item.Id!, part: "thumbnail",
+        cancellationToken: cancellationToken))
+    using (var destination = File.Create(item.CaptureId + ".jpg"))
+        await download.Stream.CopyToAsync(destination, 81920, cancellationToken);
+}
+```
+
+`motion` is omitted for ordinary photos/videos. For a supported Live Photo, prepare `kind = "live-photo"`, `motionLength` and `motionSha256`, then supply the matching QuickTime stream as `new FileParameter(motionStream, "capture.mov", "video/quicktime")`. The generated upload disposes its file streams; reopen them for a deliberate retry with the same token and identical bytes. Uploads never retry automatically. The default transport timeout is 30 seconds. For larger video uploads, inject an `HttpClient` with a suitable timeout, `AllowAutoRedirect = false` and `UseCookies = false`, and keep a cancellation deadline. Use `motion-playback` for the portable MP4 derived from Live Photo motion.
+
+A successful save means the complete media/JSON set exists in at least one region. Follow `nextCursor` unchanged with the same resource, even after an empty page; `isDegraded` means a region was unavailable, so refresh from the beginning after recovery. Omitting `resourceKid` lists the current manager's own captures. Use the returned opaque `id` for authorized content; `part` can be `original`, `thumbnail`, `metadata`, `preview`, `motion`, `motion-playback` or `playback`, as indicated by the flags. Optional `range: "bytes=0-1023"` sends a Range header; HTTP 206 returns a `FileResponse` with `IsPartial`. Dispose every returned download. Never turn storage paths into public URLs. See the API's [camera guide](/docs#camera-captures) for limits and error codes.
 
 ## Compatibility and dependencies
 
@@ -71,7 +148,7 @@ using (var api = new PortalApiClient(new Uri(tenantApiUrl)))
 
 ## Operations and identifiers
 
-The public and manager OpenAPI documents currently expose **120 operations**. Each has an `OperationIdAsync` method, typed requests/responses and XML IntelliSense documentation. See [OPERATIONS.md](OPERATIONS.md) for the complete list.
+The public and manager OpenAPI documents currently expose **178 operations**. Each has an `OperationIdAsync` method, typed requests/responses and XML IntelliSense documentation. See [OPERATIONS.md](OPERATIONS.md) for the complete list.
 
 ```csharp
 var locations = await api.GetBankLocationsAsync(bankKid, cancellationToken);
@@ -115,10 +192,10 @@ To configure timeouts/proxies, inject a dedicated `HttpClient` with a fixed `Bas
 ```powershell
 dotnet pack Kombine.Flex.Portal.Client -c Release -o artifacts/packages
 dotnet nuget add source <local-package-directory> --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.5.3
+dotnet add package Kombine.Flex.Portal.Client --version 0.11.1
 ```
 
-Production releases publish this package to [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). After publication, install with `dotnet add package Kombine.Flex.Portal.Client --version 0.5.3 --source https://api.nuget.org/v3/index.json`. For a beta version not yet listed there, use the reviewed `.nupkg` from your API documentation in a local NuGet source as shown above. `OpenApi/portal.openapi.json` is the source snapshot. Run `pwsh -File scripts/Update-PortalClient.ps1` to regenerate; optionally add `-ApiBaseUrl https://localhost:7241/` to first refresh both public Swagger documents. Review the generated changes and run `scripts/Test-PortalClients.ps1` before packing. NSwag 14.7.1 is a pinned development tool, not a package dependency. Generated code is checked in: consumer builds need neither NSwag, a running API nor private feeds.
+Production releases publish this package to [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). After publication, install with `dotnet add package Kombine.Flex.Portal.Client --version 0.11.1 --source https://api.nuget.org/v3/index.json`. For a beta version not yet listed there, use the reviewed `.nupkg` from your API documentation in a local NuGet source as shown above. `OpenApi/portal.openapi.json` is the source snapshot. Run `pwsh -File scripts/Update-PortalClient.ps1` to regenerate; optionally add `-ApiBaseUrl https://localhost:7241/` to first refresh both public Swagger documents. Review the generated changes and run `scripts/Test-PortalClients.ps1` before packing. NSwag 14.7.1 is a pinned development tool, not a package dependency. Generated code is checked in: consumer builds need neither NSwag, a running API nor private feeds.
 
 `scripts/Test-PortalClients.ps1` runs client and sample-app tests, builds the package and invokes `scripts/Test-PortalClientPackage.ps1`. The latter verifies all three package assets and dependency groups, then repeats the client contract/session/error tests in a separate NuGet-only consumer with a fresh package cache. No API/server projects or private package feeds are referenced; tests use synthetic data only.
 
@@ -134,7 +211,7 @@ CVR: 44637928
 [support@kombinetech.com](mailto:support@kombinetech.com)  
 [kombinetech.com](https://kombinetech.com/)
 
-## Managed sessions — 0.5.3 (unreleased)
+## Managed sessions — 0.11.1 (unreleased)
 
 `SendRequestAsync` also supports downloads, streaming responses and operations added after the bundled generated contract. It checks that the request stays within the client's fixed API endpoint, preserves application headers and never retries. The caller owns the request and response. Pass `HttpCompletionOption.ResponseHeadersRead` for streaming. Application-specific response models may be used with this transport; permissions remain enforced by the API.
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -11,6 +11,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
         internal Uri Uri;
         internal string Method;
         internal byte[] Body;
+        internal PortalMultipart Multipart;
         internal Dictionary<string, string> Headers;
         internal int Timeout;
     }
@@ -58,25 +59,47 @@ namespace Kombine.Flex.Portal.Client.Compact20
     }
     internal sealed class WebRequestTransport : IPortalTransport
     {
+        private static void AddRange(HttpWebRequest request, string value)
+        {
+            if (value == null || !value.StartsWith("bytes=", StringComparison.Ordinal) || value.Length > 128) throw new ArgumentException("Use a single byte range.");
+            string[] parts = value.Substring(6).Split(new char[] { '-' });
+            if (parts.Length != 2 || parts[0].Length == 0 && parts[1].Length == 0) throw new ArgumentException("Use a single byte range.");
+            int first = parts[0].Length == 0 ? 0 : Int32.Parse(parts[0], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture);
+            int last = parts[1].Length == 0 ? 0 : Int32.Parse(parts[1], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture);
+            if (parts[0].Length == 0) { if (last == 0) throw new ArgumentException("Invalid suffix range."); request.AddRange(-last); }
+            else if (parts[1].Length == 0) request.AddRange(first);
+            else { if (last < first) throw new ArgumentException("Invalid byte range."); request.AddRange(first, last); }
+        }
         public PortalResponse Send(PortalRequest input)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(input.Uri);
             request.Method = input.Method;
             request.AllowAutoRedirect = false;
+            request.AllowWriteStreamBuffering = false;
             request.Credentials = null;
             request.PreAuthenticate = false;
             request.Timeout = input.Timeout;
             request.Headers["Cache-Control"] = "no-store";
             request.Headers["Pragma"] = "no-cache";
             request.Accept = "application/json, application/zip, text/csv";
-            foreach (KeyValuePair<string, string> pair in input.Headers) request.Headers.Add(pair.Key, pair.Value);
+            foreach (KeyValuePair<string, string> pair in input.Headers)
+            {
+                if (String.Equals(pair.Key, "Range", StringComparison.OrdinalIgnoreCase)) AddRange(request, pair.Value);
+                else request.Headers.Add(pair.Key, pair.Value);
+            }
             HttpWebResponse response = null;
             RequestDeadline deadline = new RequestDeadline(request, input.Timeout);
             try
             {
                 try
                 {
-                    if (input.Body != null)
+                    if (input.Multipart != null)
+                    {
+                        request.ContentType = input.Multipart.ContentType;
+                        request.ContentLength = input.Multipart.Length;
+                        using (Stream stream = request.GetRequestStream()) input.Multipart.WriteTo(stream);
+                    }
+                    else if (input.Body != null)
                     {
                         request.ContentType = "application/json; charset=utf-8";
                         request.ContentLength = input.Body.Length;

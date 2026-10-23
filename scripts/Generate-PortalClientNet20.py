@@ -27,7 +27,16 @@ def cs(value):
     return json.dumps(value, ensure_ascii=True)
 
 
+def reference_schema(schema):
+    # OpenAPI 3.0 nullable references wrap a single $ref in allOf.
+    references = schema.get('allOf')
+    if isinstance(references, list) and len(references) == 1 and '$ref' in references[0]:
+        return {**references[0], **{key: value for key, value in schema.items() if key != 'allOf'}}
+    return schema
+
+
 def kind(schema, nullable=True):
+    schema = reference_schema(schema)
     if '$ref' in schema:
         key = schema['$ref'].split('/')[-1]
         if 'enum' in schemas[key]:
@@ -77,10 +86,14 @@ for path, methods in contract['paths'].items():
         options = [p for p in op.get('parameters', []) if p['in'] != 'path']
         for p in options:
             if p['in'] not in ('query', 'header'): raise ValueError('Unsupported parameter: ' + p['in'])
+        multipart = op.get('requestBody', {}).get('content', {}).get('multipart/form-data', {}).get('schema')
         body = op.get('requestBody', {}).get('content', {}).get('application/json', {}).get('schema')
         successes = [(int(k), v) for k, v in op['responses'].items() if k.startswith('2')]
         # These clients request complete downloads; 206 is only used when a caller sends Range.
-        assert len(successes) == 1 or {s for s, _ in successes} == {200, 206}, (method, successes)
+        background_capture = method == 'SaveCameraCapture' and {s for s, _ in successes} == {200, 202}
+        assert len(successes) == 1 or {s for s, _ in successes} == {200, 206} or background_capture, (method, successes)
+        if background_capture:
+            assert len({json.dumps(v.get('content', {}), sort_keys=True) for _, v in successes}) == 1
         successes.sort(key=lambda item: item[0])
         status, response = successes[0]
         content = response.get('content', {})
@@ -89,6 +102,9 @@ for path, methods in contract['paths'].items():
         result = 'PortalDownload' if binary else kind(response_schema, False) if response_schema else 'void'
         parameters = [kind(p['schema'], False) + ' @' + p['name'] for p in path_params]
         args = ['@' + p['name'] for p in path_params]
+        if multipart:
+            parameters.append('PortalMultipart body')
+            args.append('body')
         if body:
             parameters.append(kind(body, False) + ' body')
             args.append('body')
@@ -115,7 +131,8 @@ for path, methods in contract['paths'].items():
                 else: client += '                if (' + v + ' != null) headers.Add(' + cs(p['name']) + ', ' + v + ');\n'
             client += '            }\n'
         invocation = 'SendDownload' if binary else 'SendJson'
-        call_args = [cs(verb.upper()), 'path', 'body' if body else 'null', 'headers', str(status)]
+        expected_status = 'options != null && options.Background == true ? 202 : 200' if background_capture else str(status)
+        call_args = [cs(verb.upper()), 'path', 'body' if body or multipart else 'null', 'headers', expected_status]
         if not binary: call_args.append('typeof(' + ('object' if result == 'void' else result) + ')')
         client += '            ' + ('' if result == 'void' else 'return ' + ('' if binary else '(' + result + ')')) + invocation + '(' + ', '.join(call_args) + ');\n        }\n\n'
         operations.append('| `' + method + '` | ' + verb.upper() + ' | `' + path + '` |')

@@ -1,10 +1,51 @@
+## Calendarios de reservas de la ubicación · 0.11.0
+
+`GetLocationBookingCalendars` devuelve calendarios con fechas y horarios de apertura aplicados por la API. Parámetros opcionales: from=yyyy-MM-dd y days=1-31 (14 por defecto); la respuesta contiene timeZone, from, days y date para cada día. Muestre las fechas directamente y solicite otro intervalo al navegar, sin repetir semanas ni combinar horarios en el cliente. Los grupos incluyen unidades autorizadas y estado Configured; se omiten los calendarios almacenados no válidos. startMinute es 0-1439, durationMinutes es positivo y su suma no supera 1440. Tipo 0=reserva, 1=oportunidad, 2=cerrado, 3=horario desconocido. No muestre lo desconocido como reservable. Requiere Bookings1, Location Read, Unit Read y acceso al recurso. Muestre cada máquina por separado. Es configuración, no ocupación ni disponibilidad. Gestione 400/401/403/404/503 explícitamente. Consulte [calendarios](/docs#location-booking-calendars) y [changelog](/docs#changelog).
+
+La versión 0.11.0 incluye 178 operaciones. SaveCameraCapture admite procesamiento opcional en segundo plano; HTTP 202 solo confirma almacenamiento temporal. Conserve los archivos originales y el token de carga y llame a ConfirmCameraCapture hasta que confirmed sea true. processingPercent es una estimación y puede ser null; errorCode puede indicar un fallo. Tras reiniciar el servidor, reintente con los mismos archivos y token si la publicación no está confirmada. Recompile las llamadas con las firmas actualizadas de SaveCameraCapture y use argumentos con nombre cuando estén disponibles. El comportamiento síncrono predeterminado de la API no cambia. Consulte /docs#camera-captures y /docs#changelog.
+
+La versión 0.11.0 incluye GetCameraNearestLocation para seleccionar ubicación mediante GPS y GetRecentCameraPhotoMetadata para información protegida. Los recursos incluyen control de proximidad y coordenadas anulables. Los nuevos nombres son GUID opacos; no extraigas región ni nombre original. La selección exige Camera1 y Location Read/Write; los metadatos exigen Read del recurso. Sin GPS o con 404/409, elige la ubicación manualmente. Consulta /docs#camera-captures y /docs#changelog.
+
+## Fotos recientes de la cámara · 0.11.0
+
+Añade `GetPublicRecentCameraPhotos` y `GetPublicCameraThumbnail`. Estas operaciones públicas no requieren inicio de sesión y están vinculadas al tenant del sitio. La lista devuelve hasta diez fotos con URL temporales de miniaturas y rutas del portal. Las miniaturas son públicas; los originales y metadatos siguen protegidos. Abrir el espacio requiere los permisos normales del administrador. Gestione 503 si la lista no está disponible y 400/404 para miniaturas no válidas, caducadas o ausentes. Consulte [widgets públicos](/docs#public-widgets).
+
+## Tiempo de la ubicación · 0.11.0
+
+La versión 0.11.0 incluye las 178 operaciones y contiene `GetLocationWeather` para un KID canónico de ubicación. Reutilice la sesión del administrador. La API exige Tab asignado, Bank Read, Location Read, ámbito autorizado y ubicación/banco visibles. Resuelve coordenadas guardadas o la dirección de la ubicación; el cliente nunca envía claves del proveedor ni coordenadas. Compruebe `status`: `Available` contiene `current`; `LocationUnknown` y `Unavailable` no contienen mediciones. Los valores desconocidos son null, nunca cero. Temperatura en Celsius, viento en m/s, precipitación en mm, humedad en porcentaje y horas UTC. La posición obtenida de la dirección puede ser aproximada. Muestre: Weather data by Open-Meteo, CC BY 4.0. Gestione HTTP 400/401/403/404/503 normalmente y reintente de forma deliberada; un fallo del proveedor también puede devolver HTTP 200 con `Unavailable`. Consulte [tiempo de la ubicación](/docs#location-weather).
+
+```python
+weather = api.get_location_weather(location_kid)
+if weather.get("status") == "Available" and weather.get("current") is not None:
+    print(weather["current"]["temperatureCelsius"])
+```
+
+## Camera1 · 0.8.0
+
+La versión 0.8.0 incluye las 148 operaciones públicas, incluida Camera1. Llame a PrepareCameraCapture con SHA-256 y longitud exactos del original, fecha UTC, KID del recurso y objeto de sensores; cargue los mismos bytes con uploadToken. Live Photos requiere además la longitud/hash y el MOV original asociado. Conserve el token y los bytes para un reintento deliberado; no hay reintentos automáticos. Aumente el plazo para procesar vídeo. La API exige Camera1 y permisos Read/Write del recurso exacto. Las listas pueden estar degradadas o devolver páginas vacías con nextCursor; continúe hasta que no haya cursor. Descargue por la API; Range puede devolver HTTP 206. Consulte /docs#camera-captures para límites y errores.
+
+```python
+from kombine_flex_portal import PortalUploadFile
+
+# upload_token comes from prepare_camera_capture for these exact bytes.
+with open(original_path, "rb") as original:
+    saved = api.save_camera_capture({
+        "uploadToken": upload_token,
+        "original": PortalUploadFile(original, "capture.jpg"),
+    })
+```
+
+Streams remain caller-owned and must be seekable. Rewind before a deliberate retry. Add `motion: PortalUploadFile(...)` for Live Photos. Maximum multipart body: 140 MiB; text fields: 512 KiB each.
+
 Todos los cambios de rol de administrador requieren Read y Write tanto de Tabs como de Kids. Gestione missing-tabs-read, missing-tabs-write, missing-kids-read y missing-kids-write (HTTP 403).
 
-La versión 0.5.3 incluye 120 operaciones. GetUnits añade el directorio de unidades autorizado: mantenga filtros y fields al paginar y reinicie ante invalid-cursor. Los roles de administrador requieren las nueve categorías de expectedFlags, incluidas Tabs y Kids; gestione sus permisos independientes y las respuestas 403. Se eliminan las asignaciones de acceso de servicios: deje de enviar esas solicitudes y de leer el objeto access. Las partes del logotipo se indican en la ruta antes del color, no en parámetros de consulta. UserBalance sigue siendo compatible. Consulte /docs#changelog para la migración y /docs#unit-directory para paginación y ejemplos.
+GetTerminals usa el ComputerName comunicado para el nombre, el filtro y la ordenación; los nombres ausentes están vacíos. Solicite fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight para los datos del terminal. Son cadenas, null si no se seleccionan y vacías si faltan. Mantenga fields al paginar y reinicie los cursores anteriores. Cada fila incluye el nombre de la ubicación. Consulte /docs#changelog para todos los requisitos de migración.
 
-Versión 0.5.3: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.
+La versión 0.8.0 incluye 148 operaciones. GetUnits añade el directorio de unidades autorizado: mantenga filtros y fields al paginar y reinicie ante invalid-cursor. Los roles de administrador requieren las nueve categorías de expectedFlags, incluidas Tabs y Kids; gestione sus permisos independientes y las respuestas 403. Se eliminan las asignaciones de acceso de servicios: deje de enviar esas solicitudes y de leer el objeto access. Las partes del logotipo se indican en la ruta antes del color, no en parámetros de consulta. UserBalance sigue siendo compatible. Consulte /docs#changelog para la migración y /docs#unit-directory para paginación y ejemplos.
 
-a versión 0.5.3 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales.
+Versión 0.8.0: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.
+
+La versión 0.8.0 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales.
 
 La versión 0.2.5 añade los campos opcionales latestPostingMs2000 y hasActiveSubscription a GetBankUserBalances. La fecha del asiento es un entero de 64 bits en milisegundos UTC desde 2000-01-01; cero indica que no hay asientos. Null o un campo ausente significa desconocido; los residentes inexistentes u ocultos devuelven null. El estado de suscripción no confirma un pago. Mantenga el tratamiento de saldos y los permisos existentes; consulte /docs#user-balances.
 
@@ -20,15 +61,15 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 
 # Kombine Flex Portal — cliente Python
 
-`kombine-flex-portal-client` admite **Python 3.11+** y las **120 operaciones públicas**. No necesita dependencias de ejecución, .NET, NuGet ni otras bibliotecas Kombine. Solo usa la biblioteca estándar de Python. Los permisos y las reglas de negocio siguen en la API.
+`kombine-flex-portal-client` admite **Python 3.11+** y las **178 operaciones públicas**. No necesita dependencias de ejecución, .NET, NuGet ni otras bibliotecas Kombine. Solo usa la biblioteca estándar de Python. Los permisos y las reglas de negocio siguen en la API.
 
 El paquete **todavía no está publicado en PyPI**. Instale la distribución local:
 
 ```sh
-python -m pip install ./kombine_flex_portal_client-0.5.3-py3-none-any.whl
+python -m pip install ./kombine_flex_portal_client-0.11.0-py3-none-any.whl
 ```
 
-La versión 0.5.3 corresponde al candidato beta actual (120 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
+La versión 0.11.0 corresponde al candidato beta actual (178 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
 
 La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites.
 

@@ -28,7 +28,16 @@ def php(value):
     return "'" + value.replace('\\', '\\\\').replace("'", "\\'") + "'"
 
 
+def reference_schema(schema):
+    # OpenAPI 3.0 nullable references wrap a single $ref in allOf.
+    references = schema.get('allOf')
+    if isinstance(references, list) and len(references) == 1 and '$ref' in references[0]:
+        return {**references[0], **{key: value for key, value in schema.items() if key != 'allOf'}}
+    return schema
+
+
 def shape(schema):
+    schema = reference_schema(schema)
     return {key: ({k: shape(v) for k, v in value.items()} if key == 'properties'
                   else shape(value) if isinstance(value, dict) else value)
             for key, value in schema.items() if key in
@@ -36,6 +45,7 @@ def shape(schema):
 
 
 def doc_type(schema):
+    schema = reference_schema(schema)
     if '$ref' in schema:
         result = schema['$ref'].split('/')[-1]
     else:
@@ -73,7 +83,9 @@ for api in ('Portal',):
             parameters = op.get('parameters', [])
             assert all(p['in'] in ('path', 'query', 'header') for p in parameters)
             assert all(p.get('style', 'form' if p['in'] == 'query' else 'simple') in ('form', 'simple') for p in parameters)
-            body = op.get('requestBody', {}).get('content', {}).get('application/json', {}).get('schema')
+            request_content = op.get('requestBody', {}).get('content', {})
+            multipart = request_content.get('multipart/form-data', {}).get('schema')
+            body = request_content.get('application/json', {}).get('schema')
             successes = [(int(k), v) for k, v in op['responses'].items() if k.isdigit() and k.startswith('2')]
             schemas = [(v.get('content', {}).get('application/json') or next(iter(v.get('content', {}).values()), {})).get('schema') for _, v in successes]
             response = next((s for s in schemas if s is not None), None)
@@ -82,7 +94,7 @@ for api in ('Portal',):
             metadata = dict(method=verb.upper(), path=path.lstrip('/'), statuses=[s for s, _ in successes],
                             auth=bool(op.get('security', contract.get('security'))),
                             parameters=[dict(name=p['name'], where=p['in'], required=p.get('required', False), schema=shape(p['schema'])) for p in parameters],
-                            body=shape(body) if body is not None else None,
+                            body=shape(body) if body is not None else None, multipart=multipart,
                             response=shape(response) if response is not None else None, binary=binary)
             operations[oid] = metadata
             path_params = [p for p in parameters if p['in'] == 'path']
@@ -91,6 +103,9 @@ for api in ('Portal',):
             params = ['mixed $' + p['name'] for p in path_params]
             docs = ['    /**', '     * ' + ' '.join(op.get('summary', oid).split()).replace('*/', '* /')]
             docs.extend('     * @param ' + doc_type(p['schema']) + ' $' + p['name'] for p in path_params)
+            if multipart is not None:
+                params.append('#[\\SensitiveParameter] array $body')
+                docs.append('     * @param array<string,string|\\CURLFile> $body Multipart fields and caller-owned file paths.')
             if body is not None:
                 params.append('#[\\SensitiveParameter] array $body')
                 docs.append('     * @param ' + doc_type(body) + ' $body')
@@ -105,7 +120,7 @@ for api in ('Portal',):
             fields = '[' + ', '.join(php(p['name']) + ' => $' + p['name'] for p in path_params) + ']'
             values = fields + (' + $options' if optional else '')
             methods.append('\n'.join(docs) + f'\n    public function {method}(' + ', '.join(params) + '): mixed\n    {\n'
-                           + f'        return $this->request({php(oid)}, {values}, ' + ('$body' if body is not None else 'null') + (', $destination' if binary else '') + ');\n    }\n')
+                           + f'        return $this->request({php(oid)}, {values}, ' + ('$body' if body is not None or multipart is not None else 'null') + (', $destination' if binary else '') + ');\n    }\n')
             rows.append(f'| `{method}` | `{oid}` | {verb.upper()} | `{path}` | {"Bearer" if metadata["auth"] else "Anonymous"} |')
     login = "return $this->signIn('LoginManager', ['email' => $email, 'password' => $password]);" if api == 'Portal' else "return $this->signIn('LoginService', ['kid' => $kid, 'apiKey' => $apiKey]);"
     login_args = '#[\\SensitiveParameter] string $email, #[\\SensitiveParameter] string $password' if api == 'Portal' else 'string $kid, #[\\SensitiveParameter] string $apiKey'
@@ -118,7 +133,7 @@ for api in ('Portal',):
     write(project / 'src' / 'contract.json', json.dumps(dict(schemas={k: shape(v) for k, v in contract['components']['schemas'].items()}, operations=operations), ensure_ascii=False, indent=2) + '\n')
     write(project / 'autoload.php', f"<?php\ndeclare(strict_types=1);\nrequire_once __DIR__ . '/src/Runtime.php';\nrequire_once __DIR__ . '/src/{api}Client.php';\n")
     write(project / 'composer.json', json.dumps(dict(name=f'kombine/flex-{api.lower()}-client', description=f'Standalone HTTPS/JSON client for Kombine Flex {api}.',
-        type='library', version='0.5.3' if api == 'Portal' else '0.1.0', license='proprietary', require={'php': '^8.2', 'php-64bit': '^8.2', 'ext-curl': '*', 'ext-json': '*'},
+        type='library', version='0.11.3' if api == 'Portal' else '0.1.0', license='proprietary', require={'php': '^8.2', 'php-64bit': '^8.2', 'ext-curl': '*', 'ext-json': '*'},
         autoload={'classmap': ['src/']}), indent=2) + '\n')
     write(project / 'OPERATIONS.md', f'# {api} PHP operations\n\nGenerated from the bundled public OpenAPI snapshot (SHA-256 `{hashlib.sha256(raw).hexdigest()}`).\n{len(operations)} operations. Business permissions are enforced by the API.\n\n| PHP method | Stable operation ID | HTTP | Path | Access |\n| --- | --- | --- | --- | --- |\n' + '\n'.join(sorted(rows)) + '\n')
     write(project / 'MODELS.md', '# PHP wire models\n\nRequests and responses use associative arrays with exact JSON field names. Dates remain strings. All integer fields use 64-bit PHP integers; never convert them to floats. Null and absent values are preserved.\n\n' + '\n'.join(model_rows))

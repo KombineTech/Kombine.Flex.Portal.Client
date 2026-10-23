@@ -25,7 +25,16 @@ def type_name(s):
     return s[0].upper() + s[1:]
 
 
+def reference_schema(schema):
+    # OpenAPI 3.0 nullable references wrap a single $ref in allOf.
+    references = schema.get('allOf')
+    if isinstance(references, list) and len(references) == 1 and '$ref' in references[0]:
+        return {**references[0], **{key: value for key, value in schema.items() if key != 'allOf'}}
+    return schema
+
+
 def kind(s, language):
+    s = reference_schema(s)
     if '$ref' in s:
         t = type_name(s['$ref'].split('/')[-1])
     else:
@@ -45,6 +54,7 @@ def brief(text):
 
 
 def shape(s):
+    s = reference_schema(s)
     # Preserve wire types and numeric width; authorization/validation rules remain in the API.
     return {k: ({p: shape(v) for p, v in value.items()} if k == 'properties' else shape(value) if isinstance(value, dict) else value)
             for k, value in s.items() if k in ('$ref', 'type', 'format', 'nullable', 'properties', 'items', 'additionalProperties')}
@@ -70,7 +80,7 @@ for name, spec in schemas.items():
 
 operations = {}
 cases = []
-pyc = '"""Generated operations; regenerate with scripts/Generate-PortalScriptClients.py."""\nfrom __future__ import annotations\nfrom typing import Any\nfrom .models import *\nfrom ._runtime import BaseClient, PortalDownload\n\n\nclass PortalClient(BaseClient):\n'
+pyc = '"""Generated operations; regenerate with scripts/Generate-PortalScriptClients.py."""\nfrom __future__ import annotations\nfrom typing import Any\nfrom .models import *\nfrom ._runtime import BaseClient, PortalDownload, PortalUploadFile\n\n\nclass PortalClient(BaseClient):\n'
 tsc = '// Generated operations; regenerate with scripts/Generate-PortalScriptClients.py.\nimport { BaseClient, PortalDownload, type RequestOptions } from "./runtime.js";\nimport type * as Models from "./models.js";\n\nexport class PortalClient extends BaseClient {\n'
 rows = []
 for path, methods in contract['paths'].items():
@@ -82,23 +92,31 @@ for path, methods in contract['paths'].items():
         params = op.get('parameters', [])
         pp = [p for p in params if p['in'] == 'path']
         qp = [p for p in params if p['in'] != 'path']
-        body = op.get('requestBody', {}).get('content', {}).get('application/json', {}).get('schema')
+        request_content = op.get('requestBody', {}).get('content', {})
+        multipart = request_content.get('multipart/form-data', {}).get('schema')
+        body = request_content.get('application/json', {}).get('schema')
         successes = [(int(k), v) for k, v in op['responses'].items() if k.startswith('2')]
         # Generated methods do not send Range, so full downloads expect HTTP 200.
-        assert len(successes) == 1 or {s for s, _ in successes} == {200, 206}
+        background_capture = oid == 'SaveCameraCapture' and {s for s, _ in successes} == {200, 202}
+        assert len(successes) == 1 or {s for s, _ in successes} == {200, 206} or background_capture
+        if background_capture:
+            assert len({json.dumps(v.get('content', {}), sort_keys=True) for _, v in successes}) == 1
         successes.sort(key=lambda item: item[0])
         status, success = successes[0]
         content = success.get('content', {})
         response = next(iter(content.values()))['schema'] if content else None
         binary = bool(response and response.get('format') == 'binary')
         assert response is not None
-        operations[oid] = dict(method=verb.upper(), path=path.lstrip('/'), status=status,
+        operations[oid] = dict(method=verb.upper(), path=path.lstrip('/'), status=status, statuses=[s for s, _ in successes],
                                auth=bool(op.get('security', contract.get('security'))),
                                parameters=[dict(name=p['name'], where=p['in'], py=snake(p['name']), js=p['name'][0].lower()+p['name'][1:] if p['in'] != 'header' else re.sub(r'-(\w)', lambda m: m[1].upper(), p['name'].lower()), schema=shape(p['schema'])) for p in params],
-                               body=shape(body) if body else None, response=shape(response), binary=binary)
+                               body=shape(body) if body else None, multipart=multipart, response=shape(response), binary=binary)
         metadata = operations[oid]
         pyargs = [snake(p['name']) + ': ' + kind(p['schema'], 'py') for p in pp]
         tsargs = [p['name'] + ': ' + kind(p['schema'], 'ts') for p in pp]
+        if multipart:
+            pyargs.append('body: dict[str, str | PortalUploadFile]')
+            tsargs.append('body: FormData')
         if body:
             pyargs.append('body: ' + kind(body, 'py'))
             tsargs.append('body: Models.' + kind(body, 'ts'))
@@ -118,10 +136,10 @@ for path, methods in contract['paths'].items():
             tr = 'Models.' + type_name(response['items']['$ref'].split('/')[-1]) + '[]'
         pyc += '\n    def ' + pn + '(self' + (', ' + ', '.join(pyargs) if pyargs else '') + ') -> ' + pr + ':\n'
         pyc += '        ' + repr(brief(op.get('summary', oid))) + '\n'
-        pyc += '        return self._request(' + repr(oid) + ', {' + ', '.join(repr(p['name']) + ': ' + snake(p['name']) for p in params) + '}, ' + ('body' if body else 'None') + ')\n'
+        pyc += '        return self._request(' + repr(oid) + ', {' + ', '.join(repr(p['name']) + ': ' + snake(p['name']) for p in params) + '}, ' + ('body' if body or multipart else 'None') + ')\n'
         tsc += '  /** ' + brief(op.get('summary', oid)) + ' */\n  ' + jn + '(' + ', '.join(tsargs) + '): Promise<' + tr + '> {\n'
         values = [json.dumps(p['name']) + ': ' + (p['name'] if p['in'] == 'path' else 'options.' + next(m['js'] for m in metadata['parameters'] if m['name'] == p['name'])) for p in params]
-        tsc += '    return this.send(' + json.dumps(oid) + ', {' + ', '.join(values) + '}, ' + ('body' if body else 'undefined') + ', request) as Promise<' + tr + '>;\n  }\n\n'
+        tsc += '    return this.send(' + json.dumps(oid) + ', {' + ', '.join(values) + '}, ' + ('body' if body or multipart else 'undefined') + ', request) as Promise<' + tr + '>;\n  }\n\n'
         example = next((c['example'] for c in content.values() if 'example' in c), [] if response.get('type') == 'array' else {})
         cases.append(dict(operation=oid, python=pn, javascript=jn, **metadata, example=example))
         rows.append(f'| `{oid}` | `{pn}` | `{jn}` | {verb.upper()} | `{path}` |')

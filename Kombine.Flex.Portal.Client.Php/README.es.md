@@ -1,6 +1,36 @@
+## Calendarios de reservas de la ubicación · 0.11.3
+
+`GetLocationBookingCalendars` devuelve calendarios con fechas y horarios de apertura aplicados por la API. Parámetros opcionales: from=yyyy-MM-dd y days=1-31 (14 por defecto); la respuesta contiene timeZone, from, days y date para cada día. Muestre las fechas directamente y solicite otro intervalo al navegar, sin repetir semanas ni combinar horarios en el cliente. Los grupos incluyen unidades autorizadas y estado Configured; se omiten los calendarios almacenados no válidos. startMinute es 0-1439, durationMinutes es positivo y su suma no supera 1440. Tipo 0=reserva, 1=oportunidad, 2=cerrado, 3=horario desconocido. No muestre lo desconocido como reservable. Requiere Bookings1, Location Read, Unit Read y acceso al recurso. Muestre cada máquina por separado. Es configuración, no ocupación ni disponibilidad. Gestione 400/401/403/404/503 explícitamente. Consulte [calendarios](/docs#location-booking-calendars) y [changelog](/docs#changelog).
+
+## Tiempo de la ubicación · 0.11.3
+
+La versión 0.11.3 incluye las 178 operaciones y contiene `GetLocationWeather` para un KID canónico de ubicación. Reutilice la sesión del administrador. La API exige Tab asignado, Bank Read, Location Read, ámbito autorizado y ubicación/banco visibles. Resuelve coordenadas guardadas o la dirección de la ubicación; el cliente nunca envía claves del proveedor ni coordenadas. Compruebe `status`: `Available` contiene `current`; `LocationUnknown` y `Unavailable` no contienen mediciones. Los valores desconocidos son null, nunca cero. Temperatura en Celsius, viento en m/s, precipitación en mm, humedad en porcentaje y horas UTC. La posición obtenida de la dirección puede ser aproximada. Muestre: Weather data by Open-Meteo, CC BY 4.0. Gestione HTTP 400/401/403/404/503 normalmente y reintente de forma deliberada; un fallo del proveedor también puede devolver HTTP 200 con `Unavailable`. Consulte [tiempo de la ubicación](/docs#location-weather).
+
+```php
+$weather = $api->getLocationWeather($locationKid);
+if (($weather["status"] ?? null) === "Available" && ($weather["current"] ?? null) !== null) {
+    echo $weather["current"]["temperatureCelsius"];
+}
+```
+
 Versión 0.4.3: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.
 
-La versión 0.5.3 incluye 120 operaciones. GetUnits añade el directorio de unidades autorizado: mantenga filtros y fields al paginar y reinicie ante invalid-cursor. Los roles de administrador requieren las nueve categorías de expectedFlags, incluidas Tabs y Kids; todos los cambios de rol requieren Read y Write tanto de Tabs como de Kids; gestione missing-tabs-read, missing-tabs-write, missing-kids-read y missing-kids-write (HTTP 403). Se eliminan las asignaciones de acceso de servicios: deje de enviar esas solicitudes y de leer el objeto access. Las partes del logotipo se indican en la ruta antes del color, no en parámetros de consulta. UserBalance sigue siendo compatible. Consulte /docs#changelog para la migración y /docs#unit-directory para paginación y ejemplos.
+La versión 0.8.0 incluye las 148 operaciones públicas, incluida Camera1. Llame a PrepareCameraCapture con SHA-256 y longitud exactos del original, fecha UTC, KID del recurso y objeto de sensores; cargue los mismos bytes con uploadToken. Live Photos requiere además la longitud/hash y el MOV original asociado. Conserve el token y los bytes para un reintento deliberado; no hay reintentos automáticos. Aumente el plazo para procesar vídeo. La API exige Camera1 y permisos Read/Write del recurso exacto. Las listas pueden estar degradadas o devolver páginas vacías con nextCursor; continúe hasta que no haya cursor. Descargue por la API; Range puede devolver HTTP 206. Consulte /docs#camera-captures para límites y errores.
+
+```php
+// $uploadToken comes from prepareCameraCapture for these exact original bytes.
+$saved = $api->saveCameraCapture([
+    'uploadToken' => $uploadToken,
+    'original' => new \CURLFile($originalPath, 'application/octet-stream', 'capture.jpg'),
+]);
+```
+
+Add a `motion` CURLFile for Live Photos. Only readable local files are accepted; cURL streams them. Payloads together are limited to 139 MiB plus framing; text fields: 512 KiB each.
+
+
+La versión 0.11.3 incluye GetCameraNearestLocation para seleccionar ubicación mediante GPS y GetRecentCameraPhotoMetadata para información protegida. Los recursos incluyen control de proximidad y coordenadas anulables. Los nuevos nombres son GUID opacos; no extraigas región ni nombre original. La selección exige Camera1 y Location Read/Write; los metadatos exigen Read del recurso. Sin GPS o con 404/409, elige la ubicación manualmente. Consulta /docs#camera-captures y /docs#changelog.
+
+La versión 0.11.3 incluye 178 operaciones. SaveCameraCapture admite procesamiento opcional en segundo plano; HTTP 202 solo confirma almacenamiento temporal. Conserve los archivos originales y el token de carga y llame a ConfirmCameraCapture hasta que confirmed sea true. processingPercent es una estimación y puede ser null; errorCode puede indicar un fallo. Tras reiniciar el servidor, reintente con los mismos archivos y token si la publicación no está confirmada. Recompile las llamadas con las firmas actualizadas de SaveCameraCapture y use argumentos con nombre cuando estén disponibles. El comportamiento síncrono predeterminado de la API no cambia. Consulte /docs#camera-captures y /docs#changelog.
 
 [English](README.md) · [Dansk](README.da.md) · [Español](README.es.md)
 
@@ -8,7 +38,7 @@ La versión 0.5.3 incluye 120 operaciones. GetUnits añade el directorio de unid
 
 [Changelog del contrato API](https://api.team.kombine.technology/docs#changelog) — utiliza `/docs#changelog` en la API del mismo tenant y entorno que el cliente. El changelog está solo en inglés.
 
-Versión **0.5.3**, preparada localmente; no desplegada ni publicada en Packagist. Incluye 120 operaciones públicas del contrato OpenAPI adjunto. Requiere **PHP 8.2+ de 64 bits**, `ext-curl`, `ext-json`, HTTPS y certificados CA de confianza. No necesita bibliotecas PHP externas ni ensamblados internos de Kombine. El transporte admite Windows, Linux y macOS; esta versión se probó con Windows CLI. Utiliza una versión de PHP con soporte vigente.
+Versión **0.11.3**, preparada localmente; no desplegada ni publicada en Packagist. Incluye 178 operaciones públicas del contrato OpenAPI adjunto. Requiere **PHP 8.2+ de 64 bits**, `ext-curl`, `ext-json`, HTTPS y certificados CA de confianza. No necesita bibliotecas PHP externas ni ensamblados internos de Kombine. El transporte admite Windows, Linux y macOS; esta versión se probó con Windows CLI. Utiliza una versión de PHP con soporte vigente.
 
 La versión 0.3.1 actualiza la documentación de GetBankUserBalances al plazo de base de datos de 20 segundos. Los campos de solicitud y respuesta no cambian. Reserve tiempo adicional para transporte y autorización; HTTP 503 sigue sin devolver saldos parciales. La versión 0.2.5 añade los campos opcionales latestPostingMs2000 y hasActiveSubscription a GetBankUserBalances. La fecha del asiento es un entero de 64 bits en milisegundos UTC desde 2000-01-01; cero indica que no hay asientos. Null o un campo ausente significa desconocido; los residentes inexistentes u ocultos devuelven null. El estado de suscripción no confirma un pago. Mantenga el tratamiento de saldos y los permisos existentes; consulte /docs#user-balances. La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites. La versión 0.2.5 añade GetUserReceipts y GetHostingMetrics para versiones de la API que ofrecen estas operaciones. Cargue los recibos bajo demanda desde offset 0. Continúe con nextOffset y la misma revision; ante HTTP 409 (receipts-changed), descarte las páginas anteriores y reinicie en offset 0. Mantenga las monedas separadas y los importes como enteros de 64 bits en unidades menores. Consulte /docs#user-receipts y /docs#hosting para los permisos y límites.
 
@@ -16,11 +46,11 @@ Para este candidato beta, cambie los campos icon/bankIcon/unitIcon por iconKid/b
 
 ## Instalación
 
-Descarga `kombine-flex-portal-client-php-0.5.3.zip` desde la sección PHP de la guía API. Con Composer, guarda el ZIP en el directorio `packages/` de la aplicación:
+Descarga `kombine-flex-portal-client-php-0.11.3.zip` desde la sección PHP de la guía API. Con Composer, guarda el ZIP en el directorio `packages/` de la aplicación:
 
 ```sh
 composer config repositories.kombine artifact ./packages
-composer require kombine/flex-portal-client:0.5.3
+composer require kombine/flex-portal-client:0.11.3
 ```
 
 El repositorio artifact de Composer requiere `ext-zip` durante la instalación. Sin Composer, extrae el ZIP en `flex-portal-client/` y sustituye la línea de autoload por `require __DIR__ . '/flex-portal-client/autoload.php';`. Conserva todo `src/`, incluido `contract.json`. Ambos paquetes se pueden cargar juntos.
@@ -96,3 +126,6 @@ Límites predeterminados: 30 segundos por llamada completa, hasta 10 segundos de
 ## Compilación y verificación
 
 Para mantenedores: `scripts/Update-PhpClients.ps1` exporta metadatos del código API actual sin iniciar trabajos ni acceder a bases de datos y genera PHP. `scripts/Test-PhpClients.ps1` comprueba la generación, prueba todas las operaciones con fixtures HTTP locales, crea ZIP deterministas, prueba los paquetes extraídos y copia únicamente las descargas PHP a ambas API. Los demás clientes conservan sus propios contratos de versión. No se publica en registros ni se despliega.
+
+
+GetTerminals usa el ComputerName comunicado para el nombre, el filtro y la ordenación; los nombres ausentes están vacíos. Solicite fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight para los datos del terminal. Son cadenas, null si no se seleccionan y vacías si faltan. Mantenga fields al paginar y reinicie los cursores anteriores. Cada fila incluye el nombre de la ubicación. Consulte /docs#changelog para todos los requisitos de migración.

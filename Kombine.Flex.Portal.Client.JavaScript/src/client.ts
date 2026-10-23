@@ -3,6 +3,11 @@ import { BaseClient, PortalDownload, type RequestOptions } from "./runtime.js";
 import type * as Models from "./models.js";
 
 export class PortalClient extends BaseClient {
+  /** Resolve the Forbrug icon text from the most frequent authorized Log1 currency. */
+  getBankAccountIcon(bankKid: string, request: RequestOptions = {}): Promise<Models.AccountIconResponse> {
+    return this.send("GetBankAccountIcon", {"bankKid": bankKid}, undefined, request) as Promise<Models.AccountIconResponse>;
+  }
+
   /** Lists Account2 postings with full-selection totals per currency. */
   getBankAccount(bankKid: string, options: Models.GetBankAccountOptions = {}, request: RequestOptions = {}): Promise<Models.AccountResponse> {
     return this.send("GetBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountResponse>;
@@ -48,6 +53,21 @@ export class PortalClient extends BaseClient {
     return this.send("AskPortalAssistant", {}, body, request) as Promise<Models.AssistantResponse>;
   }
 
+  /** Count the complete filtered export selection using the same directory authorization and visibility. */
+  getBankExportCount(options: Models.GetBankExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
+    return this.send("GetBankExportCount", {"filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "bankType": options.bankType}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
+  }
+
+  /** List authorized bank identities for Banks2 with selected metadata and stable global ordering. */
+  getBanks(options: Models.GetBanksOptions = {}, request: RequestOptions = {}): Promise<Models.BankDirectoryResponse> {
+    return this.send("GetBanks", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "bankType": options.bankType}, undefined, request) as Promise<Models.BankDirectoryResponse>;
+  }
+
+  /** Count accessible active banks for the Banks2 navigation icon. */
+  getActiveBankCount(request: RequestOptions = {}): Promise<Models.ActiveBankCountResponse> {
+    return this.send("GetActiveBankCount", {}, undefined, request) as Promise<Models.ActiveBankCountResponse>;
+  }
+
   /** Search WashDoc document identities by location, unit and time without loading measurements. */
   getBankDocuments(bankKid: string, options: Models.GetBankDocumentsOptions = {}, request: RequestOptions = {}): Promise<Models.BankDocumentPage> {
     return this.send("GetBankDocuments", {"bankKid": bankKid, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.BankDocumentPage>;
@@ -78,6 +98,11 @@ export class PortalClient extends BaseClient {
     return this.send("GetSearchBank", {"bankKid": bankKid}, undefined, request) as Promise<Models.SearchResults>;
   }
 
+  /** Count the complete filtered export selection using the same directory authorization and visibility. */
+  getBankUserExportCount(bankKid: string, options: Models.GetBankUserExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
+    return this.send("GetBankUserExportCount", {"bankKid": bankKid, "filter": options.filter, "sort": options.sort, "direction": options.direction, "locationKid": options.locationKid, "deleted": options.deleted}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
+  }
+
   /** Read one page of users for a bank. */
   getBankUsers(bankKid: string, options: Models.GetBankUsersOptions = {}, request: RequestOptions = {}): Promise<Models.BankUsersResponse> {
     return this.send("GetBankUsers", {"bankKid": bankKid, "pageSize": options.pageSize, "cursor": options.cursor, "sort": options.sort, "direction": options.direction, "filter": options.filter, "userKid": options.userKid, "locationKid": options.locationKid, "deleted": options.deleted}, undefined, request) as Promise<Models.BankUsersResponse>;
@@ -98,6 +123,51 @@ export class PortalClient extends BaseClient {
     return this.send("ExecuteBankBookingCommand", {"bankKid": bankKid, "bookingKid": bookingKid}, body, request) as Promise<Models.BookingResponse>;
   }
 
+  /** Resolve the nearest writable location within 100 metres for tenant-level camera capture. */
+  getCameraNearestLocation(options: Models.GetCameraNearestLocationOptions = {}, request: RequestOptions = {}): Promise<Models.CameraResourceResponse> {
+    return this.send("GetCameraNearestLocation", {"latitude": options.latitude, "longitude": options.longitude, "accuracyMeters": options.accuracyMeters}, undefined, request) as Promise<Models.CameraResourceResponse>;
+  }
+
+  /** Read the display identity of one authorized camera resource. */
+  getCameraResource(options: Models.GetCameraResourceOptions = {}, request: RequestOptions = {}): Promise<Models.CameraResourceResponse> {
+    return this.send("GetCameraResource", {"resourceKid": options.resourceKid}, undefined, request) as Promise<Models.CameraResourceResponse>;
+  }
+
+  /** Check the lazy local camera tab and capture permission for one exact resource. */
+  getCameraAvailability(options: Models.GetCameraAvailabilityOptions = {}, request: RequestOptions = {}): Promise<Models.CameraAvailabilityResponse> {
+    return this.send("GetCameraAvailability", {"resourceKid": options.resourceKid}, undefined, request) as Promise<Models.CameraAvailabilityResponse>;
+  }
+
+  /** Prepare a bounded, immutable capture plan including optional weather. */
+  prepareCameraCapture(body: Models.CameraPrepareRequest, request: RequestOptions = {}): Promise<Models.CameraPrepareResponse> {
+    return this.send("PrepareCameraCapture", {}, body, request) as Promise<Models.CameraPrepareResponse>;
+  }
+
+  /** Save camera media synchronously, or accept bounded background processing. */
+  saveCameraCapture(body: FormData, options: Models.SaveCameraCaptureOptions = {}, request: RequestOptions = {}): Promise<Models.CameraSaveResponse> {
+    return this.send("SaveCameraCapture", {"background": options.background}, body, request) as Promise<Models.CameraSaveResponse>;
+  }
+
+  /** List own tenant captures, or all authorized captures on one exact bank, location or unit. */
+  getCameraCaptures(options: Models.GetCameraCapturesOptions = {}, request: RequestOptions = {}): Promise<Models.CameraCapturePage> {
+    return this.send("GetCameraCaptures", {"resourceKid": options.resourceKid, "cursor": options.cursor}, undefined, request) as Promise<Models.CameraCapturePage>;
+  }
+
+  /** Confirm publication of an exact prepared capture after an uncertain upload response. */
+  confirmCameraCapture(body: Models.CameraConfirmationRequest, request: RequestOptions = {}): Promise<Models.CameraConfirmationResponse> {
+    return this.send("ConfirmCameraCapture", {}, body, request) as Promise<Models.CameraConfirmationResponse>;
+  }
+
+  /** Stream one capture component through the API, with current resource authorization. */
+  getCameraCaptureContent(id: string, options: Models.GetCameraCaptureContentOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetCameraCaptureContent", {"id": id, "part": options.part, "Range": options.range}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Read private capture metadata for a public recent-photo thumbnail. */
+  getRecentCameraPhotoMetadata(id: string, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetRecentCameraPhotoMetadata", {"id": id}, undefined, request) as Promise<PortalDownload>;
+  }
+
   /** Downloads the complete filtered selection as CSV or a genuine Excel workbook. */
   exportBankAccount(bankKid: string, options: Models.ExportBankAccountOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("ExportBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit, "format": options.format}, undefined, request) as Promise<PortalDownload>;
@@ -115,12 +185,12 @@ export class PortalClient extends BaseClient {
 
   /** Download a UTF-8 CSV table for one document. */
   downloadUnitDocumentCsv(documentKid: string, options: Models.DownloadUnitDocumentCsvOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("DownloadUnitDocumentCsv", {"documentKid": documentKid, "States": options.states, "Settings": options.settings}, undefined, request) as Promise<PortalDownload>;
+    return this.send("DownloadUnitDocumentCsv", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Download an Excel 97–2003 binary .xls workbook for one document. */
   downloadUnitDocumentXls(documentKid: string, options: Models.DownloadUnitDocumentXlsOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("DownloadUnitDocumentXls", {"documentKid": documentKid, "States": options.states, "Settings": options.settings}, undefined, request) as Promise<PortalDownload>;
+    return this.send("DownloadUnitDocumentXls", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Read recent DigitalOcean runtime logs for a configured shared app. */
@@ -138,9 +208,14 @@ export class PortalClient extends BaseClient {
     return this.send("SetInstallerIcon", {"installerKid": installerKid}, body, request) as Promise<Models.InstallerIconResponse>;
   }
 
+  /** Count the complete filtered export selection using the same directory authorization and visibility. */
+  getInstallerExportCount(options: Models.GetInstallerExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
+    return this.send("GetInstallerExportCount", {"filter": options.filter, "sort": options.sort, "direction": options.direction, "includeActivationCode": options.includeActivationCode}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
+  }
+
   /** List installers with locations, tags, account state and last activity. */
   getInstallers(options: Models.GetInstallersOptions = {}, request: RequestOptions = {}): Promise<Models.InstallerDirectoryResponse> {
-    return this.send("GetInstallers", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction}, undefined, request) as Promise<Models.InstallerDirectoryResponse>;
+    return this.send("GetInstallers", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "includeActivationCode": options.includeActivationCode}, undefined, request) as Promise<Models.InstallerDirectoryResponse>;
   }
 
   /** Read one installer and the same Person icon catalog used for administrators. */
@@ -153,14 +228,19 @@ export class PortalClient extends BaseClient {
     return this.send("GetLiveLogs", {}, undefined, request) as Promise<Models.LiveLogsResponse>;
   }
 
-  /** Count accessible active locations for the Banks2 navigation icon. */
-  getActiveLocationCount(request: RequestOptions = {}): Promise<Models.ActiveLocationCountResponse> {
-    return this.send("GetActiveLocationCount", {}, undefined, request) as Promise<Models.ActiveLocationCountResponse>;
+  /** Count accessible active locations for the Locations1 navigation icon. */
+  getActiveLocationCount(options: Models.GetActiveLocationCountOptions = {}, request: RequestOptions = {}): Promise<Models.ActiveLocationCountResponse> {
+    return this.send("GetActiveLocationCount", {"bankKid": options.bankKid}, undefined, request) as Promise<Models.ActiveLocationCountResponse>;
   }
 
   /** List accessible locations with parent banks, Visma customer numbers and authorized activation codes. */
   getLocations(options: Models.GetLocationsOptions = {}, request: RequestOptions = {}): Promise<Models.LocationDirectoryResponse> {
-    return this.send("GetLocations", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates}, undefined, request) as Promise<Models.LocationDirectoryResponse>;
+    return this.send("GetLocations", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "bankKid": options.bankKid}, undefined, request) as Promise<Models.LocationDirectoryResponse>;
+  }
+
+  /** Count every location matching the same filters, selected search columns and permissions as GetLocations. */
+  getLocationCount(options: Models.GetLocationCountOptions = {}, request: RequestOptions = {}): Promise<Models.LocationCountResponse> {
+    return this.send("GetLocationCount", {"filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "bankKid": options.bankKid}, undefined, request) as Promise<Models.LocationCountResponse>;
   }
 
   /** Search location Name, Bank (alternative bank name), Zip, Address, VismaCustNo and TeltonikaSMS in Log24. */
@@ -173,9 +253,24 @@ export class PortalClient extends BaseClient {
     return this.send("SearchLocationActivation", {"q": options.q}, undefined, request) as Promise<Models.SearchResults>;
   }
 
+  /** Read dated reservation calendars with location opening hours already applied. */
+  getLocationBookingCalendars(locationKid: string, options: Models.GetLocationBookingCalendarsOptions = {}, request: RequestOptions = {}): Promise<Models.LocationBookingCalendarsResponse> {
+    return this.send("GetLocationBookingCalendars", {"locationKid": locationKid, "Accept-Language": options.acceptLanguage, "from": options.from, "days": options.days}, undefined, request) as Promise<Models.LocationBookingCalendarsResponse>;
+  }
+
   /** Read localized configured reservation rules for the location's visible units. */
   getLocationBookingRules(locationKid: string, options: Models.GetLocationBookingRulesOptions = {}, request: RequestOptions = {}): Promise<Models.LocationBookingRulesResponse> {
     return this.send("GetLocationBookingRules", {"locationKid": locationKid, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.LocationBookingRulesResponse>;
+  }
+
+  /** Read an authorized controller using its canonical Controller KID with MainId. */
+  getControllerOverview(controllerKid: string, options: Models.GetControllerOverviewOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDetailsResponse> {
+    return this.send("GetControllerOverview", {"controllerKid": controllerKid, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.UnitDetailsResponse>;
+  }
+
+  /** Read the controller's temporary Core settings or states from its main unit. */
+  getControllerGroup(controllerKid: string, kind: string, group: string, options: Models.GetControllerGroupOptions = {}, request: RequestOptions = {}): Promise<Models.UnitGroupResponse> {
+    return this.send("GetControllerGroup", {"controllerKid": controllerKid, "kind": kind, "group": group, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.UnitGroupResponse>;
   }
 
   /** Get the location label and its units, ordered by unit number. */
@@ -211,6 +306,21 @@ export class PortalClient extends BaseClient {
   /** Read grouped opening hours, upcoming exceptions and the current opening status for a location. */
   getLocationOpeningHours(locationKid: string, options: Models.GetLocationOpeningHoursOptions = {}, request: RequestOptions = {}): Promise<Models.LocationOpeningHoursResponse> {
     return this.send("GetLocationOpeningHours", {"locationKid": locationKid, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.LocationOpeningHoursResponse>;
+  }
+
+  /** Read bank Log5 reservation history for the location's authorized visible units. */
+  getLocationReservationHistory(locationKid: string, options: Models.GetLocationReservationHistoryOptions = {}, request: RequestOptions = {}): Promise<Models.LocationReservationHistoryResponse> {
+    return this.send("GetLocationReservationHistory", {"locationKid": locationKid, "from": options.from, "days": options.days, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.LocationReservationHistoryResponse>;
+  }
+
+  /** Read active tenant Log5 reservations for the location's authorized visible units. */
+  getLocationReservations(locationKid: string, options: Models.GetLocationReservationsOptions = {}, request: RequestOptions = {}): Promise<Models.LocationReservationsResponse> {
+    return this.send("GetLocationReservations", {"locationKid": locationKid, "from": options.from, "days": options.days, "Accept-Language": options.acceptLanguage}, undefined, request) as Promise<Models.LocationReservationsResponse>;
+  }
+
+  /** Get current weather for the authorized location's stored position or address. */
+  getLocationWeather(locationKid: string, request: RequestOptions = {}): Promise<Models.LocationWeatherResponse> {
+    return this.send("GetLocationWeather", {"locationKid": locationKid}, undefined, request) as Promise<Models.LocationWeatherResponse>;
   }
 
   /** Create an empty enabled administrator with a previously unused manager identity. */
@@ -258,6 +368,11 @@ export class PortalClient extends BaseClient {
     return this.send("SetManagerProfileField", {"managerKid": managerKid, "field": field}, body, request) as Promise<Models.ManagerProfileChangeResponse>;
   }
 
+  /** Count the complete filtered export selection using the same directory authorization and visibility. */
+  getManagerExportCount(options: Models.GetManagerExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
+    return this.send("GetManagerExportCount", {"filter": options.filter, "sort": options.sort, "direction": options.direction}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
+  }
+
   /** Read one administrator by canonical manager KID for a workspace shortcut. */
   getManager(managerKid: string, request: RequestOptions = {}): Promise<Models.ManagerDirectoryItem> {
     return this.send("GetManager", {"managerKid": managerKid}, undefined, request) as Promise<Models.ManagerDirectoryItem>;
@@ -268,7 +383,7 @@ export class PortalClient extends BaseClient {
     return this.send("GetManagersWithSameEmail", {"managerKid": managerKid}, undefined, request) as Promise<Models.ManagerEmailMatch[]>;
   }
 
-  /** Log in with a manager email and password. */
+  /** Log in with manager email/password or manager username/API key. */
   loginManager(body: Models.ManagerLoginRequest, options: Models.LoginManagerOptions = {}, request: RequestOptions = {}): Promise<Models.ManagerSessionResponse> {
     return this.send("LoginManager", {"X-Portal-Login-Client-IP": options.xPortalLoginClientIp}, body, request) as Promise<Models.ManagerSessionResponse>;
   }
@@ -283,6 +398,16 @@ export class PortalClient extends BaseClient {
     return this.send("GetCurrentManager", {}, undefined, request) as Promise<Models.ManagerProfileResponse>;
   }
 
+  /** Create a pending manager with a password and queue a manager-bound verification email. */
+  requestManagerSignUp(body: Models.ManagerSignUpRequest, request: RequestOptions = {}): Promise<Models.PersonalAccountResult> {
+    return this.send("RequestManagerSignUp", {}, body, request) as Promise<Models.PersonalAccountResult>;
+  }
+
+  /** Verify the email and activate only the manager already created by self-registration. */
+  confirmManagerSignUp(body: Models.ManagerSignUpConfirmation, request: RequestOptions = {}): Promise<Models.PersonalAccountResult> {
+    return this.send("ConfirmManagerSignUp", {}, body, request) as Promise<Models.PersonalAccountResult>;
+  }
+
   /** Assign or remove one available eTab on an administrator. */
   setManagerTab(managerKid: string, tabId: number, body: Models.ManagerTabChangeRequest, request: RequestOptions = {}): Promise<Models.ManagerTabChangeResponse> {
     return this.send("SetManagerTab", {"managerKid": managerKid, "tabId": tabId}, body, request) as Promise<Models.ManagerTabChangeResponse>;
@@ -293,9 +418,34 @@ export class PortalClient extends BaseClient {
     return this.send("SetCurrentManagerTheme", {}, body, request) as Promise<Models.ManagerThemeResponse>;
   }
 
+  /** Get up to ten authorized locations nearest to a supplied position. */
+  getNearestLocations(options: Models.GetNearestLocationsOptions = {}, request: RequestOptions = {}): Promise<Models.NearestLocationItem[]> {
+    return this.send("GetNearestLocations", {"latitude": options.latitude, "longitude": options.longitude}, undefined, request) as Promise<Models.NearestLocationItem[]>;
+  }
+
+  /** Count all visible administrators, independently of the current page/filter. */
+  getManagerCount(request: RequestOptions = {}): Promise<Models.PeopleDirectoryCount> {
+    return this.send("GetManagerCount", {}, undefined, request) as Promise<Models.PeopleDirectoryCount>;
+  }
+
+  /** Count all visible installers, independently of the current page/filter. */
+  getInstallerCount(request: RequestOptions = {}): Promise<Models.PeopleDirectoryCount> {
+    return this.send("GetInstallerCount", {}, undefined, request) as Promise<Models.PeopleDirectoryCount>;
+  }
+
   /** Read your own personal settings and available person icons. */
   getMyManagerProfile(request: RequestOptions = {}): Promise<Models.PersonalManagerProfile> {
     return this.send("GetMyManagerProfile", {}, undefined, request) as Promise<Models.PersonalManagerProfile>;
+  }
+
+  /** Read your own API-key configuration status and revision without exposing credentials. */
+  getMyManagerApiKey(request: RequestOptions = {}): Promise<Models.PersonalManagerApiKey> {
+    return this.send("GetMyManagerApiKey", {}, undefined, request) as Promise<Models.PersonalManagerApiKey>;
+  }
+
+  /** Generate your own API key and commit its hash to eSetting.ApiKeyHash. */
+  generateMyManagerApiKey(body: Models.PersonalApiKeyRequest, request: RequestOptions = {}): Promise<Models.PersonalApiKeyResponse> {
+    return this.send("GenerateMyManagerApiKey", {}, body, request) as Promise<Models.PersonalApiKeyResponse>;
   }
 
   /** Read your own tab selection, available tabs and editing eligibility. */
@@ -328,9 +478,19 @@ export class PortalClient extends BaseClient {
     return this.send("ChangeMyManagerPassword", {}, body, request) as Promise<Models.PersonalAccountResult>;
   }
 
+  /** Count the complete filtered export selection using the same directory authorization and visibility. */
+  getServiceExportCount(options: Models.GetServiceExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
+    return this.send("GetServiceExportCount", {"filter": options.filter, "sort": options.sort, "direction": options.direction}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
+  }
+
   /** List concrete service enum identities, including services without saved settings. */
   getServices(options: Models.GetServicesOptions = {}, request: RequestOptions = {}): Promise<Models.ServiceDirectoryResponse> {
     return this.send("GetServices", {"filter": options.filter, "sort": options.sort, "direction": options.direction}, undefined, request) as Promise<Models.ServiceDirectoryResponse>;
+  }
+
+  /** Count the predefined service identities without reading service settings. */
+  getServiceCount(request: RequestOptions = {}): Promise<Models.PeopleDirectoryCount> {
+    return this.send("GetServiceCount", {}, undefined, request) as Promise<Models.PeopleDirectoryCount>;
   }
 
   /** Read one predefined service, editable metadata and its icon catalog. */
@@ -368,24 +528,89 @@ export class PortalClient extends BaseClient {
     return this.send("GetTenantStatusPage", {"pageSize": options.pageSize, "cursor": options.cursor, "offset": options.offset, "anchor": options.anchor}, undefined, request) as Promise<Models.TenantStatusPageResponse>;
   }
 
+  /** Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers. */
+  convertToolTime(bankKid: string, body: Models.ToolTimeRequest, request: RequestOptions = {}): Promise<Models.ToolTimeResponse> {
+    return this.send("ConvertToolTime", {"bankKid": bankKid}, body, request) as Promise<Models.ToolTimeResponse>;
+  }
+
+  /** Inspect only the supplied KID with the installed Kombine.Flex.Kid parser. */
+  inspectToolKid(bankKid: string, body: Models.ToolKidInspectionRequest, request: RequestOptions = {}): Promise<Models.ToolKidInspectionResponse> {
+    return this.send("InspectToolKid", {"bankKid": bankKid}, body, request) as Promise<Models.ToolKidInspectionResponse>;
+  }
+
+  /** List document identities produced by the selected Unit for WashDoc3. */
+  getUnitDocuments(unitKid: string, options: Models.GetUnitDocumentsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDocumentPage> {
+    return this.send("GetUnitDocuments", {"unitKid": unitKid, "Sort": options.sort, "Direction": options.direction, "Offset": options.offset, "Limit": options.limit, "Search": options.search, "Date": options.date}, undefined, request) as Promise<Models.UnitDocumentPage>;
+  }
+
+  /** Count distinct WashDoc3 document identities for exactly one unit, separately from list loading. */
+  getUnitDocumentsCount(unitKid: string, options: Models.GetUnitDocumentsCountOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDocumentCount> {
+    return this.send("GetUnitDocumentsCount", {"unitKid": unitKid, "Search": options.search, "Date": options.date}, undefined, request) as Promise<Models.UnitDocumentCount>;
+  }
+
   /** Read a document's table as JSON with original values and column metadata. */
   getUnitDocumentTable(documentKid: string, options: Models.GetUnitDocumentTableOptions = {}, request: RequestOptions = {}): Promise<Models.DocumentTable> {
-    return this.send("GetUnitDocumentTable", {"documentKid": documentKid, "States": options.states, "Settings": options.settings}, undefined, request) as Promise<Models.DocumentTable>;
+    return this.send("GetUnitDocumentTable", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<Models.DocumentTable>;
   }
 
   /** View a document as a printable HTML table. */
   getUnitDocumentHtml(documentKid: string, options: Models.GetUnitDocumentHtmlOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("GetUnitDocumentHtml", {"documentKid": documentKid, "States": options.states, "Settings": options.settings}, undefined, request) as Promise<PortalDownload>;
+    return this.send("GetUnitDocumentHtml", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Render a document's numeric series as an SVG chart, caching completed documents privately. */
   getUnitDocumentSvg(documentKid: string, options: Models.GetUnitDocumentSvgOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("GetUnitDocumentSvg", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "width": options.width}, undefined, request) as Promise<PortalDownload>;
+    return this.send("GetUnitDocumentSvg", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements, "width": options.width}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Render a responsive WashDoc chart with independent text and graph layers. */
+  getUnitDocumentSvg2(documentKid: string, options: Models.GetUnitDocumentSvg2Options = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetUnitDocumentSvg2", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Read semantic WashDoc graph JSON for interactive charts and image rendering. */
+  getUnitDocumentGraph(documentKid: string, options: Models.GetUnitDocumentGraphOptions = {}, request: RequestOptions = {}): Promise<Models.WashDocChartResponse> {
+    return this.send("GetUnitDocumentGraph", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<Models.WashDocChartResponse>;
+  }
+
+  /** Render a document KID as a PNG image with the shared local Chart.js renderer. */
+  getUnitDocumentPng(documentKid: string, options: Models.GetUnitDocumentPngOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetUnitDocumentPng", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Render a text-free visual WashDoc preview for document lists and icon grids. */
+  getUnitDocumentIcon(documentKid: string, options: Models.GetUnitDocumentIconOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetUnitDocumentIcon", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Count the complete filtered export selection using the same directory authorization and visibility. */
+  getUnitExportCount(options: Models.GetUnitExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
+    return this.send("GetUnitExportCount", {"filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "locationKid": options.locationKid, "terminalKid": options.terminalKid, "runningOnly": options.runningOnly, "autoOutOfOrderOnly": options.autoOutOfOrderOnly}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
+  }
+
+  /** Count authorized main terminals matching the export filters. */
+  getTerminalExportCount(options: Models.GetTerminalExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
+    return this.send("GetTerminalExportCount", {"filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "locationKid": options.locationKid, "terminalKid": options.terminalKid, "runningOnly": options.runningOnly}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
+  }
+
+  /** Count accessible active units for the Units1 navigation icon. */
+  getActiveUnitCount(request: RequestOptions = {}): Promise<Models.ActiveUnitCountResponse> {
+    return this.send("GetActiveUnitCount", {}, undefined, request) as Promise<Models.ActiveUnitCountResponse>;
+  }
+
+  /** Count accessible active terminals for the Terminals1 navigation icon. */
+  getActiveTerminalCount(request: RequestOptions = {}): Promise<Models.ActiveUnitCountResponse> {
+    return this.send("GetActiveTerminalCount", {}, undefined, request) as Promise<Models.ActiveUnitCountResponse>;
   }
 
   /** List authorized units, including child units, for Units1. */
   getUnits(options: Models.GetUnitsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDirectoryResponse> {
-    return this.send("GetUnits", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
+    return this.send("GetUnits", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "locationKid": options.locationKid, "terminalKid": options.terminalKid, "runningOnly": options.runningOnly, "autoOutOfOrderOnly": options.autoOutOfOrderOnly}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
+  }
+
+  /** List authorized main units for Terminals1. */
+  getTerminals(options: Models.GetTerminalsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDirectoryResponse> {
+    return this.send("GetTerminals", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "includeCoordinates": options.includeCoordinates, "locationKid": options.locationKid, "terminalKid": options.terminalKid, "runningOnly": options.runningOnly}, undefined, request) as Promise<Models.UnitDirectoryResponse>;
   }
 
   /** Save one editable current-unit setting with revision protection. */
@@ -421,6 +646,21 @@ export class PortalClient extends BaseClient {
   /** Execute profile, icon, attributes, tag, location, delete, restore or replace with the revision from GetBankUserWorkspace. */
   executeBankUserCommand(bankKid: string, userKid: string, body: Models.UserCommandRequest, request: RequestOptions = {}): Promise<Models.UserWorkspaceResponse> {
     return this.send("ExecuteBankUserCommand", {"bankKid": bankKid, "userKid": userKid}, body, request) as Promise<Models.UserWorkspaceResponse>;
+  }
+
+  /** Count the complete filtered export selection using the same directory authorization and visibility. */
+  getUserExportCount(options: Models.GetUserExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
+    return this.send("GetUserExportCount", {"filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
+  }
+
+  /** List authorized residents for UserFinder1 (77). */
+  getUsers(options: Models.GetUsersOptions = {}, request: RequestOptions = {}): Promise<Models.UserDirectoryResponse> {
+    return this.send("GetUsers", {"pageSize": options.pageSize, "cursor": options.cursor, "filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly}, undefined, request) as Promise<Models.UserDirectoryResponse>;
+  }
+
+  /** Count active authorized residents for the UserFinder1 badge. */
+  getUserCount(request: RequestOptions = {}): Promise<Models.PeopleDirectoryCount> {
+    return this.send("GetUserCount", {}, undefined, request) as Promise<Models.PeopleDirectoryCount>;
   }
 
   /** Read complete receipts for one resident, newest first, twenty receipts at a time. */
@@ -583,9 +823,39 @@ export class PortalClient extends BaseClient {
     return this.send("GetKombineLogoTextWithBackground", {"color": color, "background": background, "width": width}, undefined, request) as Promise<PortalDownload>;
   }
 
+  /** Returns the site overview's running-machine pool, refreshed at most once a minute. */
+  getPublicLiveMachines(request: RequestOptions = {}): Promise<Models.LiveMachineResponse[]> {
+    return this.send("GetPublicLiveMachines", {}, undefined, request) as Promise<Models.LiveMachineResponse[]>;
+  }
+
+  /** List machines with a positive AutoOutOfOrder Id without login. */
+  getPublicMachineErrors(options: Models.GetPublicMachineErrorsOptions = {}, request: RequestOptions = {}): Promise<Models.PublicMachineErrorsPage> {
+    return this.send("GetPublicMachineErrors", {"pageSize": options.pageSize, "cursor": options.cursor}, undefined, request) as Promise<Models.PublicMachineErrorsPage>;
+  }
+
+  /** Get the ten newest photos, including Live Photo stills, newest first. */
+  getPublicRecentCameraPhotos(request: RequestOptions = {}): Promise<Models.PublicCameraPhoto[]> {
+    return this.send("GetPublicRecentCameraPhotos", {}, undefined, request) as Promise<Models.PublicCameraPhoto[]>;
+  }
+
+  /** Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket. */
+  getPublicCameraThumbnail(id: string, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetPublicCameraThumbnail", {"id": id}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Draws purchase counts for the last hour in twelve five-minute intervals. */
+  getPublicPurchasesChart(color: string, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetPublicPurchasesChart", {"color": color}, undefined, request) as Promise<PortalDownload>;
+  }
+
   /** Shows recent purchases as coin markers on a map. No login required. */
   getPublicDisp73(options: Models.GetPublicDisp73Options = {}, request: RequestOptions = {}): Promise<Models.PurchaseMapSnapshot> {
     return this.send("GetPublicDisp73", {"limit": options.limit}, undefined, request) as Promise<Models.PurchaseMapSnapshot>;
+  }
+
+  /** Get progress for one unit or a page of all public units in a location or bank. */
+  getPublicScopedUnitProgress(kid: string, options: Models.GetPublicScopedUnitProgressOptions = {}, request: RequestOptions = {}): Promise<Models.PublicScopedProgressResponse> {
+    return this.send("GetPublicScopedUnitProgress", {"kid": kid, "pageSize": options.pageSize, "cursor": options.cursor}, undefined, request) as Promise<Models.PublicScopedProgressResponse>;
   }
 
   /** Counts purchases in the site's Log1Hour without login. */
@@ -596,6 +866,26 @@ export class PortalClient extends BaseClient {
   /** Counts active users in the site's current Log7 during the last 100 days, without login. */
   getPublicActiveUsers(request: RequestOptions = {}): Promise<Models.ActiveUsersResponse> {
     return this.send("GetPublicActiveUsers", {}, undefined, request) as Promise<Models.ActiveUsersResponse>;
+  }
+
+  /** Get a square WashDoc widget's graph, machine/location names and document times. */
+  getPublicWashDocWidget(options: Models.GetPublicWashDocWidgetOptions = {}, request: RequestOptions = {}): Promise<Models.PublicWashDocWidgetResponse> {
+    return this.send("GetPublicWashDocWidget", {"documentKid": options.documentKid, "unitKid": options.unitKid}, undefined, request) as Promise<Models.PublicWashDocWidgetResponse>;
+  }
+
+  /** Get localized labels and the site's palette for the shared JavaScript widgets. */
+  getPublicWidgetPresentation(request: RequestOptions = {}): Promise<Models.PublicWidgetPresentationResponse> {
+    return this.send("GetPublicWidgetPresentation", {}, undefined, request) as Promise<Models.PublicWidgetPresentationResponse>;
+  }
+
+  /** Counts noncancelled dated reservations that have not ended, including ongoing reservations. */
+  getPublicReservations(request: RequestOptions = {}): Promise<Models.ReservationsStatisticsResponse> {
+    return this.send("GetPublicReservations", {}, undefined, request) as Promise<Models.ReservationsStatisticsResponse>;
+  }
+
+  /** Counts machines whose current Started is before now and Done is after now. */
+  getPublicRunningMachines(request: RequestOptions = {}): Promise<Models.RunningMachinesResponse> {
+    return this.send("GetPublicRunningMachines", {}, undefined, request) as Promise<Models.RunningMachinesResponse>;
   }
 
   /** Gets public API availability. This does not check database readiness. */

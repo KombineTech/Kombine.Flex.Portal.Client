@@ -32,6 +32,21 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Resolve the Forbrug icon text from the most frequent authorized Log1 currency.
+        /// </summary>
+        /// <remarks>
+        /// Requires the same active manager, Account2 and Bank/Location/Unit/User Read permissions as GetBankAccount.
+        /// <br/>            Counts rows across all periods and entry types, restricted to authorized locations. This is frequency, not amount.
+        /// <br/>            Trimmed three-letter currencies are uppercased; blanks/malformed codes are ignored. Alphabetical code breaks ties.
+        /// <br/>            Empty data returns currency=null and the base tab icon without text. No-store; no ledger details are returned.
+        /// <br/>            400 invalid bank, 401 expired session, 403 denied, 503 storage unavailable.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AccountIconResponse> GetBankAccountIconAsync(string bankKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Lists Account2 postings with full-selection totals per currency.
         /// </summary>
         /// <remarks>
@@ -63,6 +78,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>- `documents` groups this page only; merge further pages by `documentKey`. `items`, offsets and limits remain posting-based.
         /// <br/>- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.
+        /// <br/>- `description` uses decoded `Kombine.Flex.FlexDto.KrumbValue.TransactionLine.ToString()` text, with numeric localization placeholders resolved by the API.
+        /// <br/>- Safely displayable text-only legacy descriptions remain supported; absent DTO text uses a safe fallback. Raw JSON and payment identifiers are never exposed.
         /// <br/>- `LawAccountingYears` and `LawSurveillanceDays` come from tenant Log24 with positive manager Log7 overrides.
         /// <br/>- Expired identities become the GDPR user KID with empty names/numbers, safe description and `isAnonymized=true`.
         /// <br/>- An explicit `userKid` excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.
@@ -265,8 +282,9 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// Sends the question, supplied visible history and relevant authorized API results to OpenAI.
-        /// <br/>With Logz.io shipping enabled, the current question text is logged once after session revalidation,
-        /// <br/>before model use. History, answers and bearer credentials are not included in this log event.
+        /// <br/>With live diagnostics enabled, the current question text is recorded once in the authorized
+        /// <br/>process-local buffer after session revalidation, before model use. Questions are not sent to Logz.io.
+        /// <br/>History, answers and bearer credentials are not included in this log event.
         /// <br/>Requires server-side configuration. The current manager session is revalidated before model use;
         /// <br/>each business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.
         /// <br/>question: 1–2000 characters. history: at most 12 user/assistant messages, 8000 characters each,
@@ -294,6 +312,51 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<AssistantResponse> AskPortalAssistantAsync(AssistantRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetBankExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? bankType = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized bank identities for Banks2 with selected metadata and stable global ordering.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Banks2 (5), Bank Read and site grants. Location grants reveal only
+        /// <br/>            parent bank identity. Reads bank-level Log24 only. Site-wide managers can include disabled and deleted banks;
+        /// <br/>            limited grants require Enabled=1 and deletions within RetentionDays. enabledOnly requires Enabled=1 and Deleted=0.
+        /// <br/>            Missing Deleted means zero. Malformed states are excluded from active/limited views.
+        /// <br/>            filter searches name/settings or an exact bank KID/code, at most 128 characters. bankType optionally adds an exact Credit/Cash match for localized UI searches.
+        /// <br/>            fields selects bankType, bankActivationCode, exportFormat, settlementEmails, settlementDays, bankDays, cluster, hardware.
+        /// <br/>            sort accepts name or any optional field; direction=asc or desc. Code ordering is numeric using the canonical codec.
+        /// <br/>            pageSize is 1–250 and may change between pages; all other cursor options must remain unchanged. Keep all options unchanged with the protected, manager/scope-bound 15-minute cursor.
+        /// <br/>            Concurrent edits may move rows between pages. 400 invalid query/cursor; 401 revoked session; 403 missing
+        /// <br/>            tab/read/scope; 503 storage unavailable. No-store. Bank-wide fields require whole-bank scope.
+        /// <br/>            Activation code display/search/sort additionally requires whole-tenant scope and Bank Create; unauthorized values are null.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BankDirectoryResponse> GetBanksAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? bankType = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count accessible active banks for the Banks2 navigation icon.
+        /// </summary>
+        /// <remarks>
+        /// Same session, tab and Bank Read requirements as GetBanks. Counts bank-level Log24 identities with
+        /// <br/>            Enabled exactly 1 and Deleted zero (missing Deleted defaults to zero). Independent of filtering and paging.
+        /// <br/>            Returns count and a ready-to-render iconKid. No-store. 401 invalid session, 403 denied, 503 unavailable.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ActiveBankCountResponse> GetActiveBankCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -439,12 +502,24 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetBankUserExportCountAsync(string bankKid, string? filter = null, string? sort = null, string? direction = null, string? locationKid = null, string? deleted = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read one page of users for a bank.
         /// </summary>
         /// <remarks>
         /// ### Access and visibility
         /// <br/>
         /// <br/>- Requires **Users2 (53)**, **User Read** and a matching tenant/bank/location grant.
+        /// <br/>- An exact **userKid** lookup also accepts **UserFinder1 (77)** instead of Users2; bulk lists still require Users2.
         /// <br/>- Location-only grants include **Access** and **NoAccess** associations; other locations are removed from the response.
         /// <br/>- Ordinary users only, including `eUserId.UsersLast`. Deleted users follow **RetentionDays**.
         /// <br/>- `email` is the current Log7 `eSetting.Email` (2800), decoded from JSON or legacy plain text.
@@ -452,7 +527,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>### Paging
         /// <br/>
-        /// <br/>- `pageSize`: **1–100**, default **25**. Copy `previousCursor` or `nextCursor` unchanged into `cursor`.
+        /// <br/>- `pageSize`: **1–250**, default **25**. Copy `previousCursor` or `nextCursor` unchanged into `cursor`.
         /// <br/>- Cursors are shareable positions, not credentials.
         /// <br/>- Keep filters, sort and direction unchanged while using a cursor. Restart **without a cursor** when changing them.
         /// <br/>
@@ -561,6 +636,107 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Resolve the nearest writable location within 100 metres for tenant-level camera capture.
+        /// </summary>
+        /// <remarks>
+        /// Requires Camera1 and Location Read/Write within the trusted tenant scope. Only enabled, retained locations with valid stored coordinates qualify. GPS accuracy must be at most 100 metres. No bank or unit is returned. Returns 404 if none qualify, 409 if the two nearest locations cannot be distinguished within GPS accuracy, 400 for invalid coordinates and 503 for an incomplete lookup. The returned location must still pass normal capture authorization.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraResourceResponse> GetCameraNearestLocationAsync(double? latitude = null, double? longitude = null, double? accuracyMeters = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read the display identity of one authorized camera resource.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Camera1, the exact resource's Read permission, site-bound resource scope and retention visibility. A location does not require Unit Read; a unit does not require Location Read. Returns resourceKid, name, iconKid and requiresProximityCheck. Locations and units include nullable latitude/longitude in decimal degrees; units inherit the location coordinates. Banks have no proximity check. These coordinates support an advisory 100-metre warning, not authorization. Invalid or cross-tenant KIDs return 400, invalid sessions 401, denied access 403, missing/invisible resources 404 and unavailable storage 503.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraResourceResponse> GetCameraResourceAsync(string? resourceKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Check the lazy local camera tab and capture permission for one exact resource.
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraAvailabilityResponse> GetCameraAvailabilityAsync(string? resourceKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Prepare a bounded, immutable capture plan including optional weather.
+        /// </summary>
+        /// <remarks>
+        /// Requires Camera1 plus resource Read and Write. Hash original bytes with SHA-256. For kind live-photo, provide motionLength and motionSha256 for the original QuickTime movie companion. The signed uploadToken binds both files, metadata, owner and tenant. Retain the token and identical bytes for retries; tokens expire after 24 hours. Weather failure does not prevent capture. Imported media may use capturedAtUtc from Unix epoch through five minutes ahead of server time. Declare inferred timestamps in sensorData.timestampSource and do not attach current device sensors to historical media.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraPrepareResponse> PrepareCameraCaptureAsync(CameraPrepareRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Save camera media synchronously, or accept bounded background processing.
+        /// </summary>
+        /// <remarks>
+        /// Multipart fields: uploadToken from PrepareCameraCapture and original (binary file); live-photo additionally requires motion (original JPEG plus QuickTime MOV). Every component is bounded, hashed and decoded server-side. Success confirms the full set, generated thumbnail, optional playback derivative and JSON in one private region. FRA/AMS origin filenames remain unchanged when replicated. No camera database or public storage link is used.
+        /// </remarks>
+        /// <param name="background">When true, 202 acknowledges validated temporary staging only. Poll ConfirmCameraCapture with the same ticket; retain original bytes until confirmed. Host restart may require retry. Default false retains synchronous 200 confirmation.</param>
+        /// <param name="uploadToken">Unchanged token from PrepareCameraCapture.</param>
+        /// <param name="original">Original captured bytes matching the prepared length and SHA-256.</param>
+        /// <param name="motion">Required only for live-photo: the original QuickTime MOV companion matching its prepared length and hash. Omit for other capture kinds.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraSaveResponse> SaveCameraCaptureAsync(bool? background = null, string? uploadToken = null, FileParameter original = null, FileParameter? motion = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List own tenant captures, or all authorized captures on one exact bank, location or unit.
+        /// </summary>
+        /// <remarks>
+        /// Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. Nullable bankName, locationName and unitName describe the current resource hierarchy; each name requires that object's Read permission, scope and retention visibility. Inapplicable or unauthorized names are null. Unit names resolve localized placeholders. No storage URLs or credentials are returned.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraCapturePage> GetCameraCapturesAsync(string? resourceKid = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Confirm publication of an exact prepared capture after an uncertain upload response.
+        /// </summary>
+        /// <remarks>
+        /// Requires the original uploadToken, its authenticated owner and current Camera1/resource Read and Write. confirmed=false is not proof of failure; retain the original bytes and ticket for retry. No media is uploaded by this operation.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CameraConfirmationResponse> ConfirmCameraCaptureAsync(CameraConfirmationRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Stream one capture component through the API, with current resource authorization.
+        /// </summary>
+        /// <remarks>
+        /// id is an opaque, short-lived identity from GetCameraCaptures. part is original, thumbnail, metadata, motion, motion-playback, playback or preview. QuickTime and WebM originals have a separate H.264/AAC playback part; Live Photo motion uses motion-playback. Missing copies fall back to the other region. No redirects or public Spaces links.
+        /// </remarks>
+        /// <param name="range">Optional single byte range, for example bytes=0-1023. Valid ranges return 206; invalid ranges return 416.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetCameraCaptureContentAsync(string id, string? part = null, string? range = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read private capture metadata for a public recent-photo thumbnail.
+        /// </summary>
+        /// <remarks>
+        /// Use the opaque id from the public thumbnail URL. Requires an active manager, Camera1, resource Read, scope and retention visibility. The public thumbnail ticket alone grants no metadata access. Returns 400 for invalid/expired tickets, 401/403 for denied access, 404 for missing metadata and 503 for unavailable storage.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetRecentCameraPhotoMetadataAsync(string id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Downloads the complete filtered selection as CSV or a genuine Excel workbook.
         /// </summary>
         /// <remarks>
@@ -660,9 +836,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentCsvAsync(string documentKid, string? states = null, string? settings = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentCsvAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -678,9 +855,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentXlsAsync(string documentKid, string? states = null, string? settings = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentXlsAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -764,6 +942,17 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetInstallerExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? includeActivationCode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// List installers with locations, tags, account state and last activity.
         /// </summary>
         /// <remarks>
@@ -783,10 +972,13 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Disabled installers remain visible. Deleted installers follow the caller's RetentionDays; malformed/future
         /// <br/>  deletion values are hidden. LastActiveAt is the Alive row's MS2000 converted to UTC, never its Text value.
         /// <br/>- Missing/invalid Enabled and activity are null; missing Deleted is zero. Reads do not update activity.
+        /// <br/>- includeActivationCode=true additionally requires Installer Create and returns each visible installer's
+        /// <br/>  FlexActivation.User() activationCode using this site's tenant bank. Default false omits the code.
+        /// <br/>  This is sensitive activation data; do not log/cache/share it. No password is returned.
         /// <br/>
         /// <br/>### Paging, filtering and ordering
         /// <br/>
-        /// <br/>- pageSize is 1–100 (default 50). Follow nextCursor until null; a page may be empty due to retention.
+        /// <br/>- pageSize is 1–250 (default 50). Follow nextCursor until null; a page may be empty due to retention.
         /// <br/>- filter is a literal, case-insensitive Name/Email substring, at most 128 characters. Wildcards are escaped.
         /// <br/>- Sorts: identity, name, email, locations, tags, deleted, enabled, lastActive; direction asc or desc.
         /// <br/>- Sort applies before paging. Text is ordinal case-insensitive; location/tag lists compare sorted numeric
@@ -794,19 +986,19 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Null values sort first ascending, last descending. Deleted sorts by timestamp, Enabled by null/false/true.
         /// <br/>- Identity ascending uses bounded keyset reads. Other sorts use a tenant-local index, at most 999 identities,
         /// <br/>  cached for 60 seconds, then fresh page details with retention reapplied. No per-installer queries.
-        /// <br/>- Cursors are bound to caller, tenant, filter, ordering and page size. Restart without a cursor when any changes.
+        /// <br/>- Cursors are bound to caller, tenant, filter, ordering (page size may change). Restart without a cursor when any changes.
         /// <br/>  Concurrent updates are not a frozen snapshot; a removed cursor anchor requires restarting.
         /// <br/>
         /// <br/>### Errors and limits
         /// <br/>
         /// <br/>- 400: invalid-page, invalid-filter, invalid-sort or invalid-cursor. 401: invalid/revoked session.
-        /// <br/>- 403: missing-installers-tab, missing-installers-read or missing-tenant-access.
+        /// <br/>- 403: missing-installers-tab, missing-installers-read, missing-installers-create (codes) or missing-tenant-access.
         /// <br/>- 503 installers-unavailable: database unavailable or the 12-second deadline elapsed; no partial sorted result.
         /// <br/>  Retry manually. All responses are no-store. No installer writes are provided by this operation.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<InstallerDirectoryResponse> GetInstallersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<InstallerDirectoryResponse> GetInstallersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? includeActivationCode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -848,21 +1040,21 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Count accessible active locations for the Banks2 navigation icon.
+        /// Count accessible active locations for the Locations1 navigation icon.
         /// </summary>
         /// <remarks>
-        /// Requires an active manager, Banks2 (5), Bank Read, Location Read and current site/bank/location grants.
+        /// Requires an active manager, Locations1 (65), Bank Read, Location Read and current site/bank/location grants.
         /// <br/>Counts distinct Log24 locations (BankId at least 1000) with Enabled exactly 1 and Deleted zero;
         /// <br/>missing Deleted means zero, missing/invalid Enabled or malformed Deleted are excluded.
         /// <br/>These state rules also apply to all-bank managers. For limited grants the parent bank must remain
-        /// <br/>visible under RetentionDays. No search, paging or client-selected scope is accepted.
+        /// <br/>visible under RetentionDays. Optional bankKid narrows the count to one canonical bank KID in this tenant, intersecting current grants. No search or paging is accepted.
         /// <br/>Returns count and a ready-to-render iconKid containing Kid.Count. The aggregate is read afresh on each request; permission snapshots live at most 60 seconds.
         /// <br/>401: invalid/revoked session. 403: missing-banks-tab, missing-bank-read, missing-location-read or missing-resource-access.
         /// <br/>503 locations-unavailable: storage unavailable or the 12-second deadline elapsed; retry manually. No-store.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ActiveLocationCountResponse> GetActiveLocationCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ActiveLocationCountResponse> GetActiveLocationCountAsync(string? bankKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -870,7 +1062,7 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// ### Authorization and data
-        /// <br/>Requires an active manager, Banks2 (5), Bank Read, Location Read and site/bank/location grants.
+        /// <br/>Requires an active manager, Locations1 (65), Bank Read, Location Read and site/bank/location grants.
         /// <br/>Every page rechecks the current bounded manager snapshot. Location-only grants never reveal sibling locations.
         /// <br/>Reads only the site's Log24; BankId must be at least 1000. Discovery requires Name, Icon, VismaCustNo, Enabled or Deleted.
         /// <br/>An explicit site-wide grant lists all states, including disabled locations and deletions outside RetentionDays.
@@ -890,7 +1082,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Text filtering also searches all selected stored columns before pagination; unselected extra columns do not match.
         /// <br/>Decimal coordinates and gift amounts accept dot/comma; date searches accept ISO or dd.MM.yyyy/dd-MM-yyyy, UTC for contacts.
         /// <br/>bankName is an optional selection marker for showing the bank name and bank icon together after the location in the portal. Core bank identity properties remain populated.
-        /// <br/>Billing fields (also accepted as sort keys): vismaCrAcNo, vismaInvoiceVersion, vismaOrdre, vismaPNTurnover, vismaPNSettlement, vismaSettlement, vismaVAT, vismaServiceKey, vismaStart, vismaNote, hiddenNote, vismaGuaranteeMonth, vismaGuaranteeUnder, vismaGuarantee, vismaGuaranteeCustomer, vismaGuaranteeOver, gift, giftBegin, giftEnd, giftSplit, giftPN.
+        /// <br/>Billing fields (also accepted as sort keys): vismaCrAcNo, vismaInvoiceVersion, vismaOrdre, vismaPNTurnover, vismaPNSettlement, vismaSettlement, vismaVAT, vismaServiceKey, vismaStart, vismaNote, hiddenNote, vismaGuaranteeMonth, vismaGuaranteeUnder, vismaGuarantee, vismaGuaranteeCustomer, vismaGuaranteeOver, gift, giftBegin, giftEnd, giftSplit, giftPN, soapEnd.
+        /// <br/>SoapEnd reads location-owned eSetting.SoapEnd (3025) as legacy date text, like vismaStart; it is not MS2000 and sorts as stored text.
         /// <br/>GiftPN uses legacy location setting 1620 (the shared enum calls this identity DurationIsETA for units).
         /// <br/>Billing fields return location-owned stored text; omitted fields are null, selected missing fields are empty.
         /// <br/>TeltonikaSms, alternativeBankName, mask and timeZone are location-owned TeltonikaSMS, Bank, Access and TimeZone settings, returned as stored text without inheritance.
@@ -908,7 +1101,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>It means last contact, not last machine run. Deleted units follow RetentionDays; orphan Alive rows do not contribute.
         /// <br/>
         /// <br/>### Search, sorting and paging
-        /// <br/>pageSize: 1–100, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,
+        /// <br/>bankKid: optional canonical bank KID in this tenant; intersects current grants before filtering/paging.
+        /// <br/>Never broadens access or changes all-bank privileges. Repeat it unchanged with cursors; invalid/wrong-tenant KIDs return 400 invalid-bank.
+        /// <br/>pageSize: 1–250, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,
         /// <br/>location name or VismaCustNo. Exact canonical/readable/site-relative bank and location KIDs are supported.
         /// <br/>Complete bank/location activation codes match only when the caller could view that code; bank codes include tenant,
         /// <br/>location codes use the trusted site tenant. No cross-tenant reads. Empty filter lists all accessible locations.
@@ -922,19 +1117,30 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Sorting codes requires permission to see that code (otherwise 403 missing-code-access).
         /// <br/>Numeric bank/location identities break ties in the same direction for every sort.
         /// <br/>Follow nextCursor until null; cursors are protected, expire after 15 minutes and are bound to tenant, manager,
-        /// <br/>resource grants, retention, filter, enabledOnly, sort, direction and page size. Restart without a cursor when these change.
+        /// <br/>resource grants, retention, filter, enabledOnly, sort, direction (page size may change). Restart without a cursor when these change.
         /// <br/>enabledOnly: false by default. When true, exclude locations whose Enabled is not exactly 1 before paging.
         /// <br/>This narrows the authorized view only; deletion/retention rules and activation-code permissions remain unchanged.
         /// <br/>Concurrent edits are not a frozen snapshot; renamed rows may move. No count or full catalogue is returned.
         /// <br/>
         /// <br/>### Errors
-        /// <br/>400: invalid-page, invalid-filter, invalid-sort, invalid-fields, invalid-cursor. 401: invalid/revoked session.
+        /// <br/>400: invalid-bank, invalid-page, invalid-filter, invalid-sort, invalid-fields, invalid-cursor. 401: invalid/revoked session.
         /// <br/>403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access, missing-code-access.
         /// <br/>503 locations-unavailable: storage unavailable or the 12-second deadline elapsed. Retry manually. No-store.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, string? bankKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count every location matching the same filters, selected search columns and permissions as GetLocations.
+        /// </summary>
+        /// <remarks>
+        /// Requires Locations1, Bank Read, Location Read and current tenant-bound resource grants. Uses the identical Log24 discovery, scope, retention, Enabled, KID/code search and selected-field filtering as GetLocations. No cursor or page limit applies. Count is exact at query time, not an immutable snapshot of subsequent pages; concurrent data or permission changes may change a later export. sort/direction retain the listing's validation and code-access checks. No-store. 400 invalid filters/fields/scope; 401 invalid session; 403 missing permissions; 503 locations-unavailable or 12-second deadline. Retry manually.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<LocationCountResponse> GetLocationCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? bankKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -990,6 +1196,31 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read dated reservation calendars with location opening hours already applied.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Bookings1, Location Read, Unit Read and matching site/bank/location
+        /// <br/>scope and RetentionDays visibility. Authorization precedes all settings reads. No User Read required.
+        /// <br/>From is an optional local yyyy-MM-dd date, default today in the location time zone; days is 1–31, default 14.
+        /// <br/>The API expands BookCalendar v3 and applies the same opening plan as GetLocationOpeningHours,
+        /// <br/>including controller inheritance, overnight spill, holidays and custom date exceptions.
+        /// <br/>Days carry concrete dates and weekday 0=Sunday. Slots use local startMinute and durationMinutes,
+        /// <br/>clipped to 0–1440 within each date. Type 0=reservation period, 1=chance, 2=closed, 3=unknown opening hours.
+        /// <br/>Missing/hidden/cyclic opening owners remain unknown, never unrestricted. Invalid date exceptions are ignored individually.
+        /// <br/>The no-calendar sentinel is omitted;
+        /// <br/>malformed calendars are omitted. Configured calendars may have empty open days.
+        /// <br/>Grouping preserves stored calendar identity and also separates different effective dated schedules.
+        /// <br/>These are wall-clock schedules, not UTC reservations, occupancy or a guarantee of bookability.
+        /// <br/>Two bounded Log24 reads share an eight-second deadline; only the authorized units may own schedules.
+        /// <br/>No writes. 400 invalid KID/range, 401 inactive session, 403 denied, 404 hidden location, 503 unavailable data.
+        /// <br/>Do not interpret 503 or unknown as closed or unrestricted. Refresh on navigation.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<LocationBookingCalendarsResponse> GetLocationBookingCalendarsAsync(string locationKid, string? accept_Language = null, System.DateTimeOffset? from = null, int? days = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read localized configured reservation rules for the location's visible units.
         /// </summary>
         /// <remarks>
@@ -1026,6 +1257,28 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read an authorized controller using its canonical Controller KID with MainId.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization, tenant, scope and retention checks as GetUnitOverview. The authorized Alive hierarchy must identify this unit as its own controller. Controller data shares the main unit's Log24 storage. Core is the temporary settings and states selection; unavailable type metadata never invents fields.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitDetailsResponse> GetControllerOverviewAsync(string controllerKid, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read the controller's temporary Core settings or states from its main unit.
+        /// </summary>
+        /// <remarks>
+        /// Rechecks GetControllerOverview authorization and hierarchy. Uses only fields declared for the main unit type; missing Core metadata returns an empty items array without a storage read. Existing unit setting operations retain their authorization and revisions.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitGroupResponse> GetControllerGroupAsync(string controllerKid, string kind, string group, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Get the location label and its units, ordered by unit number.
         /// </summary>
         /// <remarks>
@@ -1044,12 +1297,14 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Cycle uses the newest MS2000 from `eSetting.Cycle` or `eState.Cycle`; state wins ties.
         /// <br/>- Absent or invalid cycle values return null. `cycle` is an enum name; `cycleText` is its localized label.
         /// <br/>- `unitType` is the effective numeric type; `unitTypeName` is the eUnitType name when defined; `unitTypeSource` identifies the source setting.
-        /// <br/>- A present UnitType2 takes precedence, including when malformed (null type, no legacy fallback). Otherwise UnitType is decoded using FlexOrm's `(value &gt;&gt; 1) &amp; 63` rule.
+        /// <br/>- Only the original packed UnitType determines the type, using the eight-bit `(value &gt;&gt; 1) &amp; 255` rule. UnitType2 is never an override or fallback.
         /// <br/>- Missing/invalid types return null, never an invented Type000. Unknown numeric types are retained without claiming metadata support.
         /// <br/>- `progress` contains `status`, nullable `percent`/`remainingSeconds` and `calculatedAtUtc`. The API recalculates from Started/Done at request time; clients need no MS2000 or KID calculations.
-        /// <br/>- `Estimated` is 0–99%; `Complete` is 100% only for the actual DONE phase (excluding LinkOnline). Cycle substeps are not percentages. Disabled/out-of-order/disconnected/error states suppress estimates.
-        /// <br/>- `UnknownEndTime` covers missing/reset/invalid times, the unknown-end sentinel, mismatched sequence DocIds and fractional Connected quality. `EstimateExpired` means wait for the actual cycle; it never means complete. Both have null percentages and remaining time.
-        /// <br/>- Enabled must be exactly 1. Connected=0 blocks estimates; missing Connected is not assumed offline. Started/Done are JSON Text values; TagId is the sequence. No user identities are read for progress.
+        /// <br/>- `Estimated` uses floor(clamp((now-Started)/(Done-Started)*100,0,100)), including 100 at/after the expected end. Remaining seconds are clamped at zero.
+        /// <br/>- `UnknownEndTime` covers missing/nonpositive/invalid times and Done not after Started; percent and remainingSeconds are null.
+        /// <br/>- Only Started/Done JSON Text timestamps affect progress. Cycle, Enabled, OutOfOrder, Connected and sequence IDs do not. No user identities are read for progress.
+        /// <br/>- `terminal` is an optional `{kid,name,iconKid}` with a canonical Controller KID (MainId, UnitId=0), resolved from the trusted tenant's Alive.MainId for the exact visible unit set. The parent must be a visible Log24 unit in this location; an existing parent Alive row must map UnitId to itself. A missing parent Alive row is allowed when a visible child's MainId explicitly identifies it.
+        /// <br/>- Missing, invalid, hidden, chained or unavailable hierarchy returns terminal=null; never guess a self-parent. Terminal names use the main unit’s eState.ComputerName, matching GetTerminals without falling back to eSetting.Name and its iconKid includes the main unit number. Offline is independent.
         /// <br/>
         /// <br/>### Results and cache
         /// <br/>
@@ -1078,7 +1333,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Result
         /// <br/>- Returns `location`, `unit`, `descriptorAvailable`, `settingGroups` and `stateGroups`.
         /// <br/>- Group identifiers are stable eSettingGroup/eStateGroup names, deduplicated and ordered by numeric enum value.
-        /// <br/>- Metadata comes from the installed Kombine.Flex.Units descriptor packages, selected by the unit's effective type; no runtime/hardware connection is made.
+        /// <br/>- Metadata comes from SettingsAndStates.json and the shared enums, selected by the unit's effective type; no hardware connection is made.
         /// <br/>- Missing, malformed or unsupported types return descriptorAvailable=false and empty groups. No default type is substituted.
         /// <br/>- This read-only operation returns group metadata, not setting/state values or editing rights.
         /// <br/>### Errors
@@ -1103,6 +1358,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- `canReadHistory` identifies fields supported by GetUnitSettingHistory. Fetch history only on demand. Sync-only changes and editor label changes do not invalidate the value revision or change MS2000.
         /// <br/>- `hasHistory` indicates that the setting has at least one bank Log2 history record. Show history controls only when both canReadHistory and hasHistory are true.
         /// <br/>- Settings include `canEdit`, per-field `revision` and input constraints. Use SetUnitSetting to save; Unit Write is required. States are always read-only. Dynamic-option and other-scope editors are not supported.
+        /// <br/>- Optional `valueFormat` selects a display/editor; Price comes from AttributeMetaRegEx(RegExs.Price). Display raw value/100 with two decimals, convert back exactly before saving. `pattern` is a .NET regex on raw storage text, never display text. Minimum/maximum also use raw units. Null/unknown formats use ordinary presentation. Empty optional values stay empty.
         /// <br/>- `valueStatus` is stored, missing, other-scope or redacted. A stored null/empty value remains stored. MainUnit/other-object bindings have no value; this endpoint does not infer their owning KID or borrow the current unit's value.
         /// <br/>- Hidden settings are omitted; credential settings are redacted and never read. Enum field/group names are stable identifiers.
         /// <br/>- At most 512 stored fields and 16,384 characters per value; ambiguous or oversized data fails with 503, never partial results. Values are uncached; type/location snapshots retain their normal 10/60-second limits. Poll settings at most every five seconds and states every ten seconds, pausing hidden pages and never overlapping requests.
@@ -1124,6 +1380,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Audit access exposes only editor KID, kind, current display name and icon; it grants no access to their account or directory. Manager/service labels use bank zero; installer labels use the site's tenant bank; resident labels use this unit's bank.
         /// <br/>### Paging and values
         /// <br/>- Newest first from bank Log2, with stored value, source MS2000, Sync and editor. Names/icons are current Log7 labels, not historical snapshots. Unknown editors have a null KID and may have an empty name.
+        /// <br/>- Page `valueFormat` matches GetUnitGroup. Price displays value/100; history values remain raw. Restore by submitting the unchanged raw value and the current field revision, without a second multiplication.
         /// <br/>- `changedBy` is null for UserId zero; display no user icon or name in that case.
         /// <br/>- `limit` is 1–50 (default 25). Pass `nextBeforeMs2000` as `beforeMs2000` for the next page. Null means no more rows. No count query, defaults or cache.
         /// <br/>- Sync is the flag on that exact Log2 record: only 1 means acknowledged. Null means no known flag, never success. A sync-only update does not change the value revision or modification timestamp.
@@ -1188,10 +1445,12 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>inherit schedules. The tenant is selected by site configuration, never by the caller.
         /// <br/>
         /// <br/>One bounded Log24 read, at most 255 units / 32,768 values, an eight-second deadline and two concurrent reads.
-        /// <br/>No Alive reads or writes. MasterUnitId comes from Log24 states. Missing/hidden/cyclic owners yield Unknown,
-        /// <br/>never assumed 24/7. A known controller with no weekly limits is AllDay. Open/close fields inherit independently
-        /// <br/>backwards through the week; an entirely unset unit week inherits its controller's plan. Explicit unit exceptions
-        /// <br/>remain in effect. Equal explicit times are Closed; short openings are preserved. Overnight intervals are supported.
+        /// <br/>Owner identity comes from the authorized same-location Alive.MainId hierarchy; opening settings remain in Log24.
+        /// <br/>Missing/hidden/cyclic owners yield Unknown,
+        /// <br/>never assumed 24/7. Invalid date exceptions are ignored individually, preserving weekly hours and other valid exceptions.
+        /// <br/>A known controller with no weekly limits is AllDay. Open/close fields inherit independently
+        /// <br/>backwards through the main terminal's week; child-unit hours and exceptions do not override that owner.
+        /// <br/>Equal explicit times are Closed; short openings are preserved. Overnight intervals are supported.
         /// <br/>
         /// <br/>Weekly rows use ISO weekdays 1–7. Exceptions are concrete local dates from today through two calendar months,
         /// <br/>including year boundaries. First Wednesday, configured holidays (including the legacy Great Prayer Day), then
@@ -1211,6 +1470,64 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<LocationOpeningHoursResponse> GetLocationOpeningHoursAsync(string locationKid, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read bank Log5 reservation history for the location's authorized visible units.
+        /// </summary>
+        /// <remarks>
+        /// Requires Bookings1, Location/Unit Read, resource scope and RetentionDays visibility.
+        /// <br/>            From is a local date from 2001, days 1–31. Returns every overlapping dated reservation revision,
+        /// <br/>            including cancellations (positive absolute duration, cancelled=true), plus resident number and name. User Read is required.
+        /// <br/>            Revision is UTC milliseconds since 2000-01-01. Weekly, AUT and isy events are excluded.
+        /// <br/>            Events matching the current active snapshot by MS2000, LocationId, UnitId and UserId in the same bank are omitted.
+        /// <br/>            At most 5000 events; overflow/storage failure returns 503, never truncated history. No writes.
+        /// <br/>            Load only the visible calendar range; missing or failed history is not an empty history.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<LocationReservationHistoryResponse> GetLocationReservationHistoryAsync(string locationKid, System.DateTimeOffset? from = null, int? days = null, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read active tenant Log5 reservations for the location's authorized visible units.
+        /// </summary>
+        /// <remarks>
+        /// Requires Bookings1, Location/Unit Read, a current manager session and resource/RetentionDays visibility.
+        /// <br/>            Resident number and name require User Read in addition to Location/Unit Read. From is a local date (2001 or later), days 1–31.
+        /// <br/>            StartMinute is local wall-clock minutes since 2000-01-01; weekly positions below 10080 are omitted
+        /// <br/>            because they do not identify a concrete date. DurationMinutes is independent of calendar slots. Dated entries include every
+        /// <br/>            overlap with the requested range. Cancelled, AUT and isy rows are excluded. Tenant Log5 is a current snapshot;
+        /// <br/>            no bank-history fallback. At most 5000 entries; overflow returns 503, never partial occupancy. No writes.
+        /// <br/>            Missing data must not be interpreted as availability. Refresh on date navigation.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<LocationReservationsResponse> GetLocationReservationsAsync(string locationKid, System.DateTimeOffset? from = null, int? days = null, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get current weather for the authorized location's stored position or address.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager bearer session, assigned Tab, Bank Read, Location Read, matching resource scope
+        /// <br/>and RetentionDays visibility. Location and parent bank must also satisfy GetObjectAddress visibility.
+        /// <br/>Authorization and a bounded Log-only address read precede every cache lookup. No Unit Read or Write is needed.
+        /// <br/>Uses eSetting.Latitude and Longitude (integer millionths of degrees) when both are valid; otherwise geocodes
+        /// <br/>available Address and Zip using the site's configured geocoder. Address-only/postal results are approximate.
+        /// <br/>Never inherits another object's address, substitutes zero, writes settings or accepts caller-supplied coordinates.
+        /// <br/>Returns status Available, LocationUnknown (no resolvable position), or Unavailable (provider/configuration failure).
+        /// <br/>current is null unless Available. Optional measurements are null when unknown. positionSource is Coordinates,
+        /// <br/>Address, or null. Times are UTC; temperature is Celsius, wind m/s, precipitation mm and humidity percent.
+        /// <br/>Open-Meteo model data, not an on-site sensor. Display attribution: Weather data by Open-Meteo, CC BY 4.0.
+        /// <br/>Cache: ten minutes per tenant/location/address revision; failures one minute. No-store HTTP. Refresh on navigation.
+        /// <br/>Four concurrent provider lookups per process, twelve-second request deadline, no retries.
+        /// <br/>400 invalid/foreign KID; 401 invalid/inactive manager; 403 scope/tab/read denial; 404 hidden/missing object;
+        /// <br/>503 location-weather-unavailable on storage failure/deadline. Unavailable never means zero weather.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<LocationWeatherResponse> GetLocationWeatherAsync(string locationKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1264,7 +1581,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>- `filter` matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.
         /// <br/>- Pagination scans at most `pageSize` candidates. A page can be short or empty while `nextCursor` is non-null; **continue until null**.
-        /// <br/>- Changing filter, sort, direction or page size requires restarting **without a cursor**.
+        /// <br/>- Changing filter, sort or direction requires restarting **without a cursor**.
         /// <br/>- Concurrent inserts and changes are not a frozen snapshot.
         /// <br/>
         /// <br/>### Ordering
@@ -1281,7 +1598,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- A missing continuation identity after index refresh returns **HTTP 400**, `invalid-cursor`; restart without a cursor.
         /// <br/>- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.
         /// </remarks>
-        /// <param name="pageSize">Candidate batch size, 1–100, default 50. Keep unchanged while following a cursor.</param>
+        /// <param name="pageSize">Candidate batch size, 1–250, default 50. May change while following a cursor.</param>
         /// <param name="cursor">Opaque continuation returned by the previous request, scoped to this site and caller.</param>
         /// <param name="filter">Optional name/email substring, at most 128 characters, trimmed. Empty lists all permitted managers.</param>
         /// <param name="sort">identity (default), name, email, organisation, kids, deleted, enabled or lastActive. Applied before pagination.</param>
@@ -1405,7 +1722,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
         /// <br/>            - Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.
         /// <br/>
-        /// <br/>            The additional technical-support and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
+        /// <br/>            The additional technical-support, tenant-installer and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
         /// <br/>
         /// <br/>            ### Presets
         /// <br/>
@@ -1415,24 +1732,24 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            | caretaker (Varmemester) | Read (1) | Read + Write (3) | None (0) |
         /// <br/>            | operator (Operatør) | All six flags (63) | All six flags (63) | All six flags (63) |
         /// <br/>
-        /// <br/>            - Replaces the whole matrix, including clearing existing extra flags. Accounting also replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40), removing every other ID, including unknown stored IDs. Other roles preserve Tabs.
-        /// <br/>            - Kids, account state and profile fields are unchanged.
+        /// <br/>            - Replaces the whole matrix, including clearing existing extra flags. Accounting replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40). Combine grants all six flags in all nine categories, selects every available tab (excluding None/Length), and grants the site's Tenant KID (all banks). Other roles preserve Tabs and Kids.
+        /// <br/>            - Combine replaces narrower site grants, preserves unrelated foreign stored grants without granting access to them, and never changes account state or profile fields. Available tabs are selected once; future tabs are not automatically granted.
         /// <br/>            - A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.
         /// <br/>            - Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 54 checkboxes and retains Managers access.
         /// <br/>
         /// <br/>            ### Concurrency and storage
         /// <br/>
-        /// <br/>            - Read GetManager first. Send expectedFlags for all nine categories, using explicit null for invalid stored values. Accounting additionally requires expectedTabsRevision copied from tabsRevision; older clients must send this property before applying accounting.
+        /// <br/>            - Read GetManager first. Send expectedFlags for all nine categories, using explicit null for invalid stored values. Accounting and combine require expectedTabsRevision copied from tabsRevision; combine also requires expectedKidsRevision copied from kidsRevision.
         /// <br/>            - Requests must contain all nine categories, including Service, Tabs and Kids. Incomplete category sets are rejected.
-        /// <br/>            - One serializable Log7 transaction validates every expected mask and the Tabs revision before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab updates.
-        /// <br/>            - Every role response includes tabs, tabsRevision, canEditTabs and canEditPermissions. Validate all returned permissions and tabs before changing the display; use the new tabsRevision for the next edit.
+        /// <br/>            - One serializable Log7 transaction validates every expected mask and applicable Tabs/Kids revisions before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab/resource updates.
+        /// <br/>            - Every role response includes tabs, tabsRevision, canEditTabs, canEditPermissions, resourceGrants, kidsRevision and canEditKids. Validate the full response before changing the display; use the new revisions for the next edit.
         /// <br/>            - Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.
         /// <br/>
         /// <br/>            ### Errors
         /// <br/>
-        /// <br/>            - 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid expectedTabsRevision for accounting. Invalid tenant/KID returns invalid-manager-kid.
+        /// <br/>            - 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid required revisions. Invalid tenant/KID returns invalid-manager-kid.
         /// <br/>            - 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.
-        /// <br/>            - 409 permission-conflict or tabs-conflict: reload and review; nothing is partially saved. Accounting returns invalid-stored-tabs for malformed stored JSON/non-integer tab IDs without overwriting it.
+        /// <br/>            - 409 permission-conflict, tabs-conflict or kids-conflict: reload and review; nothing is partially saved. Accounting/combine return invalid-stored-tabs for malformed tabs; combine returns invalid-stored-kids for malformed grants, without overwriting them.
         /// <br/>            - 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.
         /// </remarks>
         /// <returns>OK</returns>
@@ -1503,6 +1820,17 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetManagerExportCountAsync(string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read one administrator by canonical manager KID for a workspace shortcut.
         /// </summary>
         /// <remarks>
@@ -1542,12 +1870,15 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Log in with a manager email and password.
+        /// Log in with manager email/password or manager username/API key.
         /// </summary>
         /// <remarks>
         /// ### Sign in
         /// <br/>
-        /// <br/>- Send the **original password over HTTPS**; do not hash it in the client.
+        /// <br/>- Send exactly one complete pair: email/password or kid/apiKey, over HTTPS. Never hash credentials in the client.
+        /// <br/>- The kid field accepts the manager Kid.ToUserId username (tenant.0-userId) or canonical bank-zero manager KID on this site. API keys use eSetting.ApiKeyHash, never Password.
+        /// <br/>- API-key login performs no duplicate-account cleanup. Inactive accounts and invalid keys return 401.
+        /// <br/>- Key replacement revokes key-authenticated sessions within 60 seconds; renewal preserves the key proof.
         /// <br/>- Use `accessToken` in `Authorization: Bearer {accessToken}` when calling `GetCurrentManager`.
         /// <br/>- The opaque token lasts **259,200 seconds (three days)**. Do not decode it as a JWT.
         /// <br/>- Before expiry, use `RenewManagerSession` to replace it after user activity. No separate refresh token is issued.
@@ -1632,6 +1963,43 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Create a pending manager with a password and queue a manager-bound verification email.
+        /// </summary>
+        /// <remarks>
+        /// Name/organisation are required, max 200 characters without controls. Password and confirmPassword must match,
+        /// <br/>            with 12–128 printable ASCII characters and no leading/trailing spaces. No tenant or permission selectors are accepted.
+        /// <br/>            Stores the profile, password hash, pending marker, Enabled=0 and all operation masks=0 in Log7, then queues a Mails row
+        /// <br/>            with the allocated manager UserId in the same transaction under the tenant manager-create lock. Mail failure rolls back creation.
+        /// <br/>            Resubmission for an untouched pending account with the same password refreshes its proof and mail without allocating another ID.
+        /// <br/>            Existing active/disabled non-signup accounts and wrong passwords get the same silent 202 accepted response without changes/mail.
+        /// <br/>            The proof expires in 30 minutes. Allowed delivery domains: nortec.dk, kombinetech.com and arendt.dk; others: 400 email-delivery-restricted.
+        /// <br/>            202 accepted confirms processing, not delivery. Email throttling is silent.
+        /// <br/>            Language must be exactly lowercase en, da or es when supplied; omitted/null uses English.
+        /// <br/>            Empty strings, whitespace, regional tags, uppercase and other values return 400 ValidationProblemDetails with errors.Language before account creation or mail queueing.
+        /// <br/>            Never log request bodies, passwords or tokens; never retry an uncertain storage outcome automatically.
+        /// </remarks>
+        /// <returns>Accepted</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PersonalAccountResult> RequestManagerSignUpAsync(ManagerSignUpRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Verify the email and activate only the manager already created by self-registration.
+        /// </summary>
+        /// <remarks>
+        /// Only token is accepted; no password or profile input. Explicit POST is required. The 30-minute proof is tenant/environment-bound
+        /// <br/>            and checked against locked email, password, pending-proof and Enabled revisions. Deleted or non-pending accounts and changed proof-bound values are rejected.
+        /// <br/>            Atomically replaces the pending marker with the existing email-version proof and sets Enabled=1; no permissions, profile or password changes.
+        /// <br/>            Authorized administrators may separately assign or revoke access while verification is pending; confirmation preserves those changes and grants no permissions itself.
+        /// <br/>            200 email-verified issues no session; sign in normally afterwards. Reused, expired or invalid proof: 400 invalid-signup-token.
+        /// <br/>            503 signup-unavailable can have an uncertain outcome; do not automatically retry.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PersonalAccountResult> ConfirmManagerSignUpAsync(ManagerSignUpConfirmation? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Assign or remove one available eTab on an administrator.
         /// </summary>
         /// <remarks>
@@ -1685,6 +2053,50 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Get up to ten authorized locations nearest to a supplied position.
+        /// </summary>
+        /// <remarks>
+        /// Latitude and longitude are finite decimal degrees in [-90,90] and [-180,180].
+        /// <br/>            Requires an active tenant-bound manager, Locations1, independent Bank Read and Location Read, and resource grants.
+        /// <br/>            Reads only visible enabled Log24 locations with valid nonzero coordinates, preserving manager retention and scope.
+        /// <br/>            SQL orders by great-circle distance before LIMIT 10; bank/location identities break ties. No radius limit or text filter.
+        /// <br/>            Distances are straight-line metres, not driving distances. Locations lacking valid coordinates are omitted.
+        /// <br/>            Position is used only for this lookup; it is not written to the database or returned. Do not log coordinate query strings.
+        /// <br/>            400 invalid-position; 401 stale/inactive session; 403 missing-locations-access; 503 locations-unavailable.
+        /// <br/>            Empty authorized results return 200 with an empty array. No-store; 12-second deadline.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<NearestLocationItem>> GetNearestLocationsAsync(double? latitude = null, double? longitude = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count all visible administrators, independently of the current page/filter.
+        /// </summary>
+        /// <remarks>
+        /// Requires Managers1, Managers Read and whole-tenant access. Includes disabled accounts and
+        /// <br/>            deletions within the caller's RetentionDays, like GetManagers. Reuses the 60-second, 20,000-identity
+        /// <br/>            bounded directory index. No estimate is returned when that bound is exceeded. No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PeopleDirectoryCount> GetManagerCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count all visible installers, independently of the current page/filter.
+        /// </summary>
+        /// <remarks>
+        /// Requires Installers1, Installer Read and whole-tenant access. Includes disabled accounts and
+        /// <br/>            deletions within the caller's RetentionDays, like GetInstallers. Reuses the existing 60-second,
+        /// <br/>            at-most-999-identity directory index. No-store. Both counts recheck current session access.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PeopleDirectoryCount> GetInstallerCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read your own personal settings and available person icons.
         /// </summary>
         /// <remarks>
@@ -1701,6 +2113,34 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PersonalManagerProfile> GetMyManagerProfileAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read your own API-key configuration status and revision without exposing credentials.
+        /// </summary>
+        /// <remarks>
+        /// Requires a current active tenant-bound manager session. No administrative permissions required.
+        /// <br/>            Reads bank-zero Log7 ApiKeyHash for the authenticated manager only. 401 invalid session; 503 unavailable storage. No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PersonalManagerApiKey> GetMyManagerApiKeyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Generate your own API key and commit its hash to eSetting.ApiKeyHash.
+        /// </summary>
+        /// <remarks>
+        /// Send revision from GetMyManagerApiKey. Generates kt_ plus 64 random ASCII letters/digits.
+        /// <br/>            Uses the existing password-compatible hash, stored only in bank-zero Log7 ApiKeyHash; Password is preserved.
+        /// <br/>            Active manager, tenant and credential stamp are checked again inside the transaction. No account selector or permission grant.
+        /// <br/>            Plaintext appears once, only after commit acknowledgement. Never log the response or store it in browser storage.
+        /// <br/>            A replacement invalidates the previous key. 400 invalid-api-key-revision; 401 inactive/stale session;
+        /// <br/>            409 api-key-conflict: reread before retrying; 503 uncertain/unavailable storage: never retry automatically.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PersonalApiKeyResponse> GenerateMyManagerApiKeyAsync(PersonalApiKeyRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1815,6 +2255,17 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetServiceExportCountAsync(string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// List concrete service enum identities, including services without saved settings.
         /// </summary>
         /// <remarks>
@@ -1839,6 +2290,20 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the predefined service identities without reading service settings.
+        /// </summary>
+        /// <remarks>
+        /// Same active session, Services1, Service Read and whole-tenant scope as GetServices.
+        /// <br/>            Uses the identical PortalServiceIds catalog (distinct concrete enum values, excluding range-end markers).
+        /// <br/>            Independent of directory filtering. No service database read; the existing bounded session cache still
+        /// <br/>            validates access. Returns count and the red-badge iconKid. 401/403 as GetServices; no-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PeopleDirectoryCount> GetServiceCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read one predefined service, editable metadata and its icon catalog.
         /// </summary>
         /// <remarks>
@@ -1848,7 +2313,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- A service exists by enum definition, including before its first settings write. No identity is allocated.
         /// <br/>### Editing metadata
         /// <br/>- CanEdit additionally requires Service Write. Only these callers receive ApiKeyHash; readers receive null and HasApiKeyHash.
-        /// <br/>- ProfileRevision covers raw Name, Icon and Password, including row presence. It is not authorization.
+        /// <br/>- ProfileRevision covers raw Name, Icon, ApiKeyHash and legacy Password, including row presence. It is not authorization.
         /// <br/>- AvailableIcons contains known eIcon names; a safe legacy current icon appears first for display only.
         /// <br/>- Hash values are opaque existing hashes, not plaintext keys. This operation does not implement service login.
         /// <br/>- Service accounts have no permission matrix, assigned KID scopes or tabs. No access object is returned.
@@ -1897,8 +2362,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Key and storage
         /// <br/>- Generates kt_ followed by 64 cryptographically random ASCII letters and digits, always including both uppercase and lowercase letters. Total length is 67 characters. Keys are case-sensitive.
         /// <br/>- Uses exactly the existing manager password hashing function (HubManager.SHA512Salt compatible).
-        /// <br/>- Only the resulting 128-character uppercase hash is stored as eSetting.Password, like manager passwords. Replaces the previous hash.
-        /// <br/>- The response keeps its existing apiKeyHash/hasApiKeyHash names; these describe the Password value, not a separate storage field.
+        /// <br/>- Only the resulting 128-character uppercase hash is stored as eSetting.ApiKeyHash, separately from Password. Replaces the previous hash.
+        /// <br/>- The response keeps its existing apiKeyHash/hasApiKeyHash names; these describe ApiKeyHash; existing Password-only service keys remain readable until replaced.
         /// <br/>- The plaintext key appears only in this successful response, alongside the committed details and next revision.
         /// <br/>- GetService cannot recover it. Copy it before leaving the page; never log the key or response, or store it in browser storage.
         /// <br/>- Does not issue bearer tokens. This is the only operation for replacing the stored API-key hash; manual profile hash writes are rejected.
@@ -1970,7 +2435,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Offline reads the site's Alive rows with UnitId=MainId, excluding Cluster Test, using last server contact:
         /// <br/>Cash at least one hour old; other nonempty BankType at least one day old; at most 100 days old, inclusive.
         /// <br/>AutoOutOfOrder reads Log24 OutOfOrder with value AutoOutOfOrder; excludes StartSMS_60 and TimeSMS_61.
-        /// <br/>UnitType2 takes precedence; otherwise the legacy packed type uses (value shifted right 1) AND 255.
+        /// <br/>Only original packed UnitType determines type via (value shifted right 1) AND 255. UnitType2 is ignored, including as a fallback.
         /// <br/>Unknown/missing types are excluded from AutoOutOfOrder. ErrorId is the positive integer Id in the state JSON.
         /// <br/>Names resolve localization placeholders using Accept-Language. All identities are canonical KIDs.
         /// <br/>bankIconKid and locationIconKid are ready-to-render bank/location icons from Log24;
@@ -2011,6 +2476,85 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.
+        /// </summary>
+        /// <remarks>
+        /// Requires active manager, More1, Bank Read and a matching site/bank/location grant for bankKid.
+        /// <br/>            No business data is read or changed. TimeZone is an explicit browser IANA zone, never server-local.
+        /// <br/>            Formats are ms2000, mi2000, ss2000, utc, local. Integers are decimal strings. Date input follows
+        /// <br/>            Kombine.Flex.Time's 2 ms quantization; numeric MS2000 preserves each millisecond. UTC requires Z/offset.
+        /// <br/>            DST gaps fail; overlaps return both OffsetChoices and require explicit Offset on resubmission.
+        /// <br/>            Unsupported MI2000/SS2000 ranges return null instead of the library's wraparound. See the tools guide.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ToolTimeResponse> ConvertToolTimeAsync(string bankKid, ToolTimeRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.
+        /// </summary>
+        /// <remarks>
+        /// Same More1/Bank Read/scope requirements as ConvertToolTime. This is a syntax inspector:
+        /// <br/>            it never resolves names, verifies existence or grants access to an inspected identity.
+        /// <br/>            Nonzero, nondefault data properties are returned as strings. Enum names/numbers and list indexes
+        /// <br/>            are separate fields. Normalized indicates parser normalization; CanonicalKid is its serialization.
+        /// <br/>            Controls, input over 2048 characters and input with no usable content return 400 invalid-tool-kid.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ToolKidInspectionResponse> InspectToolKidAsync(string bankKid, ToolKidInspectionRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List document identities produced by the selected Unit for WashDoc3.
+        /// </summary>
+        /// <remarks>
+        /// ### Access
+        /// <br/>Active manager bearer session, WashDoc3 (55), Location Read, Unit Read and a matching tenant/bank/location grant.
+        /// <br/>The canonical unit KID must belong to the trusted site tenant. Location and unit visibility follow RetentionDays before history paging.
+        /// <br/>### Time and ordering
+        /// <br/>date is a UTC calendar date (yyyy-MM-dd), defaulting to today. Includes that entire date and earlier history back to 2000-01-01.
+        /// <br/>Matches tagged Cycle settings for exactly this unit. lastActivityUtc is the latest matching Cycle timestamp inside the interval,
+        /// <br/>not the document start/end. Open GetUnitDocumentTable to read its full interval and measurements.
+        /// <br/>sort=activity (default) or documentId, direction=asc or desc (default). Document IDs sort numerically.
+        /// <br/>Stable identity breaks activity ties. limit 1–100 (default 25), offset 0–100000; hasMore indicates another page.
+        /// <br/>Live changes can shift offset pages; reset offset when changing filters or refreshing. No total count or measurement reads.
+        /// <br/>### Errors and limits
+        /// <br/>400 invalid KID/time/sort/page; 401 inactive/expired session; 403 missing access; 404 hidden/missing location or unit;
+        /// <br/>422 oversized metadata; 503 storage unavailable/busy. Twelve-second storage deadline; no response cache.
+        /// <br/>Implemented locally, unreleased. Generated client and download package updates are deferred to beta preparation.
+        /// </remarks>
+        /// <param name="sort">activity (default) or documentId. Document IDs sort numerically.</param>
+        /// <param name="direction">asc or desc (default).</param>
+        /// <param name="offset">Zero-based offset, up to 100000.</param>
+        /// <param name="limit">Page size, 1–100; defaults to 25.</param>
+        /// <param name="search">Optional exact numeric Doc ID or canonical document KID belonging to the selected unit. Applies within the selected date cutoff.</param>
+        /// <param name="date">UTC calendar date (yyyy-MM-dd), inclusive through its last millisecond; defaults to UTC today.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitDocumentPage> GetUnitDocumentsAsync(string unitKid, string? sort = null, string? direction = null, int? offset = null, int? limit = null, string? search = null, string? date = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count distinct WashDoc3 document identities for exactly one unit, separately from list loading.
+        /// </summary>
+        /// <remarks>
+        /// Uses the same active manager, WashDoc3, Location/Unit Read, tenant, resource scope and RetentionDays checks as GetUnitDocuments.
+        /// <br/>date is a UTC calendar date (yyyy-MM-dd), defaulting to today; includes that entire date and all earlier history since 2000-01-01.
+        /// <br/>Counts distinct document IDs from tagged Cycle settings only, without paging through results or reading measurements.
+        /// <br/>Returns count and the effective inclusive UTC from/through bounds. Concurrent data changes may change the total between requests.
+        /// <br/>400 invalid KID/date; 401 inactive/expired session; 403 missing access; 404 hidden/missing location or unit;
+        /// <br/>422 oversized metadata; 503 storage unavailable/busy. Twelve-second storage deadline; no response cache.
+        /// </remarks>
+        /// <param name="search">Optional exact numeric Doc ID or canonical document KID belonging to the selected unit. Applies within the selected date cutoff.</param>
+        /// <param name="date">UTC calendar date (yyyy-MM-dd), inclusive through its last millisecond; defaults to UTC today.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitDocumentCount> GetUnitDocumentsCountAsync(string unitKid, string? search = null, string? date = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read a document's table as JSON with original values and column metadata.
         /// </summary>
         /// <remarks>
@@ -2020,8 +2564,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Location and unit deletion follow RetentionDays, including on SVG cache hits.
         /// <br/>### Fields and values
         /// <br/>- Optional `states`/`settings`: comma-separated exact enum names declared for this unit type. Omit for all permitted fields; an empty value selects none.
+        /// <br/>- Optional `historicalMeasurements=true` adds the fixed document-only measurement/event profile for older machine histories, independently of today's model. Default false; graph2 enables it automatically. It never adds settings or credential access.
         /// <br/>- Hidden, credential, unbound and other-object fields are never read. Unknown types return 422. Invalid/unavailable fields return 400.
         /// <br/>- Rows use exact MS2000 timestamps, with cells indexed by column position. Null cell means absent; a cell with null text/value is a stored null.
+        /// <br/>- A selected column is omitted when every cell in the complete document has no numeric value and null, empty or whitespace-only text. Zero and false are data. Build column mappings from each response; rows and timestamps are preserved, even when no columns remain. Downloads use the same selection.
         /// <br/>- `text` preserves the decoded original; `value` is a finite double when possible. No interpolation or rounding. Use text for exact large numbers.
         /// <br/>- `finished` requires a terminal Cycle and an InSync timestamp at least two minutes beyond the document end.
         /// <br/>### Limits and errors
@@ -2031,9 +2577,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DocumentTable> GetUnitDocumentTableAsync(string documentKid, string? states = null, string? settings = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<DocumentTable> GetUnitDocumentTableAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2047,9 +2594,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentHtmlAsync(string documentKid, string? states = null, string? settings = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentHtmlAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2069,9 +2617,150 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvgAsync(string documentKid, string? states = null, string? settings = null, int? width = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvgAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, int? width = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Render a responsive WashDoc chart with independent text and graph layers.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization as GetUnitDocumentTable, checked before every private cache lookup. Enables the fixed historicalMeasurements profile.
+        /// <br/>Doc ID selects the tagged Cycle history; PREPARING/DONE and last tagged measurements resolve the legacy cycle window.
+        /// <br/>The graph adds one minute of margin, rounds duration up to the next minute, and reads bounded nearest edge samples
+        /// <br/>for observed measurement fields (at most one hour outside that graph window). Old untagged measurements remain supported.
+        /// <br/>Context samples anchor clipped curves; they do not extend the visible time axis. No smoothing or fabricated measurements.
+        /// <br/>Temperature, level and spin use separate bands with matching target overlays; stored Cycle/CycleSub/Error events are marked.
+        /// <br/>At most 16 numeric series. Empty/non-numeric selections return 422. Times are UTC.
+        /// <br/>SVG fills its viewport in both directions while text size and stroke thickness remain stable; no script or third-party renderer.
+        /// <br/>The original GetUnitDocumentSvg remains available. Finished results use a separate bounded private cache, with no-store HTTP responses.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvg2Async(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read semantic WashDoc graph JSON for interactive charts and image rendering.
+        /// </summary>
+        /// <remarks>
+        /// Same active-manager, WashDoc tab, Location/Unit Read, tenant, scope and retention checks as GetUnitDocumentTable.
+        /// <br/>Uses the graph2 data path: exact document cycle boundaries, one-minute graph margin/rounding and bounded edge context.
+        /// <br/>Sparse measurement and target points retain exact MS2000 timestamps, stored nulls, calculated/edge flags and known units.
+        /// <br/>No smoothing, resampling, coordinate transforms or inferred quantities. Level is not assumed to be liters.
+        /// <br/>Presentation contains the trusted original UnitType, family and preferred group order. Observed extra measurement groups remain available.
+        /// <br/>Alliance dryers (19/29/30) interpret legacy Level as Temperature2; their flags expose heat (32|64), airflow (16), and null water inlet/outlet.
+        /// <br/>Other InOutletHeat flags expose heat (32), inlet (1|2|4|8), outlet (16); unknown remains null. SoapInfo keeps actual recorded dosing.
+        /// <br/>QW washer types 15/16/17/25/31 record bare Spin as ordinal levels, with no rpm unit. Explicit rotation-scale JSON retains its units.
+        /// <br/>Cycle/CycleSub/Error events retain enum codes and localized labels where shared enum translations exist.
+        /// <br/>Original enum names and timestamps are language independent. Clients must not treat edge/calculated points as actual hover samples.
+        /// <br/>Maximum 16 numeric series; 31 days, 50,000 samples, 500,000 cells and the existing 12-second storage deadline apply.
+        /// <br/>Returns 400 invalid KID/fields, 401 expired credentials, 403 missing permission, 404 hidden/missing,
+        /// <br/>422 unsupported type/oversized or empty graph, and 503 unavailable storage. Uncached; every request reauthorizes.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<WashDocChartResponse> GetUnitDocumentGraphAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Render a document KID as a PNG image with the shared local Chart.js renderer.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization, fields, unit-type presentation, semantic data, exact timestamps and bounded graph context as GetUnitDocumentGraph.
+        /// <br/>No client chart configuration or open browser is needed. The server renders a 1600×1000 opaque PNG locally;
+        /// <br/>measurements are never sent to an external chart service. This full graph requires manager bearer authentication.
+        /// <br/>Every request reauthorizes and returns no-store. A bounded unavailable/failed renderer returns
+        /// <br/>503 document-renderer-unavailable; storage and validation errors match GetUnitDocumentGraph.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentPngAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Render a text-free visual WashDoc preview for document lists and icon grids.
+        /// </summary>
+        /// <remarks>
+        /// Uses the same authorized historical measurements, cycle window and private graph artifact as GetUnitDocumentSvg2.
+        /// <br/>Curves are reduced while preserving local peaks. No axes, labels, target overlays or quantitative reading scale.
+        /// <br/>Access and visibility are checked before every cache lookup. Finished artifacts share the graph cache; responses use no-store.
+        /// <br/>Empty/non-numeric measurements return 422. Clients should load visible previews lazily with bounded concurrency.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentIconAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetUnitExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? locationKid = null, string? terminalKid = null, bool? runningOnly = null, bool? autoOutOfOrderOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count authorized main terminals matching the export filters.
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetTerminalExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? locationKid = null, string? terminalKid = null, bool? runningOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count accessible active units for the Units1 navigation icon.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Units1 (50), Bank/Location/Unit Read and current site/bank/location grants.
+        /// <br/>Counts distinct Log24 units (BankId at least 1000) with Enabled exactly 1 and Deleted zero;
+        /// <br/>missing Deleted means zero, missing/invalid Enabled or malformed Deleted are excluded, including for site-wide grants.
+        /// <br/>Limited grants also require an enabled parent location and Bank/Location deletion visible under RetentionDays.
+        /// <br/>No search, paging or client-selected scope is accepted. Returns count and iconKid containing Kid.Count.
+        /// <br/>The aggregate is read afresh; permission snapshots live at most 60 seconds. No request can select another tenant.
+        /// <br/>401 invalid/revoked session; 403 missing-units-tab, missing-bank-read, missing-location-read,
+        /// <br/>missing-unit-read or missing-resource-access; 503 units-unavailable (storage unavailable or 12-second deadline).
+        /// <br/>Retry unavailable requests manually. No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ActiveUnitCountResponse> GetActiveUnitCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count accessible active terminals for the Terminals1 navigation icon.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Terminals1 (66), Bank/Location/Unit Read and current site/bank/location grants;
+        /// <br/>Units1 is not required. Uses the same active-only state and parent visibility rules as GetActiveUnitCount.
+        /// <br/>Only Log24 units whose ID appears as a positive MainId in the tenant-bound Alive table at the same bank and
+        /// <br/>location qualify. Repeated Alive references count once; orphan Alive identities never count. Read-only classification.
+        /// <br/>No search, paging or client-selected scope is accepted. Returns count and iconKid containing Kid.Count.
+        /// <br/>The aggregate is read afresh; permission snapshots live at most 60 seconds. No request can select another tenant.
+        /// <br/>401 invalid/revoked session; 403 missing-terminals-tab, missing-bank-read, missing-location-read,
+        /// <br/>missing-unit-read or missing-resource-access; 503 terminals-unavailable (storage unavailable or 12-second deadline).
+        /// <br/>Retry unavailable requests manually. No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ActiveUnitCountResponse> GetActiveTerminalCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2079,24 +2768,71 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// Requires Units1 (50), Bank/Location/Unit Read and current resource grants. Every page rechecks the active manager.
-        /// <br/>Reads tenant Log24 only, BankId &gt;=1000. Limited grants require an enabled location and bank/location/unit deletion
+        /// <br/>Reads tenant Log24, BankId &gt;=1000, with optional bounded Alive.MainId terminal hierarchy. Limited grants require an enabled location and bank/location/unit deletion
         /// <br/>within RetentionDays; missing Deleted means zero, malformed/future values are hidden. Site-wide grants can inspect all states.
         /// <br/>enabledOnly=true requires unit Enabled exactly 1. No request can select another tenant.
-        /// <br/>pageSize 1–100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,
+        /// <br/>pageSize 1–250 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,
         /// <br/>or an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.
-        /// <br/>sort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.
-        /// <br/>Unit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.
-        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder. Core parent names/icons remain populated.
-        /// <br/>Optional unit fields are null unless selected, empty if missing. UnitType2 takes precedence over decoded legacy UnitType.
+        /// <br/>sort: kid, name, bankName, locationName, unitId, unitType, washDocId, outOfOrder, errorUnit, progress; direction asc/desc.
+        /// <br/>kid sorts numerically by bank, location and unit within the trusted tenant. Unit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.
+        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder, errorUnit, progress. Core parent names/icons remain populated.
+        /// <br/>errorUnit is the last stored eState.ErrorUnit JSON text (empty if absent, null unless selected); it does not prove the fault is still active. Sorting is lexical by stored text.
+        /// <br/>progress is optional and sortable with sort=progress (Units1 only), and uses the overview-card calculation at request time: status, percent, remainingSeconds, calculatedAtUtc.
+        /// <br/>Percent uses only (now-start)/(expectedEnd-start)*100, clamped to 0–100; missing/invalid timing gives null.
+        /// <br/>autoOutOfOrderOnly=true includes only Log24 eState.AutoOutOfOrder JSON with positive integer Id, independently of the OutOfOrder setting. Returns autoOutOfOrder JSON for those rows; otherwise null. Repeat the filter with cursors.
+        /// <br/>runningOnly=true requires valid positive Started/Done timestamps with Started &lt;= calculation time &lt; Done.
+        /// <br/>Filtering precedes sorting/paging and does not require fields=progress. Default false; GetTerminals rejects true.
+        /// <br/>Calculation time is fixed across the cursor chain (at most 15 minutes); refresh to reevaluate running units.
+        /// <br/>Repeat runningOnly unchanged with each cursor. Authorization and retention use the current time.
+        /// <br/>Optional unit fields are null unless selected, empty if missing. Only original packed UnitType determines type via (value shifted right 1) AND 255; UnitType2 is ignored, including as a fallback.
+        /// <br/>terminal is optional {kid,name,iconKid}; the same-location Log24 main unit must be authorized and retention-visible. A child Alive.MainId may identify it when its own Alive row is absent; an existing contradictory main mapping is rejected. Unknown, chained or unavailable hierarchy returns null without discarding the page. Offline is independent.
         /// <br/>includeCoordinates=true adds parent-location coordinates in decimal degrees, null if absent/invalid, for map presentation.
         /// <br/>Follow nextCursor until null. Protected cursors expire after 15 minutes and bind manager, tenant, grants, retention and all query options.
         /// <br/>Restart paging after changing options. Concurrent edits may move rows; pages are not a frozen snapshot.
+        /// <br/>terminalKid on GetUnits is a canonical Controller KID (MainId); results include its first unit and child units mapped by same-location Alive.MainId.
+        /// <br/>The first unit remains a separate child. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.
+        /// <br/>A missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.
+        /// <br/>Invalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.
+        /// <br/>Optional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.
+        /// <br/>Repeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.
         /// <br/>400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-units-tab, missing-bank-read,
         /// <br/>missing-location-read, missing-unit-read or missing-resource-access; 503 units-unavailable (retry manually). No-store.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UnitDirectoryResponse> GetUnitsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<UnitDirectoryResponse> GetUnitsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, string? locationKid = null, string? terminalKid = null, bool? runningOnly = null, bool? autoOutOfOrderOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized main units for Terminals1.
+        /// </summary>
+        /// <remarks>
+        /// Requires Terminals1 (66), Bank/Location/Unit Read and current site-bound resource grants; Units1 is not required.
+        /// <br/>Each row's iconKid is the fixed terminal icon, independent of eSetting.Icon, with UnitId in its Text field.
+        /// <br/>Uses the same Log24 unit directory, visibility and RetentionDays as GetUnits. Name is eState.ComputerName, without fallback to eSetting.Name.
+        /// <br/>Terminal fields/sorts: versionMinor, bootReason, booted, firmware, storageCardSerialNumber, page, backLight.
+        /// <br/>Booted comes from eSetting.Booted; other terminal columns come from eState. Values are decoded text, null unless selected.
+        /// <br/>Only units whose ID appears as a positive MainId in this tenant's Alive table for the same bank and location qualify.
+        /// <br/>Repeated Alive references produce one unit; Alive identities absent from Log24 are omitted. This is a read-only classification.
+        /// <br/>pageSize 1–250 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,
+        /// <br/>or an exact same-site bank/location/unit KID. enabledOnly=true requires unit Enabled exactly 1.
+        /// <br/>sort: kid, name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.
+        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder. Optional unit fields are null unless selected.
+        /// <br/>includeCoordinates=true returns parent-location coordinates for the map, null when absent/invalid.
+        /// <br/>Follow nextCursor until null; cursors expire after 15 minutes and bind this directory, manager, tenant, grants,
+        /// <br/>retention and all query options. Main-unit filtering precedes paging. Concurrent changes may move rows.
+        /// <br/>terminalKid on GetUnits is a canonical Controller KID (MainId); results include its first unit and child units mapped by same-location Alive.MainId.
+        /// <br/>The first unit remains a separate child. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.
+        /// <br/>A missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.
+        /// <br/>Invalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.
+        /// <br/>Optional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.
+        /// <br/>Repeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.
+        /// <br/>400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-terminals-tab, missing-bank-read,
+        /// <br/>missing-location-read, missing-unit-read or missing-resource-access; 503 terminals-unavailable (retry manually). No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitDirectoryResponse> GetTerminalsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, string? locationKid = null, string? terminalKid = null, bool? runningOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2109,8 +2845,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Only fields declared in this type's setting group can be written. States, hidden, device-owned, read-only, ORM-managed, credential, MainUnit/other-scope and dynamic-option fields cannot be edited here.
         /// <br/>### Request and result
         /// <br/>- Send `value` as invariant text (maximum 4096 characters) and `expectedRevision` from GetUnitGroup for this field.
+        /// <br/>- Price editors send raw minor units: displayed 12.50 becomes value "1250". RegExs.Price validates this raw value, not the displayed amount. Responses remain raw; decimal display text is invalid input.
         /// <br/>- Example: `{ "value": "Washer 1", "expectedRevision": "64 hexadecimal characters" }` for the Name setting.
-        /// <br/>- Descriptor required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.
+        /// <br/>- Enum metadata and SettingsAndStates.json required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.
         /// <br/>- Appends bank Log2 history with the editor's UserId and Sync=0. The Log24 projection must match before commit.
         /// <br/>- Returns confirmed value, source MS2000 and new revision. A successful save means storage accepted it, not that the physical unit has acknowledged it.
         /// <br/>### Errors
@@ -2271,6 +3008,52 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserWorkspaceResponse> ExecuteBankUserCommandAsync(string bankKid, string userKid, UserCommandRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetUserExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized residents for UserFinder1 (77).
+        /// </summary>
+        /// <remarks>
+        /// Requires UserFinder1, User Read and tenant-bound bank/location grants. Reads Log7 only.
+        /// <br/>            Applies RetentionDays and existing resident location visibility. enabledOnly=true excludes deleted residents;
+        /// <br/>            residents have no Enabled setting. filter (0–128 characters) matches literal name/number substrings,
+        /// <br/>            exact email/SMS or canonical/readable resident KID. sort=identity (default, numeric bank/user order), name or number; direction=asc or desc; pageSize=1–250.
+        /// <br/>            Cursor is protected, manager/scope/query-bound and expires after 15 minutes. Keep options unchanged.
+        /// <br/>            Up to 1000 candidates per request; scanLimitReached may accompany a short/empty page. Follow nextCursor.
+        /// <br/>            Concurrent edits can move rows. No total count. Bank KIDs provide identity, not additional bank metadata.
+        /// <br/>            Existing GetBankUsers with an exact userKid can open a result under UserFinder1; bulk lists and mutations
+        /// <br/>            retain Users2 requirements. 400 invalid query/cursor, 401 revoked session, 403 missing access, 503 unavailable.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDirectoryResponse> GetUsersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count active authorized residents for the UserFinder1 badge.
+        /// </summary>
+        /// <remarks>
+        /// Requires current active manager, UserFinder1 and User Read. Applies the trusted tenant's bank/location
+        /// <br/>            grants and the same resident location decoding as GetUsers. Counts only nondeleted residents, independently of
+        /// <br/>            the current filter/page. The count is an approximate display value cached for up to 24 hours per exact resource
+        /// <br/>            scope in this API process; restart/eviction causes a fresh count. Never use it for authorization or accounting.
+        /// <br/>            Session/tab/permission/scope are rechecked before every cache access. Log7 only, no writes. First count has a
+        /// <br/>            12-second deadline; 401 revoked session, 403 missing access, 503 unavailable, never a fabricated zero.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PeopleDirectoryCount> GetUserCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2571,10 +3354,12 @@ namespace Kombine.Flex.Portal.Client
         /// Public; no login, business lookup or database access. KID fields never grant permissions.
         /// <br/>Supply a URL-encoded canonical Kombine.Flex.Kid.ToString() value. Kid.Icons[0] is the main icon;
         /// <br/>Kid.Icons[1] is the under-icon. A missing second entry or eIcon.none omits the under-icon.
+        /// <br/>On the trusted Nortec site, the line-set check under-icon uses Nortec green (#4AC337).
         /// <br/>Additional entries are ignored for rendering. The API also reads Kid.Count, Kid.Color and Kid.Text.
         /// <br/>If KID parsing fails, an exact eIcon name (case-insensitive) uses count zero, black and empty text.
         /// <br/>Numeric enum IDs, substring matches, malformed KIDs and undefined icons are not name fallbacks.
-        /// <br/>Count at or below zero hides the badge. Positive Int64 counts display in full; the red badge widens
+        /// <br/>Count zero hides the badge. Nonzero Int64 counts display their full absolute value, including Int64.MinValue.
+        /// <br/>Positive counts use white with black digits; negative counts use red with white digits. The badge widens
         /// <br/>with circular end caps and a straight middle, keeping its height and font size. Long labels widen the SVG canvas.
         /// <br/>Choose iconSet explicitly: line or g. The g set preserves its original multicolor artwork.
         /// <br/>Main and under-icon each try the chosen set, then other packaged sets in ordinal alphabetical order.
@@ -2766,6 +3551,92 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Returns the site overview's running-machine pool, refreshed at most once a minute.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous on each tenant site; data is restricted to the trusted configured tenant. No parameters. Current Log24 Started &lt; now &lt; Done, in UTC milliseconds since 2000. Names are eSetting.Name, temperature is optional eState.Temperature. Conflicting/missing lifecycle fields are excluded. Random sample of up to 1000 machines started within 100 hours and ending within 3 hours, from at most 100000 source rows; source overflow or unavailable storage returns 503. Clients choose distinct random machines, retain running selections and count down locally using end time. Only currently running machines with a valid end time after now and no more than 3 hours ahead are eligible; stored Done values outside this window are excluded. The response schema still allows null for DoneAtUtc; clients should not select entries without a valid end time in this window. Up to 10000 metadata rows are read for the running-machine scope. Refresh every 60 seconds.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LiveMachineResponse>> GetPublicLiveMachinesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List machines with a positive AutoOutOfOrder Id without login.
+        /// </summary>
+        /// <remarks>
+        /// Explicit public read-only widget. Tenant is trusted site configuration, never request input.
+        /// <br/>            Reads Log24 only; valid AutoOutOfOrder JSON with positive integer Id is required.
+        /// <br/>            The state's MS2000 event time must be within the last 10 days, inclusive; unknown/future times are excluded.
+        /// <br/>            Excludes deleted banks, locations and units and requires an enabled location. Disabled units remain included.
+        /// <br/>            Publishes only unit KID, localized machine/bank/location names and errorId as a decimal digit string.
+        /// <br/>            No raw error JSON, credentials, manager settings, coordinates or hierarchy are returned.
+        /// <br/>            Pages contain 1–100 items (default 50), ordered by numeric bank/location/unit identity.
+        /// <br/>            Follow nextCursor with unchanged pageSize; cursors are site-bound, protected and expire after 15 minutes.
+        /// <br/>            Pages are cached for 60 seconds with bounded concurrency; refresh from the first page.
+        /// <br/>            400 invalid page/cursor; 503 unavailable with Retry-After 60. An error is never an empty success.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PublicMachineErrorsPage> GetPublicMachineErrorsAsync(int? pageSize = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the ten newest photos, including Live Photo stills, newest first.
+        /// </summary>
+        /// <remarks>
+        /// No login or tenant parameter. Includes existing captures from both regional indexes, deduplicated. Cached for 60 seconds. Only thumbnails are public; original media, owner, filenames and sensor metadata remain protected. Workspace paths require normal manager Camera1 and resource Read permissions when opened. Returns 503 if a complete bounded snapshot cannot be established (10,000 index entries or 200 candidate manifests maximum). Videos are excluded.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<PublicCameraPhoto>> GetPublicRecentCameraPhotosAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket.
+        /// </summary>
+        /// <remarks>
+        /// Tickets from GetPublicRecentCameraPhotos cannot read original files or private camera operations. No arbitrary path or part is accepted. Invalid, expired and cross-tenant tickets return 400, missing thumbnails 404, unavailable storage 503.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetPublicCameraThumbnailAsync(string id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Draws purchase counts for the last hour in twelve five-minute intervals.
+        /// </summary>
+        /// <remarks>
+        /// ### Scope and time window
+        /// <br/>- **No login required.** Uses the configured site's tenant, without caller-selected tenants, dates or filters.
+        /// <br/>- Uses the same base Log1Hour filters and shared one-minute measurement as GetPublicPurchases:
+        /// <br/>  eUserId.Users through eUserId.Guest, inclusive, Text NOT LIKE '%E', and Amount &lt; 0.
+        /// <br/>- Counts rows across currencies, without summing or converting money. No personal transaction data is returned.
+        /// <br/>- Twelve consecutive intervals cover [sinceUtc, measuredAtUtc), oldest first; each interval includes its start and excludes its end.
+        /// <br/>- Only the chart applies this exact MS2000 time window. GetPublicPurchases retains the total of all qualifying rows in Log1Hour,
+        /// <br/>  so chart counts can sum to less than that total when database cleanup is delayed or rows have future timestamps.
+        /// <br/>- The twelve interval values are spaced evenly from the left edge to the right edge, oldest first.
+        /// <br/>- The vertical range follows the observed minimum and maximum; a constant series, including all zeroes, is centered vertically.
+        /// <br/>### Image and color
+        /// <br/>- Transparent sparkline with a fixed 320 × 80 viewBox, displayed across the card's full inner width.
+        /// <br/>- Only a line, without area fill, visible numbers, axis labels or point markers; no scripts, animation, external fonts or assets.
+        /// <br/>- The final segment ends in an open arrowhead aligned with that segment; each wing is half the segment's length, with the same stroke and color and no fill.
+        /// <br/>- `color`: 3/6-digit RGB hex without #, an exact eColor name, a standard named color, or transparent (case-insensitive).
+        /// <br/>- Empty data draws a centered flat line. The SVG description retains exact counts for accessibility.
+        /// <br/>- The root svg element's `data-counts` attribute contains the same twelve counts as the line and description:
+        /// <br/>  comma-separated, nonnegative integers in invariant format without grouping separators, oldest first.
+        /// <br/>- For img rendering, use those values in localized alt text and reuse the fetched SVG for the image; no extra data request is needed.
+        /// <br/>- HTTP responses use **no-store**; the underlying measurement is shared with JSON requests for one minute per API instance.
+        /// <br/>### Errors
+        /// <br/>- **400**, code `invalid-purchase-chart-color`: use a supported color. Validation occurs before database access.
+        /// <br/>- **503**, code `purchase-statistics-unavailable`: no image is returned; wait **60 seconds** before retrying.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<FileResponse> GetPublicPurchasesChartAsync(string color, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Shows recent purchases as coin markers on a map. No login required.
         /// </summary>
         /// <remarks>
@@ -2799,21 +3670,35 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Get progress for one unit or a page of all public units in a location or bank.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous by explicit widget publication policy. Supply a canonical Unit, Location or Bank KID belonging to this API site's configured tenant. Reads Log24 only; no Alive, Orders, account data or manager permissions. Public visibility excludes deleted banks/locations/units and requires an enabled location; disabled units remain included. Location and bank pages include child units and idle/unknown timing, not a random running-machine sample. Each page contains at most 100 units in numeric bank/location/unit order. Follow nextCursor until null; cursors bind site, exact scope and page size, expire after 15 minutes and grant no private access. Refresh loaded pages from the first page every 60 seconds, using fresh cursors; pages are not a frozen snapshot. Names are localized using Accept-Language. Progress uses the same Started/Done calculation as the portal; missing/invalid timing is unknown, never invented zero. No temperature or additional settings are published. JS: mountProgressWidgets from /docs/widgets.mjs; examples: /docs/widgets. 400 invalid scope/page/cursor, 404 no public unit, 503 unavailable/busy with Retry-After: 60; failures are never returned as empty success.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PublicScopedProgressResponse> GetPublicScopedUnitProgressAsync(string kid, int? pageSize = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Counts purchases in the site's Log1Hour without login.
         /// </summary>
         /// <remarks>
         /// ### Public scope and selection
         /// <br/>
         /// <br/>- **No login required.** The site selects the tenant; no tenant or filter override is accepted.
-        /// <br/>- Uses `eUserId.Users` through `eUserId.UsersLast`, inclusive (currently **1001–99999**), `Text NOT LIKE '%E'` and `Amount &lt; 0`.
+        /// <br/>- Uses `eUserId.Users` through `eUserId.Guest`, inclusive, `Text NOT LIKE '%E'` and `Amount &lt; 0`.
         /// <br/>- Counts **rows**, not distinct users.
         /// <br/>
         /// <br/>### Time window and amounts
         /// <br/>
         /// <br/>- **Log1Hour** holds recent transactions and is cleaned every minute by the database.
         /// <br/>- The one-hour window depends on that maintenance. `sinceUtc` is the nominal start at measurement time.
-        /// <br/>- Count, `-SUM(Amount)/100` and `MAX(Currency)` are cached for **one minute** per API instance.
-        /// <br/>- No currency conversion is performed; `MAX(Currency)` assumes matching transactions share a currency.
+        /// <br/>- The total count and `currencies` are cached for **one minute** per API instance.
+        /// <br/>- The SVG chart shares this snapshot but applies an exact timestamp window; its interval counts can differ from this total when rows outside that window remain in Log1Hour.
+        /// <br/>- Each currency entry contains `currency`, its purchase `count` and `amount` (`-SUM(Amount)/100` for that currency).
+        /// <br/>- Amounts remain separate per stored currency; no currency conversion is performed.
+        /// <br/>- No purchases returns `count: 0` and `currencies: []`; a null currency code remains a separate entry.
         /// <br/>
         /// <br/>### Errors
         /// <br/>
@@ -2831,7 +3716,7 @@ namespace Kombine.Flex.Portal.Client
         /// ### Public scope and count
         /// <br/>
         /// <br/>- **No login required.** The site chooses the tenant; no caller-supplied KID, dates or filters are accepted.
-        /// <br/>- Counts distinct **(BankId, UserId)** pairs with **BankId ≥ 1000** and UserId **1001–99999** (`eUserId.UsersLast` inclusive).
+        /// <br/>- Counts distinct **(BankId, UserId)** pairs with **BankId ≥ 1000** and either UserId **1001–99999** (`eUserId.UsersLast` inclusive) or **999999999** (`eUserId.Guest`).
         /// <br/>- Activity means a current **Log7** record's `MS2000` exceeds the UTC **100-day cutoff**; it is not a verified login.
         /// <br/>- No personal data is returned.
         /// <br/>
@@ -2843,6 +3728,72 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ActiveUsersResponse> GetPublicActiveUsersAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get a square WashDoc widget's graph, machine/location names and document times.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous publication explicitly requested by the owner. documentKid and unitKid are optional and mutually exclusive.
+        /// <br/>A canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.
+        /// <br/>With neither, select the most recently started currently running public unit in this tenant. No random selection.
+        /// <br/>Public visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.
+        /// <br/>Only the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.
+        /// <br/>Uses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.
+        /// <br/>The original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.
+        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. Finished graphs use the bounded private graph cache.
+        /// <br/>Refresh visible widgets every 60 seconds. HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
+        /// <br/>422 no numeric graph/oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
+        /// <br/>Implemented locally, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PublicWashDocWidgetResponse> GetPublicWashDocWidgetAsync(string? documentKid = null, string? unitKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get localized labels and the site's palette for the shared JavaScript widgets.
+        /// </summary>
+        /// <remarks>
+        /// No login. Tenant comes exclusively from trusted site configuration. Accept-Language selects a supported language, with Danish fallback for missing translations. Washco uses English. This operation reads no database. Load /docs/widgets.mjs and call mountWidgets; see /docs/widgets for live examples. Business data comes from the existing public statistics operations and retains their bounds, caches, error responses and anonymous read-only CORS policy.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PublicWidgetPresentationResponse> GetPublicWidgetPresentationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Counts noncancelled dated reservations that have not ended, including ongoing reservations.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous tenant aggregate; trusted site configuration selects the tenant without request inputs.
+        /// <br/>Uses the current tenant Log5 snapshot keyed by start/bank/location/unit/type. Amount must be positive.
+        /// <br/>End is local start minutes plus duration; location/bank Log24 time-zone settings are respected.
+        /// <br/>Weekly templates and AUT/isy auxiliary entries are excluded. Invalid or ambiguous time-zone settings fail closed.
+        /// <br/>No resident or reservation identities are returned. Results and failures are cached for 60 seconds.
+        /// <br/>More than 100000 candidate rows, invalid time zones or unavailable storage return 503; retry after 60 seconds.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ReservationsStatisticsResponse> GetPublicReservationsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Counts machines whose current Started is before now and Done is after now.
+        /// </summary>
+        /// <remarks>
+        /// No login required. The trusted site selects the tenant; no tenant, KID or filter inputs.
+        /// <br/>Reads only Log24 States for Started and Done. Text values are UTC milliseconds since 2000-01-01,
+        /// <br/>accepting stored JSON strings or plain integers. Counts distinct BankId/LocationId/UnitId identities.
+        /// <br/>Latest MS2000 revision wins per field; conflicting equal revisions, missing or invalid values do not qualify.
+        /// <br/>Started must be within the last 100 hours (inclusive), strictly before now, and Done strictly after now; this is a time-window estimate, not an online-status check.
+        /// <br/>Results and failures are shared for 15 seconds per API instance. Poll every 15 seconds.
+        /// <br/>A bounded read exceeding 100000 lifecycle rows or a storage failure returns 503, never a partial count or zero.
+        /// <br/>No machine identities or access permissions are returned. On 503 retry after 15 seconds.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<RunningMachinesResponse> GetPublicRunningMachinesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2895,6 +3846,132 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Resolve the Forbrug icon text from the most frequent authorized Log1 currency.
+        /// </summary>
+        /// <remarks>
+        /// Requires the same active manager, Account2 and Bank/Location/Unit/User Read permissions as GetBankAccount.
+        /// <br/>            Counts rows across all periods and entry types, restricted to authorized locations. This is frequency, not amount.
+        /// <br/>            Trimmed three-letter currencies are uppercased; blanks/malformed codes are ignored. Alphabetical code breaks ties.
+        /// <br/>            Empty data returns currency=null and the base tab icon without text. No-store; no ledger details are returned.
+        /// <br/>            400 invalid bank, 401 expired session, 403 denied, 503 storage unavailable.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<AccountIconResponse> GetBankAccountIconAsync(string bankKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (bankKid == null)
+                throw new System.ArgumentNullException("bankKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks/{bankKid}/account/icon"
+                    urlBuilder_.Append("api/v1/banks/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/account/icon");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<AccountIconResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Lists Account2 postings with full-selection totals per currency.
         /// </summary>
         /// <remarks>
@@ -2926,6 +4003,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>- `documents` groups this page only; merge further pages by `documentKey`. `items`, offsets and limits remain posting-based.
         /// <br/>- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.
+        /// <br/>- `description` uses decoded `Kombine.Flex.FlexDto.KrumbValue.TransactionLine.ToString()` text, with numeric localization placeholders resolved by the API.
+        /// <br/>- Safely displayable text-only legacy descriptions remain supported; absent DTO text uses a safe fallback. Raw JSON and payment identifiers are never exposed.
         /// <br/>- `LawAccountingYears` and `LawSurveillanceDays` come from tenant Log24 with positive manager Log7 overrides.
         /// <br/>- Expired identities become the GDPR user KID with empty names/numbers, safe description and `isAnonymized=true`.
         /// <br/>- An explicit `userKid` excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.
@@ -4274,8 +5353,9 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// Sends the question, supplied visible history and relevant authorized API results to OpenAI.
-        /// <br/>With Logz.io shipping enabled, the current question text is logged once after session revalidation,
-        /// <br/>before model use. History, answers and bearer credentials are not included in this log event.
+        /// <br/>With live diagnostics enabled, the current question text is recorded once in the authorized
+        /// <br/>process-local buffer after session revalidation, before model use. Questions are not sent to Logz.io.
+        /// <br/>History, answers and bearer credentials are not included in this log event.
         /// <br/>Requires server-side configuration. The current manager session is revalidated before model use;
         /// <br/>each business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.
         /// <br/>question: 1–2000 characters. history: at most 12 user/assistant messages, 8000 characters each,
@@ -4393,6 +5473,419 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetBankExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? bankType = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks/export-count"
+                    urlBuilder_.Append("api/v1/banks/export-count");
+                    urlBuilder_.Append('?');
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (enabledOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (fields != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fields")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(fields, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (bankType != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("bankType")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(bankType, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DirectoryExportCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized bank identities for Banks2 with selected metadata and stable global ordering.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Banks2 (5), Bank Read and site grants. Location grants reveal only
+        /// <br/>            parent bank identity. Reads bank-level Log24 only. Site-wide managers can include disabled and deleted banks;
+        /// <br/>            limited grants require Enabled=1 and deletions within RetentionDays. enabledOnly requires Enabled=1 and Deleted=0.
+        /// <br/>            Missing Deleted means zero. Malformed states are excluded from active/limited views.
+        /// <br/>            filter searches name/settings or an exact bank KID/code, at most 128 characters. bankType optionally adds an exact Credit/Cash match for localized UI searches.
+        /// <br/>            fields selects bankType, bankActivationCode, exportFormat, settlementEmails, settlementDays, bankDays, cluster, hardware.
+        /// <br/>            sort accepts name or any optional field; direction=asc or desc. Code ordering is numeric using the canonical codec.
+        /// <br/>            pageSize is 1–250 and may change between pages; all other cursor options must remain unchanged. Keep all options unchanged with the protected, manager/scope-bound 15-minute cursor.
+        /// <br/>            Concurrent edits may move rows between pages. 400 invalid query/cursor; 401 revoked session; 403 missing
+        /// <br/>            tab/read/scope; 503 storage unavailable. No-store. Bank-wide fields require whole-bank scope.
+        /// <br/>            Activation code display/search/sort additionally requires whole-tenant scope and Bank Create; unauthorized values are null.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<BankDirectoryResponse> GetBanksAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? bankType = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks"
+                    urlBuilder_.Append("api/v1/banks");
+                    urlBuilder_.Append('?');
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (enabledOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (fields != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fields")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(fields, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (bankType != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("bankType")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(bankType, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<BankDirectoryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count accessible active banks for the Banks2 navigation icon.
+        /// </summary>
+        /// <remarks>
+        /// Same session, tab and Bank Read requirements as GetBanks. Counts bank-level Log24 identities with
+        /// <br/>            Enabled exactly 1 and Deleted zero (missing Deleted defaults to zero). Independent of filtering and paging.
+        /// <br/>            Returns count and a ready-to-render iconKid. No-store. 401 invalid session, 403 denied, 503 unavailable.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ActiveBankCountResponse> GetActiveBankCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks/active-count"
+                    urlBuilder_.Append("api/v1/banks/active-count");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ActiveBankCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -5282,12 +6775,157 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetBankUserExportCountAsync(string bankKid, string? filter = null, string? sort = null, string? direction = null, string? locationKid = null, string? deleted = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (bankKid == null)
+                throw new System.ArgumentNullException("bankKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks/{bankKid}/users/export-count"
+                    urlBuilder_.Append("api/v1/banks/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/users/export-count");
+                    urlBuilder_.Append('?');
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("locationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (deleted != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("deleted")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(deleted, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DirectoryExportCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read one page of users for a bank.
         /// </summary>
         /// <remarks>
         /// ### Access and visibility
         /// <br/>
         /// <br/>- Requires **Users2 (53)**, **User Read** and a matching tenant/bank/location grant.
+        /// <br/>- An exact **userKid** lookup also accepts **UserFinder1 (77)** instead of Users2; bulk lists still require Users2.
         /// <br/>- Location-only grants include **Access** and **NoAccess** associations; other locations are removed from the response.
         /// <br/>- Ordinary users only, including `eUserId.UsersLast`. Deleted users follow **RetentionDays**.
         /// <br/>- `email` is the current Log7 `eSetting.Email` (2800), decoded from JSON or legacy plain text.
@@ -5295,7 +6933,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>### Paging
         /// <br/>
-        /// <br/>- `pageSize`: **1–100**, default **25**. Copy `previousCursor` or `nextCursor` unchanged into `cursor`.
+        /// <br/>- `pageSize`: **1–250**, default **25**. Copy `previousCursor` or `nextCursor` unchanged into `cursor`.
         /// <br/>- Cursors are shareable positions, not credentials.
         /// <br/>- Keep filters, sort and direction unchanged while using a cursor. Restart **without a cursor** when changing them.
         /// <br/>
@@ -5913,6 +7551,1306 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Resolve the nearest writable location within 100 metres for tenant-level camera capture.
+        /// </summary>
+        /// <remarks>
+        /// Requires Camera1 and Location Read/Write within the trusted tenant scope. Only enabled, retained locations with valid stored coordinates qualify. GPS accuracy must be at most 100 metres. No bank or unit is returned. Returns 404 if none qualify, 409 if the two nearest locations cannot be distinguished within GPS accuracy, 400 for invalid coordinates and 503 for an incomplete lookup. The returned location must still pass normal capture authorization.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraResourceResponse> GetCameraNearestLocationAsync(double? latitude = null, double? longitude = null, double? accuracyMeters = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/nearest-location"
+                    urlBuilder_.Append("api/v1/camera/nearest-location");
+                    urlBuilder_.Append('?');
+                    if (latitude != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("latitude")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(latitude, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (longitude != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("longitude")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(longitude, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (accuracyMeters != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("accuracyMeters")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(accuracyMeters, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraResourceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read the display identity of one authorized camera resource.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Camera1, the exact resource's Read permission, site-bound resource scope and retention visibility. A location does not require Unit Read; a unit does not require Location Read. Returns resourceKid, name, iconKid and requiresProximityCheck. Locations and units include nullable latitude/longitude in decimal degrees; units inherit the location coordinates. Banks have no proximity check. These coordinates support an advisory 100-metre warning, not authorization. Invalid or cross-tenant KIDs return 400, invalid sessions 401, denied access 403, missing/invisible resources 404 and unavailable storage 503.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraResourceResponse> GetCameraResourceAsync(string? resourceKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/resource"
+                    urlBuilder_.Append("api/v1/camera/resource");
+                    urlBuilder_.Append('?');
+                    if (resourceKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("resourceKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(resourceKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraResourceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Check the lazy local camera tab and capture permission for one exact resource.
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraAvailabilityResponse> GetCameraAvailabilityAsync(string? resourceKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/availability"
+                    urlBuilder_.Append("api/v1/camera/availability");
+                    urlBuilder_.Append('?');
+                    if (resourceKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("resourceKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(resourceKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraAvailabilityResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Prepare a bounded, immutable capture plan including optional weather.
+        /// </summary>
+        /// <remarks>
+        /// Requires Camera1 plus resource Read and Write. Hash original bytes with SHA-256. For kind live-photo, provide motionLength and motionSha256 for the original QuickTime movie companion. The signed uploadToken binds both files, metadata, owner and tenant. Retain the token and identical bytes for retries; tokens expire after 24 hours. Weather failure does not prevent capture. Imported media may use capturedAtUtc from Unix epoch through five minutes ahead of server time. Declare inferred timestamps in sensorData.timestampSource and do not attach current device sensors to historical media.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraPrepareResponse> PrepareCameraCaptureAsync(CameraPrepareRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/prepare"
+                    urlBuilder_.Append("api/v1/camera/prepare");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraPrepareResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 413)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Content Too Large", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Save camera media synchronously, or accept bounded background processing.
+        /// </summary>
+        /// <remarks>
+        /// Multipart fields: uploadToken from PrepareCameraCapture and original (binary file); live-photo additionally requires motion (original JPEG plus QuickTime MOV). Every component is bounded, hashed and decoded server-side. Success confirms the full set, generated thumbnail, optional playback derivative and JSON in one private region. FRA/AMS origin filenames remain unchanged when replicated. No camera database or public storage link is used.
+        /// </remarks>
+        /// <param name="background">When true, 202 acknowledges validated temporary staging only. Poll ConfirmCameraCapture with the same ticket; retain original bytes until confirmed. Host restart may require retry. Default false retains synchronous 200 confirmation.</param>
+        /// <param name="uploadToken">Unchanged token from PrepareCameraCapture.</param>
+        /// <param name="original">Original captured bytes matching the prepared length and SHA-256.</param>
+        /// <param name="motion">Required only for live-photo: the original QuickTime MOV companion matching its prepared length and hash. Omit for other capture kinds.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraSaveResponse> SaveCameraCaptureAsync(bool? background = null, string? uploadToken = null, FileParameter original = null, FileParameter? motion = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var boundary_ = System.Guid.NewGuid().ToString();
+                    var content_ = new System.Net.Http.MultipartFormDataContent(boundary_);
+                    content_.Headers.Remove("Content-Type");
+                    content_.Headers.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=" + boundary_);
+
+                    if (uploadToken == null)
+                        throw new System.ArgumentNullException("uploadToken");
+                    else
+                    {
+                        content_.Add(new System.Net.Http.StringContent(ConvertToString(uploadToken, System.Globalization.CultureInfo.InvariantCulture)), "uploadToken");
+                    }
+
+                    if (original == null)
+                        throw new System.ArgumentNullException("original");
+                    else
+                    {
+                        var content_original_ = new System.Net.Http.StreamContent(original.Data);
+                        if (!string.IsNullOrEmpty(original.ContentType))
+                            content_original_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(original.ContentType);
+                        content_.Add(content_original_, "original", original.FileName ?? "original");
+                    }
+
+                    if (motion != null)
+                    {
+                        var content_motion_ = new System.Net.Http.StreamContent(motion.Data);
+                        if (!string.IsNullOrEmpty(motion.ContentType))
+                            content_motion_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(motion.ContentType);
+                        content_.Add(content_motion_, "motion", motion.FileName ?? "motion");
+                    }
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera"
+                    urlBuilder_.Append("api/v1/camera");
+                    urlBuilder_.Append('?');
+                    if (background != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("background")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(background, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraSaveResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 202)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraSaveResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 413)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Content Too Large", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List own tenant captures, or all authorized captures on one exact bank, location or unit.
+        /// </summary>
+        /// <remarks>
+        /// Camera1 and resource Read are required. Both Spaces regions are queried. A degraded response is not proof of an empty collection. Pass nextCursor unchanged with the same resourceKid; pages can be empty after authorization filtering. Captures are ordered newest first. Nullable bankName, locationName and unitName describe the current resource hierarchy; each name requires that object's Read permission, scope and retention visibility. Inapplicable or unauthorized names are null. Unit names resolve localized placeholders. No storage URLs or credentials are returned.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraCapturePage> GetCameraCapturesAsync(string? resourceKid = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera"
+                    urlBuilder_.Append("api/v1/camera");
+                    urlBuilder_.Append('?');
+                    if (resourceKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("resourceKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(resourceKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraCapturePage>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Confirm publication of an exact prepared capture after an uncertain upload response.
+        /// </summary>
+        /// <remarks>
+        /// Requires the original uploadToken, its authenticated owner and current Camera1/resource Read and Write. confirmed=false is not proof of failure; retain the original bytes and ticket for retry. No media is uploaded by this operation.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CameraConfirmationResponse> ConfirmCameraCaptureAsync(CameraConfirmationRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/confirmation"
+                    urlBuilder_.Append("api/v1/camera/confirmation");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CameraConfirmationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Stream one capture component through the API, with current resource authorization.
+        /// </summary>
+        /// <remarks>
+        /// id is an opaque, short-lived identity from GetCameraCaptures. part is original, thumbnail, metadata, motion, motion-playback, playback or preview. QuickTime and WebM originals have a separate H.264/AAC playback part; Live Photo motion uses motion-playback. Missing copies fall back to the other region. No redirects or public Spaces links.
+        /// </remarks>
+        /// <param name="range">Optional single byte range, for example bytes=0-1023. Valid ranges return 206; invalid ranges return 416.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetCameraCaptureContentAsync(string id, string? part = null, string? range = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (range != null)
+                        request_.Headers.TryAddWithoutValidation("Range", ConvertToString(range, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/{id}/content"
+                    urlBuilder_.Append("api/v1/camera/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/content");
+                    urlBuilder_.Append('?');
+                    if (part != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("part")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(part, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 416)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Range Not Satisfiable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read private capture metadata for a public recent-photo thumbnail.
+        /// </summary>
+        /// <remarks>
+        /// Use the opaque id from the public thumbnail URL. Requires an active manager, Camera1, resource Read, scope and retention visibility. The public thumbnail ticket alone grants no metadata access. Returns 400 for invalid/expired tickets, 401/403 for denied access, 404 for missing metadata and 503 for unavailable storage.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetRecentCameraPhotoMetadataAsync(string id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/camera/recent/{id}/metadata"
+                    urlBuilder_.Append("api/v1/camera/recent/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/metadata");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Downloads the complete filtered selection as CSV or a genuine Excel workbook.
         /// </summary>
         /// <remarks>
@@ -6430,9 +9368,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentCsvAsync(string documentKid, string? states = null, string? settings = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentCsvAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (documentKid == null)
                 throw new System.ArgumentNullException("documentKid");
@@ -6460,6 +9399,10 @@ namespace Kombine.Flex.Portal.Client
                     if (settings != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -6587,9 +9530,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentXlsAsync(string documentKid, string? states = null, string? settings = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentXlsAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (documentKid == null)
                 throw new System.ArgumentNullException("documentKid");
@@ -6617,6 +9561,10 @@ namespace Kombine.Flex.Portal.Client
                     if (settings != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -7183,6 +10131,141 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetInstallerExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? includeActivationCode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/installers/export-count"
+                    urlBuilder_.Append("api/v1/installers/export-count");
+                    urlBuilder_.Append('?');
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (includeActivationCode != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("includeActivationCode")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeActivationCode, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DirectoryExportCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// List installers with locations, tags, account state and last activity.
         /// </summary>
         /// <remarks>
@@ -7202,10 +10285,13 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Disabled installers remain visible. Deleted installers follow the caller's RetentionDays; malformed/future
         /// <br/>  deletion values are hidden. LastActiveAt is the Alive row's MS2000 converted to UTC, never its Text value.
         /// <br/>- Missing/invalid Enabled and activity are null; missing Deleted is zero. Reads do not update activity.
+        /// <br/>- includeActivationCode=true additionally requires Installer Create and returns each visible installer's
+        /// <br/>  FlexActivation.User() activationCode using this site's tenant bank. Default false omits the code.
+        /// <br/>  This is sensitive activation data; do not log/cache/share it. No password is returned.
         /// <br/>
         /// <br/>### Paging, filtering and ordering
         /// <br/>
-        /// <br/>- pageSize is 1–100 (default 50). Follow nextCursor until null; a page may be empty due to retention.
+        /// <br/>- pageSize is 1–250 (default 50). Follow nextCursor until null; a page may be empty due to retention.
         /// <br/>- filter is a literal, case-insensitive Name/Email substring, at most 128 characters. Wildcards are escaped.
         /// <br/>- Sorts: identity, name, email, locations, tags, deleted, enabled, lastActive; direction asc or desc.
         /// <br/>- Sort applies before paging. Text is ordinal case-insensitive; location/tag lists compare sorted numeric
@@ -7213,19 +10299,19 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Null values sort first ascending, last descending. Deleted sorts by timestamp, Enabled by null/false/true.
         /// <br/>- Identity ascending uses bounded keyset reads. Other sorts use a tenant-local index, at most 999 identities,
         /// <br/>  cached for 60 seconds, then fresh page details with retention reapplied. No per-installer queries.
-        /// <br/>- Cursors are bound to caller, tenant, filter, ordering and page size. Restart without a cursor when any changes.
+        /// <br/>- Cursors are bound to caller, tenant, filter, ordering (page size may change). Restart without a cursor when any changes.
         /// <br/>  Concurrent updates are not a frozen snapshot; a removed cursor anchor requires restarting.
         /// <br/>
         /// <br/>### Errors and limits
         /// <br/>
         /// <br/>- 400: invalid-page, invalid-filter, invalid-sort or invalid-cursor. 401: invalid/revoked session.
-        /// <br/>- 403: missing-installers-tab, missing-installers-read or missing-tenant-access.
+        /// <br/>- 403: missing-installers-tab, missing-installers-read, missing-installers-create (codes) or missing-tenant-access.
         /// <br/>- 503 installers-unavailable: database unavailable or the 12-second deadline elapsed; no partial sorted result.
         /// <br/>  Retry manually. All responses are no-store. No installer writes are provided by this operation.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<InstallerDirectoryResponse> GetInstallersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<InstallerDirectoryResponse> GetInstallersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? includeActivationCode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7260,6 +10346,10 @@ namespace Kombine.Flex.Portal.Client
                     if (direction != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (includeActivationCode != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("includeActivationCode")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeActivationCode, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -7611,21 +10701,21 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Count accessible active locations for the Banks2 navigation icon.
+        /// Count accessible active locations for the Locations1 navigation icon.
         /// </summary>
         /// <remarks>
-        /// Requires an active manager, Banks2 (5), Bank Read, Location Read and current site/bank/location grants.
+        /// Requires an active manager, Locations1 (65), Bank Read, Location Read and current site/bank/location grants.
         /// <br/>Counts distinct Log24 locations (BankId at least 1000) with Enabled exactly 1 and Deleted zero;
         /// <br/>missing Deleted means zero, missing/invalid Enabled or malformed Deleted are excluded.
         /// <br/>These state rules also apply to all-bank managers. For limited grants the parent bank must remain
-        /// <br/>visible under RetentionDays. No search, paging or client-selected scope is accepted.
+        /// <br/>visible under RetentionDays. Optional bankKid narrows the count to one canonical bank KID in this tenant, intersecting current grants. No search or paging is accepted.
         /// <br/>Returns count and a ready-to-render iconKid containing Kid.Count. The aggregate is read afresh on each request; permission snapshots live at most 60 seconds.
         /// <br/>401: invalid/revoked session. 403: missing-banks-tab, missing-bank-read, missing-location-read or missing-resource-access.
         /// <br/>503 locations-unavailable: storage unavailable or the 12-second deadline elapsed; retry manually. No-store.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ActiveLocationCountResponse> GetActiveLocationCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ActiveLocationCountResponse> GetActiveLocationCountAsync(string? bankKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7640,6 +10730,12 @@ namespace Kombine.Flex.Portal.Client
 
                     // Operation Path: "api/v1/locations/active-count"
                     urlBuilder_.Append("api/v1/locations/active-count");
+                    urlBuilder_.Append('?');
+                    if (bankKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("bankKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -7672,6 +10768,16 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
@@ -7729,7 +10835,7 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// ### Authorization and data
-        /// <br/>Requires an active manager, Banks2 (5), Bank Read, Location Read and site/bank/location grants.
+        /// <br/>Requires an active manager, Locations1 (65), Bank Read, Location Read and site/bank/location grants.
         /// <br/>Every page rechecks the current bounded manager snapshot. Location-only grants never reveal sibling locations.
         /// <br/>Reads only the site's Log24; BankId must be at least 1000. Discovery requires Name, Icon, VismaCustNo, Enabled or Deleted.
         /// <br/>An explicit site-wide grant lists all states, including disabled locations and deletions outside RetentionDays.
@@ -7749,7 +10855,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Text filtering also searches all selected stored columns before pagination; unselected extra columns do not match.
         /// <br/>Decimal coordinates and gift amounts accept dot/comma; date searches accept ISO or dd.MM.yyyy/dd-MM-yyyy, UTC for contacts.
         /// <br/>bankName is an optional selection marker for showing the bank name and bank icon together after the location in the portal. Core bank identity properties remain populated.
-        /// <br/>Billing fields (also accepted as sort keys): vismaCrAcNo, vismaInvoiceVersion, vismaOrdre, vismaPNTurnover, vismaPNSettlement, vismaSettlement, vismaVAT, vismaServiceKey, vismaStart, vismaNote, hiddenNote, vismaGuaranteeMonth, vismaGuaranteeUnder, vismaGuarantee, vismaGuaranteeCustomer, vismaGuaranteeOver, gift, giftBegin, giftEnd, giftSplit, giftPN.
+        /// <br/>Billing fields (also accepted as sort keys): vismaCrAcNo, vismaInvoiceVersion, vismaOrdre, vismaPNTurnover, vismaPNSettlement, vismaSettlement, vismaVAT, vismaServiceKey, vismaStart, vismaNote, hiddenNote, vismaGuaranteeMonth, vismaGuaranteeUnder, vismaGuarantee, vismaGuaranteeCustomer, vismaGuaranteeOver, gift, giftBegin, giftEnd, giftSplit, giftPN, soapEnd.
+        /// <br/>SoapEnd reads location-owned eSetting.SoapEnd (3025) as legacy date text, like vismaStart; it is not MS2000 and sorts as stored text.
         /// <br/>GiftPN uses legacy location setting 1620 (the shared enum calls this identity DurationIsETA for units).
         /// <br/>Billing fields return location-owned stored text; omitted fields are null, selected missing fields are empty.
         /// <br/>TeltonikaSms, alternativeBankName, mask and timeZone are location-owned TeltonikaSMS, Bank, Access and TimeZone settings, returned as stored text without inheritance.
@@ -7767,7 +10874,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>It means last contact, not last machine run. Deleted units follow RetentionDays; orphan Alive rows do not contribute.
         /// <br/>
         /// <br/>### Search, sorting and paging
-        /// <br/>pageSize: 1–100, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,
+        /// <br/>bankKid: optional canonical bank KID in this tenant; intersects current grants before filtering/paging.
+        /// <br/>Never broadens access or changes all-bank privileges. Repeat it unchanged with cursors; invalid/wrong-tenant KIDs return 400 invalid-bank.
+        /// <br/>pageSize: 1–250, default 50. filter: at most 128 characters, literal case/accent-insensitive substring of bank name,
         /// <br/>location name or VismaCustNo. Exact canonical/readable/site-relative bank and location KIDs are supported.
         /// <br/>Complete bank/location activation codes match only when the caller could view that code; bank codes include tenant,
         /// <br/>location codes use the trusted site tenant. No cross-tenant reads. Empty filter lists all accessible locations.
@@ -7781,19 +10890,19 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Sorting codes requires permission to see that code (otherwise 403 missing-code-access).
         /// <br/>Numeric bank/location identities break ties in the same direction for every sort.
         /// <br/>Follow nextCursor until null; cursors are protected, expire after 15 minutes and are bound to tenant, manager,
-        /// <br/>resource grants, retention, filter, enabledOnly, sort, direction and page size. Restart without a cursor when these change.
+        /// <br/>resource grants, retention, filter, enabledOnly, sort, direction (page size may change). Restart without a cursor when these change.
         /// <br/>enabledOnly: false by default. When true, exclude locations whose Enabled is not exactly 1 before paging.
         /// <br/>This narrows the authorized view only; deletion/retention rules and activation-code permissions remain unchanged.
         /// <br/>Concurrent edits are not a frozen snapshot; renamed rows may move. No count or full catalogue is returned.
         /// <br/>
         /// <br/>### Errors
-        /// <br/>400: invalid-page, invalid-filter, invalid-sort, invalid-fields, invalid-cursor. 401: invalid/revoked session.
+        /// <br/>400: invalid-bank, invalid-page, invalid-filter, invalid-sort, invalid-fields, invalid-cursor. 401: invalid/revoked session.
         /// <br/>403: missing-banks-tab, missing-bank-read, missing-location-read, missing-resource-access, missing-code-access.
         /// <br/>503 locations-unavailable: storage unavailable or the 12-second deadline elapsed. Retry manually. No-store.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<LocationDirectoryResponse> GetLocationsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, string? bankKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7841,6 +10950,10 @@ namespace Kombine.Flex.Portal.Client
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("includeCoordinates")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeCoordinates, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
+                    if (bankKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("bankKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
                     urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -7869,6 +10982,149 @@ namespace Kombine.Flex.Portal.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<LocationDirectoryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count every location matching the same filters, selected search columns and permissions as GetLocations.
+        /// </summary>
+        /// <remarks>
+        /// Requires Locations1, Bank Read, Location Read and current tenant-bound resource grants. Uses the identical Log24 discovery, scope, retention, Enabled, KID/code search and selected-field filtering as GetLocations. No cursor or page limit applies. Count is exact at query time, not an immutable snapshot of subsequent pages; concurrent data or permission changes may change a later export. sort/direction retain the listing's validation and code-access checks. No-store. 400 invalid filters/fields/scope; 401 invalid session; 403 missing permissions; 503 locations-unavailable or 12-second deadline. Retry manually.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<LocationCountResponse> GetLocationCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? bankKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/count"
+                    urlBuilder_.Append("api/v1/locations/count");
+                    urlBuilder_.Append('?');
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (enabledOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (fields != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fields")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(fields, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (bankKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("bankKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<LocationCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8223,6 +11479,165 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read dated reservation calendars with location opening hours already applied.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Bookings1, Location Read, Unit Read and matching site/bank/location
+        /// <br/>scope and RetentionDays visibility. Authorization precedes all settings reads. No User Read required.
+        /// <br/>From is an optional local yyyy-MM-dd date, default today in the location time zone; days is 1–31, default 14.
+        /// <br/>The API expands BookCalendar v3 and applies the same opening plan as GetLocationOpeningHours,
+        /// <br/>including controller inheritance, overnight spill, holidays and custom date exceptions.
+        /// <br/>Days carry concrete dates and weekday 0=Sunday. Slots use local startMinute and durationMinutes,
+        /// <br/>clipped to 0–1440 within each date. Type 0=reservation period, 1=chance, 2=closed, 3=unknown opening hours.
+        /// <br/>Missing/hidden/cyclic opening owners remain unknown, never unrestricted. Invalid date exceptions are ignored individually.
+        /// <br/>The no-calendar sentinel is omitted;
+        /// <br/>malformed calendars are omitted. Configured calendars may have empty open days.
+        /// <br/>Grouping preserves stored calendar identity and also separates different effective dated schedules.
+        /// <br/>These are wall-clock schedules, not UTC reservations, occupancy or a guarantee of bookability.
+        /// <br/>Two bounded Log24 reads share an eight-second deadline; only the authorized units may own schedules.
+        /// <br/>No writes. 400 invalid KID/range, 401 inactive session, 403 denied, 404 hidden location, 503 unavailable data.
+        /// <br/>Do not interpret 503 or unknown as closed or unrestricted. Refresh on navigation.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<LocationBookingCalendarsResponse> GetLocationBookingCalendarsAsync(string locationKid, string? accept_Language = null, System.DateTimeOffset? from = null, int? days = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (locationKid == null)
+                throw new System.ArgumentNullException("locationKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (accept_Language != null)
+                        request_.Headers.TryAddWithoutValidation("Accept-Language", ConvertToString(accept_Language, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/{locationKid}/booking-calendars"
+                    urlBuilder_.Append("api/v1/locations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/booking-calendars");
+                    urlBuilder_.Append('?');
+                    if (from != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("from")).Append('=').Append(System.Uri.EscapeDataString(from.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (days != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("days")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(days, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<LocationBookingCalendarsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read localized configured reservation rules for the location's visible units.
         /// </summary>
         /// <remarks>
@@ -8383,6 +11798,276 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read an authorized controller using its canonical Controller KID with MainId.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization, tenant, scope and retention checks as GetUnitOverview. The authorized Alive hierarchy must identify this unit as its own controller. Controller data shares the main unit's Log24 storage. Core is the temporary settings and states selection; unavailable type metadata never invents fields.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitDetailsResponse> GetControllerOverviewAsync(string controllerKid, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (controllerKid == null)
+                throw new System.ArgumentNullException("controllerKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (accept_Language != null)
+                        request_.Headers.TryAddWithoutValidation("Accept-Language", ConvertToString(accept_Language, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/controllers/{controllerKid}"
+                    urlBuilder_.Append("api/v1/controllers/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(controllerKid, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitDetailsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read the controller's temporary Core settings or states from its main unit.
+        /// </summary>
+        /// <remarks>
+        /// Rechecks GetControllerOverview authorization and hierarchy. Uses only fields declared for the main unit type; missing Core metadata returns an empty items array without a storage read. Existing unit setting operations retain their authorization and revisions.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitGroupResponse> GetControllerGroupAsync(string controllerKid, string kind, string group, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (controllerKid == null)
+                throw new System.ArgumentNullException("controllerKid");
+
+            if (kind == null)
+                throw new System.ArgumentNullException("kind");
+
+            if (group == null)
+                throw new System.ArgumentNullException("group");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (accept_Language != null)
+                        request_.Headers.TryAddWithoutValidation("Accept-Language", ConvertToString(accept_Language, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/controllers/{controllerKid}/groups/{kind}/{group}"
+                    urlBuilder_.Append("api/v1/controllers/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(controllerKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/groups/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(kind, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(group, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitGroupResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Get the location label and its units, ordered by unit number.
         /// </summary>
         /// <remarks>
@@ -8401,12 +12086,14 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Cycle uses the newest MS2000 from `eSetting.Cycle` or `eState.Cycle`; state wins ties.
         /// <br/>- Absent or invalid cycle values return null. `cycle` is an enum name; `cycleText` is its localized label.
         /// <br/>- `unitType` is the effective numeric type; `unitTypeName` is the eUnitType name when defined; `unitTypeSource` identifies the source setting.
-        /// <br/>- A present UnitType2 takes precedence, including when malformed (null type, no legacy fallback). Otherwise UnitType is decoded using FlexOrm's `(value &gt;&gt; 1) &amp; 63` rule.
+        /// <br/>- Only the original packed UnitType determines the type, using the eight-bit `(value &gt;&gt; 1) &amp; 255` rule. UnitType2 is never an override or fallback.
         /// <br/>- Missing/invalid types return null, never an invented Type000. Unknown numeric types are retained without claiming metadata support.
         /// <br/>- `progress` contains `status`, nullable `percent`/`remainingSeconds` and `calculatedAtUtc`. The API recalculates from Started/Done at request time; clients need no MS2000 or KID calculations.
-        /// <br/>- `Estimated` is 0–99%; `Complete` is 100% only for the actual DONE phase (excluding LinkOnline). Cycle substeps are not percentages. Disabled/out-of-order/disconnected/error states suppress estimates.
-        /// <br/>- `UnknownEndTime` covers missing/reset/invalid times, the unknown-end sentinel, mismatched sequence DocIds and fractional Connected quality. `EstimateExpired` means wait for the actual cycle; it never means complete. Both have null percentages and remaining time.
-        /// <br/>- Enabled must be exactly 1. Connected=0 blocks estimates; missing Connected is not assumed offline. Started/Done are JSON Text values; TagId is the sequence. No user identities are read for progress.
+        /// <br/>- `Estimated` uses floor(clamp((now-Started)/(Done-Started)*100,0,100)), including 100 at/after the expected end. Remaining seconds are clamped at zero.
+        /// <br/>- `UnknownEndTime` covers missing/nonpositive/invalid times and Done not after Started; percent and remainingSeconds are null.
+        /// <br/>- Only Started/Done JSON Text timestamps affect progress. Cycle, Enabled, OutOfOrder, Connected and sequence IDs do not. No user identities are read for progress.
+        /// <br/>- `terminal` is an optional `{kid,name,iconKid}` with a canonical Controller KID (MainId, UnitId=0), resolved from the trusted tenant's Alive.MainId for the exact visible unit set. The parent must be a visible Log24 unit in this location; an existing parent Alive row must map UnitId to itself. A missing parent Alive row is allowed when a visible child's MainId explicitly identifies it.
+        /// <br/>- Missing, invalid, hidden, chained or unavailable hierarchy returns terminal=null; never guess a self-parent. Terminal names use the main unit’s eState.ComputerName, matching GetTerminals without falling back to eSetting.Name and its iconKid includes the main unit number. Offline is independent.
         /// <br/>
         /// <br/>### Results and cache
         /// <br/>
@@ -8559,7 +12246,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Result
         /// <br/>- Returns `location`, `unit`, `descriptorAvailable`, `settingGroups` and `stateGroups`.
         /// <br/>- Group identifiers are stable eSettingGroup/eStateGroup names, deduplicated and ordered by numeric enum value.
-        /// <br/>- Metadata comes from the installed Kombine.Flex.Units descriptor packages, selected by the unit's effective type; no runtime/hardware connection is made.
+        /// <br/>- Metadata comes from SettingsAndStates.json and the shared enums, selected by the unit's effective type; no hardware connection is made.
         /// <br/>- Missing, malformed or unsupported types return descriptorAvailable=false and empty groups. No default type is substituted.
         /// <br/>- This read-only operation returns group metadata, not setting/state values or editing rights.
         /// <br/>### Errors
@@ -8707,6 +12394,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- `canReadHistory` identifies fields supported by GetUnitSettingHistory. Fetch history only on demand. Sync-only changes and editor label changes do not invalidate the value revision or change MS2000.
         /// <br/>- `hasHistory` indicates that the setting has at least one bank Log2 history record. Show history controls only when both canReadHistory and hasHistory are true.
         /// <br/>- Settings include `canEdit`, per-field `revision` and input constraints. Use SetUnitSetting to save; Unit Write is required. States are always read-only. Dynamic-option and other-scope editors are not supported.
+        /// <br/>- Optional `valueFormat` selects a display/editor; Price comes from AttributeMetaRegEx(RegExs.Price). Display raw value/100 with two decimals, convert back exactly before saving. `pattern` is a .NET regex on raw storage text, never display text. Minimum/maximum also use raw units. Null/unknown formats use ordinary presentation. Empty optional values stay empty.
         /// <br/>- `valueStatus` is stored, missing, other-scope or redacted. A stored null/empty value remains stored. MainUnit/other-object bindings have no value; this endpoint does not infer their owning KID or borrow the current unit's value.
         /// <br/>- Hidden settings are omitted; credential settings are redacted and never read. Enum field/group names are stable identifiers.
         /// <br/>- At most 512 stored fields and 16,384 characters per value; ambiguous or oversized data fails with 503, never partial results. Values are uncached; type/location snapshots retain their normal 10/60-second limits. Poll settings at most every five seconds and states every ten seconds, pausing hidden pages and never overlapping requests.
@@ -8861,6 +12549,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Audit access exposes only editor KID, kind, current display name and icon; it grants no access to their account or directory. Manager/service labels use bank zero; installer labels use the site's tenant bank; resident labels use this unit's bank.
         /// <br/>### Paging and values
         /// <br/>- Newest first from bank Log2, with stored value, source MS2000, Sync and editor. Names/icons are current Log7 labels, not historical snapshots. Unknown editors have a null KID and may have an empty name.
+        /// <br/>- Page `valueFormat` matches GetUnitGroup. Price displays value/100; history values remain raw. Restore by submitting the unchanged raw value and the current field revision, without a second multiplication.
         /// <br/>- `changedBy` is null for UserId zero; display no user icon or name in that case.
         /// <br/>- `limit` is 1–50 (default 25). Pass `nextBeforeMs2000` as `beforeMs2000` for the next page. Null means no more rows. No count query, defaults or cache.
         /// <br/>- Sync is the flag on that exact Log2 record: only 1 means acknowledged. Null means no known flag, never success. A sync-only update does not change the value revision or modification timestamp.
@@ -9250,10 +12939,12 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>inherit schedules. The tenant is selected by site configuration, never by the caller.
         /// <br/>
         /// <br/>One bounded Log24 read, at most 255 units / 32,768 values, an eight-second deadline and two concurrent reads.
-        /// <br/>No Alive reads or writes. MasterUnitId comes from Log24 states. Missing/hidden/cyclic owners yield Unknown,
-        /// <br/>never assumed 24/7. A known controller with no weekly limits is AllDay. Open/close fields inherit independently
-        /// <br/>backwards through the week; an entirely unset unit week inherits its controller's plan. Explicit unit exceptions
-        /// <br/>remain in effect. Equal explicit times are Closed; short openings are preserved. Overnight intervals are supported.
+        /// <br/>Owner identity comes from the authorized same-location Alive.MainId hierarchy; opening settings remain in Log24.
+        /// <br/>Missing/hidden/cyclic owners yield Unknown,
+        /// <br/>never assumed 24/7. Invalid date exceptions are ignored individually, preserving weekly hours and other valid exceptions.
+        /// <br/>A known controller with no weekly limits is AllDay. Open/close fields inherit independently
+        /// <br/>backwards through the main terminal's week; child-unit hours and exceptions do not override that owner.
+        /// <br/>Equal explicit times are Closed; short openings are preserved. Overnight intervals are supported.
         /// <br/>
         /// <br/>Weekly rows use ISO weekdays 1–7. Exceptions are concrete local dates from today through two calendar months,
         /// <br/>including year boundaries. First Wednesday, configured holidays (including the legacy Great Prayer Day), then
@@ -9322,6 +13013,453 @@ namespace Kombine.Flex.Portal.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<LocationOpeningHoursResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read bank Log5 reservation history for the location's authorized visible units.
+        /// </summary>
+        /// <remarks>
+        /// Requires Bookings1, Location/Unit Read, resource scope and RetentionDays visibility.
+        /// <br/>            From is a local date from 2001, days 1–31. Returns every overlapping dated reservation revision,
+        /// <br/>            including cancellations (positive absolute duration, cancelled=true), plus resident number and name. User Read is required.
+        /// <br/>            Revision is UTC milliseconds since 2000-01-01. Weekly, AUT and isy events are excluded.
+        /// <br/>            Events matching the current active snapshot by MS2000, LocationId, UnitId and UserId in the same bank are omitted.
+        /// <br/>            At most 5000 events; overflow/storage failure returns 503, never truncated history. No writes.
+        /// <br/>            Load only the visible calendar range; missing or failed history is not an empty history.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<LocationReservationHistoryResponse> GetLocationReservationHistoryAsync(string locationKid, System.DateTimeOffset? from = null, int? days = null, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (locationKid == null)
+                throw new System.ArgumentNullException("locationKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (accept_Language != null)
+                        request_.Headers.TryAddWithoutValidation("Accept-Language", ConvertToString(accept_Language, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/{locationKid}/reservation-history"
+                    urlBuilder_.Append("api/v1/locations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/reservation-history");
+                    urlBuilder_.Append('?');
+                    if (from != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("from")).Append('=').Append(System.Uri.EscapeDataString(from.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (days != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("days")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(days, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<LocationReservationHistoryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read active tenant Log5 reservations for the location's authorized visible units.
+        /// </summary>
+        /// <remarks>
+        /// Requires Bookings1, Location/Unit Read, a current manager session and resource/RetentionDays visibility.
+        /// <br/>            Resident number and name require User Read in addition to Location/Unit Read. From is a local date (2001 or later), days 1–31.
+        /// <br/>            StartMinute is local wall-clock minutes since 2000-01-01; weekly positions below 10080 are omitted
+        /// <br/>            because they do not identify a concrete date. DurationMinutes is independent of calendar slots. Dated entries include every
+        /// <br/>            overlap with the requested range. Cancelled, AUT and isy rows are excluded. Tenant Log5 is a current snapshot;
+        /// <br/>            no bank-history fallback. At most 5000 entries; overflow returns 503, never partial occupancy. No writes.
+        /// <br/>            Missing data must not be interpreted as availability. Refresh on date navigation.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<LocationReservationsResponse> GetLocationReservationsAsync(string locationKid, System.DateTimeOffset? from = null, int? days = null, string? accept_Language = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (locationKid == null)
+                throw new System.ArgumentNullException("locationKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (accept_Language != null)
+                        request_.Headers.TryAddWithoutValidation("Accept-Language", ConvertToString(accept_Language, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/{locationKid}/reservations"
+                    urlBuilder_.Append("api/v1/locations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/reservations");
+                    urlBuilder_.Append('?');
+                    if (from != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("from")).Append('=').Append(System.Uri.EscapeDataString(from.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (days != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("days")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(days, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<LocationReservationsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get current weather for the authorized location's stored position or address.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager bearer session, assigned Tab, Bank Read, Location Read, matching resource scope
+        /// <br/>and RetentionDays visibility. Location and parent bank must also satisfy GetObjectAddress visibility.
+        /// <br/>Authorization and a bounded Log-only address read precede every cache lookup. No Unit Read or Write is needed.
+        /// <br/>Uses eSetting.Latitude and Longitude (integer millionths of degrees) when both are valid; otherwise geocodes
+        /// <br/>available Address and Zip using the site's configured geocoder. Address-only/postal results are approximate.
+        /// <br/>Never inherits another object's address, substitutes zero, writes settings or accepts caller-supplied coordinates.
+        /// <br/>Returns status Available, LocationUnknown (no resolvable position), or Unavailable (provider/configuration failure).
+        /// <br/>current is null unless Available. Optional measurements are null when unknown. positionSource is Coordinates,
+        /// <br/>Address, or null. Times are UTC; temperature is Celsius, wind m/s, precipitation mm and humidity percent.
+        /// <br/>Open-Meteo model data, not an on-site sensor. Display attribution: Weather data by Open-Meteo, CC BY 4.0.
+        /// <br/>Cache: ten minutes per tenant/location/address revision; failures one minute. No-store HTTP. Refresh on navigation.
+        /// <br/>Four concurrent provider lookups per process, twelve-second request deadline, no retries.
+        /// <br/>400 invalid/foreign KID; 401 invalid/inactive manager; 403 scope/tab/read denial; 404 hidden/missing object;
+        /// <br/>503 location-weather-unavailable on storage failure/deadline. Unavailable never means zero weather.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<LocationWeatherResponse> GetLocationWeatherAsync(string locationKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (locationKid == null)
+                throw new System.ArgumentNullException("locationKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/{locationKid}/weather"
+                    urlBuilder_.Append("api/v1/locations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/weather");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<LocationWeatherResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9557,7 +13695,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>- `filter` matches a case-insensitive substring of decoded **Name OR Email** before pagination. SQL wildcard characters are literal.
         /// <br/>- Pagination scans at most `pageSize` candidates. A page can be short or empty while `nextCursor` is non-null; **continue until null**.
-        /// <br/>- Changing filter, sort, direction or page size requires restarting **without a cursor**.
+        /// <br/>- Changing filter, sort or direction requires restarting **without a cursor**.
         /// <br/>- Concurrent inserts and changes are not a frozen snapshot.
         /// <br/>
         /// <br/>### Ordering
@@ -9574,7 +13712,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- A missing continuation identity after index refresh returns **HTTP 400**, `invalid-cursor`; restart without a cursor.
         /// <br/>- A cold index plus detail read has a **12-second deadline**. Data failure returns **HTTP 503**, never a silently truncated sorted list.
         /// </remarks>
-        /// <param name="pageSize">Candidate batch size, 1–100, default 50. Keep unchanged while following a cursor.</param>
+        /// <param name="pageSize">Candidate batch size, 1–250, default 50. May change while following a cursor.</param>
         /// <param name="cursor">Opaque continuation returned by the previous request, scoped to this site and caller.</param>
         /// <param name="filter">Optional name/email substring, at most 128 characters, trimmed. Empty lists all permitted managers.</param>
         /// <param name="sort">identity (default), name, email, organisation, kids, deleted, enabled or lastActive. Applied before pagination.</param>
@@ -10298,7 +14436,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            - Requires an active manager, Managers1 (28), independent Managers Read and Write, and a whole-tenant KID grant.
         /// <br/>            - Own edits require being the sole active tenant-wide manager. The same fresh transactional authorization as SetManagerPermission applies.
         /// <br/>
-        /// <br/>            The additional technical-support and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
+        /// <br/>            The additional technical-support, tenant-installer and tenant-accounting presets currently grant all six flags (63) in all nine categories and preserve Tabs, matching operator.
         /// <br/>
         /// <br/>            ### Presets
         /// <br/>
@@ -10308,24 +14446,24 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            | caretaker (Varmemester) | Read (1) | Read + Write (3) | None (0) |
         /// <br/>            | operator (Operatør) | All six flags (63) | All six flags (63) | All six flags (63) |
         /// <br/>
-        /// <br/>            - Replaces the whole matrix, including clearing existing extra flags. Accounting also replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40), removing every other ID, including unknown stored IDs. Other roles preserve Tabs.
-        /// <br/>            - Kids, account state and profile fields are unchanged.
+        /// <br/>            - Replaces the whole matrix, including clearing existing extra flags. Accounting replaces Tabs with exactly Users2 (53), Account2 (2) and Settlement2 (40). Combine grants all six flags in all nine categories, selects every available tab (excluding None/Length), and grants the site's Tenant KID (all banks). Other roles preserve Tabs and Kids.
+        /// <br/>            - Combine replaces narrower site grants, preserves unrelated foreign stored grants without granting access to them, and never changes account state or profile fields. Available tabs are selected once; future tabs are not automatically granted.
         /// <br/>            - A preset is a one-time assignment, not a stored or continuously enforced role. Individual checkboxes remain editable afterward if authorized.
         /// <br/>            - Applying accounting or caretaker to yourself removes Managers access. The response sets canEditPermissions=false; disable further editing. Operator enables all 54 checkboxes and retains Managers access.
         /// <br/>
         /// <br/>            ### Concurrency and storage
         /// <br/>
-        /// <br/>            - Read GetManager first. Send expectedFlags for all nine categories, using explicit null for invalid stored values. Accounting additionally requires expectedTabsRevision copied from tabsRevision; older clients must send this property before applying accounting.
+        /// <br/>            - Read GetManager first. Send expectedFlags for all nine categories, using explicit null for invalid stored values. Accounting and combine require expectedTabsRevision copied from tabsRevision; combine also requires expectedKidsRevision copied from kidsRevision.
         /// <br/>            - Requests must contain all nine categories, including Service, Tabs and Kids. Incomplete category sets are rejected.
-        /// <br/>            - One serializable Log7 transaction validates every expected mask and the Tabs revision before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab updates.
-        /// <br/>            - Every role response includes tabs, tabsRevision, canEditTabs and canEditPermissions. Validate all returned permissions and tabs before changing the display; use the new tabsRevision for the next edit.
+        /// <br/>            - One serializable Log7 transaction validates every expected mask and applicable Tabs/Kids revisions before writing, appends only changed settings with the caller as actor, and verifies every current-table trigger. There are no partial permission/tab/resource updates.
+        /// <br/>            - Every role response includes tabs, tabsRevision, canEditTabs, canEditPermissions, resourceGrants, kidsRevision and canEditKids. Validate the full response before changing the display; use the new revisions for the next edit.
         /// <br/>            - Update the whole display only after a valid 200 response. Session cache invalidation also applies to uncertain outcomes.
         /// <br/>
         /// <br/>            ### Errors
         /// <br/>
-        /// <br/>            - 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid expectedTabsRevision for accounting. Invalid tenant/KID returns invalid-manager-kid.
+        /// <br/>            - 400 invalid-permission-role: unknown role, missing/extra categories, invalid masks or missing/invalid required revisions. Invalid tenant/KID returns invalid-manager-kid.
         /// <br/>            - 401 requires login. 403 uses the same permission codes as SetManagerPermission, including own-manager-permissions. 404 manager-not-found covers absent or retention-hidden records.
-        /// <br/>            - 409 permission-conflict or tabs-conflict: reload and review; nothing is partially saved. Accounting returns invalid-stored-tabs for malformed stored JSON/non-integer tab IDs without overwriting it.
+        /// <br/>            - 409 permission-conflict, tabs-conflict or kids-conflict: reload and review; nothing is partially saved. Accounting/combine return invalid-stored-tabs for malformed tabs; combine returns invalid-stored-kids for malformed grants, without overwriting them.
         /// <br/>            - 503 manager-permissions-unavailable or timeout: keep the old display and reread before manually retrying; do not automatically retry an uncertain commit. The existing 12-second deadline and sole-manager scan bound apply.
         /// </remarks>
         /// <returns>OK</returns>
@@ -10809,6 +14947,137 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetManagerExportCountAsync(string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/managers/export-count"
+                    urlBuilder_.Append("api/v1/managers/export-count");
+                    urlBuilder_.Append('?');
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DirectoryExportCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read one administrator by canonical manager KID for a workspace shortcut.
         /// </summary>
         /// <remarks>
@@ -11089,12 +15358,15 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Log in with a manager email and password.
+        /// Log in with manager email/password or manager username/API key.
         /// </summary>
         /// <remarks>
         /// ### Sign in
         /// <br/>
-        /// <br/>- Send the **original password over HTTPS**; do not hash it in the client.
+        /// <br/>- Send exactly one complete pair: email/password or kid/apiKey, over HTTPS. Never hash credentials in the client.
+        /// <br/>- The kid field accepts the manager Kid.ToUserId username (tenant.0-userId) or canonical bank-zero manager KID on this site. API keys use eSetting.ApiKeyHash, never Password.
+        /// <br/>- API-key login performs no duplicate-account cleanup. Inactive accounts and invalid keys return 401.
+        /// <br/>- Key replacement revokes key-authenticated sessions within 60 seconds; renewal preserves the key proof.
         /// <br/>- Use `accessToken` in `Authorization: Bearer {accessToken}` when calling `GetCurrentManager`.
         /// <br/>- The opaque token lasts **259,200 seconds (three days)**. Do not decode it as a JWT.
         /// <br/>- Before expiry, use `RenewManagerSession` to replace it after user activity. No separate refresh token is issued.
@@ -11505,6 +15777,235 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Create a pending manager with a password and queue a manager-bound verification email.
+        /// </summary>
+        /// <remarks>
+        /// Name/organisation are required, max 200 characters without controls. Password and confirmPassword must match,
+        /// <br/>            with 12–128 printable ASCII characters and no leading/trailing spaces. No tenant or permission selectors are accepted.
+        /// <br/>            Stores the profile, password hash, pending marker, Enabled=0 and all operation masks=0 in Log7, then queues a Mails row
+        /// <br/>            with the allocated manager UserId in the same transaction under the tenant manager-create lock. Mail failure rolls back creation.
+        /// <br/>            Resubmission for an untouched pending account with the same password refreshes its proof and mail without allocating another ID.
+        /// <br/>            Existing active/disabled non-signup accounts and wrong passwords get the same silent 202 accepted response without changes/mail.
+        /// <br/>            The proof expires in 30 minutes. Allowed delivery domains: nortec.dk, kombinetech.com and arendt.dk; others: 400 email-delivery-restricted.
+        /// <br/>            202 accepted confirms processing, not delivery. Email throttling is silent.
+        /// <br/>            Language must be exactly lowercase en, da or es when supplied; omitted/null uses English.
+        /// <br/>            Empty strings, whitespace, regional tags, uppercase and other values return 400 ValidationProblemDetails with errors.Language before account creation or mail queueing.
+        /// <br/>            Never log request bodies, passwords or tokens; never retry an uncertain storage outcome automatically.
+        /// </remarks>
+        /// <returns>Accepted</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PersonalAccountResult> RequestManagerSignUpAsync(ManagerSignUpRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/signup"
+                    urlBuilder_.Append("api/v1/session/signup");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 202)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalAccountResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalAccountResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<PersonalAccountResult>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Verify the email and activate only the manager already created by self-registration.
+        /// </summary>
+        /// <remarks>
+        /// Only token is accepted; no password or profile input. Explicit POST is required. The 30-minute proof is tenant/environment-bound
+        /// <br/>            and checked against locked email, password, pending-proof and Enabled revisions. Deleted or non-pending accounts and changed proof-bound values are rejected.
+        /// <br/>            Atomically replaces the pending marker with the existing email-version proof and sets Enabled=1; no permissions, profile or password changes.
+        /// <br/>            Authorized administrators may separately assign or revoke access while verification is pending; confirmation preserves those changes and grants no permissions itself.
+        /// <br/>            200 email-verified issues no session; sign in normally afterwards. Reused, expired or invalid proof: 400 invalid-signup-token.
+        /// <br/>            503 signup-unavailable can have an uncertain outcome; do not automatically retry.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PersonalAccountResult> ConfirmManagerSignUpAsync(ManagerSignUpConfirmation? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/signup-confirmation"
+                    urlBuilder_.Append("api/v1/session/signup-confirmation");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalAccountResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalAccountResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<PersonalAccountResult>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Assign or remove one available eTab on an administrator.
         /// </summary>
         /// <remarks>
@@ -11797,6 +16298,350 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Get up to ten authorized locations nearest to a supplied position.
+        /// </summary>
+        /// <remarks>
+        /// Latitude and longitude are finite decimal degrees in [-90,90] and [-180,180].
+        /// <br/>            Requires an active tenant-bound manager, Locations1, independent Bank Read and Location Read, and resource grants.
+        /// <br/>            Reads only visible enabled Log24 locations with valid nonzero coordinates, preserving manager retention and scope.
+        /// <br/>            SQL orders by great-circle distance before LIMIT 10; bank/location identities break ties. No radius limit or text filter.
+        /// <br/>            Distances are straight-line metres, not driving distances. Locations lacking valid coordinates are omitted.
+        /// <br/>            Position is used only for this lookup; it is not written to the database or returned. Do not log coordinate query strings.
+        /// <br/>            400 invalid-position; 401 stale/inactive session; 403 missing-locations-access; 503 locations-unavailable.
+        /// <br/>            Empty authorized results return 200 with an empty array. No-store; 12-second deadline.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<NearestLocationItem>> GetNearestLocationsAsync(double? latitude = null, double? longitude = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/nearest"
+                    urlBuilder_.Append("api/v1/locations/nearest");
+                    urlBuilder_.Append('?');
+                    if (latitude != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("latitude")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(latitude, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (longitude != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("longitude")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(longitude, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<NearestLocationItem>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count all visible administrators, independently of the current page/filter.
+        /// </summary>
+        /// <remarks>
+        /// Requires Managers1, Managers Read and whole-tenant access. Includes disabled accounts and
+        /// <br/>            deletions within the caller's RetentionDays, like GetManagers. Reuses the 60-second, 20,000-identity
+        /// <br/>            bounded directory index. No estimate is returned when that bound is exceeded. No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PeopleDirectoryCount> GetManagerCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/managers/count"
+                    urlBuilder_.Append("api/v1/managers/count");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PeopleDirectoryCount>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count all visible installers, independently of the current page/filter.
+        /// </summary>
+        /// <remarks>
+        /// Requires Installers1, Installer Read and whole-tenant access. Includes disabled accounts and
+        /// <br/>            deletions within the caller's RetentionDays, like GetInstallers. Reuses the existing 60-second,
+        /// <br/>            at-most-999-identity directory index. No-store. Both counts recheck current session access.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PeopleDirectoryCount> GetInstallerCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/installers/count"
+                    urlBuilder_.Append("api/v1/installers/count");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PeopleDirectoryCount>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read your own personal settings and available person icons.
         /// </summary>
         /// <remarks>
@@ -11869,6 +16714,222 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read your own API-key configuration status and revision without exposing credentials.
+        /// </summary>
+        /// <remarks>
+        /// Requires a current active tenant-bound manager session. No administrative permissions required.
+        /// <br/>            Reads bank-zero Log7 ApiKeyHash for the authenticated manager only. 401 invalid session; 503 unavailable storage. No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PersonalManagerApiKey> GetMyManagerApiKeyAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/api-key"
+                    urlBuilder_.Append("api/v1/session/me/api-key");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalManagerApiKey>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Generate your own API key and commit its hash to eSetting.ApiKeyHash.
+        /// </summary>
+        /// <remarks>
+        /// Send revision from GetMyManagerApiKey. Generates kt_ plus 64 random ASCII letters/digits.
+        /// <br/>            Uses the existing password-compatible hash, stored only in bank-zero Log7 ApiKeyHash; Password is preserved.
+        /// <br/>            Active manager, tenant and credential stamp are checked again inside the transaction. No account selector or permission grant.
+        /// <br/>            Plaintext appears once, only after commit acknowledgement. Never log the response or store it in browser storage.
+        /// <br/>            A replacement invalidates the previous key. 400 invalid-api-key-revision; 401 inactive/stale session;
+        /// <br/>            409 api-key-conflict: reread before retrying; 503 uncertain/unavailable storage: never retry automatically.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PersonalApiKeyResponse> GenerateMyManagerApiKeyAsync(PersonalApiKeyRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/api-key"
+                    urlBuilder_.Append("api/v1/session/me/api-key");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalApiKeyResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalAccountResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<PersonalAccountResult>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -12629,6 +17690,137 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetServiceExportCountAsync(string? filter = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/services/export-count"
+                    urlBuilder_.Append("api/v1/services/export-count");
+                    urlBuilder_.Append('?');
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DirectoryExportCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// List concrete service enum identities, including services without saved settings.
         /// </summary>
         /// <remarks>
@@ -12773,6 +17965,116 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Count the predefined service identities without reading service settings.
+        /// </summary>
+        /// <remarks>
+        /// Same active session, Services1, Service Read and whole-tenant scope as GetServices.
+        /// <br/>            Uses the identical PortalServiceIds catalog (distinct concrete enum values, excluding range-end markers).
+        /// <br/>            Independent of directory filtering. No service database read; the existing bounded session cache still
+        /// <br/>            validates access. Returns count and the red-badge iconKid. 401/403 as GetServices; no-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PeopleDirectoryCount> GetServiceCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/services/count"
+                    urlBuilder_.Append("api/v1/services/count");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PeopleDirectoryCount>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read one predefined service, editable metadata and its icon catalog.
         /// </summary>
         /// <remarks>
@@ -12782,7 +18084,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- A service exists by enum definition, including before its first settings write. No identity is allocated.
         /// <br/>### Editing metadata
         /// <br/>- CanEdit additionally requires Service Write. Only these callers receive ApiKeyHash; readers receive null and HasApiKeyHash.
-        /// <br/>- ProfileRevision covers raw Name, Icon and Password, including row presence. It is not authorization.
+        /// <br/>- ProfileRevision covers raw Name, Icon, ApiKeyHash and legacy Password, including row presence. It is not authorization.
         /// <br/>- AvailableIcons contains known eIcon names; a safe legacy current icon appears first for display only.
         /// <br/>- Hash values are opaque existing hashes, not plaintext keys. This operation does not implement service login.
         /// <br/>- Service accounts have no permission matrix, assigned KID scopes or tabs. No access object is returned.
@@ -13070,8 +18372,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Key and storage
         /// <br/>- Generates kt_ followed by 64 cryptographically random ASCII letters and digits, always including both uppercase and lowercase letters. Total length is 67 characters. Keys are case-sensitive.
         /// <br/>- Uses exactly the existing manager password hashing function (HubManager.SHA512Salt compatible).
-        /// <br/>- Only the resulting 128-character uppercase hash is stored as eSetting.Password, like manager passwords. Replaces the previous hash.
-        /// <br/>- The response keeps its existing apiKeyHash/hasApiKeyHash names; these describe the Password value, not a separate storage field.
+        /// <br/>- Only the resulting 128-character uppercase hash is stored as eSetting.ApiKeyHash, separately from Password. Replaces the previous hash.
+        /// <br/>- The response keeps its existing apiKeyHash/hasApiKeyHash names; these describe ApiKeyHash; existing Password-only service keys remain readable until replaced.
         /// <br/>- The plaintext key appears only in this successful response, alongside the committed details and next revision.
         /// <br/>- GetService cannot recover it. Copy it before leaving the page; never log the key or response, or store it in browser storage.
         /// <br/>- Does not issue bearer tokens. This is the only operation for replacing the stored API-key hash; manual profile hash writes are rejected.
@@ -13520,7 +18822,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Offline reads the site's Alive rows with UnitId=MainId, excluding Cluster Test, using last server contact:
         /// <br/>Cash at least one hour old; other nonempty BankType at least one day old; at most 100 days old, inclusive.
         /// <br/>AutoOutOfOrder reads Log24 OutOfOrder with value AutoOutOfOrder; excludes StartSMS_60 and TimeSMS_61.
-        /// <br/>UnitType2 takes precedence; otherwise the legacy packed type uses (value shifted right 1) AND 255.
+        /// <br/>Only original packed UnitType determines type via (value shifted right 1) AND 255. UnitType2 is ignored, including as a fallback.
         /// <br/>Unknown/missing types are excluded from AutoOutOfOrder. ErrorId is the positive integer Id in the state JSON.
         /// <br/>Names resolve localization placeholders using Accept-Language. All identities are canonical KIDs.
         /// <br/>bankIconKid and locationIconKid are ready-to-render bank/location icons from Log24;
@@ -13817,6 +19119,613 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.
+        /// </summary>
+        /// <remarks>
+        /// Requires active manager, More1, Bank Read and a matching site/bank/location grant for bankKid.
+        /// <br/>            No business data is read or changed. TimeZone is an explicit browser IANA zone, never server-local.
+        /// <br/>            Formats are ms2000, mi2000, ss2000, utc, local. Integers are decimal strings. Date input follows
+        /// <br/>            Kombine.Flex.Time's 2 ms quantization; numeric MS2000 preserves each millisecond. UTC requires Z/offset.
+        /// <br/>            DST gaps fail; overlaps return both OffsetChoices and require explicit Offset on resubmission.
+        /// <br/>            Unsupported MI2000/SS2000 ranges return null instead of the library's wraparound. See the tools guide.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ToolTimeResponse> ConvertToolTimeAsync(string bankKid, ToolTimeRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (bankKid == null)
+                throw new System.ArgumentNullException("bankKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks/{bankKid}/tools/time"
+                    urlBuilder_.Append("api/v1/banks/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/tools/time");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ToolTimeResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ToolTimeResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ToolTimeResponse>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.
+        /// </summary>
+        /// <remarks>
+        /// Same More1/Bank Read/scope requirements as ConvertToolTime. This is a syntax inspector:
+        /// <br/>            it never resolves names, verifies existence or grants access to an inspected identity.
+        /// <br/>            Nonzero, nondefault data properties are returned as strings. Enum names/numbers and list indexes
+        /// <br/>            are separate fields. Normalized indicates parser normalization; CanonicalKid is its serialization.
+        /// <br/>            Controls, input over 2048 characters and input with no usable content return 400 invalid-tool-kid.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ToolKidInspectionResponse> InspectToolKidAsync(string bankKid, ToolKidInspectionRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (bankKid == null)
+                throw new System.ArgumentNullException("bankKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks/{bankKid}/tools/kid"
+                    urlBuilder_.Append("api/v1/banks/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/tools/kid");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ToolKidInspectionResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List document identities produced by the selected Unit for WashDoc3.
+        /// </summary>
+        /// <remarks>
+        /// ### Access
+        /// <br/>Active manager bearer session, WashDoc3 (55), Location Read, Unit Read and a matching tenant/bank/location grant.
+        /// <br/>The canonical unit KID must belong to the trusted site tenant. Location and unit visibility follow RetentionDays before history paging.
+        /// <br/>### Time and ordering
+        /// <br/>date is a UTC calendar date (yyyy-MM-dd), defaulting to today. Includes that entire date and earlier history back to 2000-01-01.
+        /// <br/>Matches tagged Cycle settings for exactly this unit. lastActivityUtc is the latest matching Cycle timestamp inside the interval,
+        /// <br/>not the document start/end. Open GetUnitDocumentTable to read its full interval and measurements.
+        /// <br/>sort=activity (default) or documentId, direction=asc or desc (default). Document IDs sort numerically.
+        /// <br/>Stable identity breaks activity ties. limit 1–100 (default 25), offset 0–100000; hasMore indicates another page.
+        /// <br/>Live changes can shift offset pages; reset offset when changing filters or refreshing. No total count or measurement reads.
+        /// <br/>### Errors and limits
+        /// <br/>400 invalid KID/time/sort/page; 401 inactive/expired session; 403 missing access; 404 hidden/missing location or unit;
+        /// <br/>422 oversized metadata; 503 storage unavailable/busy. Twelve-second storage deadline; no response cache.
+        /// <br/>Implemented locally, unreleased. Generated client and download package updates are deferred to beta preparation.
+        /// </remarks>
+        /// <param name="sort">activity (default) or documentId. Document IDs sort numerically.</param>
+        /// <param name="direction">asc or desc (default).</param>
+        /// <param name="offset">Zero-based offset, up to 100000.</param>
+        /// <param name="limit">Page size, 1–100; defaults to 25.</param>
+        /// <param name="search">Optional exact numeric Doc ID or canonical document KID belonging to the selected unit. Applies within the selected date cutoff.</param>
+        /// <param name="date">UTC calendar date (yyyy-MM-dd), inclusive through its last millisecond; defaults to UTC today.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitDocumentPage> GetUnitDocumentsAsync(string unitKid, string? sort = null, string? direction = null, int? offset = null, int? limit = null, string? search = null, string? date = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (unitKid == null)
+                throw new System.ArgumentNullException("unitKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/units/{unitKid}/documents"
+                    urlBuilder_.Append("api/v1/units/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/documents");
+                    urlBuilder_.Append('?');
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (offset != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Offset")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(offset, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (limit != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Limit")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (search != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Search")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(search, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (date != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Date")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitDocumentPage>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count distinct WashDoc3 document identities for exactly one unit, separately from list loading.
+        /// </summary>
+        /// <remarks>
+        /// Uses the same active manager, WashDoc3, Location/Unit Read, tenant, resource scope and RetentionDays checks as GetUnitDocuments.
+        /// <br/>date is a UTC calendar date (yyyy-MM-dd), defaulting to today; includes that entire date and all earlier history since 2000-01-01.
+        /// <br/>Counts distinct document IDs from tagged Cycle settings only, without paging through results or reading measurements.
+        /// <br/>Returns count and the effective inclusive UTC from/through bounds. Concurrent data changes may change the total between requests.
+        /// <br/>400 invalid KID/date; 401 inactive/expired session; 403 missing access; 404 hidden/missing location or unit;
+        /// <br/>422 oversized metadata; 503 storage unavailable/busy. Twelve-second storage deadline; no response cache.
+        /// </remarks>
+        /// <param name="search">Optional exact numeric Doc ID or canonical document KID belonging to the selected unit. Applies within the selected date cutoff.</param>
+        /// <param name="date">UTC calendar date (yyyy-MM-dd), inclusive through its last millisecond; defaults to UTC today.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitDocumentCount> GetUnitDocumentsCountAsync(string unitKid, string? search = null, string? date = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (unitKid == null)
+                throw new System.ArgumentNullException("unitKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/units/{unitKid}/documents/count"
+                    urlBuilder_.Append("api/v1/units/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/documents/count");
+                    urlBuilder_.Append('?');
+                    if (search != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Search")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(search, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (date != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Date")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitDocumentCount>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read a document's table as JSON with original values and column metadata.
         /// </summary>
         /// <remarks>
@@ -13826,8 +19735,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Location and unit deletion follow RetentionDays, including on SVG cache hits.
         /// <br/>### Fields and values
         /// <br/>- Optional `states`/`settings`: comma-separated exact enum names declared for this unit type. Omit for all permitted fields; an empty value selects none.
+        /// <br/>- Optional `historicalMeasurements=true` adds the fixed document-only measurement/event profile for older machine histories, independently of today's model. Default false; graph2 enables it automatically. It never adds settings or credential access.
         /// <br/>- Hidden, credential, unbound and other-object fields are never read. Unknown types return 422. Invalid/unavailable fields return 400.
         /// <br/>- Rows use exact MS2000 timestamps, with cells indexed by column position. Null cell means absent; a cell with null text/value is a stored null.
+        /// <br/>- A selected column is omitted when every cell in the complete document has no numeric value and null, empty or whitespace-only text. Zero and false are data. Build column mappings from each response; rows and timestamps are preserved, even when no columns remain. Downloads use the same selection.
         /// <br/>- `text` preserves the decoded original; `value` is a finite double when possible. No interpolation or rounding. Use text for exact large numbers.
         /// <br/>- `finished` requires a terminal Cycle and an InSync timestamp at least two minutes beyond the document end.
         /// <br/>### Limits and errors
@@ -13837,9 +19748,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<DocumentTable> GetUnitDocumentTableAsync(string documentKid, string? states = null, string? settings = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<DocumentTable> GetUnitDocumentTableAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (documentKid == null)
                 throw new System.ArgumentNullException("documentKid");
@@ -13867,6 +19779,10 @@ namespace Kombine.Flex.Portal.Client
                     if (settings != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -13994,9 +19910,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentHtmlAsync(string documentKid, string? states = null, string? settings = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentHtmlAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (documentKid == null)
                 throw new System.ArgumentNullException("documentKid");
@@ -14024,6 +19941,10 @@ namespace Kombine.Flex.Portal.Client
                     if (settings != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -14155,9 +20076,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
         /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvgAsync(string documentKid, string? states = null, string? settings = null, int? width = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvgAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, int? width = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (documentKid == null)
                 throw new System.ArgumentNullException("documentKid");
@@ -14185,6 +20107,10 @@ namespace Kombine.Flex.Portal.Client
                     if (settings != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     if (width != null)
                     {
@@ -14304,28 +20230,1193 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Render a responsive WashDoc chart with independent text and graph layers.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization as GetUnitDocumentTable, checked before every private cache lookup. Enables the fixed historicalMeasurements profile.
+        /// <br/>Doc ID selects the tagged Cycle history; PREPARING/DONE and last tagged measurements resolve the legacy cycle window.
+        /// <br/>The graph adds one minute of margin, rounds duration up to the next minute, and reads bounded nearest edge samples
+        /// <br/>for observed measurement fields (at most one hour outside that graph window). Old untagged measurements remain supported.
+        /// <br/>Context samples anchor clipped curves; they do not extend the visible time axis. No smoothing or fabricated measurements.
+        /// <br/>Temperature, level and spin use separate bands with matching target overlays; stored Cycle/CycleSub/Error events are marked.
+        /// <br/>At most 16 numeric series. Empty/non-numeric selections return 422. Times are UTC.
+        /// <br/>SVG fills its viewport in both directions while text size and stroke thickness remain stable; no script or third-party renderer.
+        /// <br/>The original GetUnitDocumentSvg remains available. Finished results use a separate bounded private cache, with no-store HTTP responses.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvg2Async(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (documentKid == null)
+                throw new System.ArgumentNullException("documentKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("image/svg+xml"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/documents/{documentKid}/graph2.svg"
+                    urlBuilder_.Append("api/v1/documents/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/graph2.svg");
+                    urlBuilder_.Append('?');
+                    if (states != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("States")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(states, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (settings != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read semantic WashDoc graph JSON for interactive charts and image rendering.
+        /// </summary>
+        /// <remarks>
+        /// Same active-manager, WashDoc tab, Location/Unit Read, tenant, scope and retention checks as GetUnitDocumentTable.
+        /// <br/>Uses the graph2 data path: exact document cycle boundaries, one-minute graph margin/rounding and bounded edge context.
+        /// <br/>Sparse measurement and target points retain exact MS2000 timestamps, stored nulls, calculated/edge flags and known units.
+        /// <br/>No smoothing, resampling, coordinate transforms or inferred quantities. Level is not assumed to be liters.
+        /// <br/>Presentation contains the trusted original UnitType, family and preferred group order. Observed extra measurement groups remain available.
+        /// <br/>Alliance dryers (19/29/30) interpret legacy Level as Temperature2; their flags expose heat (32|64), airflow (16), and null water inlet/outlet.
+        /// <br/>Other InOutletHeat flags expose heat (32), inlet (1|2|4|8), outlet (16); unknown remains null. SoapInfo keeps actual recorded dosing.
+        /// <br/>QW washer types 15/16/17/25/31 record bare Spin as ordinal levels, with no rpm unit. Explicit rotation-scale JSON retains its units.
+        /// <br/>Cycle/CycleSub/Error events retain enum codes and localized labels where shared enum translations exist.
+        /// <br/>Original enum names and timestamps are language independent. Clients must not treat edge/calculated points as actual hover samples.
+        /// <br/>Maximum 16 numeric series; 31 days, 50,000 samples, 500,000 cells and the existing 12-second storage deadline apply.
+        /// <br/>Returns 400 invalid KID/fields, 401 expired credentials, 403 missing permission, 404 hidden/missing,
+        /// <br/>422 unsupported type/oversized or empty graph, and 503 unavailable storage. Uncached; every request reauthorizes.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<WashDocChartResponse> GetUnitDocumentGraphAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (documentKid == null)
+                throw new System.ArgumentNullException("documentKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/documents/{documentKid}/graph"
+                    urlBuilder_.Append("api/v1/documents/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/graph");
+                    urlBuilder_.Append('?');
+                    if (states != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("States")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(states, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (settings != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<WashDocChartResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Render a document KID as a PNG image with the shared local Chart.js renderer.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization, fields, unit-type presentation, semantic data, exact timestamps and bounded graph context as GetUnitDocumentGraph.
+        /// <br/>No client chart configuration or open browser is needed. The server renders a 1600×1000 opaque PNG locally;
+        /// <br/>measurements are never sent to an external chart service. This full graph requires manager bearer authentication.
+        /// <br/>Every request reauthorizes and returns no-store. A bounded unavailable/failed renderer returns
+        /// <br/>503 document-renderer-unavailable; storage and validation errors match GetUnitDocumentGraph.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentPngAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (documentKid == null)
+                throw new System.ArgumentNullException("documentKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("image/png"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/documents/{documentKid}/graph.png"
+                    urlBuilder_.Append("api/v1/documents/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/graph.png");
+                    urlBuilder_.Append('?');
+                    if (states != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("States")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(states, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (settings != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Render a text-free visual WashDoc preview for document lists and icon grids.
+        /// </summary>
+        /// <remarks>
+        /// Uses the same authorized historical measurements, cycle window and private graph artifact as GetUnitDocumentSvg2.
+        /// <br/>Curves are reduced while preserving local peaks. No axes, labels, target overlays or quantitative reading scale.
+        /// <br/>Access and visibility are checked before every cache lookup. Finished artifacts share the graph cache; responses use no-store.
+        /// <br/>Empty/non-numeric measurements return 422. Clients should load visible previews lazily with bounded concurrency.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentIconAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (documentKid == null)
+                throw new System.ArgumentNullException("documentKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("image/svg+xml"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/documents/{documentKid}/icon.svg"
+                    urlBuilder_.Append("api/v1/documents/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/icon.svg");
+                    urlBuilder_.Append('?');
+                    if (states != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("States")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(states, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (settings != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetUnitExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? locationKid = null, string? terminalKid = null, bool? runningOnly = null, bool? autoOutOfOrderOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/units/export-count"
+                    urlBuilder_.Append("api/v1/units/export-count");
+                    urlBuilder_.Append('?');
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (enabledOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (fields != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fields")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(fields, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("locationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (terminalKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("terminalKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(terminalKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (runningOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("runningOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(runningOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (autoOutOfOrderOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("autoOutOfOrderOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(autoOutOfOrderOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DirectoryExportCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count authorized main terminals matching the export filters.
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetTerminalExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, string? locationKid = null, string? terminalKid = null, bool? runningOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/terminals/export-count"
+                    urlBuilder_.Append("api/v1/terminals/export-count");
+                    urlBuilder_.Append('?');
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (enabledOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (fields != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fields")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(fields, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("locationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (terminalKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("terminalKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(terminalKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (runningOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("runningOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(runningOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DirectoryExportCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count accessible active units for the Units1 navigation icon.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Units1 (50), Bank/Location/Unit Read and current site/bank/location grants.
+        /// <br/>Counts distinct Log24 units (BankId at least 1000) with Enabled exactly 1 and Deleted zero;
+        /// <br/>missing Deleted means zero, missing/invalid Enabled or malformed Deleted are excluded, including for site-wide grants.
+        /// <br/>Limited grants also require an enabled parent location and Bank/Location deletion visible under RetentionDays.
+        /// <br/>No search, paging or client-selected scope is accepted. Returns count and iconKid containing Kid.Count.
+        /// <br/>The aggregate is read afresh; permission snapshots live at most 60 seconds. No request can select another tenant.
+        /// <br/>401 invalid/revoked session; 403 missing-units-tab, missing-bank-read, missing-location-read,
+        /// <br/>missing-unit-read or missing-resource-access; 503 units-unavailable (storage unavailable or 12-second deadline).
+        /// <br/>Retry unavailable requests manually. No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ActiveUnitCountResponse> GetActiveUnitCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/units/active-count"
+                    urlBuilder_.Append("api/v1/units/active-count");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ActiveUnitCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count accessible active terminals for the Terminals1 navigation icon.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager, Terminals1 (66), Bank/Location/Unit Read and current site/bank/location grants;
+        /// <br/>Units1 is not required. Uses the same active-only state and parent visibility rules as GetActiveUnitCount.
+        /// <br/>Only Log24 units whose ID appears as a positive MainId in the tenant-bound Alive table at the same bank and
+        /// <br/>location qualify. Repeated Alive references count once; orphan Alive identities never count. Read-only classification.
+        /// <br/>No search, paging or client-selected scope is accepted. Returns count and iconKid containing Kid.Count.
+        /// <br/>The aggregate is read afresh; permission snapshots live at most 60 seconds. No request can select another tenant.
+        /// <br/>401 invalid/revoked session; 403 missing-terminals-tab, missing-bank-read, missing-location-read,
+        /// <br/>missing-unit-read or missing-resource-access; 503 terminals-unavailable (storage unavailable or 12-second deadline).
+        /// <br/>Retry unavailable requests manually. No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ActiveUnitCountResponse> GetActiveTerminalCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/terminals/active-count"
+                    urlBuilder_.Append("api/v1/terminals/active-count");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ActiveUnitCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// List authorized units, including child units, for Units1.
         /// </summary>
         /// <remarks>
         /// Requires Units1 (50), Bank/Location/Unit Read and current resource grants. Every page rechecks the active manager.
-        /// <br/>Reads tenant Log24 only, BankId &gt;=1000. Limited grants require an enabled location and bank/location/unit deletion
+        /// <br/>Reads tenant Log24, BankId &gt;=1000, with optional bounded Alive.MainId terminal hierarchy. Limited grants require an enabled location and bank/location/unit deletion
         /// <br/>within RetentionDays; missing Deleted means zero, malformed/future values are hidden. Site-wide grants can inspect all states.
         /// <br/>enabledOnly=true requires unit Enabled exactly 1. No request can select another tenant.
-        /// <br/>pageSize 1–100 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,
+        /// <br/>pageSize 1–250 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,
         /// <br/>or an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.
-        /// <br/>sort: name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.
-        /// <br/>Unit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.
-        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder. Core parent names/icons remain populated.
-        /// <br/>Optional unit fields are null unless selected, empty if missing. UnitType2 takes precedence over decoded legacy UnitType.
+        /// <br/>sort: kid, name, bankName, locationName, unitId, unitType, washDocId, outOfOrder, errorUnit, progress; direction asc/desc.
+        /// <br/>kid sorts numerically by bank, location and unit within the trusted tenant. Unit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.
+        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder, errorUnit, progress. Core parent names/icons remain populated.
+        /// <br/>errorUnit is the last stored eState.ErrorUnit JSON text (empty if absent, null unless selected); it does not prove the fault is still active. Sorting is lexical by stored text.
+        /// <br/>progress is optional and sortable with sort=progress (Units1 only), and uses the overview-card calculation at request time: status, percent, remainingSeconds, calculatedAtUtc.
+        /// <br/>Percent uses only (now-start)/(expectedEnd-start)*100, clamped to 0–100; missing/invalid timing gives null.
+        /// <br/>autoOutOfOrderOnly=true includes only Log24 eState.AutoOutOfOrder JSON with positive integer Id, independently of the OutOfOrder setting. Returns autoOutOfOrder JSON for those rows; otherwise null. Repeat the filter with cursors.
+        /// <br/>runningOnly=true requires valid positive Started/Done timestamps with Started &lt;= calculation time &lt; Done.
+        /// <br/>Filtering precedes sorting/paging and does not require fields=progress. Default false; GetTerminals rejects true.
+        /// <br/>Calculation time is fixed across the cursor chain (at most 15 minutes); refresh to reevaluate running units.
+        /// <br/>Repeat runningOnly unchanged with each cursor. Authorization and retention use the current time.
+        /// <br/>Optional unit fields are null unless selected, empty if missing. Only original packed UnitType determines type via (value shifted right 1) AND 255; UnitType2 is ignored, including as a fallback.
+        /// <br/>terminal is optional {kid,name,iconKid}; the same-location Log24 main unit must be authorized and retention-visible. A child Alive.MainId may identify it when its own Alive row is absent; an existing contradictory main mapping is rejected. Unknown, chained or unavailable hierarchy returns null without discarding the page. Offline is independent.
         /// <br/>includeCoordinates=true adds parent-location coordinates in decimal degrees, null if absent/invalid, for map presentation.
         /// <br/>Follow nextCursor until null. Protected cursors expire after 15 minutes and bind manager, tenant, grants, retention and all query options.
         /// <br/>Restart paging after changing options. Concurrent edits may move rows; pages are not a frozen snapshot.
+        /// <br/>terminalKid on GetUnits is a canonical Controller KID (MainId); results include its first unit and child units mapped by same-location Alive.MainId.
+        /// <br/>The first unit remains a separate child. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.
+        /// <br/>A missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.
+        /// <br/>Invalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.
+        /// <br/>Optional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.
+        /// <br/>Repeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.
         /// <br/>400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-units-tab, missing-bank-read,
         /// <br/>missing-location-read, missing-unit-read or missing-resource-access; 503 units-unavailable (retry manually). No-store.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UnitDirectoryResponse> GetUnitsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<UnitDirectoryResponse> GetUnitsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, string? locationKid = null, string? terminalKid = null, bool? runningOnly = null, bool? autoOutOfOrderOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -14372,6 +21463,206 @@ namespace Kombine.Flex.Portal.Client
                     if (includeCoordinates != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("includeCoordinates")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeCoordinates, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("locationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (terminalKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("terminalKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(terminalKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (runningOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("runningOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(runningOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (autoOutOfOrderOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("autoOutOfOrderOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(autoOutOfOrderOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitDirectoryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized main units for Terminals1.
+        /// </summary>
+        /// <remarks>
+        /// Requires Terminals1 (66), Bank/Location/Unit Read and current site-bound resource grants; Units1 is not required.
+        /// <br/>Each row's iconKid is the fixed terminal icon, independent of eSetting.Icon, with UnitId in its Text field.
+        /// <br/>Uses the same Log24 unit directory, visibility and RetentionDays as GetUnits. Name is eState.ComputerName, without fallback to eSetting.Name.
+        /// <br/>Terminal fields/sorts: versionMinor, bootReason, booted, firmware, storageCardSerialNumber, page, backLight.
+        /// <br/>Booted comes from eSetting.Booted; other terminal columns come from eState. Values are decoded text, null unless selected.
+        /// <br/>Only units whose ID appears as a positive MainId in this tenant's Alive table for the same bank and location qualify.
+        /// <br/>Repeated Alive references produce one unit; Alive identities absent from Log24 are omitted. This is a read-only classification.
+        /// <br/>pageSize 1–250 (default 50); filter max 128 characters searches stored names, unit number/type, WashDocId and OutOfOrder,
+        /// <br/>or an exact same-site bank/location/unit KID. enabledOnly=true requires unit Enabled exactly 1.
+        /// <br/>sort: kid, name, bankName, locationName, unitId, unitType, washDocId, outOfOrder; direction asc/desc.
+        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder. Optional unit fields are null unless selected.
+        /// <br/>includeCoordinates=true returns parent-location coordinates for the map, null when absent/invalid.
+        /// <br/>Follow nextCursor until null; cursors expire after 15 minutes and bind this directory, manager, tenant, grants,
+        /// <br/>retention and all query options. Main-unit filtering precedes paging. Concurrent changes may move rows.
+        /// <br/>terminalKid on GetUnits is a canonical Controller KID (MainId); results include its first unit and child units mapped by same-location Alive.MainId.
+        /// <br/>The first unit remains a separate child. The parent must be a retention-visible Log24 unit with no contradictory parent mapping.
+        /// <br/>A missing parent Alive row is allowed; missing child mappings never infer membership. GetTerminals rejects terminalKid.
+        /// <br/>Invalid/wrong-tenant terminal KIDs return 400 invalid-terminal. Repeat terminalKid unchanged with each cursor.
+        /// <br/>Optional locationKid is a canonical location KID in this tenant, intersecting grants before search/sorting/paging.
+        /// <br/>Repeat it unchanged with cursors. Invalid/wrong-tenant KIDs return 400 invalid-location; it never grants access.
+        /// <br/>400 invalid-page/filter/sort/fields/cursor; 401 invalid/revoked session; 403 missing-terminals-tab, missing-bank-read,
+        /// <br/>missing-location-read, missing-unit-read or missing-resource-access; 503 terminals-unavailable (retry manually). No-store.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitDirectoryResponse> GetTerminalsAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, string? fields = null, bool? includeCoordinates = null, string? locationKid = null, string? terminalKid = null, bool? runningOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/terminals"
+                    urlBuilder_.Append("api/v1/terminals");
+                    urlBuilder_.Append('?');
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (enabledOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (fields != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fields")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(fields, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (includeCoordinates != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("includeCoordinates")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeCoordinates, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("locationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (terminalKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("terminalKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(terminalKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (runningOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("runningOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(runningOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -14478,8 +21769,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Only fields declared in this type's setting group can be written. States, hidden, device-owned, read-only, ORM-managed, credential, MainUnit/other-scope and dynamic-option fields cannot be edited here.
         /// <br/>### Request and result
         /// <br/>- Send `value` as invariant text (maximum 4096 characters) and `expectedRevision` from GetUnitGroup for this field.
+        /// <br/>- Price editors send raw minor units: displayed 12.50 becomes value "1250". RegExs.Price validates this raw value, not the displayed amount. Responses remain raw; decimal display text is invalid input.
         /// <br/>- Example: `{ "value": "Washer 1", "expectedRevision": "64 hexadecimal characters" }` for the Name setting.
-        /// <br/>- Descriptor required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.
+        /// <br/>- Enum metadata and SettingsAndStates.json required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.
         /// <br/>- Appends bank Log2 history with the editor's UserId and Sync=0. The Log24 projection must match before commit.
         /// <br/>- Returns confirmed value, source MS2000 and new revision. A successful save means storage accepted it, not that the physical unit has acknowledged it.
         /// <br/>### Errors
@@ -15309,6 +22601,400 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count the complete filtered export selection using the same directory authorization and visibility.
+        /// </summary>
+        /// <remarks>
+        /// No paging parameters. Reuses listing filters and authorization, using a direct aggregate or minimal cached index instead of enumerating pages. No-store; existing storage deadlines and index bounds apply. Concurrent edits can invalidate an export count.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetUserExportCountAsync(string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/users/export-count"
+                    urlBuilder_.Append("api/v1/users/export-count");
+                    urlBuilder_.Append('?');
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (enabledOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DirectoryExportCountResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized residents for UserFinder1 (77).
+        /// </summary>
+        /// <remarks>
+        /// Requires UserFinder1, User Read and tenant-bound bank/location grants. Reads Log7 only.
+        /// <br/>            Applies RetentionDays and existing resident location visibility. enabledOnly=true excludes deleted residents;
+        /// <br/>            residents have no Enabled setting. filter (0–128 characters) matches literal name/number substrings,
+        /// <br/>            exact email/SMS or canonical/readable resident KID. sort=identity (default, numeric bank/user order), name or number; direction=asc or desc; pageSize=1–250.
+        /// <br/>            Cursor is protected, manager/scope/query-bound and expires after 15 minutes. Keep options unchanged.
+        /// <br/>            Up to 1000 candidates per request; scanLimitReached may accompany a short/empty page. Follow nextCursor.
+        /// <br/>            Concurrent edits can move rows. No total count. Bank KIDs provide identity, not additional bank metadata.
+        /// <br/>            Existing GetBankUsers with an exact userKid can open a result under UserFinder1; bulk lists and mutations
+        /// <br/>            retain Users2 requirements. 400 invalid query/cursor, 401 revoked session, 403 missing access, 503 unavailable.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UserDirectoryResponse> GetUsersAsync(int? pageSize = null, string? cursor = null, string? filter = null, string? sort = null, string? direction = null, bool? enabledOnly = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/users"
+                    urlBuilder_.Append("api/v1/users");
+                    urlBuilder_.Append('?');
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (filter != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("filter")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (enabledOnly != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("enabledOnly")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(enabledOnly, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDirectoryResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count active authorized residents for the UserFinder1 badge.
+        /// </summary>
+        /// <remarks>
+        /// Requires current active manager, UserFinder1 and User Read. Applies the trusted tenant's bank/location
+        /// <br/>            grants and the same resident location decoding as GetUsers. Counts only nondeleted residents, independently of
+        /// <br/>            the current filter/page. The count is an approximate display value cached for up to 24 hours per exact resource
+        /// <br/>            scope in this API process; restart/eviction causes a fresh count. Never use it for authorization or accounting.
+        /// <br/>            Session/tab/permission/scope are rechecked before every cache access. Log7 only, no writes. First count has a
+        /// <br/>            12-second deadline; 401 revoked session, 403 missing access, 503 unavailable, never a fabricated zero.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PeopleDirectoryCount> GetUserCountAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/users/count"
+                    urlBuilder_.Append("api/v1/users/count");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PeopleDirectoryCount>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -17390,10 +25076,12 @@ namespace Kombine.Flex.Portal.Client
         /// Public; no login, business lookup or database access. KID fields never grant permissions.
         /// <br/>Supply a URL-encoded canonical Kombine.Flex.Kid.ToString() value. Kid.Icons[0] is the main icon;
         /// <br/>Kid.Icons[1] is the under-icon. A missing second entry or eIcon.none omits the under-icon.
+        /// <br/>On the trusted Nortec site, the line-set check under-icon uses Nortec green (#4AC337).
         /// <br/>Additional entries are ignored for rendering. The API also reads Kid.Count, Kid.Color and Kid.Text.
         /// <br/>If KID parsing fails, an exact eIcon name (case-insensitive) uses count zero, black and empty text.
         /// <br/>Numeric enum IDs, substring matches, malformed KIDs and undefined icons are not name fallbacks.
-        /// <br/>Count at or below zero hides the badge. Positive Int64 counts display in full; the red badge widens
+        /// <br/>Count zero hides the badge. Nonzero Int64 counts display their full absolute value, including Int64.MinValue.
+        /// <br/>Positive counts use white with black digits; negative counts use red with white digits. The badge widens
         /// <br/>with circular end caps and a straight middle, keeping its height and font size. Long labels widen the SVG canvas.
         /// <br/>Choose iconSet explicitly: line or g. The g set preserves its original multicolor artwork.
         /// <br/>Main and under-icon each try the chosen set, then other packaged sets in ordinal alphabetical order.
@@ -19163,6 +26851,520 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Returns the site overview's running-machine pool, refreshed at most once a minute.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous on each tenant site; data is restricted to the trusted configured tenant. No parameters. Current Log24 Started &lt; now &lt; Done, in UTC milliseconds since 2000. Names are eSetting.Name, temperature is optional eState.Temperature. Conflicting/missing lifecycle fields are excluded. Random sample of up to 1000 machines started within 100 hours and ending within 3 hours, from at most 100000 source rows; source overflow or unavailable storage returns 503. Clients choose distinct random machines, retain running selections and count down locally using end time. Only currently running machines with a valid end time after now and no more than 3 hours ahead are eligible; stored Done values outside this window are excluded. The response schema still allows null for DoneAtUtc; clients should not select entries without a valid end time in this window. Up to 10000 metadata rows are read for the running-machine scope. Refresh every 60 seconds.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LiveMachineResponse>> GetPublicLiveMachinesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/statistics/live-machines"
+                    urlBuilder_.Append("api/v1/public/statistics/live-machines");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<LiveMachineResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List machines with a positive AutoOutOfOrder Id without login.
+        /// </summary>
+        /// <remarks>
+        /// Explicit public read-only widget. Tenant is trusted site configuration, never request input.
+        /// <br/>            Reads Log24 only; valid AutoOutOfOrder JSON with positive integer Id is required.
+        /// <br/>            The state's MS2000 event time must be within the last 10 days, inclusive; unknown/future times are excluded.
+        /// <br/>            Excludes deleted banks, locations and units and requires an enabled location. Disabled units remain included.
+        /// <br/>            Publishes only unit KID, localized machine/bank/location names and errorId as a decimal digit string.
+        /// <br/>            No raw error JSON, credentials, manager settings, coordinates or hierarchy are returned.
+        /// <br/>            Pages contain 1–100 items (default 50), ordered by numeric bank/location/unit identity.
+        /// <br/>            Follow nextCursor with unchanged pageSize; cursors are site-bound, protected and expire after 15 minutes.
+        /// <br/>            Pages are cached for 60 seconds with bounded concurrency; refresh from the first page.
+        /// <br/>            400 invalid page/cursor; 503 unavailable with Retry-After 60. An error is never an empty success.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PublicMachineErrorsPage> GetPublicMachineErrorsAsync(int? pageSize = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/widgets/machine-errors"
+                    urlBuilder_.Append("api/v1/public/widgets/machine-errors");
+                    urlBuilder_.Append('?');
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PublicMachineErrorsPage>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the ten newest photos, including Live Photo stills, newest first.
+        /// </summary>
+        /// <remarks>
+        /// No login or tenant parameter. Includes existing captures from both regional indexes, deduplicated. Cached for 60 seconds. Only thumbnails are public; original media, owner, filenames and sensor metadata remain protected. Workspace paths require normal manager Camera1 and resource Read permissions when opened. Returns 503 if a complete bounded snapshot cannot be established (10,000 index entries or 200 candidate manifests maximum). Videos are excluded.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<PublicCameraPhoto>> GetPublicRecentCameraPhotosAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/camera/photos"
+                    urlBuilder_.Append("api/v1/public/camera/photos");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<PublicCameraPhoto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket.
+        /// </summary>
+        /// <remarks>
+        /// Tickets from GetPublicRecentCameraPhotos cannot read original files or private camera operations. No arbitrary path or part is accepted. Invalid, expired and cross-tenant tickets return 400, missing thumbnails 404, unavailable storage 503.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetPublicCameraThumbnailAsync(string id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/camera/photos/{id}/thumbnail"
+                    urlBuilder_.Append("api/v1/public/camera/photos/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/thumbnail");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Draws purchase counts for the last hour in twelve five-minute intervals.
+        /// </summary>
+        /// <remarks>
+        /// ### Scope and time window
+        /// <br/>- **No login required.** Uses the configured site's tenant, without caller-selected tenants, dates or filters.
+        /// <br/>- Uses the same base Log1Hour filters and shared one-minute measurement as GetPublicPurchases:
+        /// <br/>  eUserId.Users through eUserId.Guest, inclusive, Text NOT LIKE '%E', and Amount &lt; 0.
+        /// <br/>- Counts rows across currencies, without summing or converting money. No personal transaction data is returned.
+        /// <br/>- Twelve consecutive intervals cover [sinceUtc, measuredAtUtc), oldest first; each interval includes its start and excludes its end.
+        /// <br/>- Only the chart applies this exact MS2000 time window. GetPublicPurchases retains the total of all qualifying rows in Log1Hour,
+        /// <br/>  so chart counts can sum to less than that total when database cleanup is delayed or rows have future timestamps.
+        /// <br/>- The twelve interval values are spaced evenly from the left edge to the right edge, oldest first.
+        /// <br/>- The vertical range follows the observed minimum and maximum; a constant series, including all zeroes, is centered vertically.
+        /// <br/>### Image and color
+        /// <br/>- Transparent sparkline with a fixed 320 × 80 viewBox, displayed across the card's full inner width.
+        /// <br/>- Only a line, without area fill, visible numbers, axis labels or point markers; no scripts, animation, external fonts or assets.
+        /// <br/>- The final segment ends in an open arrowhead aligned with that segment; each wing is half the segment's length, with the same stroke and color and no fill.
+        /// <br/>- `color`: 3/6-digit RGB hex without #, an exact eColor name, a standard named color, or transparent (case-insensitive).
+        /// <br/>- Empty data draws a centered flat line. The SVG description retains exact counts for accessibility.
+        /// <br/>- The root svg element's `data-counts` attribute contains the same twelve counts as the line and description:
+        /// <br/>  comma-separated, nonnegative integers in invariant format without grouping separators, oldest first.
+        /// <br/>- For img rendering, use those values in localized alt text and reuse the fetched SVG for the image; no extra data request is needed.
+        /// <br/>- HTTP responses use **no-store**; the underlying measurement is shared with JSON requests for one minute per API instance.
+        /// <br/>### Errors
+        /// <br/>- **400**, code `invalid-purchase-chart-color`: use a supported color. Validation occurs before database access.
+        /// <br/>- **503**, code `purchase-statistics-unavailable`: no image is returned; wait **60 seconds** before retrying.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetPublicPurchasesChartAsync(string color, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (color == null)
+                throw new System.ArgumentNullException("color");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("image/svg+xml"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/statistics/purchases/chart/{color}.svg"
+                    urlBuilder_.Append("api/v1/public/statistics/purchases/chart/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(color, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(".svg");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200 || status_ == 206)
+                        {
+                            var responseStream_ = response_.Content == null ? System.IO.Stream.Null : await ReadAsStreamAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            var fileResponse_ = new FileResponse(status_, headers_, responseStream_, null, response_);
+                            disposeClient_ = false; disposeResponse_ = false; // response and client are disposed by FileResponse
+                            return fileResponse_;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Shows recent purchases as coin markers on a map. No login required.
         /// </summary>
         /// <remarks>
@@ -19284,21 +27486,145 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Get progress for one unit or a page of all public units in a location or bank.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous by explicit widget publication policy. Supply a canonical Unit, Location or Bank KID belonging to this API site's configured tenant. Reads Log24 only; no Alive, Orders, account data or manager permissions. Public visibility excludes deleted banks/locations/units and requires an enabled location; disabled units remain included. Location and bank pages include child units and idle/unknown timing, not a random running-machine sample. Each page contains at most 100 units in numeric bank/location/unit order. Follow nextCursor until null; cursors bind site, exact scope and page size, expire after 15 minutes and grant no private access. Refresh loaded pages from the first page every 60 seconds, using fresh cursors; pages are not a frozen snapshot. Names are localized using Accept-Language. Progress uses the same Started/Done calculation as the portal; missing/invalid timing is unknown, never invented zero. No temperature or additional settings are published. JS: mountProgressWidgets from /docs/widgets.mjs; examples: /docs/widgets. 400 invalid scope/page/cursor, 404 no public unit, 503 unavailable/busy with Retry-After: 60; failures are never returned as empty success.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PublicScopedProgressResponse> GetPublicScopedUnitProgressAsync(string kid, int? pageSize = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (kid == null)
+                throw new System.ArgumentNullException("kid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/widgets/progress/{kid}"
+                    urlBuilder_.Append("api/v1/public/widgets/progress/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(kid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('?');
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PublicScopedProgressResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Counts purchases in the site's Log1Hour without login.
         /// </summary>
         /// <remarks>
         /// ### Public scope and selection
         /// <br/>
         /// <br/>- **No login required.** The site selects the tenant; no tenant or filter override is accepted.
-        /// <br/>- Uses `eUserId.Users` through `eUserId.UsersLast`, inclusive (currently **1001–99999**), `Text NOT LIKE '%E'` and `Amount &lt; 0`.
+        /// <br/>- Uses `eUserId.Users` through `eUserId.Guest`, inclusive, `Text NOT LIKE '%E'` and `Amount &lt; 0`.
         /// <br/>- Counts **rows**, not distinct users.
         /// <br/>
         /// <br/>### Time window and amounts
         /// <br/>
         /// <br/>- **Log1Hour** holds recent transactions and is cleaned every minute by the database.
         /// <br/>- The one-hour window depends on that maintenance. `sinceUtc` is the nominal start at measurement time.
-        /// <br/>- Count, `-SUM(Amount)/100` and `MAX(Currency)` are cached for **one minute** per API instance.
-        /// <br/>- No currency conversion is performed; `MAX(Currency)` assumes matching transactions share a currency.
+        /// <br/>- The total count and `currencies` are cached for **one minute** per API instance.
+        /// <br/>- The SVG chart shares this snapshot but applies an exact timestamp window; its interval counts can differ from this total when rows outside that window remain in Log1Hour.
+        /// <br/>- Each currency entry contains `currency`, its purchase `count` and `amount` (`-SUM(Amount)/100` for that currency).
+        /// <br/>- Amounts remain separate per stored currency; no currency conversion is performed.
+        /// <br/>- No purchases returns `count: 0` and `currencies: []`; a null currency code remains a separate entry.
         /// <br/>
         /// <br/>### Errors
         /// <br/>
@@ -19392,7 +27718,7 @@ namespace Kombine.Flex.Portal.Client
         /// ### Public scope and count
         /// <br/>
         /// <br/>- **No login required.** The site chooses the tenant; no caller-supplied KID, dates or filters are accepted.
-        /// <br/>- Counts distinct **(BankId, UserId)** pairs with **BankId ≥ 1000** and UserId **1001–99999** (`eUserId.UsersLast` inclusive).
+        /// <br/>- Counts distinct **(BankId, UserId)** pairs with **BankId ≥ 1000** and either UserId **1001–99999** (`eUserId.UsersLast` inclusive) or **999999999** (`eUserId.Guest`).
         /// <br/>- Activity means a current **Log7** record's `MS2000` exceeds the UTC **100-day cutoff**; it is not a verified login.
         /// <br/>- No personal data is returned.
         /// <br/>
@@ -19460,6 +27786,398 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get a square WashDoc widget's graph, machine/location names and document times.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous publication explicitly requested by the owner. documentKid and unitKid are optional and mutually exclusive.
+        /// <br/>A canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.
+        /// <br/>With neither, select the most recently started currently running public unit in this tenant. No random selection.
+        /// <br/>Public visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.
+        /// <br/>Only the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.
+        /// <br/>Uses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.
+        /// <br/>The original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.
+        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. Finished graphs use the bounded private graph cache.
+        /// <br/>Refresh visible widgets every 60 seconds. HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
+        /// <br/>422 no numeric graph/oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
+        /// <br/>Implemented locally, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PublicWashDocWidgetResponse> GetPublicWashDocWidgetAsync(string? documentKid = null, string? unitKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/widgets/washdoc"
+                    urlBuilder_.Append("api/v1/public/widgets/washdoc");
+                    urlBuilder_.Append('?');
+                    if (documentKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("documentKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (unitKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("unitKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PublicWashDocWidgetResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get localized labels and the site's palette for the shared JavaScript widgets.
+        /// </summary>
+        /// <remarks>
+        /// No login. Tenant comes exclusively from trusted site configuration. Accept-Language selects a supported language, with Danish fallback for missing translations. Washco uses English. This operation reads no database. Load /docs/widgets.mjs and call mountWidgets; see /docs/widgets for live examples. Business data comes from the existing public statistics operations and retains their bounds, caches, error responses and anonymous read-only CORS policy.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PublicWidgetPresentationResponse> GetPublicWidgetPresentationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/widgets"
+                    urlBuilder_.Append("api/v1/public/widgets");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PublicWidgetPresentationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Counts noncancelled dated reservations that have not ended, including ongoing reservations.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous tenant aggregate; trusted site configuration selects the tenant without request inputs.
+        /// <br/>Uses the current tenant Log5 snapshot keyed by start/bank/location/unit/type. Amount must be positive.
+        /// <br/>End is local start minutes plus duration; location/bank Log24 time-zone settings are respected.
+        /// <br/>Weekly templates and AUT/isy auxiliary entries are excluded. Invalid or ambiguous time-zone settings fail closed.
+        /// <br/>No resident or reservation identities are returned. Results and failures are cached for 60 seconds.
+        /// <br/>More than 100000 candidate rows, invalid time zones or unavailable storage return 503; retry after 60 seconds.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ReservationsStatisticsResponse> GetPublicReservationsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/statistics/reservations"
+                    urlBuilder_.Append("api/v1/public/statistics/reservations");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ReservationsStatisticsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Counts machines whose current Started is before now and Done is after now.
+        /// </summary>
+        /// <remarks>
+        /// No login required. The trusted site selects the tenant; no tenant, KID or filter inputs.
+        /// <br/>Reads only Log24 States for Started and Done. Text values are UTC milliseconds since 2000-01-01,
+        /// <br/>accepting stored JSON strings or plain integers. Counts distinct BankId/LocationId/UnitId identities.
+        /// <br/>Latest MS2000 revision wins per field; conflicting equal revisions, missing or invalid values do not qualify.
+        /// <br/>Started must be within the last 100 hours (inclusive), strictly before now, and Done strictly after now; this is a time-window estimate, not an online-status check.
+        /// <br/>Results and failures are shared for 15 seconds per API instance. Poll every 15 seconds.
+        /// <br/>A bounded read exceeding 100000 lifecycle rows or a storage failure returns 503, never a partial count or zero.
+        /// <br/>No machine identities or access permissions are returned. On 503 retry after 15 seconds.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<RunningMachinesResponse> GetPublicRunningMachinesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/statistics/running-machines"
+                    urlBuilder_.Append("api/v1/public/statistics/running-machines");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<RunningMachinesResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -19803,6 +28521,21 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Most frequent authorized currency and the ready-to-render Forbrug icon.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class AccountIconResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("currency")]
+        public string? Currency { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Filtered postings, full-selection totals and server-resolved query defaults. No computed resident balance is implied.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -19904,6 +28637,24 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Accessible bank count for Enabled=1 and Deleted=0.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ActiveBankCountResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
+
+        /// <summary>
+        /// Tab icon containing the authorized count.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Number of accessible locations with Enabled=1 and Deleted=0, independent of search and paging.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -19914,8 +28665,23 @@ namespace Kombine.Flex.Portal.Client
         public long? Count { get; set; } = default!;
 
         /// <summary>
-        /// Ready-to-render Banks2 icon with Count in Kid.Count.
+        /// Ready-to-render Locations1 icon with Count in Kid.Count.
         /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Accessible active units or terminals, independent of search and paging, with a ready-to-render navigation icon.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ActiveUnitCountResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
         public string? IconKid { get; set; } = default!;
 
@@ -19996,6 +28762,67 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("links")]
         public System.Collections.Generic.ICollection<AssistantLink>? Links { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Canonical bank identity, display metadata and stored state.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BankDirectoryItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("enabled")]
+        public bool? Enabled { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("deleted")]
+        public bool? Deleted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("deletedAt")]
+        public System.DateTimeOffset? DeletedAt { get; set; } = default!;
+
+        /// <summary>
+        /// Requested bank-level settings; null when scope does not authorize their disclosure.
+        /// <br/>            bankActivationCode additionally requires whole-tenant access and Bank Create.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("fields")]
+        public System.Collections.Generic.IDictionary<string, string?>? Fields { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// A bounded bank page and optional protected continuation.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BankDirectoryResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<BankDirectoryItem>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
+        public string? NextCursor { get; set; } = default!;
+
+        /// <summary>
+        /// Selected optional field keys. Keep the same selection when following the cursor.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("fields")]
+        public System.Collections.Generic.ICollection<string>? Fields { get; set; } = default!;
+
+        /// <summary>
+        /// Whether this caller may display, search and sort bank activation codes.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("canReadBankActivationCode")]
+        public bool? CanReadBankActivationCode { get; set; } = default!;
 
     }
 
@@ -20458,6 +29285,234 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Availability and effective capture permission for one exact authorized resource.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraAvailabilityResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasCaptures")]
+        public bool? HasCaptures { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDegraded")]
+        public bool? IsDegraded { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("canCapture")]
+        public bool? CanCapture { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One authorized capture; all object identifiers are canonical KIDs or opaque API tokens.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraCaptureItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("captureId")]
+        public string? CaptureId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("resourceKid")]
+        public string? ResourceKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ownerKid")]
+        public string? OwnerKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fileName")]
+        public string? FileName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capturedAtUtc")]
+        public System.DateTimeOffset? CapturedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasPreview")]
+        public bool? HasPreview { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasMotion")]
+        public bool? HasMotion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasPlayback")]
+        public bool? HasPlayback { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankName")]
+        public string? BankName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
+        public string? LocationName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
+        public string? UnitName { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One bounded page. A degraded page may omit captures from an unavailable region; refresh from the beginning after recovery.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraCapturePage
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<CameraCaptureItem>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
+        public string? NextCursor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDegraded")]
+        public bool? IsDegraded { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// The unchanged signed ticket returned by PrepareCameraCapture.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraConfirmationRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("uploadToken")]
+        public string? UploadToken { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Only Confirmed=true acknowledges durable publication. ProcessingPercent is a weighted completed-stage estimate, not elapsed time; null means unknown and 100 requires confirmation. ErrorCode may report a transient processing failure.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraConfirmationResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("confirmed")]
+        public bool? Confirmed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errorCode")]
+        public string? ErrorCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("processingPercent")]
+        public int? ProcessingPercent { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Immutable input for recorded photo, video or a paired Live Photo; tenant and owner are never client parameters.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraPrepareRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("resourceKid")]
+        public string? ResourceKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("originalFileName")]
+        public string? OriginalFileName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("originalNameAvailable")]
+        public bool? OriginalNameAvailable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capturedAtUtc")]
+        public System.DateTimeOffset? CapturedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mediaLength")]
+        public long? MediaLength { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mediaSha256")]
+        public string? MediaSha256 { get; set; } = default!;
+
+        /// <summary>
+        /// Available device observations with source, time and units; use an empty object when unavailable. Never include API credentials.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("sensorData")]
+        public object? SensorData { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("motionLength")]
+        public long? MotionLength { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("motionSha256")]
+        public string? MotionSha256 { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Opaque signed ticket; retry with this exact token and unchanged original bytes.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraPrepareResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("uploadToken")]
+        public string? UploadToken { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Display metadata for the exact authorized camera resource, without parent or child data.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraResourceResponse
+    {
+
+        /// <summary>
+        /// Canonical, site-bound bank, location or unit identity.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("resourceKid")]
+        public string? ResourceKid { get; set; } = default!;
+
+        /// <summary>
+        /// Resource display name; unit localization placeholders are resolved.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// API-computed icon identity including the resource number; use unchanged in icon URLs.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+        /// <summary>
+        /// True for locations and units; false for banks. Advisory only.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("requiresProximityCheck")]
+        public bool? RequiresProximityCheck { get; set; } = default!;
+
+        /// <summary>
+        /// Nullable location latitude in decimal degrees, inherited by units.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("latitude")]
+        public double? Latitude { get; set; } = default!;
+
+        /// <summary>
+        /// Nullable location longitude in decimal degrees, inherited by units.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("longitude")]
+        public double? Longitude { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// A complete media set exists in at least one region; the second copy continues independently.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CameraSaveResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("captureId")]
+        public string? CaptureId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("resourceKid")]
+        public string? ResourceKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Site database access indicator, never a manager permission or a guarantee for a business operation.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -20475,6 +29530,18 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("checkedAtUtc")]
         public System.DateTimeOffset? CheckedAtUtc { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// The complete number of rows matching the authorized export selection.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DirectoryExportCountResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
 
     }
 
@@ -20527,7 +29594,7 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
-    /// Values are indexed by column position. A missing cell is null; a stored null is a cell with null text/value.
+    /// Only columns with data are returned, with values indexed by column position. A missing cell is null; a stored null is a cell with null text/value.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DocumentTable
@@ -20776,7 +29843,7 @@ namespace Kombine.Flex.Portal.Client
     /// <summary>
     /// Installer metadata from the site's Log7 with BankId=TenantId. Kid is canonical with type Installer;
     /// <br/>            clients can derive the display UserId from it. Missing Enabled is null. DeletedAt and LastActiveAt are UTC;
-    /// <br/>            LastActiveAt is the Alive krumb's MS2000, not its Text. No credentials are returned.
+    /// <br/>            LastActiveAt is the Alive krumb's MS2000, not its Text. Passwords are never returned.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class InstallerDirectoryItem
@@ -20808,6 +29875,12 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("lastActiveAt")]
         public System.DateTimeOffset? LastActiveAt { get; set; } = default!;
+
+        /// <summary>
+        /// User activation code, only when explicitly requested with Installer Create permission.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("activationCode")]
+        public string? ActivationCode { get; set; } = default!;
 
         /// <summary>
         /// API-computed icon identity; use unchanged in the icon image URL.
@@ -21038,6 +30111,101 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// DayOfWeek is 0=Sunday through 6=Saturday; times are relative to this day's midnight.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarDayResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("dayOfWeek")]
+        public int? DayOfWeek { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("slots")]
+        public System.Collections.Generic.ICollection<LocationBookingCalendarSlotResponse>? Slots { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("date")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(DateFormatConverter))]
+        public System.DateTimeOffset? Date { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Units with the same valid stored calendar identity and effective dated schedule; status is Configured.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarGroup
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("units")]
+        public System.Collections.Generic.ICollection<LocationBookingCalendarUnit>? Units { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("days")]
+        public System.Collections.Generic.ICollection<LocationBookingCalendarDayResponse>? Days { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed, 3=unknown.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarSlotResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("startMinute")]
+        public int? StartMinute { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("durationMinutes")]
+        public int? DurationMinutes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        public int? Type { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Authorized canonical unit KID and localized plain-text name.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarUnit
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// The authorized location's effective dated calendars; no occupancy or booking rights.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationBookingCalendarsResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationKid")]
+        public string? LocationKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("groups")]
+        public System.Collections.Generic.ICollection<LocationBookingCalendarGroup>? Groups { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("timeZone")]
+        public string? TimeZone { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("from")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(DateFormatConverter))]
+        public System.DateTimeOffset? From { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("days")]
+        public int? Days { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Stable code, localized plain text and whether the row needs attention. Never HTML.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -21119,6 +30287,18 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("groups")]
         public System.Collections.Generic.ICollection<LocationBookingRuleGroup>? Groups { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Exact number of locations matching the authorized, filtered directory at count time.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationCountResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
 
     }
 
@@ -21252,6 +30432,9 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("giftPN")]
         public string? GiftPN { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("soapEnd")]
+        public string? SoapEnd { get; set; } = default!;
+
         /// <summary>
         /// API-computed icon identity; use unchanged in the icon image URL.
         /// </summary>
@@ -21342,6 +30525,110 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Unit KID, local epoch start minute, absolute duration, UTC event revision and cancellation state.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationReservationHistoryItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("startMinute")]
+        public int? StartMinute { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("durationMinutes")]
+        public int? DurationMinutes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public long? Revision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("cancelled")]
+        public bool? Cancelled { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("userNumber")]
+        public string? UserNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("userName")]
+        public string? UserName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("userKid")]
+        public string? UserKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Bank reservation history with resident display metadata.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationReservationHistoryResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationKid")]
+        public string? LocationKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("from")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(DateFormatConverter))]
+        public System.DateTimeOffset? From { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("days")]
+        public int? Days { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<LocationReservationHistoryItem>? Items { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Unit KID, local epoch/weekly start minute and positive duration. No slot rounding.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationReservationResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("startMinute")]
+        public int? StartMinute { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("durationMinutes")]
+        public int? DurationMinutes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("userNumber")]
+        public string? UserNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("userName")]
+        public string? UserName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("userKid")]
+        public string? UserKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Current active reservations, independent of calendar configuration, with resident display metadata.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationReservationsResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationKid")]
+        public string? LocationKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("from")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(DateFormatConverter))]
+        public System.DateTimeOffset? From { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("days")]
+        public int? Days { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<LocationReservationResponse>? Items { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// An authorized location and its visible unit list.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -21353,6 +30640,72 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
         public System.Collections.Generic.ICollection<UnitOverviewResponse>? Items { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Open-Meteo model conditions. Times are UTC; units are explicit in measurement names.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationWeatherCurrent
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("observedAtUtc")]
+        public System.DateTimeOffset? ObservedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("retrievedAtUtc")]
+        public System.DateTimeOffset? RetrievedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("temperatureCelsius")]
+        public double? TemperatureCelsius { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("apparentTemperatureCelsius")]
+        public double? ApparentTemperatureCelsius { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("windSpeedMetresPerSecond")]
+        public double? WindSpeedMetresPerSecond { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("precipitationMillimetres")]
+        public double? PrecipitationMillimetres { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("relativeHumidityPercent")]
+        public double? RelativeHumidityPercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("weatherCode")]
+        public int? WeatherCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDay")]
+        public bool? IsDay { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Weather for one authorized location. Null measurements mean unknown, never zero.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LocationWeatherResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationKid")]
+        public string? LocationKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("address")]
+        public string? Address { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("zip")]
+        public string? Zip { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("positionSource")]
+        public string? PositionSource { get; set; } = default!;
+
+        /// <summary>
+        /// Current conditions, or null unless status is Available.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("current")]
+        public Current? Current { get; set; } = default!;
 
     }
 
@@ -21684,23 +31037,35 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
-    /// Credentials submitted over HTTPS; never log request bodies for this endpoint.
+    /// Exactly one manager credential pair submitted over HTTPS. Never log this body.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ManagerLoginRequest
     {
 
         /// <summary>
-        /// The manager's email address.
+        /// Manager email for password login.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("email")]
-        public string Email { get; set; } = default!;
+        public string? Email { get; set; } = default!;
 
         /// <summary>
-        /// The original password, normalized only by the documented legacy verifier.
+        /// Original manager password.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("password")]
-        public string Password { get; set; } = default!;
+        public string? Password { get; set; } = default!;
+
+        /// <summary>
+        /// Manager login username from Kid.ToUserId (tenant.0-userId), or canonical bank-zero manager KID, on this API's tenant.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        /// <summary>
+        /// Original case-sensitive API key, never its hash.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("apiKey")]
+        public string? ApiKey { get; set; } = default!;
 
     }
 
@@ -21814,7 +31179,7 @@ namespace Kombine.Flex.Portal.Client
     {
 
         /// <summary>
-        /// accounting, caretaker or operator; case-sensitive, required.
+        /// accounting, caretaker, operator, technical-support, tenant-installer, tenant-accounting or combine; case-sensitive, required.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("role")]
         public string? Role { get; set; } = default!;
@@ -21826,10 +31191,16 @@ namespace Kombine.Flex.Portal.Client
         public System.Collections.Generic.IDictionary<string, int?>? ExpectedFlags { get; set; } = default!;
 
         /// <summary>
-        /// Required for accounting: tabsRevision from GetManager or the last acknowledged edit. Other roles keep tabs unchanged.
+        /// Required for accounting and combine: tabsRevision from GetManager or the last acknowledged edit.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("expectedTabsRevision")]
         public string? ExpectedTabsRevision { get; set; } = default!;
+
+        /// <summary>
+        /// Required for combine: kidsRevision from GetManager or the last acknowledged edit.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("expectedKidsRevision")]
+        public string? ExpectedKidsRevision { get; set; } = default!;
 
     }
 
@@ -21875,6 +31246,24 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("canEditTabs")]
         public bool? CanEditTabs { get; set; } = default!;
+
+        /// <summary>
+        /// Authoritative resource grants after the role assignment.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("resourceGrants")]
+        public System.Collections.Generic.ICollection<ManagerResourceGrantResponse>? ResourceGrants { get; set; } = default!;
+
+        /// <summary>
+        /// Revision for the next resource-grant edit.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("kidsRevision")]
+        public string? KidsRevision { get; set; } = default!;
+
+        /// <summary>
+        /// Whether the caller retains permission to edit resource grants.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("canEditKids")]
+        public bool? CanEditKids { get; set; } = default!;
 
     }
 
@@ -22161,6 +31550,66 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Single-use mailbox proof for the pending manager.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ManagerSignUpConfirmation
+    {
+
+        /// <summary>
+        /// Protected single-use mailbox proof.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("token")]
+        public string? Token { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Required self-registration profile with no permission selectors.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ManagerSignUpRequest
+    {
+
+        /// <summary>
+        /// Mailbox to verify.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string? Email { get; set; } = default!;
+
+        /// <summary>
+        /// Manager name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// Manager organisation.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("organisation")]
+        public string? Organisation { get; set; } = default!;
+
+        /// <summary>
+        /// Password chosen at registration.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("password")]
+        public string? Password { get; set; } = default!;
+
+        /// <summary>
+        /// Matching password confirmation.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("confirmPassword")]
+        public string? ConfirmPassword { get; set; } = default!;
+
+        /// <summary>
+        /// Optional email language: exactly lowercase en, da or es. Omitted/null uses English; empty or other values are invalid.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("language")]
+        public string? Language { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Desired state of one numeric eTab grant, using the last returned Tabs revision.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -22262,6 +31711,30 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("themeMode")]
         public EThemeMode? ThemeMode { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Authorized display identity and great-circle distance in metres, without the caller's position.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NearestLocationItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankName")]
+        public string? BankName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distanceMeters")]
+        public double? DistanceMeters { get; set; } = default!;
 
     }
 
@@ -22387,6 +31860,21 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Authorized count and red badge icon; each operation documents its cache age and precision.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PeopleDirectoryCount
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Stable success/error code, containing no secrets.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -22395,6 +31883,33 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public string? Code { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Generate a replacement against the last acknowledged API-key revision.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PersonalApiKeyRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public string? Revision { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One-time plaintext key returned only after the hash was committed. Never log this response.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PersonalApiKeyResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("apiKey")]
+        public string? ApiKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("details")]
+        public PersonalManagerApiKey? Details { get; set; } = default!;
 
     }
 
@@ -22425,6 +31940,21 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("language")]
         public string? Language { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Own API-key status; never contains the hash or plaintext key.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PersonalManagerApiKey
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasApiKey")]
+        public bool? HasApiKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public string? Revision { get; set; } = default!;
 
     }
 
@@ -22673,7 +32203,7 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
-    /// ApiKeyHash is the hash stored in eSetting.Password and is included only for callers with Service Write.
+    /// ApiKeyHash is the hash stored in eSetting.ApiKeyHash (or an existing legacy Password-only service record) and is included only for callers with Service Write.
     /// <br/>            The published JSON names are preserved; this is never a plaintext API key.
     /// <br/>            CanEdit is only a display hint; every mutation independently reauthorizes.
     /// </summary>
@@ -23083,6 +32613,186 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// One nondefault, nonzero data property returned by the installed Flex KID parser.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ToolKidField
+    {
+
+        /// <summary>
+        /// Exact Kid property name, independent of display language.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// Exact invariant numeric value or decoded text; numbers remain strings to avoid JavaScript precision loss.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public string? Value { get; set; } = default!;
+
+        /// <summary>
+        /// The actual enum ToString() name, or null when the enum value has no name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("enumName")]
+        public string? EnumName { get; set; } = default!;
+
+        /// <summary>
+        /// Exact enum numeric value as a string; null for properties that are not enums.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("enumNumber")]
+        public string? EnumNumber { get; set; } = default!;
+
+        /// <summary>
+        /// Zero-based original list position for Settings and Icons, otherwise null.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("index")]
+        public int? Index { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Input to the KID inspection tool. Parsing never resolves resources or grants access.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ToolKidInspectionRequest
+    {
+
+        /// <summary>
+        /// A Flex KID in a representation accepted by the installed Kid parser, up to 2048 characters.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Parsed KID data only, without database lookups, inferred scope, or derived display identities.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ToolKidInspectionResponse
+    {
+
+        /// <summary>
+        /// The installed parser's ToString() output.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("canonicalKid")]
+        public string? CanonicalKid { get; set; } = default!;
+
+        /// <summary>
+        /// Nondefault, nonzero properties, with all nonzero Settings and Icons preserved in their original order.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("fields")]
+        public System.Collections.Generic.ICollection<ToolKidField>? Fields { get; set; } = default!;
+
+        /// <summary>
+        /// True when the installed parser reserialized the input differently, including ignored input or whitespace.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("normalized")]
+        public bool? Normalized { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One possible offset for a local time repeated at the end of daylight saving time.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ToolTimeOffsetChoice
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("offset")]
+        public string? Offset { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("utc")]
+        public string? Utc { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Pure conversion input. Format is ms2000, mi2000, ss2000, utc or local; all numbers travel as strings.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ToolTimeRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("format")]
+        public string? Format { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public string? Value { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("timeZone")]
+        public string? TimeZone { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("offset")]
+        public string? Offset { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// A validation outcome, or one instant expressed in all supported reversible formats.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ToolTimeResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("success")]
+        public bool? Success { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("error")]
+        public string? Error { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("result")]
+        public ToolTimeResult? Result { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("offsetChoices")]
+        public System.Collections.Generic.ICollection<ToolTimeOffsetChoice>? OffsetChoices { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// MS2000 preserves input milliseconds. Date input follows Kombine.Flex.Time's two-millisecond truncation;
+    /// <br/>DateInputRounded reports any lost ticks. MI2000 and SS2000 are null outside their reversible Int32 range.
+    /// <br/>MillisecondRemainder is the part lost by SS2000; SecondRemainder is the seconds lost by MI2000.
+    /// <br/>Local is an offset-free ISO wall time in the explicitly supplied IANA TimeZone; Offset identifies the instant.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ToolTimeResult
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ms2000")]
+        public string? Ms2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mi2000")]
+        public string? Mi2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ss2000")]
+        public string? Ss2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("utc")]
+        public string? Utc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("local")]
+        public string? Local { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("timeZone")]
+        public string? TimeZone { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("offset")]
+        public string? Offset { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("dateInputRounded")]
+        public bool? DateInputRounded { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("millisecondRemainder")]
+        public string? MillisecondRemainder { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("secondRemainder")]
+        public string? SecondRemainder { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Authorized unit with the declared groups for its resolved type. No setting/state values or write permissions are returned.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -23164,10 +32874,70 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("longitude")]
         public double? Longitude { get; set; } = default!;
 
+        /// <summary>
+        /// Last stored eState.ErrorUnit JSON text; null unless selected, empty when absent. May describe a historical fault.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("errorUnit")]
+        public string? ErrorUnit { get; set; } = default!;
+
+        /// <summary>
+        /// Stored AutoOutOfOrder JSON when autoOutOfOrderOnly is true; otherwise null.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("autoOutOfOrder")]
+        public string? AutoOutOfOrder { get; set; } = default!;
+
+        /// <summary>
+        /// Requested terminal eState.VersionMinor as decoded text; null unless selected, empty when absent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("versionMinor")]
+        public string? VersionMinor { get; set; } = default!;
+
+        /// <summary>
+        /// Requested terminal eState.BootReason as decoded text; null unless selected, empty when absent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("bootReason")]
+        public string? BootReason { get; set; } = default!;
+
+        /// <summary>
+        /// Requested terminal eSetting.Booted as decoded text; null unless selected, empty when absent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("booted")]
+        public string? Booted { get; set; } = default!;
+
+        /// <summary>
+        /// Requested terminal eState.Firmware as decoded text; null unless selected, empty when absent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("firmware")]
+        public string? Firmware { get; set; } = default!;
+
+        /// <summary>
+        /// Requested terminal eState.StorageCardSerialNumber as decoded text; null unless selected, empty when absent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("storageCardSerialNumber")]
+        public string? StorageCardSerialNumber { get; set; } = default!;
+
+        /// <summary>
+        /// Requested terminal eState.Page as decoded text; null unless selected, empty when absent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("page")]
+        public string? Page { get; set; } = default!;
+
+        /// <summary>
+        /// Requested terminal eState.BackLight as decoded text; null unless selected, empty when absent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("backLight")]
+        public string? BackLight { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("terminal")]
+        public UnitTerminalResponse? Terminal { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("progress")]
+        public UnitProgressResponse? Progress { get; set; } = default!;
+
     }
 
     /// <summary>
-    /// A scoped Units1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location.
+    /// A scoped Units1 or Terminals1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class UnitDirectoryResponse
@@ -23184,6 +32954,81 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("fields")]
         public System.Collections.Generic.ICollection<string>? Fields { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Distinct document count and effective inclusive UTC history bounds for the exact authorized unit.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitDocumentCount
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("from")]
+        public System.DateTimeOffset? From { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("through")]
+        public System.DateTimeOffset? Through { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One bounded, sorted document page for the exact authorized unit.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitDocumentPage
+    {
+
+        /// <summary>
+        /// Document identities and authorized unit display metadata.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<BankDocumentItem>? Items { get; set; } = default!;
+
+        /// <summary>
+        /// Effective inclusive UTC search start.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("from")]
+        public System.DateTimeOffset? From { get; set; } = default!;
+
+        /// <summary>
+        /// Effective inclusive UTC search end.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("through")]
+        public System.DateTimeOffset? Through { get; set; } = default!;
+
+        /// <summary>
+        /// Effective sort field.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("sort")]
+        public string? Sort { get; set; } = default!;
+
+        /// <summary>
+        /// Effective sort direction.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("direction")]
+        public string? Direction { get; set; } = default!;
+
+        /// <summary>
+        /// Effective offset.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("offset")]
+        public int? Offset { get; set; } = default!;
+
+        /// <summary>
+        /// Effective page size.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("limit")]
+        public int? Limit { get; set; } = default!;
+
+        /// <summary>
+        /// Another page existed when this query ran.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("hasMore")]
+        public bool? HasMore { get; set; } = default!;
 
     }
 
@@ -23242,10 +33087,16 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("hasHistory")]
         public bool? HasHistory { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("valueFormat")]
+        public string? ValueFormat { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("pattern")]
+        public string? Pattern { get; set; } = default!;
+
     }
 
     /// <summary>
-    /// The authorized unit and one descriptor-defined group, with read-only stored values.
+    /// The authorized unit and one catalog-defined group, with read-only stored values.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class UnitGroupResponse
@@ -23338,6 +33189,9 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("progress")]
         public UnitProgressResponse? Progress { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("terminal")]
+        public UnitTerminalResponse? Terminal { get; set; } = default!;
+
     }
 
     /// <summary>
@@ -23428,10 +33282,13 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("nextBeforeMs2000")]
         public long? NextBeforeMs2000 { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("valueFormat")]
+        public string? ValueFormat { get; set; } = default!;
+
     }
 
     /// <summary>
-    /// A selectable persisted value and its localized descriptor label.
+    /// A selectable persisted value and its localized catalog label.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class UnitSettingOption
@@ -23490,6 +33347,27 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("changedBy")]
         public UnitSettingEditorResponse? ChangedBy { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Visible authorized main terminal identified by a canonical unit KID; no extra access is granted.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitTerminalResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// API-computed terminal icon identity, including its controller number.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
 
     }
 
@@ -23724,6 +33602,51 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("previousPeriodIsProvisional")]
         public bool? PreviousPeriodIsProvisional { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Resident and parent bank identities with display metadata only.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UserDirectoryItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankKid")]
+        public string? BankKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("number")]
+        public string? Number { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
+        public string? IconKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("deletedAt")]
+        public System.DateTimeOffset? DeletedAt { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Authorized resident page. A short page may still have a continuation.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UserDirectoryResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<UserDirectoryItem>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
+        public string? NextCursor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("scanLimitReached")]
+        public bool? ScanLimitReached { get; set; } = default!;
 
     }
 
@@ -24001,6 +33924,225 @@ namespace Kombine.Flex.Portal.Client
 
     }
 
+    /// <summary>
+    /// Actual SoapInfo event. Missing duration/amounts remain null; quantity is never inferred from duration.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WashDocChartDosing
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ms2000")]
+        public long? Ms2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("durationMs")]
+        public long? DurationMs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("volumeMl")]
+        public double? VolumeMl { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("massGrams")]
+        public double? MassGrams { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("process")]
+        public string? Process { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("step")]
+        public string? Step { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// A stored Cycle, CycleSub or Error transition. Stable name/value and localization key are independent of the display label.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WashDocChartEvent
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ms2000")]
+        public long? Ms2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public double? Value { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("label")]
+        public string? Label { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("localization")]
+        public string? Localization { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCalculated")]
+        public bool? IsCalculated { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One stored timestamp. Null values break curves. Edge samples anchor drawing but are outside the visible window.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WashDocChartPoint
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ms2000")]
+        public long? Ms2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public double? Value { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCalculated")]
+        public bool? IsCalculated { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isEdge")]
+        public bool? IsEdge { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string? Unit { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Renderer-independent WashDoc measurements. All times are UTC milliseconds since 2000-01-01.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WashDocChartResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("documentKid")]
+        public string? DocumentKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
+        public string? UnitName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("finished")]
+        public bool? Finished { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fromMs2000")]
+        public long? FromMs2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("toMs2000")]
+        public long? ToMs2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("startedMs2000")]
+        public long? StartedMs2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("endedMs2000")]
+        public long? EndedMs2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("series")]
+        public System.Collections.Generic.ICollection<WashDocChartSeries>? Series { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("events")]
+        public System.Collections.Generic.ICollection<WashDocChartEvent>? Events { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("signals")]
+        public System.Collections.Generic.ICollection<WashDocChartSignal>? Signals { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("dosing")]
+        public System.Collections.Generic.ICollection<WashDocChartDosing>? Dosing { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("presentation")]
+        public WashDocPresentation? Presentation { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// A sparse measurement or target series. Unit is null when not known or not uniform. Raw values are not visual band coordinates.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WashDocChartSeries
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("label")]
+        public string? Label { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("localization")]
+        public string? Localization { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("group")]
+        public string? Group { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("role")]
+        public string? Role { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string? Unit { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("step")]
+        public bool? Step { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("points")]
+        public System.Collections.Generic.ICollection<WashDocChartPoint>? Points { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Actual InOutletHeat changes interpreted by the trusted machine profile. Null means unknown or inapplicable, never off. Holds until next stored change.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WashDocChartSignal
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ms2000")]
+        public long? Ms2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("flags")]
+        public int? Flags { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("heat")]
+        public bool? Heat { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("inlet")]
+        public bool? Inlet { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("outlet")]
+        public bool? Outlet { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCalculated")]
+        public bool? IsCalculated { get; set; } = default!;
+
+        /// <summary>
+        /// Alliance dryer airflow switch. Null for other protocols or unknown input.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("airflow")]
+        public bool? Airflow { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Server-selected presentation for the original, decoded UnitType. Group order is a preference, not a measurement filter.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WashDocPresentation
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitType")]
+        public int? UnitType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("groupOrder")]
+        public System.Collections.Generic.ICollection<string>? GroupOrder { get; set; } = default!;
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum EThemeMode
     {
@@ -24088,6 +34230,285 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
         public string? IconKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Minimal public site-tenant machine display, without resident or payment fields.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LiveMachineResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
+        public string? UnitName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
+        public string? LocationName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("startedAtUtc")]
+        public System.DateTimeOffset? StartedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("doneAtUtc")]
+        public System.DateTimeOffset? DoneAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("temperature")]
+        public double? Temperature { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Public thumbnail URL and relative portal destination; no original or sensor metadata.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PublicCameraPhoto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("thumbnailUrl")]
+        public string? ThumbnailUrl { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("workspacePath")]
+        public string? WorkspacePath { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Public identity, display names and error code; no raw state payload.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PublicMachineError
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankName")]
+        public string? BankName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
+        public string? LocationName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errorId")]
+        public string? ErrorId { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Public machine-error page, with a protected next-page cursor and refresh interval.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PublicMachineErrorsPage
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<PublicMachineError>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
+        public string? NextCursor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Minimal public unit display and expected timing.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PublicScopedProgressItem
+    {
+
+        /// <summary>
+        /// Canonical site-bound unit identity.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        /// <summary>
+        /// Localized unit name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
+        public string? UnitName { get; set; } = default!;
+
+        /// <summary>
+        /// Localized location name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
+        public string? LocationName { get; set; } = default!;
+
+        /// <summary>
+        /// Expected start or null for unknown timing.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("startedAtUtc")]
+        public System.DateTimeOffset? StartedAtUtc { get; set; } = default!;
+
+        /// <summary>
+        /// Expected end or null for unknown timing.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("doneAtUtc")]
+        public System.DateTimeOffset? DoneAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("progress")]
+        public UnitProgressResponse? Progress { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// A bounded page of public progress for the exact site-bound scope.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PublicScopedProgressResponse
+    {
+
+        /// <summary>
+        /// Requested canonical KID.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("scopeKid")]
+        public string? ScopeKid { get; set; } = default!;
+
+        /// <summary>
+        /// Unit, Location or Bank enum name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("scopeKind")]
+        public string? ScopeKind { get; set; } = default!;
+
+        /// <summary>
+        /// UTC calculation time.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("calculatedAtUtc")]
+        public System.DateTimeOffset? CalculatedAtUtc { get; set; } = default!;
+
+        /// <summary>
+        /// Recommended refresh interval.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get; set; } = default!;
+
+        /// <summary>
+        /// Public units in numeric identity order.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<PublicScopedProgressItem>? Items { get; set; } = default!;
+
+        /// <summary>
+        /// Opaque next-page cursor, or null after the last page.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
+        public string? NextCursor { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PublicWashDocWidgetResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("documentKid")]
+        public string? DocumentKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
+        public string? UnitName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
+        public string? LocationName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("startedAtUtc")]
+        public System.DateTimeOffset? StartedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("endedAtUtc")]
+        public System.DateTimeOffset? EndedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("finished")]
+        public bool? Finished { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("graphSvg")]
+        public string? GraphSvg { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Public presentation selected by this API site's trusted tenant.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PublicWidgetPresentationResponse
+    {
+
+        /// <summary>
+        /// Resolved supported culture for labels, names and number formatting.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("language")]
+        public string? Language { get; set; } = default!;
+
+        /// <summary>
+        /// Hyphen-separated RGB hex palette for the API's circle SVGs.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("colors")]
+        public string? Colors { get; set; } = default!;
+
+        /// <summary>
+        /// RGB hex background inside the progress circle.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("background")]
+        public string? Background { get; set; } = default!;
+
+        /// <summary>
+        /// Trusted HTTPS portal origin for the public purchase map, or null when unavailable.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("webBase")]
+        public string? WebBase { get; set; } = default!;
+
+        /// <summary>
+        /// Existing localized portal text keys used by the widgets; contains no account data.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("labels")]
+        public System.Collections.Generic.IDictionary<string, string>? Labels { get; set; } = default!;
+
+        /// <summary>
+        /// Public browser Maps key, restricted by HTTP referrer at Google; never a server credential. Null when maps are not configured.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("googleMapsBrowserKey")]
+        public string? GoogleMapsBrowserKey { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Purchase count and total for one currency; no currency conversion is performed.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PurchaseCurrencySnapshot
+    {
+
+        /// <summary>
+        /// Stored currency code; null represents purchases with no currency code.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("currency")]
+        public string? Currency { get; set; } = default!;
+
+        /// <summary>
+        /// Number of matching purchase rows for this currency.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
+
+        /// <summary>
+        /// Positive total in major currency units (negated stored Amount divided by 100).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("amount")]
+        public double? Amount { get; set; } = default!;
 
     }
 
@@ -24195,16 +34616,91 @@ namespace Kombine.Flex.Portal.Client
         public System.DateTimeOffset? MeasuredAtUtc { get; set; } = default!;
 
         /// <summary>
-        /// Positive purchase total in major currency units; zero for no matches.
+        /// One count and amount per stored currency; empty for no matches. No currency conversion.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("amount")]
-        public double? Amount { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("currencies")]
+        public System.Collections.Generic.ICollection<PurchaseCurrencySnapshot>? Currencies { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Public count of reservations that have not ended.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ReservationsStatisticsResponse
+    {
 
         /// <summary>
-        /// MAX(Currency), or null for no matches. No currency conversion.
+        /// Configured site's canonical tenant KID.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("currency")]
-        public string? Currency { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("tenantKid")]
+        public string? TenantKid { get; set; } = default!;
+
+        /// <summary>
+        /// Qualifying reservations; zero only for a successful empty count.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
+
+        /// <summary>
+        /// UTC instant used for the strict reservation-end comparison.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("measuredAtUtc")]
+        public System.DateTimeOffset? MeasuredAtUtc { get; set; } = default!;
+
+        /// <summary>
+        /// Recommended polling interval, 60 seconds.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Public count of currently running machines.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RunningMachinesResponse
+    {
+
+        /// <summary>
+        /// Configured site's canonical tenant KID.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("tenantKid")]
+        public string? TenantKid { get; set; } = default!;
+
+        /// <summary>
+        /// Distinct qualifying machines; zero only for a successful empty count.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
+
+        /// <summary>
+        /// UTC instant used for both strict time comparisons.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("measuredAtUtc")]
+        public System.DateTimeOffset? MeasuredAtUtc { get; set; } = default!;
+
+        /// <summary>
+        /// Recommended polling interval, 15 seconds.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Current : LocationWeatherCurrent
+    {
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
@@ -24226,6 +34722,33 @@ namespace Kombine.Flex.Portal.Client
         {
             writer.WriteStringValue(value.ToString("yyyy-MM-dd"));
         }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FileParameter
+    {
+        public FileParameter(System.IO.Stream data)
+            : this (data, null, null)
+        {
+        }
+
+        public FileParameter(System.IO.Stream data, string? fileName)
+            : this (data, fileName, null)
+        {
+        }
+
+        public FileParameter(System.IO.Stream data, string? fileName, string? contentType)
+        {
+            Data = data;
+            FileName = fileName;
+            ContentType = contentType;
+        }
+
+        public System.IO.Stream Data { get; private set; }
+
+        public string? FileName { get; private set; }
+
+        public string? ContentType { get; private set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]

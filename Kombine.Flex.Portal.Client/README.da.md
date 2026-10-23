@@ -1,10 +1,24 @@
+## Lokationens reservationskalendere · 0.11.1
+
+`GetLocationBookingCalendars` returnerer daterede kalendere med åbningstider anvendt af API’et. Angiv valgfrit from=yyyy-MM-dd og days=1-31 (standard 14); svaret indeholder timeZone, from, days og date for hver dag. Vis datoerne direkte og hent et nyt interval ved navigation uden at gentage uger eller kombinere åbningstider i klienten. Grupper har autoriserede enheder og status Configured; ugyldige gemte kalendere udelades. startMinute er 0-1439, durationMinutes er positiv, og summen er højst 1440. Type 0 er reservationstid, 1 chance, 2 lukket og 3 ukendt åbningstid. Ukendt må ikke vises som reserverbart. Kræver Bookings1, Lokation Læs, Enhed Læs og korrekt ressourceadgang. Vis hver maskine separat. Dette er opsætning, ikke aktuelle reservationer eller ledighed. Håndter 400/401/403/404/503 eksplicit. Se [reservationskalendere](/docs#location-booking-calendars) og [changelog](/docs#changelog).
+
+Version 0.11.1 omfatter 178 operationer. SaveCameraCapture understøtter valgfri baggrundsbehandling; HTTP 202 bekræfter kun midlertidig lagring. Behold originalfiler og uploadtoken, og kald ConfirmCameraCapture, indtil confirmed er true. processingPercent er et skøn og kan være null; errorCode kan angive fejl. Efter genstart af værten gentages upload med de samme originalfiler og token, hvis publicering ikke er bekræftet. Genbyg kald mod de opdaterede SaveCameraCapture-signaturer, og brug navngivne argumenter, hvor det er muligt. API-standardens synkrone adfærd er uændret. Se /docs#camera-captures og /docs#changelog.
+
+Version 0.11.1 indeholder GetCameraNearestLocation til GPS-baseret lokationsvalg og GetRecentCameraPhotoMetadata til beskyttet billedinformation. Kameraressourcer indeholder afstandskontrol og nullable lokationskoordinater. Nye filnavne er uigennemsigtige GUID’er; udled ikke region eller oprindeligt navn. Lokationsvalg kræver Camera1 og Location Læs/Skriv; metadata kræver ressourcens Læs. Ved manglende GPS og 404/409 vælges lokationen manuelt. Se /docs#camera-captures og /docs#changelog.
+
+## Seneste kamerabilleder · 0.11.1
+
+Tilføjer `GetPublicRecentCameraPhotos` og `GetPublicCameraThumbnail`. De offentlige operationer kræver ikke login og er bundet til sitets tenant. Listen returnerer højst ti billeder med kortlivede miniature-URL’er og arbejdsområdestier. Miniaturer er offentlige; originaler og metadata forbliver beskyttede. Åbning af arbejdsområdet kræver normale administratorrettigheder. Håndtér 503 ved utilgængelig liste og 400/404 ved ugyldige, udløbne eller manglende miniaturer. Se [offentlige widgets](/docs#public-widgets).
+
 Alle administratorrolleskift kræver Læs og Skriv på både Tabs og Kids. Håndter missing-tabs-read, missing-tabs-write, missing-kids-read og missing-kids-write (HTTP 403).
 
-Version 0.5.3 omfatter 120 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; håndter deres særskilte læse-/skriverettigheder og 403-svar. Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
+GetTerminals bruger rapporteret ComputerName til navn, filtrering og sortering; manglende navne er tomme. Bed om fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight for terminaldata. Værdier er strenge, null ved fravalg og tomme ved manglende data. Behold fields under sideskift, og genstart gamle cursors. Lokationsnavne følger altid med. Se /docs#changelog for alle migreringskrav.
 
-Version 0.5.3: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
+Version 0.11.1 omfatter 178 API-operationer. GetUnits tilføjer en autoriseret enhedsoversigt: behold filtre og fields under sideskift, og genstart ved invalid-cursor. Administratorroller kræver alle ni expectedFlags-kategorier, inklusive Tabs og Kids; håndter deres særskilte læse-/skriverettigheder og 403-svar. Serviceadgangstildelinger er fjernet; stop tildelingskald og læsning af access-objektet. Logodele angives i stien før farven, ikke som query-parametre. UserBalance er fortsat kompatibel. Se /docs#changelog for migrering og /docs#unit-directory for sideskift og eksempler.
 
-Version 0.5.3 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
+Version 0.8.0: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.
+
+Version 0.8.0 opdaterer dokumentationen for GetBankUserBalances til den nye databasefrist på 20 sekunder. Felter i kald og svar er uændrede. Giv ekstra tid til transport og adgangskontrol; HTTP 503 returnerer fortsat ingen delvise saldoer.
 
 Version 0.3.3 bruger det [officielle Kombine-logo](https://static.kombine.services/kombinelogotext1/black.svg), bevaret som logo.svg og gengivet som icon.png til NuGet. API-kontrakter og klientens funktion er uændrede.
 
@@ -26,19 +40,82 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 # Kombine Flex Portal — .NET-klient
 
-Typet HTTPS/JSON-klient til alle 110 offentlige API-operationer. Ingen afhængigheder til andre Kombine-pakker, databaseadgang eller forretningslogik. Den primære, detaljerede reference er [den engelske vejledning](README.md); alle operationer fremgår af [OPERATIONS.md](OPERATIONS.md).
+Typet HTTPS/JSON-klient til alle 178 offentlige API-operationer. Ingen afhængigheder til andre Kombine-pakker, databaseadgang eller forretningslogik. Den primære, detaljerede reference er [den engelske vejledning](README.md); alle operationer fremgår af [OPERATIONS.md](OPERATIONS.md).
 
-Version 0.5.3 følger den aktuelle API-kontrakt (120 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
+Version 0.11.1 følger den aktuelle API-kontrakt (178 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.
 
 Version 0.2.5 tilføjer GetLocationOpeningHours og GetLocationBookingRules. Begge kræver Location Read, Unit Read og adgang til lokationen. Reservationsregler indeholder ren tekst samt ordnede parts med text/isValue til valgfri fremhævning; vis aldrig strengene som HTML. Brug text som fallback for ældre svar. Se /docs#location-opening-hours og /docs#location-booking-rules for rettigheder, eksempler og grænser.
 
+## Aktuelt vejr for en lokation
+
+Version 0.11.1 indeholder `GetLocationWeatherAsync`; SDK'et omfatter 178 operationer. API'et bruger den autoriserede lokations gemte koordinater eller dens gemte adresse/postnummer. Kun `locationKid` kan angives; klienten kan ikke sende koordinater eller vælge en anden tenant. Det kræver en aktiv administrator, tildelt Tab, Bank Read, Location Read, korrekt ressourceadgang og synlighed inden for retention. Unit Read og Write kræves ikke.
+
+```csharp
+var weather = await api.GetLocationWeatherAsync(locationKid, cancellationToken);
+if (weather.Status == "Available" && weather.Current != null)
+    Console.WriteLine($"{weather.Current.TemperatureCelsius} °C");
+```
+
+```vbnet
+Dim weather = Await api.GetLocationWeatherAsync(locationKid, cancellationToken)
+If weather.Status = "Available" AndAlso weather.Current IsNot Nothing Then
+    Console.WriteLine("{0} °C", weather.Current.TemperatureCelsius)
+End If
+```
+
+Kontrollér `status`, før `current` bruges: `Available` indeholder aktuelle målinger, mens `LocationUnknown` og `Unavailable` har `current = null`. Valgfrie målinger er null, når de er ukendte; bevar reelle nulværdier. Tidspunkter er UTC, temperaturer Celsius, vind meter/sekund, nedbør millimeter og fugtighed procent. `positionSource = "Address"` angiver en omtrentligt fundet adresse/postnummer-position. Vis **Weather data by Open-Meteo, CC BY 4.0**; data er modelbaserede og kommer ikke fra en sensor på stedet.
+
+Opdatér ved navigation. API'et cacher succes i ti minutter og fejl i ét minut; HTTP-svar er no-store. En udbyderfejl kan give HTTP 200 med `Unavailable`; lagerfejl eller fristen på tolv sekunder giver HTTP 503 med koden `location-weather-unavailable`. Erstat aldrig manglende vejr med nul, og gentag ikke automatisk. Resten af programmet skal kunne bruges. Se [lokationsvejr](/docs#location-weather) for alle rettigheder og fejlkoder.
+
+## Kameraoptagelser og private medier
+
+Version 0.8.0 tilføjede seks typede kameraoperationer. Camera1 og Læs på ressourcen kræves; klargøring og lagring kræver også Skriv. Hent `resourceKid` fra API'et. Serveren vælger tenant og ejer.
+
+Eksemplet sender et nyoptaget JPEG med det faktiske optagelsestidspunkt. Hash de præcise originalbytes, og omkod ikke filen efter klargøring. API'et validerer fil og metadata. Selve kameraoptagelsen håndteres af programmet.
+
+```csharp
+using (var original = File.OpenRead(capturedJpegPath))
+using (var sha256 = System.Security.Cryptography.SHA256.Create())
+{
+    var hash = BitConverter.ToString(sha256.ComputeHash(original)).Replace("-", "");
+    original.Position = 0;
+    var prepared = await api.PrepareCameraCaptureAsync(new CameraPrepareRequest
+    {
+        ResourceKid = resourceKid,
+        Kind = "photo",
+        OriginalFileName = Path.GetFileName(capturedJpegPath),
+        OriginalNameAvailable = true,
+        CapturedAtUtc = capturedAtUtc,
+        MediaLength = original.Length,
+        MediaSha256 = hash,
+        SensorData = new Dictionary<string, object>()
+    }, cancellationToken);
+    var saved = await api.SaveCameraCaptureAsync(uploadToken: prepared.UploadToken,
+        original: new FileParameter(original, Path.GetFileName(capturedJpegPath), "image/jpeg"),
+        cancellationToken: cancellationToken);
+}
+
+var gallery = await api.GetCameraCapturesAsync(resourceKid, cancellationToken: cancellationToken);
+foreach (var item in gallery.Items ?? Array.Empty<CameraCaptureItem>())
+{
+    using (var download = await api.GetCameraCaptureContentAsync(item.Id!, part: "thumbnail",
+        cancellationToken: cancellationToken))
+    using (var destination = File.Create(item.CaptureId + ".jpg"))
+        await download.Stream.CopyToAsync(destination, 81920, cancellationToken);
+}
+```
+
+Udelad `motion` ved almindelige billeder og videoer. Ved en understøttet Live Photo klargøres `kind = "live-photo"`, `motionLength` og `motionSha256`; send derefter den matchende QuickTime-stream som `new FileParameter(motionStream, "capture.mov", "video/quicktime")`. Uploadmetoden lukker filstreams; åbn dem igen ved et bevidst genforsøg med samme token og identiske bytes. Upload gentages aldrig automatisk. Standardtransportens timeout er 30 sekunder. Ved større videouploads indsprøjtes en `HttpClient` med passende timeout, `AllowAutoRedirect = false` og `UseCookies = false`; behold en annulleringsfrist. Brug `motion-playback` til den portable MP4 af Live Photo-bevægelsen.
+
+Et vellykket gem betyder, at hele medie/JSON-sættet findes i mindst én region. Følg `nextCursor` uændret med samme ressource, også efter en tom side. `isDegraded` betyder, at en region ikke svarede; begynd forfra efter genoprettelse. Uden `resourceKid` vises den aktuelle administrators egne optagelser. Brug det returnerede, uigennemsigtige `id` til adgangskontrolleret indhold. `part` kan være `original`, `thumbnail`, `metadata`, `preview`, `motion`, `motion-playback` eller `playback` efter svarenes flag. Valgfri `range: "bytes=0-1023"` sender en Range-header; HTTP 206 giver en `FileResponse` med `IsPartial`. Luk alle downloadobjekter med Dispose. Lav aldrig offentlige URL'er af lagerstier. Se API'ets [kameravejledning](/docs#camera-captures) for grænser og fejlkoder.
+
 ## Installation og platforme
 
-Produktionsudgaver publiceres på [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Installér den publicerede version med kommandoen nedenfor og nuget.org som pakkekilde. Hvis en beta-version endnu ikke findes dér, lægges den kontrollerede Kombine.Flex.Portal.Client.0.5.3.nupkg fra API-dokumentationen i en lokal NuGet-kilde.
+Produktionsudgaver publiceres på [nuget.org](https://www.nuget.org/packages/Kombine.Flex.Portal.Client). Installér den publicerede version med kommandoen nedenfor og nuget.org som pakkekilde. Hvis en beta-version endnu ikke findes dér, lægges den kontrollerede Kombine.Flex.Portal.Client.0.11.1.nupkg fra API-dokumentationen i en lokal NuGet-kilde.
 
 ```powershell
 dotnet nuget add source ./packages --name flex-local
-dotnet add package Kombine.Flex.Portal.Client --version 0.5.3
+dotnet add package Kombine.Flex.Portal.Client --version 0.11.1
 ```
 
 .NET Framework 4.7.2/4.8/4.8.1 bruger netstandard2.0 med Microsoft System.Text.Json 10.0.12 og dets afhængigheder. .NET 8/9 bruger net8.0; .NET 10 bruger net10.0 uden ekstra pakker. Behold nuget.org eller en godkendt mirror til Microsoft-afhængigheder. Framework-programmer kan have brug for automatiske binding redirects og System.Net.Http-reference ved egen HttpClient. Framework-tests er bygget mod 4.7.2/4.8 og kørt på installeret 4.8.1; en oprindelig 4.7.2-installation er ikke afprøvet.
@@ -86,7 +163,7 @@ CVR: 44637928
 [support@kombinetech.com](mailto:support@kombinetech.com)  
 [kombinetech.com](https://kombinetech.com/)
 
-## Automatisk sessionshåndtering — 0.5.3 (ikke udgivet)
+## Automatisk sessionshåndtering — 0.11.1 (ikke udgivet)
 
 `SendRequestAsync` understøtter også downloads, streaming og operationer tilføjet efter den medfølgende genererede kontrakt. Den kontrollerer, at kaldet holder sig til klientens faste API-adresse, bevarer applikationens headers og gentager aldrig kald. Den kaldende kode ejer request og response. Brug `HttpCompletionOption.ResponseHeadersRead` til streaming. Applikationen kan bruge egne svarmodeller med denne transport; API'et håndhæver fortsat rettighederne.
 

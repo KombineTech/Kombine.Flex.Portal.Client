@@ -34,6 +34,11 @@ AccountEntryResponse = TypedDict('AccountEntryResponse', {
     'paymentKind': 'str | None',
 }, total=False)
 
+AccountIconResponse = TypedDict('AccountIconResponse', {
+    'currency': 'str | None',
+    'iconKid': 'str | None',
+}, total=False)
+
 AccountResponse = TypedDict('AccountResponse', {
     'items': 'list[AccountEntryResponse] | None',
     'units': 'list[AccountUnitResponse] | None',
@@ -67,7 +72,17 @@ AccountUnitResponse = TypedDict('AccountUnitResponse', {
     'name': 'str | None',
 }, total=False)
 
+ActiveBankCountResponse = TypedDict('ActiveBankCountResponse', {
+    'count': 'int',
+    'iconKid': 'str | None',
+}, total=False)
+
 ActiveLocationCountResponse = TypedDict('ActiveLocationCountResponse', {
+    'count': 'int',
+    'iconKid': 'str | None',
+}, total=False)
+
+ActiveUnitCountResponse = TypedDict('ActiveUnitCountResponse', {
     'count': 'int',
     'iconKid': 'str | None',
 }, total=False)
@@ -94,6 +109,23 @@ AssistantResponse = TypedDict('AssistantResponse', {
     'answer': 'str | None',
     'operations': 'list[str] | None',
     'links': 'list[AssistantLink] | None',
+}, total=False)
+
+BankDirectoryItem = TypedDict('BankDirectoryItem', {
+    'kid': 'str | None',
+    'name': 'str | None',
+    'iconKid': 'str | None',
+    'enabled': 'bool',
+    'deleted': 'bool | None',
+    'deletedAt': 'str | None',
+    'fields': 'dict[str, str | None] | None',
+}, total=False)
+
+BankDirectoryResponse = TypedDict('BankDirectoryResponse', {
+    'items': 'list[BankDirectoryItem] | None',
+    'nextCursor': 'str | None',
+    'fields': 'list[str] | None',
+    'canReadBankActivationCode': 'bool',
 }, total=False)
 
 BankDocumentItem = TypedDict('BankDocumentItem', {
@@ -218,9 +250,82 @@ BookingsResponse = TypedDict('BookingsResponse', {
     'hasMore': 'bool',
 }, total=False)
 
+CameraAvailabilityResponse = TypedDict('CameraAvailabilityResponse', {
+    'hasCaptures': 'bool',
+    'isDegraded': 'bool',
+    'canCapture': 'bool',
+}, total=False)
+
+CameraCaptureItem = TypedDict('CameraCaptureItem', {
+    'id': 'str | None',
+    'captureId': 'str | None',
+    'resourceKid': 'str | None',
+    'ownerKid': 'str | None',
+    'fileName': 'str | None',
+    'kind': 'str | None',
+    'capturedAtUtc': 'str',
+    'hasPreview': 'bool',
+    'hasMotion': 'bool',
+    'hasPlayback': 'bool',
+    'bankName': 'str | None',
+    'locationName': 'str | None',
+    'unitName': 'str | None',
+}, total=False)
+
+CameraCapturePage = TypedDict('CameraCapturePage', {
+    'items': 'list[CameraCaptureItem] | None',
+    'nextCursor': 'str | None',
+    'isDegraded': 'bool',
+}, total=False)
+
+CameraConfirmationRequest = TypedDict('CameraConfirmationRequest', {
+    'uploadToken': 'str | None',
+}, total=False)
+
+CameraConfirmationResponse = TypedDict('CameraConfirmationResponse', {
+    'confirmed': 'bool',
+    'errorCode': 'str | None',
+    'processingPercent': 'int | None',
+}, total=False)
+
+CameraPrepareRequest = TypedDict('CameraPrepareRequest', {
+    'resourceKid': 'str | None',
+    'kind': 'str | None',
+    'originalFileName': 'str | None',
+    'originalNameAvailable': 'bool',
+    'capturedAtUtc': 'str',
+    'mediaLength': 'int',
+    'mediaSha256': 'str | None',
+    'sensorData': 'Any',
+    'motionLength': 'int | None',
+    'motionSha256': 'str | None',
+}, total=False)
+
+CameraPrepareResponse = TypedDict('CameraPrepareResponse', {
+    'uploadToken': 'str | None',
+}, total=False)
+
+CameraResourceResponse = TypedDict('CameraResourceResponse', {
+    'resourceKid': 'str | None',
+    'name': 'str | None',
+    'iconKid': 'str | None',
+    'requiresProximityCheck': 'bool',
+    'latitude': 'float | None',
+    'longitude': 'float | None',
+}, total=False)
+
+CameraSaveResponse = TypedDict('CameraSaveResponse', {
+    'captureId': 'str | None',
+    'resourceKid': 'str | None',
+}, total=False)
+
 DatabaseAccessResponse = TypedDict('DatabaseAccessResponse', {
     'canWrite': 'bool | None',
     'checkedAtUtc': 'str',
+}, total=False)
+
+DirectoryExportCountResponse = TypedDict('DirectoryExportCountResponse', {
+    'count': 'int',
 }, total=False)
 
 DocumentCell = TypedDict('DocumentCell', {
@@ -321,6 +426,7 @@ InstallerDirectoryItem = TypedDict('InstallerDirectoryItem', {
     'deletedAt': 'str | None',
     'enabled': 'bool | None',
     'lastActiveAt': 'str | None',
+    'activationCode': 'str | None',
     'iconKid': 'str | None',
 }, total=False)
 
@@ -378,6 +484,37 @@ LiveLogsResponse = TypedDict('LiveLogsResponse', {
     'servers': 'list[LiveLogCard] | None',
 }, total=False)
 
+LocationBookingCalendarDayResponse = TypedDict('LocationBookingCalendarDayResponse', {
+    'dayOfWeek': 'int',
+    'slots': 'list[LocationBookingCalendarSlotResponse] | None',
+    'date': 'str',
+}, total=False)
+
+LocationBookingCalendarGroup = TypedDict('LocationBookingCalendarGroup', {
+    'units': 'list[LocationBookingCalendarUnit] | None',
+    'status': 'str | None',
+    'days': 'list[LocationBookingCalendarDayResponse] | None',
+}, total=False)
+
+LocationBookingCalendarSlotResponse = TypedDict('LocationBookingCalendarSlotResponse', {
+    'startMinute': 'int',
+    'durationMinutes': 'int',
+    'type': 'int',
+}, total=False)
+
+LocationBookingCalendarUnit = TypedDict('LocationBookingCalendarUnit', {
+    'kid': 'str | None',
+    'name': 'str | None',
+}, total=False)
+
+LocationBookingCalendarsResponse = TypedDict('LocationBookingCalendarsResponse', {
+    'locationKid': 'str | None',
+    'groups': 'list[LocationBookingCalendarGroup] | None',
+    'timeZone': 'str | None',
+    'from': 'str',
+    'days': 'int',
+}, total=False)
+
 LocationBookingRule = TypedDict('LocationBookingRule', {
     'code': 'str | None',
     'text': 'str | None',
@@ -402,6 +539,10 @@ LocationBookingRulesResponse = TypedDict('LocationBookingRulesResponse', {
     'locationKid': 'str | None',
     'calculatedAt': 'str',
     'groups': 'list[LocationBookingRuleGroup] | None',
+}, total=False)
+
+LocationCountResponse = TypedDict('LocationCountResponse', {
+    'count': 'int',
 }, total=False)
 
 LocationDirectoryItem = TypedDict('LocationDirectoryItem', {
@@ -446,6 +587,7 @@ LocationDirectoryItem = TypedDict('LocationDirectoryItem', {
     'giftEnd': 'str | None',
     'giftSplit': 'str | None',
     'giftPN': 'str | None',
+    'soapEnd': 'str | None',
     'iconKid': 'str | None',
     'bankIconKid': 'str | None',
 }, total=False)
@@ -475,9 +617,64 @@ LocationOpeningHoursResponse = TypedDict('LocationOpeningHoursResponse', {
     'groups': 'list[OpeningHoursGroup] | None',
 }, total=False)
 
+LocationReservationHistoryItem = TypedDict('LocationReservationHistoryItem', {
+    'unitKid': 'str | None',
+    'startMinute': 'int',
+    'durationMinutes': 'int',
+    'revision': 'int',
+    'cancelled': 'bool',
+    'userNumber': 'str | None',
+    'userName': 'str | None',
+    'userKid': 'str | None',
+}, total=False)
+
+LocationReservationHistoryResponse = TypedDict('LocationReservationHistoryResponse', {
+    'locationKid': 'str | None',
+    'from': 'str',
+    'days': 'int',
+    'items': 'list[LocationReservationHistoryItem] | None',
+}, total=False)
+
+LocationReservationResponse = TypedDict('LocationReservationResponse', {
+    'unitKid': 'str | None',
+    'startMinute': 'int',
+    'durationMinutes': 'int',
+    'userNumber': 'str | None',
+    'userName': 'str | None',
+    'userKid': 'str | None',
+}, total=False)
+
+LocationReservationsResponse = TypedDict('LocationReservationsResponse', {
+    'locationKid': 'str | None',
+    'from': 'str',
+    'days': 'int',
+    'items': 'list[LocationReservationResponse] | None',
+}, total=False)
+
 LocationUnitsResponse = TypedDict('LocationUnitsResponse', {
     'location': 'BankLocationResponse',
     'items': 'list[UnitOverviewResponse] | None',
+}, total=False)
+
+LocationWeatherCurrent = TypedDict('LocationWeatherCurrent', {
+    'observedAtUtc': 'str',
+    'retrievedAtUtc': 'str',
+    'temperatureCelsius': 'float',
+    'apparentTemperatureCelsius': 'float | None',
+    'windSpeedMetresPerSecond': 'float | None',
+    'precipitationMillimetres': 'float | None',
+    'relativeHumidityPercent': 'float | None',
+    'weatherCode': 'int | None',
+    'isDay': 'bool | None',
+}, total=False)
+
+LocationWeatherResponse = TypedDict('LocationWeatherResponse', {
+    'locationKid': 'str | None',
+    'status': 'str | None',
+    'address': 'str | None',
+    'zip': 'str | None',
+    'positionSource': 'str | None',
+    'current': 'LocationWeatherCurrent | None',
 }, total=False)
 
 ManagerCreationResponse = TypedDict('ManagerCreationResponse', {
@@ -554,8 +751,10 @@ ManagerLoginErrorResponse = TypedDict('ManagerLoginErrorResponse', {
 }, total=False)
 
 ManagerLoginRequest = TypedDict('ManagerLoginRequest', {
-    'email': Required['str'],
-    'password': Required['str'],
+    'email': 'str | None',
+    'password': 'str | None',
+    'kid': 'str | None',
+    'apiKey': 'str | None',
 }, total=False)
 
 ManagerOperationPermissionResponse = TypedDict('ManagerOperationPermissionResponse', {
@@ -584,6 +783,7 @@ ManagerPermissionRoleRequest = TypedDict('ManagerPermissionRoleRequest', {
     'role': Required['str | None'],
     'expectedFlags': Required['dict[str, int | None] | None'],
     'expectedTabsRevision': 'str | None',
+    'expectedKidsRevision': 'str | None',
 }, total=False)
 
 ManagerPermissionRoleResponse = TypedDict('ManagerPermissionRoleResponse', {
@@ -593,6 +793,9 @@ ManagerPermissionRoleResponse = TypedDict('ManagerPermissionRoleResponse', {
     'tabs': 'list[ManagerTabResponse] | None',
     'tabsRevision': 'str | None',
     'canEditTabs': 'bool',
+    'resourceGrants': 'list[ManagerResourceGrantResponse] | None',
+    'kidsRevision': 'str | None',
+    'canEditKids': 'bool',
 }, total=False)
 
 ManagerProfileChangeRequest = TypedDict('ManagerProfileChangeRequest', {
@@ -652,6 +855,19 @@ ManagerSessionResponse = TypedDict('ManagerSessionResponse', {
     'tokenType': 'str | None',
 }, total=False)
 
+ManagerSignUpConfirmation = TypedDict('ManagerSignUpConfirmation', {
+    'token': 'str | None',
+}, total=False)
+
+ManagerSignUpRequest = TypedDict('ManagerSignUpRequest', {
+    'email': 'str | None',
+    'name': 'str | None',
+    'organisation': 'str | None',
+    'password': 'str | None',
+    'confirmPassword': 'str | None',
+    'language': 'str | None',
+}, total=False)
+
 ManagerTabChangeRequest = TypedDict('ManagerTabChangeRequest', {
     'enabled': 'bool | None',
     'expectedRevision': Required['str | None'],
@@ -676,6 +892,14 @@ ManagerThemeRequest = TypedDict('ManagerThemeRequest', {
 
 ManagerThemeResponse = TypedDict('ManagerThemeResponse', {
     'themeMode': 'EThemeMode',
+}, total=False)
+
+NearestLocationItem = TypedDict('NearestLocationItem', {
+    'kid': 'str | None',
+    'name': 'str | None',
+    'bankName': 'str | None',
+    'iconKid': 'str | None',
+    'distanceMeters': 'float',
 }, total=False)
 
 ObjectAddressResponse = TypedDict('ObjectAddressResponse', {
@@ -717,8 +941,22 @@ OpeningHoursUnit = TypedDict('OpeningHoursUnit', {
     'name': 'str | None',
 }, total=False)
 
+PeopleDirectoryCount = TypedDict('PeopleDirectoryCount', {
+    'count': 'int',
+    'iconKid': 'str | None',
+}, total=False)
+
 PersonalAccountResult = TypedDict('PersonalAccountResult', {
     'code': 'str | None',
+}, total=False)
+
+PersonalApiKeyRequest = TypedDict('PersonalApiKeyRequest', {
+    'revision': Required['str | None'],
+}, total=False)
+
+PersonalApiKeyResponse = TypedDict('PersonalApiKeyResponse', {
+    'apiKey': 'str | None',
+    'details': 'PersonalManagerApiKey',
 }, total=False)
 
 PersonalEmailConfirmation = TypedDict('PersonalEmailConfirmation', {
@@ -729,6 +967,11 @@ PersonalEmailRequest = TypedDict('PersonalEmailRequest', {
     'email': Required['str | None'],
     'currentPassword': Required['str | None'],
     'language': 'str | None',
+}, total=False)
+
+PersonalManagerApiKey = TypedDict('PersonalManagerApiKey', {
+    'hasApiKey': 'bool',
+    'revision': 'str | None',
 }, total=False)
 
 PersonalManagerProfile = TypedDict('PersonalManagerProfile', {
@@ -920,6 +1163,56 @@ TenantStatusSourceResult = TypedDict('TenantStatusSourceResult', {
     'errorCode': 'str | None',
 }, total=False)
 
+ToolKidField = TypedDict('ToolKidField', {
+    'name': 'str | None',
+    'value': 'str | None',
+    'enumName': 'str | None',
+    'enumNumber': 'str | None',
+    'index': 'int | None',
+}, total=False)
+
+ToolKidInspectionRequest = TypedDict('ToolKidInspectionRequest', {
+    'kid': 'str | None',
+}, total=False)
+
+ToolKidInspectionResponse = TypedDict('ToolKidInspectionResponse', {
+    'canonicalKid': 'str | None',
+    'fields': 'list[ToolKidField] | None',
+    'normalized': 'bool',
+}, total=False)
+
+ToolTimeOffsetChoice = TypedDict('ToolTimeOffsetChoice', {
+    'offset': 'str | None',
+    'utc': 'str | None',
+}, total=False)
+
+ToolTimeRequest = TypedDict('ToolTimeRequest', {
+    'format': 'str | None',
+    'value': 'str | None',
+    'timeZone': 'str | None',
+    'offset': 'str | None',
+}, total=False)
+
+ToolTimeResponse = TypedDict('ToolTimeResponse', {
+    'success': 'bool',
+    'error': 'str | None',
+    'result': 'ToolTimeResult',
+    'offsetChoices': 'list[ToolTimeOffsetChoice] | None',
+}, total=False)
+
+ToolTimeResult = TypedDict('ToolTimeResult', {
+    'ms2000': 'str | None',
+    'mi2000': 'str | None',
+    'ss2000': 'str | None',
+    'utc': 'str | None',
+    'local': 'str | None',
+    'timeZone': 'str | None',
+    'offset': 'str | None',
+    'dateInputRounded': 'bool',
+    'millisecondRemainder': 'str | None',
+    'secondRemainder': 'str | None',
+}, total=False)
+
 UnitDetailsResponse = TypedDict('UnitDetailsResponse', {
     'location': 'BankLocationResponse',
     'unit': 'UnitOverviewResponse',
@@ -946,6 +1239,17 @@ UnitDirectoryItem = TypedDict('UnitDirectoryItem', {
     'outOfOrder': 'str | None',
     'latitude': 'float | None',
     'longitude': 'float | None',
+    'errorUnit': 'str | None',
+    'autoOutOfOrder': 'str | None',
+    'versionMinor': 'str | None',
+    'bootReason': 'str | None',
+    'booted': 'str | None',
+    'firmware': 'str | None',
+    'storageCardSerialNumber': 'str | None',
+    'page': 'str | None',
+    'backLight': 'str | None',
+    'terminal': 'UnitTerminalResponse',
+    'progress': 'UnitProgressResponse',
 }, total=False)
 
 UnitDirectoryResponse = TypedDict('UnitDirectoryResponse', {
@@ -953,6 +1257,23 @@ UnitDirectoryResponse = TypedDict('UnitDirectoryResponse', {
     'nextCursor': 'str | None',
     'hasAllBanksAccess': 'bool',
     'fields': 'list[str] | None',
+}, total=False)
+
+UnitDocumentCount = TypedDict('UnitDocumentCount', {
+    'count': 'int',
+    'from': 'str',
+    'through': 'str',
+}, total=False)
+
+UnitDocumentPage = TypedDict('UnitDocumentPage', {
+    'items': 'list[BankDocumentItem] | None',
+    'from': 'str',
+    'through': 'str',
+    'sort': 'str | None',
+    'direction': 'str | None',
+    'offset': 'int',
+    'limit': 'int',
+    'hasMore': 'bool',
 }, total=False)
 
 UnitGroupFieldResponse = TypedDict('UnitGroupFieldResponse', {
@@ -972,6 +1293,8 @@ UnitGroupFieldResponse = TypedDict('UnitGroupFieldResponse', {
     'changedBy': 'UnitSettingEditorResponse',
     'canReadHistory': 'bool',
     'hasHistory': 'bool',
+    'valueFormat': 'str | None',
+    'pattern': 'str | None',
 }, total=False)
 
 UnitGroupResponse = TypedDict('UnitGroupResponse', {
@@ -1003,6 +1326,7 @@ UnitOverviewResponse = TypedDict('UnitOverviewResponse', {
     'unitTypeSource': 'str | None',
     'iconKid': 'str | None',
     'progress': 'UnitProgressResponse',
+    'terminal': 'UnitTerminalResponse',
 }, total=False)
 
 UnitProgressResponse = TypedDict('UnitProgressResponse', {
@@ -1032,6 +1356,7 @@ UnitSettingHistoryResponse = TypedDict('UnitSettingHistoryResponse', {
     'setting': 'str | None',
     'items': 'list[UnitSettingHistoryItem] | None',
     'nextBeforeMs2000': 'int | None',
+    'valueFormat': 'str | None',
 }, total=False)
 
 UnitSettingOption = TypedDict('UnitSettingOption', {
@@ -1053,6 +1378,12 @@ UnitSettingResponse = TypedDict('UnitSettingResponse', {
     'revision': 'str | None',
     'sync': 'int | None',
     'changedBy': 'UnitSettingEditorResponse',
+}, total=False)
+
+UnitTerminalResponse = TypedDict('UnitTerminalResponse', {
+    'kid': 'str | None',
+    'name': 'str | None',
+    'iconKid': 'str | None',
 }, total=False)
 
 UpdateObjectAddressRequest = TypedDict('UpdateObjectAddressRequest', {
@@ -1119,6 +1450,21 @@ UserCurrencyBalanceItem = TypedDict('UserCurrencyBalanceItem', {
     'previousBalanceMinor': 'int | None',
     'previousPeriod': 'int | None',
     'previousPeriodIsProvisional': 'bool',
+}, total=False)
+
+UserDirectoryItem = TypedDict('UserDirectoryItem', {
+    'kid': 'str | None',
+    'bankKid': 'str | None',
+    'name': 'str | None',
+    'number': 'str | None',
+    'iconKid': 'str | None',
+    'deletedAt': 'str | None',
+}, total=False)
+
+UserDirectoryResponse = TypedDict('UserDirectoryResponse', {
+    'items': 'list[UserDirectoryItem] | None',
+    'nextCursor': 'str | None',
+    'scanLimitReached': 'bool',
 }, total=False)
 
 UserLocationResponse = TypedDict('UserLocationResponse', {
@@ -1206,6 +1552,78 @@ ValidationProblemDetails = TypedDict('ValidationProblemDetails', {
     'errors': 'dict[str, list[str]] | None',
 }, total=False)
 
+WashDocChartDosing = TypedDict('WashDocChartDosing', {
+    'ms2000': 'int',
+    'name': 'str | None',
+    'durationMs': 'int | None',
+    'volumeMl': 'float | None',
+    'massGrams': 'float | None',
+    'process': 'str | None',
+    'step': 'str | None',
+}, total=False)
+
+WashDocChartEvent = TypedDict('WashDocChartEvent', {
+    'ms2000': 'int',
+    'kind': 'str | None',
+    'name': 'str | None',
+    'value': 'float | None',
+    'label': 'str | None',
+    'localization': 'str | None',
+    'isCalculated': 'bool',
+}, total=False)
+
+WashDocChartPoint = TypedDict('WashDocChartPoint', {
+    'ms2000': 'int',
+    'value': 'float | None',
+    'isCalculated': 'bool',
+    'isEdge': 'bool',
+    'unit': 'str | None',
+}, total=False)
+
+WashDocChartResponse = TypedDict('WashDocChartResponse', {
+    'documentKid': 'str | None',
+    'unitKid': 'str | None',
+    'unitName': 'str | None',
+    'finished': 'bool',
+    'fromMs2000': 'int',
+    'toMs2000': 'int',
+    'startedMs2000': 'int | None',
+    'endedMs2000': 'int | None',
+    'series': 'list[WashDocChartSeries] | None',
+    'events': 'list[WashDocChartEvent] | None',
+    'signals': 'list[WashDocChartSignal] | None',
+    'dosing': 'list[WashDocChartDosing] | None',
+    'presentation': 'WashDocPresentation',
+}, total=False)
+
+WashDocChartSeries = TypedDict('WashDocChartSeries', {
+    'kind': 'str | None',
+    'name': 'str | None',
+    'label': 'str | None',
+    'localization': 'str | None',
+    'group': 'str | None',
+    'role': 'str | None',
+    'unit': 'str | None',
+    'step': 'bool',
+    'points': 'list[WashDocChartPoint] | None',
+}, total=False)
+
+WashDocChartSignal = TypedDict('WashDocChartSignal', {
+    'ms2000': 'int',
+    'flags': 'int | None',
+    'heat': 'bool | None',
+    'inlet': 'bool | None',
+    'outlet': 'bool | None',
+    'isCalculated': 'bool',
+    'airflow': 'bool | None',
+}, total=False)
+
+WashDocPresentation = TypedDict('WashDocPresentation', {
+    'unitType': 'int | None',
+    'kind': 'str | None',
+    'groupOrder': 'list[str] | None',
+}, total=False)
+
 EThemeMode = int
 
 ActiveUsersResponse = TypedDict('ActiveUsersResponse', {
@@ -1224,6 +1642,79 @@ ApiStatusResponse = TypedDict('ApiStatusResponse', {
 
 IconPresentationResponse = TypedDict('IconPresentationResponse', {
     'iconKid': 'str | None',
+}, total=False)
+
+LiveMachineResponse = TypedDict('LiveMachineResponse', {
+    'unitKid': 'str | None',
+    'unitName': 'str | None',
+    'locationName': 'str | None',
+    'startedAtUtc': 'str',
+    'doneAtUtc': 'str | None',
+    'temperature': 'float | None',
+}, total=False)
+
+PublicCameraPhoto = TypedDict('PublicCameraPhoto', {
+    'thumbnailUrl': 'str | None',
+    'workspacePath': 'str | None',
+}, total=False)
+
+PublicMachineError = TypedDict('PublicMachineError', {
+    'kid': 'str | None',
+    'name': 'str | None',
+    'bankName': 'str | None',
+    'locationName': 'str | None',
+    'errorId': 'str | None',
+}, total=False)
+
+PublicMachineErrorsPage = TypedDict('PublicMachineErrorsPage', {
+    'items': 'list[PublicMachineError] | None',
+    'nextCursor': 'str | None',
+    'refreshAfterSeconds': 'int',
+}, total=False)
+
+PublicScopedProgressItem = TypedDict('PublicScopedProgressItem', {
+    'unitKid': 'str | None',
+    'unitName': 'str | None',
+    'locationName': 'str | None',
+    'startedAtUtc': 'str | None',
+    'doneAtUtc': 'str | None',
+    'progress': 'UnitProgressResponse',
+}, total=False)
+
+PublicScopedProgressResponse = TypedDict('PublicScopedProgressResponse', {
+    'scopeKid': 'str | None',
+    'scopeKind': 'str | None',
+    'calculatedAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
+    'items': 'list[PublicScopedProgressItem] | None',
+    'nextCursor': 'str | None',
+}, total=False)
+
+PublicWashDocWidgetResponse = TypedDict('PublicWashDocWidgetResponse', {
+    'documentKid': 'str | None',
+    'unitKid': 'str | None',
+    'unitName': 'str | None',
+    'locationName': 'str | None',
+    'startedAtUtc': 'str',
+    'endedAtUtc': 'str | None',
+    'finished': 'bool',
+    'graphSvg': 'str | None',
+    'refreshAfterSeconds': 'int',
+}, total=False)
+
+PublicWidgetPresentationResponse = TypedDict('PublicWidgetPresentationResponse', {
+    'language': 'str | None',
+    'colors': 'str | None',
+    'background': 'str | None',
+    'webBase': 'str | None',
+    'labels': 'dict[str, str] | None',
+    'googleMapsBrowserKey': 'str | None',
+}, total=False)
+
+PurchaseCurrencySnapshot = TypedDict('PurchaseCurrencySnapshot', {
+    'currency': 'str | None',
+    'count': 'int',
+    'amount': 'float',
 }, total=False)
 
 PurchaseHeatmapPoint = TypedDict('PurchaseHeatmapPoint', {
@@ -1253,7 +1744,20 @@ PurchasesResponse = TypedDict('PurchasesResponse', {
     'lookbackHours': 'int',
     'sinceUtc': 'str',
     'measuredAtUtc': 'str',
-    'amount': 'float',
-    'currency': 'str | None',
+    'currencies': 'list[PurchaseCurrencySnapshot] | None',
+}, total=False)
+
+ReservationsStatisticsResponse = TypedDict('ReservationsStatisticsResponse', {
+    'tenantKid': 'str | None',
+    'count': 'int',
+    'measuredAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
+}, total=False)
+
+RunningMachinesResponse = TypedDict('RunningMachinesResponse', {
+    'tenantKid': 'str | None',
+    'count': 'int',
+    'measuredAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
 }, total=False)
 
