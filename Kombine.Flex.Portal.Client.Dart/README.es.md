@@ -1,6 +1,6 @@
 # Cliente Dart de Kombine Flex Portal
 
-La versión **0.1.0** incluye **155 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicación, añada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicación proporciona las credenciales del ejemplo.
+La versión **0.2.0** incluye **178 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicación, añada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicación proporciona las credenciales del ejemplo.
 
 ```yaml
 dependencies:

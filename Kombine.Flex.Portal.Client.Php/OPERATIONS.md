@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `c0d090caf759b7b66e7cb669bb1d43a721c87e017d05238f814bbf75440d0114`).
-155 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `9f1b18bb94c2e392e8bbad7c831284db1e19818c3e82734fd8fe97159ee5fdf0`).
+178 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -10,6 +10,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `c0d090caf759b7b66e7
 | `confirmCameraCapture` | `ConfirmCameraCapture` | POST | `/api/v1/camera/confirmation` | Bearer |
 | `confirmManagerSignUp` | `ConfirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` | Anonymous |
 | `confirmMyManagerEmail` | `ConfirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` | Anonymous |
+| `convertToolTime` | `ConvertToolTime` | POST | `/api/v1/banks/{bankKid}/tools/time` | Bearer |
 | `createBankUser` | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` | Bearer |
 | `createManager` | `CreateManager` | POST | `/api/v1/managers` | Bearer |
 | `downloadBankSettlement` | `DownloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` | Bearer |
@@ -21,6 +22,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `c0d090caf759b7b66e7
 | `executeBankUserCommand` | `ExecuteBankUserCommand` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` | Bearer |
 | `exportBankAccount` | `ExportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` | Bearer |
 | `exportBankUsers` | `ExportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` | Bearer |
+| `generateMyManagerApiKey` | `GenerateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` | Bearer |
 | `generateServiceApiKey` | `GenerateServiceApiKey` | POST | `/api/v1/services/{serviceKid}/api-key` | Bearer |
 | `getActiveBankCount` | `GetActiveBankCount` | GET | `/api/v1/banks/active-count` | Bearer |
 | `getActiveLocationCount` | `GetActiveLocationCount` | GET | `/api/v1/locations/active-count` | Bearer |
@@ -31,6 +33,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `c0d090caf759b7b66e7
 | `getBankAccount` | `GetBankAccount` | GET | `/api/v1/banks/{bankKid}/account` | Bearer |
 | `getBankBookings` | `GetBankBookings` | GET | `/api/v1/banks/{bankKid}/bookings` | Bearer |
 | `getBankDocuments` | `GetBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` | Bearer |
+| `getBankExportCount` | `GetBankExportCount` | GET | `/api/v1/banks/export-count` | Bearer |
 | `getBankIcons` | `GetBankIcons` | GET | `/api/v1/banks/icons` | Bearer |
 | `getBankLocations` | `GetBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` | Bearer |
 | `getBankNextUserNumber` | `GetBankNextUserNumber` | GET | `/api/v1/banks/{bankKid}/users/next-number-after` | Bearer |
@@ -38,6 +41,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `c0d090caf759b7b66e7
 | `getBankSettlements` | `GetBankSettlements` | GET | `/api/v1/banks/{bankKid}/settlements` | Bearer |
 | `getBankUserActivation` | `GetBankUserActivation` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/activation` | Bearer |
 | `getBankUserBalances` | `GetBankUserBalances` | POST | `/api/v1/banks/{bankKid}/users/balances` | Bearer |
+| `getBankUserExportCount` | `GetBankUserExportCount` | GET | `/api/v1/banks/{bankKid}/users/export-count` | Bearer |
 | `getBankUserNumberForNewUser` | `GetBankUserNumberForNewUser` | GET | `/api/v1/banks/{bankKid}/users/next-number` | Bearer |
 | `getBankUserWorkspace` | `GetBankUserWorkspace` | GET | `/api/v1/banks/{bankKid}/users/{userKid}/workspace` | Bearer |
 | `getBankUsers` | `GetBankUsers` | GET | `/api/v1/banks/{bankKid}/users` | Bearer |
@@ -64,6 +68,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `c0d090caf759b7b66e7
 | `getIconImageWithBackgroundFromSet` | `GetIconImageWithBackgroundFromSet` | GET | `/api/v1/icon/{iconSet}/{kid}/{backColor}/{size}.{format}` | Anonymous |
 | `getIconPresentation` | `GetIconPresentation` | GET | `/api/v1/icon/presentation` | Anonymous |
 | `getInstallerCount` | `GetInstallerCount` | GET | `/api/v1/installers/count` | Bearer |
+| `getInstallerExportCount` | `GetInstallerExportCount` | GET | `/api/v1/installers/export-count` | Bearer |
 | `getInstaller` | `GetInstaller` | GET | `/api/v1/installers/{installerKid}` | Bearer |
 | `getInstallers` | `GetInstallers` | GET | `/api/v1/installers` | Bearer |
 | `getKombineLogoPartsSized` | `GetKombineLogoPartsSized` | GET | `/api/v1/logos/kombine/{parts}/{color}/{width}.svg` | Anonymous |
@@ -83,17 +88,23 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `c0d090caf759b7b66e7
 | `getLiveLogs` | `GetLiveLogs` | GET | `/api/v1/diagnostics/live-logs` | Bearer |
 | `getLocationBookingCalendars` | `GetLocationBookingCalendars` | GET | `/api/v1/locations/{locationKid}/booking-calendars` | Bearer |
 | `getLocationBookingRules` | `GetLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` | Bearer |
+| `getLocationCount` | `GetLocationCount` | GET | `/api/v1/locations/count` | Bearer |
 | `getLocationIcons` | `GetLocationIcons` | GET | `/api/v1/locations/icons` | Bearer |
 | `getLocationOpeningHours` | `GetLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` | Bearer |
+| `getLocationReservationHistory` | `GetLocationReservationHistory` | GET | `/api/v1/locations/{locationKid}/reservation-history` | Bearer |
+| `getLocationReservations` | `GetLocationReservations` | GET | `/api/v1/locations/{locationKid}/reservations` | Bearer |
 | `getLocationUnits` | `GetLocationUnits` | GET | `/api/v1/locations/{locationKid}/units` | Bearer |
 | `getLocationWeather` | `GetLocationWeather` | GET | `/api/v1/locations/{locationKid}/weather` | Bearer |
 | `getLocations` | `GetLocations` | GET | `/api/v1/locations` | Bearer |
 | `getManagerCount` | `GetManagerCount` | GET | `/api/v1/managers/count` | Bearer |
+| `getManagerExportCount` | `GetManagerExportCount` | GET | `/api/v1/managers/export-count` | Bearer |
 | `getManager` | `GetManager` | GET | `/api/v1/managers/{managerKid}` | Bearer |
 | `getManagersWithSameEmail` | `GetManagersWithSameEmail` | GET | `/api/v1/managers/{managerKid}/same-email` | Bearer |
 | `getManagers` | `GetManagers` | GET | `/api/v1/managers` | Bearer |
+| `getMyManagerApiKey` | `GetMyManagerApiKey` | GET | `/api/v1/session/me/api-key` | Bearer |
 | `getMyManagerProfile` | `GetMyManagerProfile` | GET | `/api/v1/session/me/profile` | Bearer |
 | `getMyManagerTabs` | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` | Bearer |
+| `getNearestLocations` | `GetNearestLocations` | GET | `/api/v1/locations/nearest` | Bearer |
 | `getObjectAddress` | `GetObjectAddress` | GET | `/api/v1/addresses/{kid}` | Bearer |
 | `getPortalAppDownloadPage` | `GetPortalAppDownloadPage` | GET | `/download` | Anonymous |
 | `getPortalStatus` | `GetPortalStatus` | GET | `/api/v1/status` | Anonymous |
@@ -108,26 +119,38 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `c0d090caf759b7b66e7
 | `getPublicReservations` | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` | Anonymous |
 | `getPublicRunningMachines` | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` | Anonymous |
 | `getPublicScopedUnitProgress` | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` | Anonymous |
+| `getPublicWashDocWidget` | `GetPublicWashDocWidget` | GET | `/api/v1/public/widgets/washdoc` | Anonymous |
 | `getPublicWidgetPresentation` | `GetPublicWidgetPresentation` | GET | `/api/v1/public/widgets` | Anonymous |
 | `getRecentCameraPhotoMetadata` | `GetRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` | Bearer |
 | `getSearchBank` | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` | Bearer |
 | `getServiceCount` | `GetServiceCount` | GET | `/api/v1/services/count` | Bearer |
+| `getServiceExportCount` | `GetServiceExportCount` | GET | `/api/v1/services/export-count` | Bearer |
 | `getService` | `GetService` | GET | `/api/v1/services/{serviceKid}` | Bearer |
 | `getServices` | `GetServices` | GET | `/api/v1/services` | Bearer |
 | `getTenantStatusPage` | `GetTenantStatusPage` | GET | `/api/v1/tenant/status/page` | Bearer |
 | `getTenantStatus` | `GetTenantStatus` | GET | `/api/v1/tenant/status` | Bearer |
+| `getTerminalExportCount` | `GetTerminalExportCount` | GET | `/api/v1/terminals/export-count` | Bearer |
 | `getTerminals` | `GetTerminals` | GET | `/api/v1/terminals` | Bearer |
+| `getUnitDocumentGraph` | `GetUnitDocumentGraph` | GET | `/api/v1/documents/{documentKid}/graph` | Bearer |
 | `getUnitDocumentHtml` | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` | Bearer |
+| `getUnitDocumentIcon` | `GetUnitDocumentIcon` | GET | `/api/v1/documents/{documentKid}/icon.svg` | Bearer |
+| `getUnitDocumentPng` | `GetUnitDocumentPng` | GET | `/api/v1/documents/{documentKid}/graph.png` | Bearer |
+| `getUnitDocumentSvg2` | `GetUnitDocumentSvg2` | GET | `/api/v1/documents/{documentKid}/graph2.svg` | Bearer |
 | `getUnitDocumentSvg` | `GetUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` | Bearer |
 | `getUnitDocumentTable` | `GetUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` | Bearer |
+| `getUnitDocumentsCount` | `GetUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` | Bearer |
+| `getUnitDocuments` | `GetUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` | Bearer |
+| `getUnitExportCount` | `GetUnitExportCount` | GET | `/api/v1/units/export-count` | Bearer |
 | `getUnitGroup` | `GetUnitGroup` | GET | `/api/v1/units/{unitKid}/groups/{kind}/{group}` | Bearer |
 | `getUnitIcons` | `GetUnitIcons` | GET | `/api/v1/units/icons` | Bearer |
 | `getUnitOverview` | `GetUnitOverview` | GET | `/api/v1/units/{unitKid}` | Bearer |
 | `getUnitSettingHistory` | `GetUnitSettingHistory` | GET | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history` | Bearer |
 | `getUnits` | `GetUnits` | GET | `/api/v1/units` | Bearer |
 | `getUserCount` | `GetUserCount` | GET | `/api/v1/users/count` | Bearer |
+| `getUserExportCount` | `GetUserExportCount` | GET | `/api/v1/users/export-count` | Bearer |
 | `getUserReceipts` | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` | Bearer |
 | `getUsers` | `GetUsers` | GET | `/api/v1/users` | Bearer |
+| `inspectToolKid` | `InspectToolKid` | POST | `/api/v1/banks/{bankKid}/tools/kid` | Bearer |
 | `inviteManager` | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` | Bearer |
 | `loginManager` | `LoginManager` | POST | `/api/v1/session/login` | Anonymous |
 | `lookupObjectCoordinates` | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` | Bearer |

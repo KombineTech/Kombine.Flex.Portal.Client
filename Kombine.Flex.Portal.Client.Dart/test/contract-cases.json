@@ -509,6 +509,74 @@
     "binary": false
   },
   {
+    "operation": "GetBankExportCount",
+    "dartMethod": "getBankExportCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/banks/export-count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "bankType",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetBanks",
     "dartMethod": "getBanks",
     "example": null,
@@ -833,6 +901,74 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetBankUserExportCount",
+    "dartMethod": "getBankUserExportCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/users/export-count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "deleted",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
     },
     "binary": false
   },
@@ -1717,6 +1853,14 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
@@ -1761,6 +1905,14 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
         }
       }
     ],
@@ -2101,6 +2253,58 @@
     "binary": false
   },
   {
+    "operation": "GetInstallerExportCount",
+    "dartMethod": "getInstallerExportCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/installers/export-count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeActivationCode",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetInstallers",
     "dartMethod": "getInstallers",
     "example": {
@@ -2125,7 +2329,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
         }
       ],
       "nextCursor": null
@@ -2219,7 +2423,7 @@
         "enabled": true,
         "deleted": false,
         "deletedAt": null,
-        "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+        "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
       },
       "canEditIcon": true,
       "iconRevision": "5CE7200DE215F47D73E8C782F447813306BD7DD66F0C468AD961D92D0C950FDE",
@@ -2597,6 +2801,74 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationDirectoryResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetLocationCount",
+    "dartMethod": "getLocationCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/locations/count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "bankKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationCountResponse"
     },
     "binary": false
   },
@@ -3119,6 +3391,114 @@
     "binary": false
   },
   {
+    "operation": "GetLocationReservationHistory",
+    "dartMethod": "getLocationReservationHistory",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/reservation-history",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "from",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationReservationHistoryResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetLocationReservations",
+    "dartMethod": "getLocationReservations",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/reservations",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "from",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationReservationsResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetLocationWeather",
     "dartMethod": "getLocationWeather",
     "example": null,
@@ -3179,7 +3559,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
           "retentionDays": 30,
           "canEditPermissions": true,
           "canEditTabs": true,
@@ -3938,6 +4318,50 @@
     "binary": false
   },
   {
+    "operation": "GetManagerExportCount",
+    "dartMethod": "getManagerExportCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/managers/export-count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetManager",
     "dartMethod": "getManager",
     "example": {
@@ -3949,7 +4373,7 @@
       "enabled": true,
       "deleted": false,
       "deletedAt": null,
-      "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
       "retentionDays": 30,
       "canEditPermissions": true,
       "canEditTabs": true,
@@ -4854,6 +5278,47 @@
     "binary": false
   },
   {
+    "operation": "GetNearestLocations",
+    "dartMethod": "getNearestLocations",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/locations/nearest",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "latitude",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      {
+        "name": "longitude",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/NearestLocationItem"
+      }
+    },
+    "binary": false
+  },
+  {
     "operation": "GetManagerCount",
     "dartMethod": "getManagerCount",
     "example": null,
@@ -4907,6 +5372,46 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerProfile"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetMyManagerApiKey",
+    "dartMethod": "getMyManagerApiKey",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/api-key",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalManagerApiKey"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GenerateMyManagerApiKey",
+    "dartMethod": "generateMyManagerApiKey",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/session/me/api-key",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/PersonalApiKeyRequest"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalApiKeyResponse"
     },
     "binary": false
   },
@@ -5050,6 +5555,50 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetServiceExportCount",
+    "dartMethod": "getServiceExportCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/services/export-count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
     },
     "binary": false
   },
@@ -5402,6 +5951,188 @@
     "binary": false
   },
   {
+    "operation": "ConvertToolTime",
+    "dartMethod": "convertToolTime",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/banks/{bankKid}/tools/time",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/ToolTimeRequest"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ToolTimeResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "InspectToolKid",
+    "dartMethod": "inspectToolKid",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/banks/{bankKid}/tools/kid",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/ToolKidInspectionRequest"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ToolKidInspectionResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetUnitDocuments",
+    "dartMethod": "getUnitDocuments",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/documents",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentPage"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetUnitDocumentsCount",
+    "dartMethod": "getUnitDocumentsCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/documents/count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentCount"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetUnitDocumentTable",
     "dartMethod": "getUnitDocumentTable",
     "example": null,
@@ -5434,6 +6165,14 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
         }
       }
     ],
@@ -5478,6 +6217,14 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
         }
       }
     ],
@@ -5526,6 +6273,14 @@
         }
       },
       {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
         "name": "width",
         "where": "query",
         "required": false,
@@ -5543,6 +6298,393 @@
       "format": "binary"
     },
     "binary": true
+  },
+  {
+    "operation": "GetUnitDocumentSvg2",
+    "dartMethod": "getUnitDocumentSvg2",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/documents/{documentKid}/graph2.svg",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true
+  },
+  {
+    "operation": "GetUnitDocumentGraph",
+    "dartMethod": "getUnitDocumentGraph",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/documents/{documentKid}/graph",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WashDocChartResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetUnitDocumentPng",
+    "dartMethod": "getUnitDocumentPng",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/documents/{documentKid}/graph.png",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true
+  },
+  {
+    "operation": "GetUnitDocumentIcon",
+    "dartMethod": "getUnitDocumentIcon",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/documents/{documentKid}/icon.svg",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true
+  },
+  {
+    "operation": "GetUnitExportCount",
+    "dartMethod": "getUnitExportCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/units/export-count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "autoOutOfOrderOnly",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetTerminalExportCount",
+    "dartMethod": "getTerminalExportCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/terminals/export-count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false
   },
   {
     "operation": "GetActiveUnitCount",
@@ -6082,6 +7224,58 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserWorkspaceResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetUserExportCount",
+    "dartMethod": "getUserExportCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/users/export-count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
     },
     "binary": false
   },
@@ -7707,8 +8901,8 @@
         }
       ],
       "lookbackHours": 1,
-      "sinceUtc": "2026-09-23T11:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-09-23T09:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     },
     "method": "GET",
     "path": "api/v1/public/statistics/purchases",
@@ -7732,8 +8926,8 @@
       "tenantKid": "3E7QAo",
       "count": 12450,
       "lookbackDays": 100,
-      "sinceUtc": "2026-06-15T12:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-06-15T10:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     },
     "method": "GET",
     "path": "api/v1/public/statistics/active-users",
@@ -7747,6 +8941,42 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ActiveUsersResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetPublicWashDocWidget",
+    "dartMethod": "getPublicWashDocWidget",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/public/widgets/washdoc",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "unitKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWashDocWidgetResponse"
     },
     "binary": false
   },

@@ -155,13 +155,13 @@ class {api}Client extends ApiClient {{
 '''
     files={destination/'lib/src/client.dart':client,destination/'lib/src/models.dart':'\n'.join(models)+'\n',
         destination/'lib'/f'{package}.dart':"export 'src/client.dart';\nexport 'src/models.dart';\nexport 'src/runtime.dart';\nexport 'src/json.dart';\n",
-        destination/'lib/src/runtime.dart':(HERE/'runtime.dart').read_text(),destination/'lib/src/json.dart':(HERE/'json.dart').read_text(),
+        destination/'lib/src/runtime.dart':(HERE/'runtime.dart').read_text(encoding='utf-8'),destination/'lib/src/json.dart':(HERE/'json.dart').read_text(encoding='utf-8'),
         destination/'OpenApi'/f'{api.lower()}.openapi.json':raw.decode('utf-8-sig').replace('\r\n','\n'),
         destination/'test/contract-cases.json':json.dumps(cases,indent=2)+'\n',
         destination/'OPERATIONS.md':f'# {api} Dart operations\n\n{len(operations)} operations. OpenAPI SHA-256: `{hashlib.sha256(raw).hexdigest()}`.\n\n| Stable operation ID | Dart method | HTTP | Path |\n| --- | --- | --- | --- |\n'+'\n'.join(rows)+'\n',
         destination/'test/operations_test.dart':"// Generated contract coverage.\nimport 'package:http/http.dart' as http;\nimport 'package:http/testing.dart';\nimport 'package:test/test.dart';\nimport 'package:"+package+'/'+package+".dart';\nvoid main() {\n"+'\n'.join(tests)+'}\n',
-        destination/'test/runtime_test.dart':(HERE/'runtime_test.dart').read_text().replace('PACKAGE',package),
-        destination/'example/browser_smoke.dart':(HERE/'browser_smoke.dart').read_text().replace('PACKAGE',package)}
+        destination/'test/runtime_test.dart':(HERE/'runtime_test.dart').read_text(encoding='utf-8').replace('PACKAGE',package),
+        destination/'example/browser_smoke.dart':(HERE/'browser_smoke.dart').read_text(encoding='utf-8').replace('PACKAGE',package)}
     stale=[]
     for path,text in files.items():
         if check:

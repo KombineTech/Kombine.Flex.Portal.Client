@@ -22,7 +22,7 @@ try {
 ```
 ## Contract and runtime
 
-Version **0.1.0** contains **155 named operations**. See [OPERATIONS.md](OPERATIONS.md) and the bundled `OpenApi` snapshot for the exact contract; this package does not discover new server operations at runtime. Object models are wire-map typedefs (`Map<String, Object?>`), not field-typed classes. Keep JSON field names and KIDs unchanged. Server authorization, tenant binding and resource permissions always apply.
+Version **0.2.0** contains **178 named operations**. See [OPERATIONS.md](OPERATIONS.md) and the bundled `OpenApi` snapshot for the exact contract; this package does not discover new server operations at runtime. Object models are wire-map typedefs (`Map<String, Object?>`), not field-typed classes. Keep JSON field names and KIDs unchanged. Server authorization, tenant binding and resource permissions always apply.
 
 Dart SDK >=3.6.0 <4.0.0 is required. Tests cover Dart 3.6.2 and 3.13.6, including JavaScript compilation and 64-bit precision; Flutter device execution has not been tested. Runtime dependencies are `http` and `http_parser`. No private Kombine runtime dependency is required.
 
@@ -54,7 +54,7 @@ pwsh -NoProfile -File scripts/Test-PortalDartClient.ps1
 python scripts/Build-PortalDartPackage.py
 ```
 
-The source ZIP includes this guide, Danish/Spanish alternatives, contract, library, examples and synthetic tests. Build output is `artifacts/packages/Kombine.Flex.Portal.Client.Dart.0.1.0.zip` with a SHA-256 manifest. A changed archive requires a new package version; identical rebuilds are deterministic. These commands do not publish or deploy anything.
+The source ZIP includes this guide, Danish/Spanish alternatives, contract, library, examples and synthetic tests. Build output is `artifacts/packages/Kombine.Flex.Portal.Client.Dart.0.2.0.zip` with a SHA-256 manifest. A changed archive requires a new package version; identical rebuilds are deterministic. These commands do not publish or deploy anything.
 
 [API integration guide](https://api.team.kombine.technology/docs) · [API contract changelog](https://api.team.kombine.technology/docs#changelog) · [English](README.md) · [Dansk](README.da.md) · [Español](README.es.md)
 
