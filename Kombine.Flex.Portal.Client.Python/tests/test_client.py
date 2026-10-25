@@ -45,7 +45,7 @@ def sample(spec):
     if kind == 'number':
         return 12.5
     if kind == 'string':
-        return 'tekst æ 😀'
+        return 'tekst Ã¦ ðŸ˜€'
     if kind == 'boolean':
         return False
     if kind == 'array':
@@ -72,7 +72,7 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(api.get_location_weather("opaque-location")["current"], current)
 
     def test_every_public_operation(self):
-        self.assertEqual(len(CASES), 178)
+        self.assertEqual(len(CASES), 181)
         for case in CASES:
             with self.subTest(operation=case['operation']):
                 response_data = b'PK\x00\xff' if case['binary'] else json.dumps(sample(case['response']), ensure_ascii=False).encode()
@@ -87,7 +87,7 @@ class ContractTests(unittest.TestCase):
                 for param in case['parameters']:
                     value = sample(param['schema'])
                     if param['schema'].get('type') == 'string':
-                        value = 'Kid /?&+#æ' if param['where'] == 'path' else 'da-DK' if param['where'] == 'header' else 'a b/&?+æ'
+                        value = 'Kid /?&+#Ã¦' if param['where'] == 'path' else 'da-DK' if param['where'] == 'header' else 'a b/&?+Ã¦'
                     text = str(value).lower() if isinstance(value, bool) else str(value)
                     if param['where'] == 'path':
                         args.append(value)
@@ -160,7 +160,7 @@ class RuntimeTests(unittest.TestCase):
         for url in ['https://api.example.test/', 'http://localhost:123/', 'http://127.0.0.1:123/', 'http://[::1]:123/']:
             self.assertEqual(PortalClient(url).base_url, url)
         api = PortalClient('https://api.example.test/')
-        for token in ['', 'a b', 'a\r\nb', 'æ']:
+        for token in ['', 'a b', 'a\r\nb', 'Ã¦']:
             with self.assertRaises(ValueError):
                 api.access_token = token
         with self.assertRaises(AttributeError):

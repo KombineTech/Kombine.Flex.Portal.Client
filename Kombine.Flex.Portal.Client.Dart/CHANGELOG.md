@@ -1,3 +1,8 @@
+## 0.2.2 — 2026-10-25
+
+- Add scoped WashDoc list/count operations.
+- No registry publication.
+
 ## 0.2.1
 
 - Refresh the reviewed API contract and generated operations for beta preparation on 2026-10-23.

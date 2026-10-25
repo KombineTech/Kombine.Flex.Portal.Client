@@ -29,6 +29,7 @@
 | `GetBankAccountRevision` | GET | `/api/v1/banks/{bankKid}/account/revision` |
 | `GetBankAccount` | GET | `/api/v1/banks/{bankKid}/account` |
 | `GetBankBookings` | GET | `/api/v1/banks/{bankKid}/bookings` |
+| `GetBankDocumentsCount` | GET | `/api/v1/banks/{bankKid}/documents/count` |
 | `GetBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` |
 | `GetBankExportCount` | GET | `/api/v1/banks/export-count` |
 | `GetBankIcons` | GET | `/api/v1/banks/icons` |
@@ -86,6 +87,8 @@
 | `GetLocationBookingCalendars` | GET | `/api/v1/locations/{locationKid}/booking-calendars` |
 | `GetLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` |
 | `GetLocationCount` | GET | `/api/v1/locations/count` |
+| `GetLocationDocumentsCount` | GET | `/api/v1/locations/{locationKid}/documents/count` |
+| `GetLocationDocuments` | GET | `/api/v1/locations/{locationKid}/documents` |
 | `GetLocationIcons` | GET | `/api/v1/locations/icons` |
 | `GetLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` |
 | `GetLocationReservationHistory` | GET | `/api/v1/locations/{locationKid}/reservation-history` |

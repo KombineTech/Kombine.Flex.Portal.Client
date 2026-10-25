@@ -16,6 +16,9 @@
 | `GetBanks` | `get_banks` | `getBanks` | GET | `/api/v1/banks` |
 | `GetActiveBankCount` | `get_active_bank_count` | `getActiveBankCount` | GET | `/api/v1/banks/active-count` |
 | `GetBankDocuments` | `get_bank_documents` | `getBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` |
+| `GetBankDocumentsCount` | `get_bank_documents_count` | `getBankDocumentsCount` | GET | `/api/v1/banks/{bankKid}/documents/count` |
+| `GetLocationDocuments` | `get_location_documents` | `getLocationDocuments` | GET | `/api/v1/locations/{locationKid}/documents` |
+| `GetLocationDocumentsCount` | `get_location_documents_count` | `getLocationDocumentsCount` | GET | `/api/v1/locations/{locationKid}/documents/count` |
 | `GetBankIcons` | `get_bank_icons` | `getBankIcons` | GET | `/api/v1/banks/icons` |
 | `GetBankLocations` | `get_bank_locations` | `getBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` |
 | `SearchBanks` | `search_banks` | `searchBanks` | GET | `/api/v1/search/banks` |

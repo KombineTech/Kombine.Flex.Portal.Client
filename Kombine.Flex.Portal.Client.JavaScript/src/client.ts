@@ -70,7 +70,22 @@ export class PortalClient extends BaseClient {
 
   /** Search WashDoc document identities by location, unit and time without loading measurements. */
   getBankDocuments(bankKid: string, options: Models.GetBankDocumentsOptions = {}, request: RequestOptions = {}): Promise<Models.BankDocumentPage> {
-    return this.send("GetBankDocuments", {"bankKid": bankKid, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.BankDocumentPage>;
+    return this.send("GetBankDocuments", {"bankKid": bankKid, "LocationKid": options.locationKid, "Date": options.date, "Search": options.search, "UnitKids": options.unitKids, "Sort": options.sort, "Direction": options.direction, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.BankDocumentPage>;
+  }
+
+  /** Count WashDocs across the authorized bank scope, without loading document pages or measurements. */
+  getBankDocumentsCount(bankKid: string, options: Models.GetBankDocumentsCountOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDocumentCount> {
+    return this.send("GetBankDocumentsCount", {"bankKid": bankKid, "LocationKid": options.locationKid, "Date": options.date, "Search": options.search, "UnitKids": options.unitKids, "Sort": options.sort, "Direction": options.direction, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.UnitDocumentCount>;
+  }
+
+  /** List WashDocs for one authorized location, optionally selecting one or several units. */
+  getLocationDocuments(locationKid: string, options: Models.GetLocationDocumentsOptions = {}, request: RequestOptions = {}): Promise<Models.BankDocumentPage> {
+    return this.send("GetLocationDocuments", {"locationKid": locationKid, "Date": options.date, "Search": options.search, "UnitKids": options.unitKids, "Sort": options.sort, "Direction": options.direction, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.BankDocumentPage>;
+  }
+
+  /** Count distinct WashDocs for the selected location and unit choices. */
+  getLocationDocumentsCount(locationKid: string, options: Models.GetLocationDocumentsCountOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDocumentCount> {
+    return this.send("GetLocationDocumentsCount", {"locationKid": locationKid, "Date": options.date, "Search": options.search, "UnitKids": options.unitKids, "Sort": options.sort, "Direction": options.direction, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.UnitDocumentCount>;
   }
 
   /** Resolve up to eight bank icons with their authorized units' combined status. */

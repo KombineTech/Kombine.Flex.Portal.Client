@@ -12,6 +12,9 @@ GetBankExportCount	GET	/api/v1/banks/export-count	200	{}
 GetBanks	GET	/api/v1/banks	200	{}
 GetActiveBankCount	GET	/api/v1/banks/active-count	200	{}
 GetBankDocuments	GET	/api/v1/banks/{bankKid}/documents	200	{}
+GetBankDocumentsCount	GET	/api/v1/banks/{bankKid}/documents/count	200	{}
+GetLocationDocuments	GET	/api/v1/locations/{locationKid}/documents	200	{}
+GetLocationDocumentsCount	GET	/api/v1/locations/{locationKid}/documents/count	200	{}
 GetBankIcons	GET	/api/v1/banks/icons	200	{}
 GetBankLocations	GET	/api/v1/banks/{bankKid}/locations	200	[]
 SearchBanks	GET	/api/v1/search/banks	200	{}

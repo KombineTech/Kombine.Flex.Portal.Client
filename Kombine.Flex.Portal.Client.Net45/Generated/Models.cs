@@ -5834,7 +5834,7 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
-    /// <summary>A stored Cycle, CycleSub or Error transition. Stable name/value and localization key are independent of the display label.</summary>
+    /// <summary>A stored Cycle, Process, CycleSub or Error transition. Process retains the legacy eProcess byte, independently of newer cycle enums. Stable name/value and localization key are independent of the display label.</summary>
     public sealed class WashDocChartEvent
     {
         /// <summary>ms2000</summary>
@@ -6765,6 +6765,165 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>Canonical location KID in this bank.</summary>
         public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
         private string _LocationKid;
+
+        /// <summary>UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</summary>
+        public string Date { get { return _Date; } set { _Date = value; } }
+        private string _Date;
+
+        /// <summary>Exact numeric Doc ID or canonical document KID within the selected scope.</summary>
+        public string Search { get { return _Search; } set { _Search = value; } }
+        private string _Search;
+
+        /// <summary>Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</summary>
+        public string[] UnitKids { get { return _UnitKids; } set { _UnitKids = value; } }
+        private string[] _UnitKids;
+
+        /// <summary>activity (default) or documentId; ties use location/unit/document identity.</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>asc or desc (default).</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>Canonical unit KID in this bank; also restricts the location.</summary>
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</summary>
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</summary>
+        public string Through { get { return _Through; } set { _Through = value; } }
+        private string _Through;
+
+        /// <summary>Zero-based offset, up to 100000.</summary>
+        public int? Offset { get { return _Offset; } set { _Offset = value; } }
+        private int? _Offset;
+
+        /// <summary>Page size, 1–100; defaults to 25.</summary>
+        public int? Limit { get { return _Limit; } set { _Limit = value; } }
+        private int? _Limit;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetBankDocumentsCount. Null values use API defaults.</summary>
+    public sealed class GetBankDocumentsCountOptions
+    {
+        /// <summary>Canonical location KID in this bank.</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</summary>
+        public string Date { get { return _Date; } set { _Date = value; } }
+        private string _Date;
+
+        /// <summary>Exact numeric Doc ID or canonical document KID within the selected scope.</summary>
+        public string Search { get { return _Search; } set { _Search = value; } }
+        private string _Search;
+
+        /// <summary>Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</summary>
+        public string[] UnitKids { get { return _UnitKids; } set { _UnitKids = value; } }
+        private string[] _UnitKids;
+
+        /// <summary>activity (default) or documentId; ties use location/unit/document identity.</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>asc or desc (default).</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>Canonical unit KID in this bank; also restricts the location.</summary>
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</summary>
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</summary>
+        public string Through { get { return _Through; } set { _Through = value; } }
+        private string _Through;
+
+        /// <summary>Zero-based offset, up to 100000.</summary>
+        public int? Offset { get { return _Offset; } set { _Offset = value; } }
+        private int? _Offset;
+
+        /// <summary>Page size, 1–100; defaults to 25.</summary>
+        public int? Limit { get { return _Limit; } set { _Limit = value; } }
+        private int? _Limit;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetLocationDocuments. Null values use API defaults.</summary>
+    public sealed class GetLocationDocumentsOptions
+    {
+        /// <summary>UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</summary>
+        public string Date { get { return _Date; } set { _Date = value; } }
+        private string _Date;
+
+        /// <summary>Exact numeric Doc ID or canonical document KID within the selected scope.</summary>
+        public string Search { get { return _Search; } set { _Search = value; } }
+        private string _Search;
+
+        /// <summary>Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</summary>
+        public string[] UnitKids { get { return _UnitKids; } set { _UnitKids = value; } }
+        private string[] _UnitKids;
+
+        /// <summary>activity (default) or documentId; ties use location/unit/document identity.</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>asc or desc (default).</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
+
+        /// <summary>Canonical unit KID in this bank; also restricts the location.</summary>
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</summary>
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</summary>
+        public string Through { get { return _Through; } set { _Through = value; } }
+        private string _Through;
+
+        /// <summary>Zero-based offset, up to 100000.</summary>
+        public int? Offset { get { return _Offset; } set { _Offset = value; } }
+        private int? _Offset;
+
+        /// <summary>Page size, 1–100; defaults to 25.</summary>
+        public int? Limit { get { return _Limit; } set { _Limit = value; } }
+        private int? _Limit;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetLocationDocumentsCount. Null values use API defaults.</summary>
+    public sealed class GetLocationDocumentsCountOptions
+    {
+        /// <summary>UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</summary>
+        public string Date { get { return _Date; } set { _Date = value; } }
+        private string _Date;
+
+        /// <summary>Exact numeric Doc ID or canonical document KID within the selected scope.</summary>
+        public string Search { get { return _Search; } set { _Search = value; } }
+        private string _Search;
+
+        /// <summary>Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</summary>
+        public string[] UnitKids { get { return _UnitKids; } set { _UnitKids = value; } }
+        private string[] _UnitKids;
+
+        /// <summary>activity (default) or documentId; ties use location/unit/document identity.</summary>
+        public string Sort { get { return _Sort; } set { _Sort = value; } }
+        private string _Sort;
+
+        /// <summary>asc or desc (default).</summary>
+        public string Direction { get { return _Direction; } set { _Direction = value; } }
+        private string _Direction;
 
         /// <summary>Canonical unit KID in this bank; also restricts the location.</summary>
         public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }

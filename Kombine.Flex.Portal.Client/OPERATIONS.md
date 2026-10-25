@@ -32,6 +32,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetBankAccountRevisionAsync` | GET | `/api/v1/banks/{bankKid}/account/revision` |
 | `GetBankBookingsAsync` | GET | `/api/v1/banks/{bankKid}/bookings` |
 | `GetBankDocumentsAsync` | GET | `/api/v1/banks/{bankKid}/documents` |
+| `GetBankDocumentsCountAsync` | GET | `/api/v1/banks/{bankKid}/documents/count` |
 | `GetBankExportCountAsync` | GET | `/api/v1/banks/export-count` |
 | `GetBankIconsAsync` | GET | `/api/v1/banks/icons` |
 | `GetBankLocationsAsync` | GET | `/api/v1/banks/{bankKid}/locations` |
@@ -88,6 +89,8 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetLocationBookingCalendarsAsync` | GET | `/api/v1/locations/{locationKid}/booking-calendars` |
 | `GetLocationBookingRulesAsync` | GET | `/api/v1/locations/{locationKid}/booking-rules` |
 | `GetLocationCountAsync` | GET | `/api/v1/locations/count` |
+| `GetLocationDocumentsAsync` | GET | `/api/v1/locations/{locationKid}/documents` |
+| `GetLocationDocumentsCountAsync` | GET | `/api/v1/locations/{locationKid}/documents/count` |
 | `GetLocationIconsAsync` | GET | `/api/v1/locations/icons` |
 | `GetLocationOpeningHoursAsync` | GET | `/api/v1/locations/{locationKid}/opening-hours` |
 | `GetLocationReservationHistoryAsync` | GET | `/api/v1/locations/{locationKid}/reservation-history` |

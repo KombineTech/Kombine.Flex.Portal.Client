@@ -2725,7 +2725,7 @@ export interface WashDocChartDosing {
   "step"?: string | null;
 }
 
-/** A stored Cycle, CycleSub or Error transition. Stable name/value and localization key are independent of the display label. */
+/** A stored Cycle, Process, CycleSub or Error transition. Process retains the legacy eProcess byte, independently of newer cycle enums. Stable name/value and localization key are independent of the display label. */
 export interface WashDocChartEvent {
   /** ms2000 */
   "ms2000"?: bigint;
@@ -3128,6 +3128,51 @@ export interface GetBanksOptions {
 
 export interface GetBankDocumentsOptions {
   locationKid?: string;
+  date?: string;
+  search?: string;
+  unitKids?: (string)[];
+  sort?: string;
+  direction?: string;
+  unitKid?: string;
+  from?: string;
+  through?: string;
+  offset?: number;
+  limit?: number;
+}
+
+export interface GetBankDocumentsCountOptions {
+  locationKid?: string;
+  date?: string;
+  search?: string;
+  unitKids?: (string)[];
+  sort?: string;
+  direction?: string;
+  unitKid?: string;
+  from?: string;
+  through?: string;
+  offset?: number;
+  limit?: number;
+}
+
+export interface GetLocationDocumentsOptions {
+  date?: string;
+  search?: string;
+  unitKids?: (string)[];
+  sort?: string;
+  direction?: string;
+  unitKid?: string;
+  from?: string;
+  through?: string;
+  offset?: number;
+  limit?: number;
+}
+
+export interface GetLocationDocumentsCountOptions {
+  date?: string;
+  search?: string;
+  unitKids?: (string)[];
+  sort?: string;
+  direction?: string;
   unitKid?: string;
   from?: string;
   through?: string;

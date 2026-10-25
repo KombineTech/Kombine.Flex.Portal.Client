@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `9f1b18bb94c2e392e8bbad7c831284db1e19818c3e82734fd8fe97159ee5fdf0`).
-178 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `bcba9b0fd3738a5f434d97c2d7beaf8a0837e24fff3460e774dc522ca3357d00`).
+181 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -32,6 +32,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `9f1b18bb94c2e392e8b
 | `getBankAccountRevision` | `GetBankAccountRevision` | GET | `/api/v1/banks/{bankKid}/account/revision` | Bearer |
 | `getBankAccount` | `GetBankAccount` | GET | `/api/v1/banks/{bankKid}/account` | Bearer |
 | `getBankBookings` | `GetBankBookings` | GET | `/api/v1/banks/{bankKid}/bookings` | Bearer |
+| `getBankDocumentsCount` | `GetBankDocumentsCount` | GET | `/api/v1/banks/{bankKid}/documents/count` | Bearer |
 | `getBankDocuments` | `GetBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` | Bearer |
 | `getBankExportCount` | `GetBankExportCount` | GET | `/api/v1/banks/export-count` | Bearer |
 | `getBankIcons` | `GetBankIcons` | GET | `/api/v1/banks/icons` | Bearer |
@@ -89,6 +90,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `9f1b18bb94c2e392e8b
 | `getLocationBookingCalendars` | `GetLocationBookingCalendars` | GET | `/api/v1/locations/{locationKid}/booking-calendars` | Bearer |
 | `getLocationBookingRules` | `GetLocationBookingRules` | GET | `/api/v1/locations/{locationKid}/booking-rules` | Bearer |
 | `getLocationCount` | `GetLocationCount` | GET | `/api/v1/locations/count` | Bearer |
+| `getLocationDocumentsCount` | `GetLocationDocumentsCount` | GET | `/api/v1/locations/{locationKid}/documents/count` | Bearer |
+| `getLocationDocuments` | `GetLocationDocuments` | GET | `/api/v1/locations/{locationKid}/documents` | Bearer |
 | `getLocationIcons` | `GetLocationIcons` | GET | `/api/v1/locations/icons` | Bearer |
 | `getLocationOpeningHours` | `GetLocationOpeningHours` | GET | `/api/v1/locations/{locationKid}/opening-hours` | Bearer |
 | `getLocationReservationHistory` | `GetLocationReservationHistory` | GET | `/api/v1/locations/{locationKid}/reservation-history` | Bearer |

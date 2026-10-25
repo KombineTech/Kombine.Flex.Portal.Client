@@ -774,6 +774,54 @@
         }
       },
       {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
         "name": "UnitKid",
         "where": "query",
         "py": "unit_kid",
@@ -825,6 +873,390 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BankDocumentPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetBankDocumentsCount",
+    "python": "get_bank_documents_count",
+    "javascript": "getBankDocumentsCount",
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/documents/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "LocationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKid",
+        "where": "query",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "From",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Through",
+        "where": "query",
+        "py": "through",
+        "js": "through",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "py": "offset",
+        "js": "offset",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "py": "limit",
+        "js": "limit",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationDocuments",
+    "python": "get_location_documents",
+    "javascript": "getLocationDocuments",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/documents",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKid",
+        "where": "query",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "From",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Through",
+        "where": "query",
+        "py": "through",
+        "js": "through",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "py": "offset",
+        "js": "offset",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "py": "limit",
+        "js": "limit",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/BankDocumentPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationDocumentsCount",
+    "python": "get_location_documents_count",
+    "javascript": "getLocationDocumentsCount",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/documents/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKid",
+        "where": "query",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "From",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Through",
+        "where": "query",
+        "py": "through",
+        "js": "through",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "py": "offset",
+        "js": "offset",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "py": "limit",
+        "js": "limit",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentCount"
     },
     "binary": false,
     "example": {}

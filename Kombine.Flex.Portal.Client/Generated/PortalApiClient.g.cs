@@ -368,17 +368,26 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Location-only grants and RetentionDays restrict both results and filter choices before paging. KIDs must be canonical and site-bound.
         /// <br/>### Filters and ordering
         /// <br/>Optional locationKid and unitKid must belong to the requested bank; unitKid also selects its location.
+        /// <br/>Repeat unitKids to select multiple canonical units (maximum 255); choices are intersected before paging/counting.
+        /// <br/>date=yyyy-MM-dd selects the whole UTC date and all earlier history since 2000; do not combine it with from/through.
+        /// <br/>search matches an exact numeric Doc ID or canonical document KID within the selected scope.
+        /// <br/>sort=activity or documentId, direction=asc or desc. Defaults remain activity descending.
         /// <br/>from/through are inclusive ISO 8601 timestamps with an explicit UTC offset (default: last 24 hours, maximum: 31 days).
         /// <br/>A document matches when a tagged Cycle setting occurs inside that interval. lastActivityUtc is its latest matching Cycle timestamp,
         /// <br/>not necessarily the document's start or end. Open its table for the complete interval and completion status.
         /// <br/>Newest matching activity first, then location/unit/document identity. limit 1–100 (default 25), offset 0–100000, hasMore indicates another page.
-        /// <br/>No total count or measurement queries. Live changes can shift offset pages; reset offset to refresh the list.
+        /// <br/>No total count or measurement queries. Use GetBankDocumentsCount separately. Live changes can shift offset pages; reset offset to refresh the list.
         /// <br/>### Limits and errors
         /// <br/>At most 1000 visible locations, 5000 visible/discoverable units and 35000 unit-setting rows per search; narrow by location on 422.
         /// <br/>400 invalid filters, 401 inactive session, 403 missing access, 404 hidden/missing filter object, 422 oversized scope, 503 storage unavailable/busy.
         /// <br/>Twelve-second storage deadline; no response cache. Filter choices include only currently visible units with Log24 metadata.
         /// </remarks>
         /// <param name="locationKid">Canonical location KID in this bank.</param>
+        /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
+        /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
+        /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
+        /// <param name="sort">activity (default) or documentId; ties use location/unit/document identity.</param>
+        /// <param name="direction">asc or desc (default).</param>
         /// <param name="unitKid">Canonical unit KID in this bank; also restricts the location.</param>
         /// <param name="from">Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</param>
         /// <param name="through">Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</param>
@@ -386,7 +395,71 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size, 1–100; defaults to 25.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BankDocumentPage> GetBankDocumentsAsync(string bankKid, string? locationKid = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BankDocumentPage> GetBankDocumentsAsync(string bankKid, string? locationKid = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count WashDocs across the authorized bank scope, without loading document pages or measurements.
+        /// </summary>
+        /// <remarks>
+        /// Same access, date/search/locationKid/unitKids filters and visibility checks as GetBankDocuments. Counts distinct location/unit/document identities. Storage deadline twelve seconds; 422 for oversized scope, 503 for unavailable storage.
+        /// </remarks>
+        /// <param name="locationKid">Canonical location KID in this bank.</param>
+        /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
+        /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
+        /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
+        /// <param name="sort">activity (default) or documentId; ties use location/unit/document identity.</param>
+        /// <param name="direction">asc or desc (default).</param>
+        /// <param name="unitKid">Canonical unit KID in this bank; also restricts the location.</param>
+        /// <param name="from">Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</param>
+        /// <param name="through">Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</param>
+        /// <param name="offset">Zero-based offset, up to 100000.</param>
+        /// <param name="limit">Page size, 1–100; defaults to 25.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitDocumentCount> GetBankDocumentsCountAsync(string bankKid, string? locationKid = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List WashDocs for one authorized location, optionally selecting one or several units.
+        /// </summary>
+        /// <remarks>
+        /// Active manager, a WashDoc tab, Location Read, Unit Read and a matching site-bound resource grant. date=yyyy-MM-dd includes that entire UTC date and earlier history. Repeat unitKids with canonical unit KIDs in this location (maximum 255); omitted means all visible units. search accepts an exact numeric Doc ID or canonical document KID. sort=activity or documentId, direction=asc or desc; offset 0–100000, limit 1–100. RetentionDays and selected units are applied before paging. Filter choices include all authorized visible units. No measurement reads. 400 invalid scope/filters, 403 denied, 404 hidden location/unit, 422 oversized scope, 503 busy/unavailable.
+        /// </remarks>
+        /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
+        /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
+        /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
+        /// <param name="sort">activity (default) or documentId; ties use location/unit/document identity.</param>
+        /// <param name="direction">asc or desc (default).</param>
+        /// <param name="unitKid">Canonical unit KID in this bank; also restricts the location.</param>
+        /// <param name="from">Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</param>
+        /// <param name="through">Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</param>
+        /// <param name="offset">Zero-based offset, up to 100000.</param>
+        /// <param name="limit">Page size, 1–100; defaults to 25.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BankDocumentPage> GetLocationDocumentsAsync(string locationKid, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count distinct WashDocs for the selected location and unit choices.
+        /// </summary>
+        /// <remarks>
+        /// Uses the same access, date, search and repeated unitKids filters as GetLocationDocuments. Counts location/unit/document identities without traversing pages or reading measurements. No response cache.
+        /// </remarks>
+        /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
+        /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
+        /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
+        /// <param name="sort">activity (default) or documentId; ties use location/unit/document identity.</param>
+        /// <param name="direction">asc or desc (default).</param>
+        /// <param name="unitKid">Canonical unit KID in this bank; also restricts the location.</param>
+        /// <param name="from">Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</param>
+        /// <param name="through">Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</param>
+        /// <param name="offset">Zero-based offset, up to 100000.</param>
+        /// <param name="limit">Page size, 1–100; defaults to 25.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitDocumentCount> GetLocationDocumentsCountAsync(string locationKid, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2632,7 +2705,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>The graph adds one minute of margin, rounds duration up to the next minute, and reads bounded nearest edge samples
         /// <br/>for observed measurement fields (at most one hour outside that graph window). Old untagged measurements remain supported.
         /// <br/>Context samples anchor clipped curves; they do not extend the visible time axis. No smoothing or fabricated measurements.
-        /// <br/>Temperature, level and spin use separate bands with matching target overlays; stored Cycle/CycleSub/Error events are marked.
+        /// <br/>Temperature, level and spin use separate bands with matching target overlays; stored Cycle/Process/CycleSub/Error events are marked.
         /// <br/>At most 16 numeric series. Empty/non-numeric selections return 422. Times are UTC.
         /// <br/>SVG fills its viewport in both directions while text size and stroke thickness remain stable; no script or third-party renderer.
         /// <br/>The original GetUnitDocumentSvg remains available. Finished results use a separate bounded private cache, with no-store HTTP responses.
@@ -2657,7 +2730,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Alliance dryers (19/29/30) interpret legacy Level as Temperature2; their flags expose heat (32|64), airflow (16), and null water inlet/outlet.
         /// <br/>Other InOutletHeat flags expose heat (32), inlet (1|2|4|8), outlet (16); unknown remains null. SoapInfo keeps actual recorded dosing.
         /// <br/>QW washer types 15/16/17/25/31 record bare Spin as ordinal levels, with no rpm unit. Explicit rotation-scale JSON retains its units.
-        /// <br/>Cycle/CycleSub/Error events retain enum codes and localized labels where shared enum translations exist.
+        /// <br/>Cycle/Process/CycleSub/Error events retain enum codes and localized labels where shared enum translations exist.
+        /// <br/>Legacy Process (state 138) retains eProcess byte codes: 1 Prewash, 2 Mainwash, 3/4/5 rinses, 6 Spin, 7 Done.
+        /// <br/>Its labels reuse equivalent shared phase translations; Process codes never become CycleSub codes or document boundaries.
         /// <br/>Original enum names and timestamps are language independent. Clients must not treat edge/calculated points as actual hover samples.
         /// <br/>Maximum 16 numeric series; 31 days, 50,000 samples, 500,000 cells and the existing 12-second storage deadline apply.
         /// <br/>Returns 400 invalid KID/fields, 401 expired credentials, 403 missing permission, 404 hidden/missing,
@@ -5927,17 +6002,26 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Location-only grants and RetentionDays restrict both results and filter choices before paging. KIDs must be canonical and site-bound.
         /// <br/>### Filters and ordering
         /// <br/>Optional locationKid and unitKid must belong to the requested bank; unitKid also selects its location.
+        /// <br/>Repeat unitKids to select multiple canonical units (maximum 255); choices are intersected before paging/counting.
+        /// <br/>date=yyyy-MM-dd selects the whole UTC date and all earlier history since 2000; do not combine it with from/through.
+        /// <br/>search matches an exact numeric Doc ID or canonical document KID within the selected scope.
+        /// <br/>sort=activity or documentId, direction=asc or desc. Defaults remain activity descending.
         /// <br/>from/through are inclusive ISO 8601 timestamps with an explicit UTC offset (default: last 24 hours, maximum: 31 days).
         /// <br/>A document matches when a tagged Cycle setting occurs inside that interval. lastActivityUtc is its latest matching Cycle timestamp,
         /// <br/>not necessarily the document's start or end. Open its table for the complete interval and completion status.
         /// <br/>Newest matching activity first, then location/unit/document identity. limit 1–100 (default 25), offset 0–100000, hasMore indicates another page.
-        /// <br/>No total count or measurement queries. Live changes can shift offset pages; reset offset to refresh the list.
+        /// <br/>No total count or measurement queries. Use GetBankDocumentsCount separately. Live changes can shift offset pages; reset offset to refresh the list.
         /// <br/>### Limits and errors
         /// <br/>At most 1000 visible locations, 5000 visible/discoverable units and 35000 unit-setting rows per search; narrow by location on 422.
         /// <br/>400 invalid filters, 401 inactive session, 403 missing access, 404 hidden/missing filter object, 422 oversized scope, 503 storage unavailable/busy.
         /// <br/>Twelve-second storage deadline; no response cache. Filter choices include only currently visible units with Log24 metadata.
         /// </remarks>
         /// <param name="locationKid">Canonical location KID in this bank.</param>
+        /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
+        /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
+        /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
+        /// <param name="sort">activity (default) or documentId; ties use location/unit/document identity.</param>
+        /// <param name="direction">asc or desc (default).</param>
         /// <param name="unitKid">Canonical unit KID in this bank; also restricts the location.</param>
         /// <param name="from">Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</param>
         /// <param name="through">Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</param>
@@ -5945,7 +6029,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size, 1–100; defaults to 25.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BankDocumentPage> GetBankDocumentsAsync(string bankKid, string? locationKid = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BankDocumentPage> GetBankDocumentsAsync(string bankKid, string? locationKid = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -5969,6 +6053,26 @@ namespace Kombine.Flex.Portal.Client
                     if (locationKid != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("LocationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (date != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Date")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (search != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Search")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(search, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (unitKids != null)
+                    {
+                            foreach (var item_ in unitKids) { urlBuilder_.Append(System.Uri.EscapeDataString("UnitKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     if (unitKid != null)
                     {
@@ -6018,6 +6122,593 @@ namespace Kombine.Flex.Portal.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<BankDocumentPage>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count WashDocs across the authorized bank scope, without loading document pages or measurements.
+        /// </summary>
+        /// <remarks>
+        /// Same access, date/search/locationKid/unitKids filters and visibility checks as GetBankDocuments. Counts distinct location/unit/document identities. Storage deadline twelve seconds; 422 for oversized scope, 503 for unavailable storage.
+        /// </remarks>
+        /// <param name="locationKid">Canonical location KID in this bank.</param>
+        /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
+        /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
+        /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
+        /// <param name="sort">activity (default) or documentId; ties use location/unit/document identity.</param>
+        /// <param name="direction">asc or desc (default).</param>
+        /// <param name="unitKid">Canonical unit KID in this bank; also restricts the location.</param>
+        /// <param name="from">Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</param>
+        /// <param name="through">Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</param>
+        /// <param name="offset">Zero-based offset, up to 100000.</param>
+        /// <param name="limit">Page size, 1–100; defaults to 25.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitDocumentCount> GetBankDocumentsCountAsync(string bankKid, string? locationKid = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (bankKid == null)
+                throw new System.ArgumentNullException("bankKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/banks/{bankKid}/documents/count"
+                    urlBuilder_.Append("api/v1/banks/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/documents/count");
+                    urlBuilder_.Append('?');
+                    if (locationKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("LocationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (date != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Date")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (search != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Search")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(search, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (unitKids != null)
+                    {
+                            foreach (var item_ in unitKids) { urlBuilder_.Append(System.Uri.EscapeDataString("UnitKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (unitKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("UnitKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (from != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("From")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(from, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (through != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Through")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(through, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (offset != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Offset")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(offset, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (limit != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Limit")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitDocumentCount>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List WashDocs for one authorized location, optionally selecting one or several units.
+        /// </summary>
+        /// <remarks>
+        /// Active manager, a WashDoc tab, Location Read, Unit Read and a matching site-bound resource grant. date=yyyy-MM-dd includes that entire UTC date and earlier history. Repeat unitKids with canonical unit KIDs in this location (maximum 255); omitted means all visible units. search accepts an exact numeric Doc ID or canonical document KID. sort=activity or documentId, direction=asc or desc; offset 0–100000, limit 1–100. RetentionDays and selected units are applied before paging. Filter choices include all authorized visible units. No measurement reads. 400 invalid scope/filters, 403 denied, 404 hidden location/unit, 422 oversized scope, 503 busy/unavailable.
+        /// </remarks>
+        /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
+        /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
+        /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
+        /// <param name="sort">activity (default) or documentId; ties use location/unit/document identity.</param>
+        /// <param name="direction">asc or desc (default).</param>
+        /// <param name="unitKid">Canonical unit KID in this bank; also restricts the location.</param>
+        /// <param name="from">Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</param>
+        /// <param name="through">Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</param>
+        /// <param name="offset">Zero-based offset, up to 100000.</param>
+        /// <param name="limit">Page size, 1–100; defaults to 25.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<BankDocumentPage> GetLocationDocumentsAsync(string locationKid, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (locationKid == null)
+                throw new System.ArgumentNullException("locationKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/{locationKid}/documents"
+                    urlBuilder_.Append("api/v1/locations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/documents");
+                    urlBuilder_.Append('?');
+                    if (date != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Date")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (search != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Search")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(search, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (unitKids != null)
+                    {
+                            foreach (var item_ in unitKids) { urlBuilder_.Append(System.Uri.EscapeDataString("UnitKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (unitKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("UnitKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (from != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("From")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(from, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (through != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Through")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(through, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (offset != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Offset")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(offset, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (limit != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Limit")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<BankDocumentPage>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Count distinct WashDocs for the selected location and unit choices.
+        /// </summary>
+        /// <remarks>
+        /// Uses the same access, date, search and repeated unitKids filters as GetLocationDocuments. Counts location/unit/document identities without traversing pages or reading measurements. No response cache.
+        /// </remarks>
+        /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
+        /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
+        /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
+        /// <param name="sort">activity (default) or documentId; ties use location/unit/document identity.</param>
+        /// <param name="direction">asc or desc (default).</param>
+        /// <param name="unitKid">Canonical unit KID in this bank; also restricts the location.</param>
+        /// <param name="from">Inclusive ISO 8601 start with an explicit UTC offset; defaults to 24 hours before through.</param>
+        /// <param name="through">Inclusive ISO 8601 end with an explicit UTC offset; defaults to now.</param>
+        /// <param name="offset">Zero-based offset, up to 100000.</param>
+        /// <param name="limit">Page size, 1–100; defaults to 25.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitDocumentCount> GetLocationDocumentsCountAsync(string locationKid, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (locationKid == null)
+                throw new System.ArgumentNullException("locationKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/locations/{locationKid}/documents/count"
+                    urlBuilder_.Append("api/v1/locations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/documents/count");
+                    urlBuilder_.Append('?');
+                    if (date != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Date")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (search != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Search")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(search, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (unitKids != null)
+                    {
+                            foreach (var item_ in unitKids) { urlBuilder_.Append(System.Uri.EscapeDataString("UnitKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
+                    if (sort != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (direction != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (unitKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("UnitKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (from != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("From")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(from, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (through != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Through")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(through, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (offset != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Offset")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(offset, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (limit != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Limit")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitDocumentCount>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -20238,7 +20929,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>The graph adds one minute of margin, rounds duration up to the next minute, and reads bounded nearest edge samples
         /// <br/>for observed measurement fields (at most one hour outside that graph window). Old untagged measurements remain supported.
         /// <br/>Context samples anchor clipped curves; they do not extend the visible time axis. No smoothing or fabricated measurements.
-        /// <br/>Temperature, level and spin use separate bands with matching target overlays; stored Cycle/CycleSub/Error events are marked.
+        /// <br/>Temperature, level and spin use separate bands with matching target overlays; stored Cycle/Process/CycleSub/Error events are marked.
         /// <br/>At most 16 numeric series. Empty/non-numeric selections return 422. Times are UTC.
         /// <br/>SVG fills its viewport in both directions while text size and stroke thickness remain stable; no script or third-party renderer.
         /// <br/>The original GetUnitDocumentSvg remains available. Finished results use a separate bounded private cache, with no-store HTTP responses.
@@ -20406,7 +21097,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Alliance dryers (19/29/30) interpret legacy Level as Temperature2; their flags expose heat (32|64), airflow (16), and null water inlet/outlet.
         /// <br/>Other InOutletHeat flags expose heat (32), inlet (1|2|4|8), outlet (16); unknown remains null. SoapInfo keeps actual recorded dosing.
         /// <br/>QW washer types 15/16/17/25/31 record bare Spin as ordinal levels, with no rpm unit. Explicit rotation-scale JSON retains its units.
-        /// <br/>Cycle/CycleSub/Error events retain enum codes and localized labels where shared enum translations exist.
+        /// <br/>Cycle/Process/CycleSub/Error events retain enum codes and localized labels where shared enum translations exist.
+        /// <br/>Legacy Process (state 138) retains eProcess byte codes: 1 Prewash, 2 Mainwash, 3/4/5 rinses, 6 Spin, 7 Done.
+        /// <br/>Its labels reuse equivalent shared phase translations; Process codes never become CycleSub codes or document boundaries.
         /// <br/>Original enum names and timestamps are language independent. Clients must not treat edge/calculated points as actual hover samples.
         /// <br/>Maximum 16 numeric series; 31 days, 50,000 samples, 500,000 cells and the existing 12-second storage deadline apply.
         /// <br/>Returns 400 invalid KID/fields, 401 expired credentials, 403 missing permission, 404 hidden/missing,
@@ -33955,7 +34648,7 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
-    /// A stored Cycle, CycleSub or Error transition. Stable name/value and localization key are independent of the display label.
+    /// A stored Cycle, Process, CycleSub or Error transition. Process retains the legacy eProcess byte, independently of newer cycle enums. Stable name/value and localization key are independent of the display label.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class WashDocChartEvent

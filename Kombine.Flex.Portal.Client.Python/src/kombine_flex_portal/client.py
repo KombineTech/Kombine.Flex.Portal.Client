@@ -59,9 +59,21 @@ class PortalClient(BaseClient):
         'Count accessible active banks for the Banks2 navigation icon.'
         return self._request('GetActiveBankCount', {}, None)
 
-    def get_bank_documents(self, bank_kid: str, *, location_kid: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> BankDocumentPage:
+    def get_bank_documents(self, bank_kid: str, *, location_kid: str | None = None, date: str | None = None, search: str | None = None, unit_kids: list[str] | None = None, sort: str | None = None, direction: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> BankDocumentPage:
         'Search WashDoc document identities by location, unit and time without loading measurements.'
-        return self._request('GetBankDocuments', {'bankKid': bank_kid, 'LocationKid': location_kid, 'UnitKid': unit_kid, 'From': from_, 'Through': through, 'Offset': offset, 'Limit': limit}, None)
+        return self._request('GetBankDocuments', {'bankKid': bank_kid, 'LocationKid': location_kid, 'Date': date, 'Search': search, 'UnitKids': unit_kids, 'Sort': sort, 'Direction': direction, 'UnitKid': unit_kid, 'From': from_, 'Through': through, 'Offset': offset, 'Limit': limit}, None)
+
+    def get_bank_documents_count(self, bank_kid: str, *, location_kid: str | None = None, date: str | None = None, search: str | None = None, unit_kids: list[str] | None = None, sort: str | None = None, direction: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> UnitDocumentCount:
+        'Count WashDocs across the authorized bank scope, without loading document pages or measurements.'
+        return self._request('GetBankDocumentsCount', {'bankKid': bank_kid, 'LocationKid': location_kid, 'Date': date, 'Search': search, 'UnitKids': unit_kids, 'Sort': sort, 'Direction': direction, 'UnitKid': unit_kid, 'From': from_, 'Through': through, 'Offset': offset, 'Limit': limit}, None)
+
+    def get_location_documents(self, location_kid: str, *, date: str | None = None, search: str | None = None, unit_kids: list[str] | None = None, sort: str | None = None, direction: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> BankDocumentPage:
+        'List WashDocs for one authorized location, optionally selecting one or several units.'
+        return self._request('GetLocationDocuments', {'locationKid': location_kid, 'Date': date, 'Search': search, 'UnitKids': unit_kids, 'Sort': sort, 'Direction': direction, 'UnitKid': unit_kid, 'From': from_, 'Through': through, 'Offset': offset, 'Limit': limit}, None)
+
+    def get_location_documents_count(self, location_kid: str, *, date: str | None = None, search: str | None = None, unit_kids: list[str] | None = None, sort: str | None = None, direction: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> UnitDocumentCount:
+        'Count distinct WashDocs for the selected location and unit choices.'
+        return self._request('GetLocationDocumentsCount', {'locationKid': location_kid, 'Date': date, 'Search': search, 'UnitKids': unit_kids, 'Sort': sort, 'Direction': direction, 'UnitKid': unit_kid, 'From': from_, 'Through': through, 'Offset': offset, 'Limit': limit}, None)
 
     def get_bank_icons(self, *, kid: list[str] | None = None) -> BankIconsResponse:
         "Resolve up to eight bank icons with their authorized units' combined status."
