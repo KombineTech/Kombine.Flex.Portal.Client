@@ -708,6 +708,49 @@
         }
       },
       {
+        "name": "Date",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
         "name": "UnitKid",
         "where": "query",
         "required": false,
@@ -755,6 +798,353 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BankDocumentPage"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetBankDocumentsCount",
+    "dartMethod": "getBankDocumentsCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/documents/count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "LocationKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "From",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Through",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentCount"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetLocationDocuments",
+    "dartMethod": "getLocationDocuments",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/documents",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "From",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Through",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/BankDocumentPage"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetLocationDocumentsCount",
+    "dartMethod": "getLocationDocumentsCount",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/documents/count",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "From",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Through",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentCount"
     },
     "binary": false
   },

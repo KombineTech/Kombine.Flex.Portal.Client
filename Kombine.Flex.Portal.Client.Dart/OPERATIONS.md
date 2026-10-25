@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-178 operations. OpenAPI SHA-256: `9f1b18bb94c2e392e8bbad7c831284db1e19818c3e82734fd8fe97159ee5fdf0`.
+181 operations. OpenAPI SHA-256: `bcba9b0fd3738a5f434d97c2d7beaf8a0837e24fff3460e774dc522ca3357d00`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -18,6 +18,9 @@
 | `GetBanks` | `getBanks` | GET | `/api/v1/banks` |
 | `GetActiveBankCount` | `getActiveBankCount` | GET | `/api/v1/banks/active-count` |
 | `GetBankDocuments` | `getBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` |
+| `GetBankDocumentsCount` | `getBankDocumentsCount` | GET | `/api/v1/banks/{bankKid}/documents/count` |
+| `GetLocationDocuments` | `getLocationDocuments` | GET | `/api/v1/locations/{locationKid}/documents` |
+| `GetLocationDocumentsCount` | `getLocationDocumentsCount` | GET | `/api/v1/locations/{locationKid}/documents/count` |
 | `GetBankIcons` | `getBankIcons` | GET | `/api/v1/banks/icons` |
 | `GetBankLocations` | `getBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` |
 | `SearchBanks` | `searchBanks` | GET | `/api/v1/search/banks` |

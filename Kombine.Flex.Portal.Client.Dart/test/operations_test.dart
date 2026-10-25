@@ -289,6 +289,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.url.queryParametersAll["LocationKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Date"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Search"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKids"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Direction"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["UnitKid"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["From"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Through"], <Object?>["fixture"]);
@@ -297,8 +302,90 @@ void main() {
       return http.Response(encodeApiJson(<String, Object?>{"items": null, "locations": null, "units": null, "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z", "offset": 7, "limit": 7, "hasMore": false}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getBankDocuments(bankKid: "fixture /\u00e6?&", locationKid: "fixture", unitKid: "fixture", from: "fixture", through: "fixture", offset: 7, limit: 7);
+    final result = await client.getBankDocuments(bankKid: "fixture /\u00e6?&", locationKid: "fixture", date: "fixture", search: "fixture", unitKids: <String>["fixture"], sort: "fixture", direction: "fixture", unitKid: "fixture", from: "fixture", through: "fixture", offset: 7, limit: 7);
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "locations": null, "units": null, "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z", "offset": 7, "limit": 7, "hasMore": false}));
+    expect(sends, 1);
+  });
+
+  test("wire GetBankDocumentsCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/banks/fixture%20%2F%C3%A6%3F%26/documents/count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["LocationKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Date"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Search"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKids"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["From"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Through"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Offset"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["Limit"], <Object?>["7"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z"}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getBankDocumentsCount(bankKid: "fixture /\u00e6?&", locationKid: "fixture", date: "fixture", search: "fixture", unitKids: <String>["fixture"], sort: "fixture", direction: "fixture", unitKid: "fixture", from: "fixture", through: "fixture", offset: 7, limit: 7);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z"}));
+    expect(sends, 1);
+  });
+
+  test("wire GetLocationDocuments", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/locations/fixture%20%2F%C3%A6%3F%26/documents");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["Date"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Search"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKids"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["From"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Through"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Offset"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["Limit"], <Object?>["7"]);
+      return http.Response(encodeApiJson(<String, Object?>{"items": null, "locations": null, "units": null, "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z", "offset": 7, "limit": 7, "hasMore": false}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getLocationDocuments(locationKid: "fixture /\u00e6?&", date: "fixture", search: "fixture", unitKids: <String>["fixture"], sort: "fixture", direction: "fixture", unitKid: "fixture", from: "fixture", through: "fixture", offset: 7, limit: 7);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "locations": null, "units": null, "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z", "offset": 7, "limit": 7, "hasMore": false}));
+    expect(sends, 1);
+  });
+
+  test("wire GetLocationDocumentsCount", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/locations/fixture%20%2F%C3%A6%3F%26/documents/count");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["Date"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Search"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKids"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Sort"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Direction"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["From"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Through"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Offset"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["Limit"], <Object?>["7"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z"}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getLocationDocumentsCount(locationKid: "fixture /\u00e6?&", date: "fixture", search: "fixture", unitKids: <String>["fixture"], sort: "fixture", direction: "fixture", unitKid: "fixture", from: "fixture", through: "fixture", offset: 7, limit: 7);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z"}));
     expect(sends, 1);
   });
 

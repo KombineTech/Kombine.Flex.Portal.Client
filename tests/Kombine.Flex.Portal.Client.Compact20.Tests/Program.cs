@@ -23,7 +23,7 @@ internal static class Program
 #if DESKTOP_TEST_HOST
         LoopbackCamera(false); LoopbackCamera(true); LoopbackTransport(); LoopbackPost(false); LoopbackPost(true); StalledTransport(false); StalledTransport(true);
 #endif
-        return "PASS: " + _assertions + " checks, 178 API operations; runtime " + Environment.Version + ".";
+        return "PASS: " + _assertions + " checks, 181 API operations; runtime " + Environment.Version + ".";
     }
     private static string _directory;
     private static void Check(bool ok, string label) { _assertions++; if (!ok) throw new Exception(label); }
@@ -178,7 +178,7 @@ internal static class Program
     private static void Contracts()
     {
         string[] rows = ReadRows(Path.Combine(_directory, "ContractCases.tsv"));
-        Equal(178, rows.Length, "Published operation count");
+        Equal(181, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });

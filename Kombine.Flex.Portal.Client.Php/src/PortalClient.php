@@ -381,12 +381,45 @@ final class PortalClient extends BaseClient
     /**
      * Search WashDoc document identities by location, unit and time without loading measurements.
      * @param string $bankKid
-     * @param array{'LocationKid'?: string, 'UnitKid'?: string, 'From'?: string, 'Through'?: string, 'Offset'?: int, 'Limit'?: int} $options
+     * @param array{'LocationKid'?: string, 'Date'?: string, 'Search'?: string, 'UnitKids'?: list<string>, 'Sort'?: string, 'Direction'?: string, 'UnitKid'?: string, 'From'?: string, 'Through'?: string, 'Offset'?: int, 'Limit'?: int} $options
      * @return BankDocumentPage
      */
     public function getBankDocuments(mixed $bankKid, array $options = []): mixed
     {
         return $this->request('GetBankDocuments', ['bankKid' => $bankKid] + $options, null);
+    }
+
+    /**
+     * Count WashDocs across the authorized bank scope, without loading document pages or measurements.
+     * @param string $bankKid
+     * @param array{'LocationKid'?: string, 'Date'?: string, 'Search'?: string, 'UnitKids'?: list<string>, 'Sort'?: string, 'Direction'?: string, 'UnitKid'?: string, 'From'?: string, 'Through'?: string, 'Offset'?: int, 'Limit'?: int} $options
+     * @return UnitDocumentCount
+     */
+    public function getBankDocumentsCount(mixed $bankKid, array $options = []): mixed
+    {
+        return $this->request('GetBankDocumentsCount', ['bankKid' => $bankKid] + $options, null);
+    }
+
+    /**
+     * List WashDocs for one authorized location, optionally selecting one or several units.
+     * @param string $locationKid
+     * @param array{'Date'?: string, 'Search'?: string, 'UnitKids'?: list<string>, 'Sort'?: string, 'Direction'?: string, 'UnitKid'?: string, 'From'?: string, 'Through'?: string, 'Offset'?: int, 'Limit'?: int} $options
+     * @return BankDocumentPage
+     */
+    public function getLocationDocuments(mixed $locationKid, array $options = []): mixed
+    {
+        return $this->request('GetLocationDocuments', ['locationKid' => $locationKid] + $options, null);
+    }
+
+    /**
+     * Count distinct WashDocs for the selected location and unit choices.
+     * @param string $locationKid
+     * @param array{'Date'?: string, 'Search'?: string, 'UnitKids'?: list<string>, 'Sort'?: string, 'Direction'?: string, 'UnitKid'?: string, 'From'?: string, 'Through'?: string, 'Offset'?: int, 'Limit'?: int} $options
+     * @return UnitDocumentCount
+     */
+    public function getLocationDocumentsCount(mixed $locationKid, array $options = []): mixed
+    {
+        return $this->request('GetLocationDocumentsCount', ['locationKid' => $locationKid] + $options, null);
     }
 
     /**

@@ -13,7 +13,7 @@ function sample(spec) {
   switch (spec.type) {
     case 'integer': return spec.format === 'int64' ? 9223372036854775807n : 17;
     case 'number': return 12.5;
-    case 'string': return 'tekst æ 😀';
+    case 'string': return 'tekst Ã¦ ðŸ˜€';
     case 'boolean': return false;
     case 'array': return [sample(spec.items)];
     case 'object': return Object.fromEntries(Object.entries(spec.properties ?? {}).map(([k, v]) => [k, sample(v)]));
@@ -21,7 +21,7 @@ function sample(spec) {
   }
 }
 
-assert.equal(cases.length, 178);
+assert.equal(cases.length, 181);
 test('background upload accepts 202 and confirmation preserves unknown progress', async () => {
   const client = new PortalClient('https://api.example.test/', { fetch: async (url) => {
     const request = new URL(url);
@@ -56,7 +56,7 @@ for (const spec of cases) {
     let hasOptions = false;
     for (const param of spec.parameters) {
       const value = param.schema.type === 'string'
-        ? param.where === 'path' ? 'Kid /?&+#æ' : param.where === 'header' ? 'da-DK' : 'a b/&?+æ'
+        ? param.where === 'path' ? 'Kid /?&+#Ã¦' : param.where === 'header' ? 'da-DK' : 'a b/&?+Ã¦'
         : sample(param.schema);
       if (param.where === 'path') {
         args.push(value);
@@ -113,7 +113,7 @@ test('URL, token and options validation', () => {
   for (const base of ['https://api.example.test/', 'http://localhost:123/', 'http://127.0.0.1:123/', 'http://[::1]:123/']) assert.equal(new PortalClient(base).baseUrl, base);
   for (const timeoutMs of [-1, 0, Infinity, 2 ** 32]) assert.throws(() => new PortalClient('https://x/', { timeoutMs }));
   const client = new PortalClient('https://x/');
-  for (const value of ['', 'a b', 'x\r\nb', 'æ']) assert.throws(() => { client.accessToken = value; });
+  for (const value of ['', 'a b', 'x\r\nb', 'Ã¦']) assert.throws(() => { client.accessToken = value; });
   assert.throws(() => { client.baseUrl = 'https://y/'; });
 });
 
@@ -166,7 +166,7 @@ test('older 401 cannot clear a replacement session', async () => {
 });
 
 test('int64, Unicode and JSON parser preserve values and reject invalid documents', () => {
-  const original = { x: 9223372036854775807n, y: -9223372036854775808n, value: 'æ 😀 \\ " \n', nullable: null, list: [true, false, 0n, 12.5] };
+  const original = { x: 9223372036854775807n, y: -9223372036854775808n, value: 'Ã¦ ðŸ˜€ \\ " \n', nullable: null, list: [true, false, 0n, 12.5] };
   assert.equal(stringifyJson(parseJson(stringifyJson(original))), stringifyJson(original));
   for (const text of ['{"a":1,"a":2}', 'NaN', 'Infinity', '01', '1e999', '{"a":}', '{"a":1,}', '[1,]', '{} trailing', '"\\ud800"', '"\\udc00"', '"unescaped\nline"', '['.repeat(70) + ']'.repeat(70)]) assert.throws(() => parseJson(text), PortalProtocolError);
   for (const value of [NaN, Infinity, 9007199254740992, new Date(), '\ud800', [undefined], Array(1)]) assert.throws(() => stringifyJson(value), PortalProtocolError);

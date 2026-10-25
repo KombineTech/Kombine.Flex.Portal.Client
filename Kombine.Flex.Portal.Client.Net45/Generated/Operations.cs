@@ -212,6 +212,11 @@ namespace Kombine.Flex.Portal.Client.Net45
             if (options != null)
             {
                 path = AddQuery(path, "LocationKid", options.LocationKid);
+                path = AddQuery(path, "Date", options.Date);
+                path = AddQuery(path, "Search", options.Search);
+                path = AddQuery(path, "UnitKids", options.UnitKids);
+                path = AddQuery(path, "Sort", options.Sort);
+                path = AddQuery(path, "Direction", options.Direction);
                 path = AddQuery(path, "UnitKid", options.UnitKid);
                 path = AddQuery(path, "From", options.From);
                 path = AddQuery(path, "Through", options.Through);
@@ -219,6 +224,91 @@ namespace Kombine.Flex.Portal.Client.Net45
                 path = AddQuery(path, "Limit", options.Limit);
             }
             return (BankDocumentPage)SendJson("GET", path, null, headers, 200, typeof(BankDocumentPage));
+        }
+
+        /// <summary>Count WashDocs across the authorized bank scope, without loading document pages or measurements.</summary>
+        public UnitDocumentCount GetBankDocumentsCount(string @bankKid)
+        {
+            return GetBankDocumentsCount(@bankKid, null);
+        }
+
+        /// <summary>Count WashDocs across the authorized bank scope, without loading document pages or measurements.</summary>
+        public UnitDocumentCount GetBankDocumentsCount(string @bankKid, GetBankDocumentsCountOptions options)
+        {
+            string path = "api/v1/banks/{bankKid}/documents/count";
+            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "LocationKid", options.LocationKid);
+                path = AddQuery(path, "Date", options.Date);
+                path = AddQuery(path, "Search", options.Search);
+                path = AddQuery(path, "UnitKids", options.UnitKids);
+                path = AddQuery(path, "Sort", options.Sort);
+                path = AddQuery(path, "Direction", options.Direction);
+                path = AddQuery(path, "UnitKid", options.UnitKid);
+                path = AddQuery(path, "From", options.From);
+                path = AddQuery(path, "Through", options.Through);
+                path = AddQuery(path, "Offset", options.Offset);
+                path = AddQuery(path, "Limit", options.Limit);
+            }
+            return (UnitDocumentCount)SendJson("GET", path, null, headers, 200, typeof(UnitDocumentCount));
+        }
+
+        /// <summary>List WashDocs for one authorized location, optionally selecting one or several units.</summary>
+        public BankDocumentPage GetLocationDocuments(string @locationKid)
+        {
+            return GetLocationDocuments(@locationKid, null);
+        }
+
+        /// <summary>List WashDocs for one authorized location, optionally selecting one or several units.</summary>
+        public BankDocumentPage GetLocationDocuments(string @locationKid, GetLocationDocumentsOptions options)
+        {
+            string path = "api/v1/locations/{locationKid}/documents";
+            path = path.Replace("{locationKid}", PathValue(@locationKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "Date", options.Date);
+                path = AddQuery(path, "Search", options.Search);
+                path = AddQuery(path, "UnitKids", options.UnitKids);
+                path = AddQuery(path, "Sort", options.Sort);
+                path = AddQuery(path, "Direction", options.Direction);
+                path = AddQuery(path, "UnitKid", options.UnitKid);
+                path = AddQuery(path, "From", options.From);
+                path = AddQuery(path, "Through", options.Through);
+                path = AddQuery(path, "Offset", options.Offset);
+                path = AddQuery(path, "Limit", options.Limit);
+            }
+            return (BankDocumentPage)SendJson("GET", path, null, headers, 200, typeof(BankDocumentPage));
+        }
+
+        /// <summary>Count distinct WashDocs for the selected location and unit choices.</summary>
+        public UnitDocumentCount GetLocationDocumentsCount(string @locationKid)
+        {
+            return GetLocationDocumentsCount(@locationKid, null);
+        }
+
+        /// <summary>Count distinct WashDocs for the selected location and unit choices.</summary>
+        public UnitDocumentCount GetLocationDocumentsCount(string @locationKid, GetLocationDocumentsCountOptions options)
+        {
+            string path = "api/v1/locations/{locationKid}/documents/count";
+            path = path.Replace("{locationKid}", PathValue(@locationKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "Date", options.Date);
+                path = AddQuery(path, "Search", options.Search);
+                path = AddQuery(path, "UnitKids", options.UnitKids);
+                path = AddQuery(path, "Sort", options.Sort);
+                path = AddQuery(path, "Direction", options.Direction);
+                path = AddQuery(path, "UnitKid", options.UnitKid);
+                path = AddQuery(path, "From", options.From);
+                path = AddQuery(path, "Through", options.Through);
+                path = AddQuery(path, "Offset", options.Offset);
+                path = AddQuery(path, "Limit", options.Limit);
+            }
+            return (UnitDocumentCount)SendJson("GET", path, null, headers, 200, typeof(UnitDocumentCount));
         }
 
         /// <summary>Resolve up to eight bank icons with their authorized units' combined status.</summary>

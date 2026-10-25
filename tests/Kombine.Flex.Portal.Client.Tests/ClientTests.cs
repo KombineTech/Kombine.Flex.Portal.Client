@@ -195,7 +195,9 @@ public sealed class ClientTests
             {
                 var type = Nullable.GetUnderlyingType(parameter.ParameterType) ?? parameter.ParameterType;
                 object? value = type == typeof(FileParameter) ? new FileParameter(new MemoryStream([1]), "fixture.jpg", "image/jpeg") : type == typeof(string) ? "opaque-KID" : type.IsValueType ? Activator.CreateInstance(type) : parameter.HasDefaultValue ? null : Activator.CreateInstance(type);
-                if (expectedPath.Contains("{" + parameter.Name + "}")) expectedPath = expectedPath.Replace("{" + parameter.Name + "}", value?.ToString());
+                var pathName = parameter.Name!;
+                if (pathName.EndsWith("Path", StringComparison.Ordinal)) pathName = pathName.Substring(0, pathName.Length - 4);
+                if (expectedPath.Contains("{" + pathName + "}")) expectedPath = expectedPath.Replace("{" + pathName + "}", value?.ToString());
                 return value;
             }).ToArray();
             if (method.Invoke(client, arguments) is Task task)
