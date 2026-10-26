@@ -595,6 +595,22 @@ export interface DocumentColumn {
   "iconKid"?: string | null;
 }
 
+/** An existing same-unit document identified by its canonical KID and latest tagged Cycle timestamp. */
+export interface DocumentNeighbor {
+  /** kid */
+  "kid"?: string | null;
+  /** lastActivityUtc */
+  "lastActivityUtc"?: string;
+}
+
+/** Previous (higher numeric Doc ID) and next (lower numeric Doc ID) documents. Null means no document exists in that direction. */
+export interface DocumentNeighbors {
+  /** previous */
+  "previous"?: DocumentNeighbor;
+  /** next */
+  "next"?: DocumentNeighbor;
+}
+
 /** Only columns with data are returned, with values indexed by column position. A missing cell is null; a stored null is a cell with null text/value. */
 export interface DocumentTable {
   /** documentKid */

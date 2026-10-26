@@ -6345,21 +6345,12 @@
     "dartMethod": "convertToolTime",
     "example": null,
     "method": "POST",
-    "path": "api/v1/banks/{bankKid}/tools/time",
+    "path": "api/v1/tenant/tools/time",
     "auth": true,
     "statuses": [
       200
     ],
-    "parameters": [
-      {
-        "name": "bankKid",
-        "where": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
+    "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ToolTimeRequest"
     },
@@ -6375,21 +6366,12 @@
     "dartMethod": "inspectToolKid",
     "example": null,
     "method": "POST",
-    "path": "api/v1/banks/{bankKid}/tools/kid",
+    "path": "api/v1/tenant/tools/kid",
     "auth": true,
     "statuses": [
       200
     ],
-    "parameters": [
-      {
-        "name": "bankKid",
-        "where": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
+    "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ToolKidInspectionRequest"
     },
@@ -6519,6 +6501,34 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitDocumentCount"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetUnitDocumentNeighbors",
+    "dartMethod": "getUnitDocumentNeighbors",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/documents/{documentKid}/neighbors",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "documentKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DocumentNeighbors"
     },
     "binary": false
   },

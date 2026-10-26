@@ -439,13 +439,13 @@ class PortalClient(BaseClient):
         'Read 25 status rows at a time with next/previous cursors.'
         return self._request('GetTenantStatusPage', {'pageSize': page_size, 'cursor': cursor, 'offset': offset, 'anchor': anchor}, None)
 
-    def convert_tool_time(self, bank_kid: str, body: ToolTimeRequest) -> ToolTimeResponse:
+    def convert_tool_time(self, body: ToolTimeRequest) -> ToolTimeResponse:
         'Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.'
-        return self._request('ConvertToolTime', {'bankKid': bank_kid}, body)
+        return self._request('ConvertToolTime', {}, body)
 
-    def inspect_tool_kid(self, bank_kid: str, body: ToolKidInspectionRequest) -> ToolKidInspectionResponse:
+    def inspect_tool_kid(self, body: ToolKidInspectionRequest) -> ToolKidInspectionResponse:
         'Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.'
-        return self._request('InspectToolKid', {'bankKid': bank_kid}, body)
+        return self._request('InspectToolKid', {}, body)
 
     def get_unit_documents(self, unit_kid: str, *, sort: str | None = None, direction: str | None = None, offset: int | None = None, limit: int | None = None, search: str | None = None, date: str | None = None) -> UnitDocumentPage:
         'List document identities produced by the selected Unit for WashDoc3.'
@@ -454,6 +454,10 @@ class PortalClient(BaseClient):
     def get_unit_documents_count(self, unit_kid: str, *, search: str | None = None, date: str | None = None) -> UnitDocumentCount:
         'Count distinct WashDoc3 document identities for exactly one unit, separately from list loading.'
         return self._request('GetUnitDocumentsCount', {'unitKid': unit_kid, 'Search': search, 'Date': date}, None)
+
+    def get_unit_document_neighbors(self, document_kid: str) -> DocumentNeighbors:
+        'Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.'
+        return self._request('GetUnitDocumentNeighbors', {'documentKid': document_kid}, None)
 
     def get_unit_document_table(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> DocumentTable:
         "Read a document's table as JSON with original values and column metadata."

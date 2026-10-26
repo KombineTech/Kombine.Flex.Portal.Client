@@ -1168,6 +1168,32 @@
       },
       "additionalProperties": false
     },
+    "DocumentNeighbor": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "lastActivityUtc": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "DocumentNeighbors": {
+      "type": "object",
+      "properties": {
+        "previous": {
+          "$ref": "#/components/schemas/DocumentNeighbor"
+        },
+        "next": {
+          "$ref": "#/components/schemas/DocumentNeighbor"
+        }
+      },
+      "additionalProperties": false
+    },
     "DocumentTable": {
       "type": "object",
       "properties": {
@@ -10341,21 +10367,12 @@
     },
     "ConvertToolTime": {
       "method": "POST",
-      "path": "api/v1/banks/{bankKid}/tools/time",
+      "path": "api/v1/tenant/tools/time",
       "statuses": [
         200
       ],
       "auth": true,
-      "parameters": [
-        {
-          "name": "bankKid",
-          "where": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
+      "parameters": [],
       "body": {
         "$ref": "#/components/schemas/ToolTimeRequest"
       },
@@ -10367,21 +10384,12 @@
     },
     "InspectToolKid": {
       "method": "POST",
-      "path": "api/v1/banks/{bankKid}/tools/kid",
+      "path": "api/v1/tenant/tools/kid",
       "statuses": [
         200
       ],
       "auth": true,
-      "parameters": [
-        {
-          "name": "bankKid",
-          "where": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
+      "parameters": [],
       "body": {
         "$ref": "#/components/schemas/ToolKidInspectionRequest"
       },
@@ -10502,6 +10510,30 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitDocumentCount"
+      },
+      "binary": false
+    },
+    "GetUnitDocumentNeighbors": {
+      "method": "GET",
+      "path": "api/v1/documents/{documentKid}/neighbors",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "documentKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DocumentNeighbors"
       },
       "binary": false
     },

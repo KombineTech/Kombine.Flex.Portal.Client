@@ -544,13 +544,13 @@ export class PortalClient extends BaseClient {
   }
 
   /** Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers. */
-  convertToolTime(bankKid: string, body: Models.ToolTimeRequest, request: RequestOptions = {}): Promise<Models.ToolTimeResponse> {
-    return this.send("ConvertToolTime", {"bankKid": bankKid}, body, request) as Promise<Models.ToolTimeResponse>;
+  convertToolTime(body: Models.ToolTimeRequest, request: RequestOptions = {}): Promise<Models.ToolTimeResponse> {
+    return this.send("ConvertToolTime", {}, body, request) as Promise<Models.ToolTimeResponse>;
   }
 
   /** Inspect only the supplied KID with the installed Kombine.Flex.Kid parser. */
-  inspectToolKid(bankKid: string, body: Models.ToolKidInspectionRequest, request: RequestOptions = {}): Promise<Models.ToolKidInspectionResponse> {
-    return this.send("InspectToolKid", {"bankKid": bankKid}, body, request) as Promise<Models.ToolKidInspectionResponse>;
+  inspectToolKid(body: Models.ToolKidInspectionRequest, request: RequestOptions = {}): Promise<Models.ToolKidInspectionResponse> {
+    return this.send("InspectToolKid", {}, body, request) as Promise<Models.ToolKidInspectionResponse>;
   }
 
   /** List document identities produced by the selected Unit for WashDoc3. */
@@ -561,6 +561,11 @@ export class PortalClient extends BaseClient {
   /** Count distinct WashDoc3 document identities for exactly one unit, separately from list loading. */
   getUnitDocumentsCount(unitKid: string, options: Models.GetUnitDocumentsCountOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDocumentCount> {
     return this.send("GetUnitDocumentsCount", {"unitKid": unitKid, "Search": options.search, "Date": options.date}, undefined, request) as Promise<Models.UnitDocumentCount>;
+  }
+
+  /** Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit. */
+  getUnitDocumentNeighbors(documentKid: string, request: RequestOptions = {}): Promise<Models.DocumentNeighbors> {
+    return this.send("GetUnitDocumentNeighbors", {"documentKid": documentKid}, undefined, request) as Promise<Models.DocumentNeighbors>;
   }
 
   /** Read a document's table as JSON with original values and column metadata. */

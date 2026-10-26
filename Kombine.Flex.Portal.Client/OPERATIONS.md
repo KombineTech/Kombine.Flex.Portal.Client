@@ -9,7 +9,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `ConfirmCameraCaptureAsync` | POST | `/api/v1/camera/confirmation` |
 | `ConfirmManagerSignUpAsync` | POST | `/api/v1/session/signup-confirmation` |
 | `ConfirmMyManagerEmailAsync` | POST | `/api/v1/session/me/email-confirmation` |
-| `ConvertToolTimeAsync` | POST | `/api/v1/banks/{bankKid}/tools/time` |
+| `ConvertToolTimeAsync` | POST | `/api/v1/tenant/tools/time` |
 | `CreateBankUserAsync` | POST | `/api/v1/banks/{bankKid}/users` |
 | `CreateManagerAsync` | POST | `/api/v1/managers` |
 | `DownloadBankSettlementAsync` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
@@ -136,6 +136,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetUnitDocumentGraphAsync` | GET | `/api/v1/documents/{documentKid}/graph` |
 | `GetUnitDocumentHtmlAsync` | GET | `/api/v1/documents/{documentKid}/table.html` |
 | `GetUnitDocumentIconAsync` | GET | `/api/v1/documents/{documentKid}/icon.svg` |
+| `GetUnitDocumentNeighborsAsync` | GET | `/api/v1/documents/{documentKid}/neighbors` |
 | `GetUnitDocumentPngAsync` | GET | `/api/v1/documents/{documentKid}/graph.png` |
 | `GetUnitDocumentsAsync` | GET | `/api/v1/units/{unitKid}/documents` |
 | `GetUnitDocumentsCountAsync` | GET | `/api/v1/units/{unitKid}/documents/count` |
@@ -152,7 +153,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetUserExportCountAsync` | GET | `/api/v1/users/export-count` |
 | `GetUserReceiptsAsync` | GET | `/api/v1/users/{userKid}/receipts` |
 | `GetUsersAsync` | GET | `/api/v1/users` |
-| `InspectToolKidAsync` | POST | `/api/v1/banks/{bankKid}/tools/kid` |
+| `InspectToolKidAsync` | POST | `/api/v1/tenant/tools/kid` |
 | `InviteManagerAsync` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `LoginManagerAsync` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinatesAsync` | POST | `/api/v1/addresses/{kid}/lookup` |

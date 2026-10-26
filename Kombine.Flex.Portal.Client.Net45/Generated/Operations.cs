@@ -1665,19 +1665,17 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.</summary>
-        public ToolTimeResponse ConvertToolTime(string @bankKid, ToolTimeRequest body)
+        public ToolTimeResponse ConvertToolTime(ToolTimeRequest body)
         {
-            string path = "api/v1/banks/{bankKid}/tools/time";
-            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            string path = "api/v1/tenant/tools/time";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (ToolTimeResponse)SendJson("POST", path, body, headers, 200, typeof(ToolTimeResponse));
         }
 
         /// <summary>Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.</summary>
-        public ToolKidInspectionResponse InspectToolKid(string @bankKid, ToolKidInspectionRequest body)
+        public ToolKidInspectionResponse InspectToolKid(ToolKidInspectionRequest body)
         {
-            string path = "api/v1/banks/{bankKid}/tools/kid";
-            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            string path = "api/v1/tenant/tools/kid";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (ToolKidInspectionResponse)SendJson("POST", path, body, headers, 200, typeof(ToolKidInspectionResponse));
         }
@@ -1724,6 +1722,15 @@ namespace Kombine.Flex.Portal.Client.Net45
                 path = AddQuery(path, "Date", options.Date);
             }
             return (UnitDocumentCount)SendJson("GET", path, null, headers, 200, typeof(UnitDocumentCount));
+        }
+
+        /// <summary>Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.</summary>
+        public DocumentNeighbors GetUnitDocumentNeighbors(string @documentKid)
+        {
+            string path = "api/v1/documents/{documentKid}/neighbors";
+            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (DocumentNeighbors)SendJson("GET", path, null, headers, 200, typeof(DocumentNeighbors));
         }
 
         /// <summary>Read a document's table as JSON with original values and column metadata.</summary>

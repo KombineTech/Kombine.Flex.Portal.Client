@@ -106,10 +106,11 @@ GetBankSettlements	GET	/api/v1/banks/{bankKid}/settlements	200	{"kid":"3E7Q14o2A
 GetBankSettlementPeriod	GET	/api/v1/banks/{bankKid}/settlements/{period}	200	{"kid":"3E7Q14o2Ab","period":12,"sourceEntries":45,"includedEntries":42,"groups":[{"group":"LR","currency":"DKK","entries":42,"amountMinor":-12500}],"formats":["XLS","NAVISION"]}
 GetTenantStatus	GET	/api/v1/tenant/status	200	{}
 GetTenantStatusPage	GET	/api/v1/tenant/status/page	200	{}
-ConvertToolTime	POST	/api/v1/banks/{bankKid}/tools/time	200	{}
-InspectToolKid	POST	/api/v1/banks/{bankKid}/tools/kid	200	{}
+ConvertToolTime	POST	/api/v1/tenant/tools/time	200	{}
+InspectToolKid	POST	/api/v1/tenant/tools/kid	200	{}
 GetUnitDocuments	GET	/api/v1/units/{unitKid}/documents	200	{}
 GetUnitDocumentsCount	GET	/api/v1/units/{unitKid}/documents/count	200	{}
+GetUnitDocumentNeighbors	GET	/api/v1/documents/{documentKid}/neighbors	200	{}
 GetUnitDocumentTable	GET	/api/v1/documents/{documentKid}/table	200	{}
 GetUnitDocumentHtml	GET	/api/v1/documents/{documentKid}/table.html	200	{}
 GetUnitDocumentSvg	GET	/api/v1/documents/{documentKid}/graph.svg	200	{}

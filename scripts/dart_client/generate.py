@@ -49,7 +49,8 @@ def sample(schema,schemas,depth=0):
     return None
 def generate(destination,source,api,package,check=False):
     destination,source=Path(destination),Path(source)
-    raw=source.read_bytes();doc=json.loads(raw.decode('utf-8-sig'));operations={};methods=[];rows=[];cases=[];tests=[]
+    # Git may check text out as CRLF on Windows. Hash the same LF snapshot that is bundled.
+    raw=source.read_text(encoding='utf-8-sig').replace('\r\n','\n').encode('utf-8');doc=json.loads(raw);operations={};methods=[];rows=[];cases=[];tests=[]
     models=['// Generated wire aliases. Object fields retain their exact JSON names.\n']
     for name,schema in doc['components']['schemas'].items():
         models.append(f'typedef {name} = '+('String' if schema.get('type')=='string' else 'int' if schema.get('type')=='integer' else 'Map<String, Object?>')+';')

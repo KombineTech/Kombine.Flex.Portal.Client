@@ -343,6 +343,16 @@ DocumentColumn = TypedDict('DocumentColumn', {
     'iconKid': 'str | None',
 }, total=False)
 
+DocumentNeighbor = TypedDict('DocumentNeighbor', {
+    'kid': 'str | None',
+    'lastActivityUtc': 'str',
+}, total=False)
+
+DocumentNeighbors = TypedDict('DocumentNeighbors', {
+    'previous': 'DocumentNeighbor',
+    'next': 'DocumentNeighbor',
+}, total=False)
+
 DocumentTable = TypedDict('DocumentTable', {
     'documentKid': 'str | None',
     'unitKid': 'str | None',

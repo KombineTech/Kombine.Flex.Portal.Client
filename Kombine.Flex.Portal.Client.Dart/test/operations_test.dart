@@ -2148,7 +2148,7 @@ void main() {
       sends++;
       expect(request.method, "POST");
       expect(request.url.origin, 'https://example.invalid');
-      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/banks/fixture%20%2F%C3%A6%3F%26/tools/time");
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/tenant/tools/time");
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.body, encodeApiJson(<String, Object?>{"format": null, "value": null, "timeZone": null, "offset": null}));
@@ -2156,7 +2156,7 @@ void main() {
       return http.Response(encodeApiJson(<String, Object?>{"success": false, "error": null, "result": <String, Object?>{"ms2000": null, "mi2000": null, "ss2000": null, "utc": null, "local": null, "timeZone": null, "offset": null, "dateInputRounded": false, "millisecondRemainder": null, "secondRemainder": null}, "offsetChoices": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.convertToolTime(bankKid: "fixture /\u00e6?&", body: <String, Object?>{"format": null, "value": null, "timeZone": null, "offset": null});
+    final result = await client.convertToolTime(body: <String, Object?>{"format": null, "value": null, "timeZone": null, "offset": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"success": false, "error": null, "result": <String, Object?>{"ms2000": null, "mi2000": null, "ss2000": null, "utc": null, "local": null, "timeZone": null, "offset": null, "dateInputRounded": false, "millisecondRemainder": null, "secondRemainder": null}, "offsetChoices": null}));
     expect(sends, 1);
   });
@@ -2167,7 +2167,7 @@ void main() {
       sends++;
       expect(request.method, "POST");
       expect(request.url.origin, 'https://example.invalid');
-      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/banks/fixture%20%2F%C3%A6%3F%26/tools/kid");
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/tenant/tools/kid");
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.body, encodeApiJson(<String, Object?>{"kid": null}));
@@ -2175,7 +2175,7 @@ void main() {
       return http.Response(encodeApiJson(<String, Object?>{"canonicalKid": null, "fields": null, "normalized": false}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.inspectToolKid(bankKid: "fixture /\u00e6?&", body: <String, Object?>{"kid": null});
+    final result = await client.inspectToolKid(body: <String, Object?>{"kid": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"canonicalKid": null, "fields": null, "normalized": false}));
     expect(sends, 1);
   });
@@ -2219,6 +2219,24 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getUnitDocumentsCount(unitKid: "fixture /\u00e6?&", search: "fixture", date: "fixture");
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "from": "2026-10-20T10:00:00Z", "through": "2026-10-20T10:00:00Z"}));
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitDocumentNeighbors", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/documents/fixture%20%2F%C3%A6%3F%26/neighbors");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"previous": <String, Object?>{"kid": null, "lastActivityUtc": "2026-10-20T10:00:00Z"}, "next": <String, Object?>{"kid": null, "lastActivityUtc": "2026-10-20T10:00:00Z"}}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitDocumentNeighbors(documentKid: "fixture /\u00e6?&");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"previous": <String, Object?>{"kid": null, "lastActivityUtc": "2026-10-20T10:00:00Z"}, "next": <String, Object?>{"kid": null, "lastActivityUtc": "2026-10-20T10:00:00Z"}}));
     expect(sends, 1);
   });
 

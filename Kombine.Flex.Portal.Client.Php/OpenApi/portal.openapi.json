@@ -18309,24 +18309,14 @@
         ]
       }
     },
-    "/api/v1/banks/{bankKid}/tools/time": {
+    "/api/v1/tenant/tools/time": {
       "post": {
         "tags": [
           "Tools"
         ],
         "summary": "Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.",
-        "description": "Requires active manager, More1, Bank Read and a matching site/bank/location grant for bankKid.\r\n            No business data is read or changed. TimeZone is an explicit browser IANA zone, never server-local.\r\n            Formats are ms2000, mi2000, ss2000, utc, local. Integers are decimal strings. Date input follows\r\n            Kombine.Flex.Time\u0027s 2 ms quantization; numeric MS2000 preserves each millisecond. UTC requires Z/offset.\r\n            DST gaps fail; overlaps return both OffsetChoices and require explicit Offset on resubmission.\r\n            Unsupported MI2000/SS2000 ranges return null instead of the library\u0027s wraparound. See the tools guide.",
+        "description": "Requires active manager, More1, Bank Read and at least one resource grant in the trusted site\u0027s tenant.\r\n            No bank or tenant selector is accepted. Bank/location-restricted managers can use these pure calculators.\r\n            No business data is read or changed. TimeZone is an explicit browser IANA zone, never server-local.\r\n            Formats are ms2000, mi2000, ss2000, utc, local. Integers are decimal strings. Date input follows\r\n            Kombine.Flex.Time\u0027s 2 ms quantization; numeric MS2000 preserves each millisecond. UTC requires Z/offset.\r\n            DST gaps fail; overlaps return both OffsetChoices and require explicit Offset on resubmission.\r\n            Unsupported MI2000/SS2000 ranges return null instead of the library\u0027s wraparound. See the tools guide.",
         "operationId": "ConvertToolTime",
-        "parameters": [
-          {
-            "name": "bankKid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -18455,24 +18445,14 @@
         ]
       }
     },
-    "/api/v1/banks/{bankKid}/tools/kid": {
+    "/api/v1/tenant/tools/kid": {
       "post": {
         "tags": [
           "Tools"
         ],
         "summary": "Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.",
-        "description": "Same More1/Bank Read/scope requirements as ConvertToolTime. This is a syntax inspector:\r\n            it never resolves names, verifies existence or grants access to an inspected identity.\r\n            Nonzero, nondefault data properties are returned as strings. Enum names/numbers and list indexes\r\n            are separate fields. Normalized indicates parser normalization; CanonicalKid is its serialization.\r\n            Controls, input over 2048 characters and input with no usable content return 400 invalid-tool-kid.",
+        "description": "Same tenant-bound More1/Bank Read/scope requirements as ConvertToolTime. This is a syntax inspector:\r\n            it never resolves names, verifies existence or grants access to an inspected identity.\r\n            Nonzero, nondefault data properties are returned as strings. Enum names/numbers and list indexes\r\n            are separate fields. Normalized indicates parser normalization; CanonicalKid is its serialization.\r\n            Controls, input over 2048 characters and input with no usable content return 400 invalid-tool-kid.",
         "operationId": "InspectToolKid",
-        "parameters": [
-          {
-            "name": "bankKid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -18955,6 +18935,153 @@
           },
           "422": {
             "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/documents/{documentKid}/neighbors": {
+      "get": {
+        "tags": [
+          "UnitDocuments"
+        ],
+        "summary": "Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.",
+        "description": "Requires the same active manager, WashDoc1/2/3 tab, Location/Unit Read, tenant, resource scope and RetentionDays checks as GetUnitDocumentTable.\r\nReturns nullable previous/next objects with a canonical document kid and lastActivityUtc (latest tagged Cycle timestamp).\r\nDoc IDs count down: previous is the nearest higher numeric ID (older document), next the nearest lower ID (newer document).\r\nSkips gaps in document numbers. Searches the unit\u0027s full stored history independently of list dates, sort and filters.\r\nA missing neighbor is null; a missing selected document is 404. No measurements, other units or settings are exposed.\r\nUncached. 400 invalid document KID; 401 expired credentials; 403 missing permission; 404 hidden/missing location, unit or document;\r\n503 unavailable/busy storage. The twelve-second storage deadline applies. Implemented locally, unreleased.",
+        "operationId": "GetUnitDocumentNeighbors",
+        "parameters": [
+          {
+            "name": "documentKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentNeighbors"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentNeighbors"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentNeighbors"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
@@ -27166,6 +27293,34 @@
         },
         "additionalProperties": false,
         "description": "Stable enum column metadata; kind is state or setting."
+      },
+      "DocumentNeighbor": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastActivityUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "An existing same-unit document identified by its canonical KID and latest tagged Cycle timestamp."
+      },
+      "DocumentNeighbors": {
+        "type": "object",
+        "properties": {
+          "previous": {
+            "$ref": "#/components/schemas/DocumentNeighbor"
+          },
+          "next": {
+            "$ref": "#/components/schemas/DocumentNeighbor"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Previous (higher numeric Doc ID) and next (lower numeric Doc ID) documents. Null means no document exists in that direction."
       },
       "DocumentTable": {
         "type": "object",
