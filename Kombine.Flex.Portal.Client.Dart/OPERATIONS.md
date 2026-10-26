@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-181 operations. OpenAPI SHA-256: `bcba9b0fd3738a5f434d97c2d7beaf8a0837e24fff3460e774dc522ca3357d00`.
+182 operations. OpenAPI SHA-256: `977e99003cdc63d482815f407100e8614e8bcdf3e573f3f7d449fbd27af7e387`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -112,10 +112,11 @@
 | `GetBankSettlementPeriod` | `getBankSettlementPeriod` | GET | `/api/v1/banks/{bankKid}/settlements/{period}` |
 | `GetTenantStatus` | `getTenantStatus` | GET | `/api/v1/tenant/status` |
 | `GetTenantStatusPage` | `getTenantStatusPage` | GET | `/api/v1/tenant/status/page` |
-| `ConvertToolTime` | `convertToolTime` | POST | `/api/v1/banks/{bankKid}/tools/time` |
-| `InspectToolKid` | `inspectToolKid` | POST | `/api/v1/banks/{bankKid}/tools/kid` |
+| `ConvertToolTime` | `convertToolTime` | POST | `/api/v1/tenant/tools/time` |
+| `InspectToolKid` | `inspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
 | `GetUnitDocuments` | `getUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |
 | `GetUnitDocumentsCount` | `getUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` |
+| `GetUnitDocumentNeighbors` | `getUnitDocumentNeighbors` | GET | `/api/v1/documents/{documentKid}/neighbors` |
 | `GetUnitDocumentTable` | `getUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` |
 | `GetUnitDocumentHtml` | `getUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` |
 | `GetUnitDocumentSvg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |

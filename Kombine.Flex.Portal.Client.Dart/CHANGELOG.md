@@ -1,4 +1,8 @@
-## 0.2.2 — 2026-10-25
+## 0.3.0
+
+Breaking: More1 time/KID methods no longer accept bankKid and use tenant routes. Adds GetUnitDocumentNeighbors.
+
+## 0.3.0 — 2026-10-25
 
 - Add scoped WashDoc list/count operations.
 - No registry publication.

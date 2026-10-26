@@ -1279,6 +1279,36 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>An existing same-unit document identified by its canonical KID and latest tagged Cycle timestamp.</summary>
+    public sealed class DocumentNeighbor
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>lastActivityUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("lastActivityUtc")]
+        public string LastActivityUtc { get { return _LastActivityUtc; } set { _LastActivityUtc = value; } }
+        private string _LastActivityUtc;
+
+    }
+
+    /// <summary>Previous (higher numeric Doc ID) and next (lower numeric Doc ID) documents. Null means no document exists in that direction.</summary>
+    public sealed class DocumentNeighbors
+    {
+        /// <summary>previous</summary>
+        [JsonField("previous")]
+        public DocumentNeighbor Previous { get { return _Previous; } set { _Previous = value; } }
+        private DocumentNeighbor _Previous;
+
+        /// <summary>next</summary>
+        [JsonField("next")]
+        public DocumentNeighbor Next { get { return _Next; } set { _Next = value; } }
+        private DocumentNeighbor _Next;
+
+    }
+
     /// <summary>Only columns with data are returned, with values indexed by column position. A missing cell is null; a stored null is a cell with null text/value.</summary>
     public sealed class DocumentTable
     {

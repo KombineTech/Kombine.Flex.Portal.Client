@@ -7,7 +7,7 @@
 | `ConfirmCameraCapture` | POST | `/api/v1/camera/confirmation` |
 | `ConfirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` |
 | `ConfirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` |
-| `ConvertToolTime` | POST | `/api/v1/banks/{bankKid}/tools/time` |
+| `ConvertToolTime` | POST | `/api/v1/tenant/tools/time` |
 | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` |
 | `CreateManager` | POST | `/api/v1/managers` |
 | `DownloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
@@ -134,6 +134,7 @@
 | `GetUnitDocumentGraph` | GET | `/api/v1/documents/{documentKid}/graph` |
 | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` |
 | `GetUnitDocumentIcon` | GET | `/api/v1/documents/{documentKid}/icon.svg` |
+| `GetUnitDocumentNeighbors` | GET | `/api/v1/documents/{documentKid}/neighbors` |
 | `GetUnitDocumentPng` | GET | `/api/v1/documents/{documentKid}/graph.png` |
 | `GetUnitDocumentSvg2` | GET | `/api/v1/documents/{documentKid}/graph2.svg` |
 | `GetUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
@@ -150,7 +151,7 @@
 | `GetUserExportCount` | GET | `/api/v1/users/export-count` |
 | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
 | `GetUsers` | GET | `/api/v1/users` |
-| `InspectToolKid` | POST | `/api/v1/banks/{bankKid}/tools/kid` |
+| `InspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
 | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `LoginManager` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` |

@@ -2552,7 +2552,8 @@ namespace Kombine.Flex.Portal.Client
         /// Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.
         /// </summary>
         /// <remarks>
-        /// Requires active manager, More1, Bank Read and a matching site/bank/location grant for bankKid.
+        /// Requires active manager, More1, Bank Read and at least one resource grant in the trusted site's tenant.
+        /// <br/>            No bank or tenant selector is accepted. Bank/location-restricted managers can use these pure calculators.
         /// <br/>            No business data is read or changed. TimeZone is an explicit browser IANA zone, never server-local.
         /// <br/>            Formats are ms2000, mi2000, ss2000, utc, local. Integers are decimal strings. Date input follows
         /// <br/>            Kombine.Flex.Time's 2 ms quantization; numeric MS2000 preserves each millisecond. UTC requires Z/offset.
@@ -2561,14 +2562,14 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ToolTimeResponse> ConvertToolTimeAsync(string bankKid, ToolTimeRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ToolTimeResponse> ConvertToolTimeAsync(ToolTimeRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.
         /// </summary>
         /// <remarks>
-        /// Same More1/Bank Read/scope requirements as ConvertToolTime. This is a syntax inspector:
+        /// Same tenant-bound More1/Bank Read/scope requirements as ConvertToolTime. This is a syntax inspector:
         /// <br/>            it never resolves names, verifies existence or grants access to an inspected identity.
         /// <br/>            Nonzero, nondefault data properties are returned as strings. Enum names/numbers and list indexes
         /// <br/>            are separate fields. Normalized indicates parser normalization; CanonicalKid is its serialization.
@@ -2576,7 +2577,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ToolKidInspectionResponse> InspectToolKidAsync(string bankKid, ToolKidInspectionRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ToolKidInspectionResponse> InspectToolKidAsync(ToolKidInspectionRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2625,6 +2626,23 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UnitDocumentCount> GetUnitDocumentsCountAsync(string unitKid, string? search = null, string? date = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.
+        /// </summary>
+        /// <remarks>
+        /// Requires the same active manager, WashDoc1/2/3 tab, Location/Unit Read, tenant, resource scope and RetentionDays checks as GetUnitDocumentTable.
+        /// <br/>Returns nullable previous/next objects with a canonical document kid and lastActivityUtc (latest tagged Cycle timestamp).
+        /// <br/>Doc IDs count down: previous is the nearest higher numeric ID (older document), next the nearest lower ID (newer document).
+        /// <br/>Skips gaps in document numbers. Searches the unit's full stored history independently of list dates, sort and filters.
+        /// <br/>A missing neighbor is null; a missing selected document is 404. No measurements, other units or settings are exposed.
+        /// <br/>Uncached. 400 invalid document KID; 401 expired credentials; 403 missing permission; 404 hidden/missing location, unit or document;
+        /// <br/>503 unavailable/busy storage. The twelve-second storage deadline applies. Implemented locally, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DocumentNeighbors> GetUnitDocumentNeighborsAsync(string documentKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -19813,7 +19831,8 @@ namespace Kombine.Flex.Portal.Client
         /// Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.
         /// </summary>
         /// <remarks>
-        /// Requires active manager, More1, Bank Read and a matching site/bank/location grant for bankKid.
+        /// Requires active manager, More1, Bank Read and at least one resource grant in the trusted site's tenant.
+        /// <br/>            No bank or tenant selector is accepted. Bank/location-restricted managers can use these pure calculators.
         /// <br/>            No business data is read or changed. TimeZone is an explicit browser IANA zone, never server-local.
         /// <br/>            Formats are ms2000, mi2000, ss2000, utc, local. Integers are decimal strings. Date input follows
         /// <br/>            Kombine.Flex.Time's 2 ms quantization; numeric MS2000 preserves each millisecond. UTC requires Z/offset.
@@ -19822,11 +19841,8 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ToolTimeResponse> ConvertToolTimeAsync(string bankKid, ToolTimeRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ToolTimeResponse> ConvertToolTimeAsync(ToolTimeRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (bankKid == null)
-                throw new System.ArgumentNullException("bankKid");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -19842,10 +19858,8 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/banks/{bankKid}/tools/time"
-                    urlBuilder_.Append("api/v1/banks/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append("/tools/time");
+                    // Operation Path: "api/v1/tenant/tools/time"
+                    urlBuilder_.Append("api/v1/tenant/tools/time");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -19944,7 +19958,7 @@ namespace Kombine.Flex.Portal.Client
         /// Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.
         /// </summary>
         /// <remarks>
-        /// Same More1/Bank Read/scope requirements as ConvertToolTime. This is a syntax inspector:
+        /// Same tenant-bound More1/Bank Read/scope requirements as ConvertToolTime. This is a syntax inspector:
         /// <br/>            it never resolves names, verifies existence or grants access to an inspected identity.
         /// <br/>            Nonzero, nondefault data properties are returned as strings. Enum names/numbers and list indexes
         /// <br/>            are separate fields. Normalized indicates parser normalization; CanonicalKid is its serialization.
@@ -19952,11 +19966,8 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ToolKidInspectionResponse> InspectToolKidAsync(string bankKid, ToolKidInspectionRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ToolKidInspectionResponse> InspectToolKidAsync(ToolKidInspectionRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (bankKid == null)
-                throw new System.ArgumentNullException("bankKid");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -19972,10 +19983,8 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/banks/{bankKid}/tools/kid"
-                    urlBuilder_.Append("api/v1/banks/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(bankKid, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append("/tools/kid");
+                    // Operation Path: "api/v1/tenant/tools/kid"
+                    urlBuilder_.Append("api/v1/tenant/tools/kid");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -20384,6 +20393,144 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.
+        /// </summary>
+        /// <remarks>
+        /// Requires the same active manager, WashDoc1/2/3 tab, Location/Unit Read, tenant, resource scope and RetentionDays checks as GetUnitDocumentTable.
+        /// <br/>Returns nullable previous/next objects with a canonical document kid and lastActivityUtc (latest tagged Cycle timestamp).
+        /// <br/>Doc IDs count down: previous is the nearest higher numeric ID (older document), next the nearest lower ID (newer document).
+        /// <br/>Skips gaps in document numbers. Searches the unit's full stored history independently of list dates, sort and filters.
+        /// <br/>A missing neighbor is null; a missing selected document is 404. No measurements, other units or settings are exposed.
+        /// <br/>Uncached. 400 invalid document KID; 401 expired credentials; 403 missing permission; 404 hidden/missing location, unit or document;
+        /// <br/>503 unavailable/busy storage. The twelve-second storage deadline applies. Implemented locally, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DocumentNeighbors> GetUnitDocumentNeighborsAsync(string documentKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (documentKid == null)
+                throw new System.ArgumentNullException("documentKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/documents/{documentKid}/neighbors"
+                    urlBuilder_.Append("api/v1/documents/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/neighbors");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DocumentNeighbors>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -30283,6 +30430,36 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
         public string? IconKid { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// An existing same-unit document identified by its canonical KID and latest tagged Cycle timestamp.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DocumentNeighbor
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastActivityUtc")]
+        public System.DateTimeOffset? LastActivityUtc { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Previous (higher numeric Doc ID) and next (lower numeric Doc ID) documents. Null means no document exists in that direction.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DocumentNeighbors
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("previous")]
+        public DocumentNeighbor? Previous { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("next")]
+        public DocumentNeighbor? Next { get; set; } = default!;
 
     }
 

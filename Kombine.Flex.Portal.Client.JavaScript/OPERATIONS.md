@@ -110,10 +110,11 @@
 | `GetBankSettlementPeriod` | `get_bank_settlement_period` | `getBankSettlementPeriod` | GET | `/api/v1/banks/{bankKid}/settlements/{period}` |
 | `GetTenantStatus` | `get_tenant_status` | `getTenantStatus` | GET | `/api/v1/tenant/status` |
 | `GetTenantStatusPage` | `get_tenant_status_page` | `getTenantStatusPage` | GET | `/api/v1/tenant/status/page` |
-| `ConvertToolTime` | `convert_tool_time` | `convertToolTime` | POST | `/api/v1/banks/{bankKid}/tools/time` |
-| `InspectToolKid` | `inspect_tool_kid` | `inspectToolKid` | POST | `/api/v1/banks/{bankKid}/tools/kid` |
+| `ConvertToolTime` | `convert_tool_time` | `convertToolTime` | POST | `/api/v1/tenant/tools/time` |
+| `InspectToolKid` | `inspect_tool_kid` | `inspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
 | `GetUnitDocuments` | `get_unit_documents` | `getUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |
 | `GetUnitDocumentsCount` | `get_unit_documents_count` | `getUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` |
+| `GetUnitDocumentNeighbors` | `get_unit_document_neighbors` | `getUnitDocumentNeighbors` | GET | `/api/v1/documents/{documentKid}/neighbors` |
 | `GetUnitDocumentTable` | `get_unit_document_table` | `getUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` |
 | `GetUnitDocumentHtml` | `get_unit_document_html` | `getUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` |
 | `GetUnitDocumentSvg` | `get_unit_document_svg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |

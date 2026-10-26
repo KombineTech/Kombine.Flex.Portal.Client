@@ -260,6 +260,18 @@ array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
 array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
 ```
 
+### DocumentNeighbor
+
+```php
+array{'kid'?: string|null, 'lastActivityUtc'?: string}
+```
+
+### DocumentNeighbors
+
+```php
+array{'previous'?: DocumentNeighbor, 'next'?: DocumentNeighbor}
+```
+
 ### DocumentTable
 
 ```php

@@ -48,6 +48,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type DirectoryExportCountResponse array{'count'?: int}
  * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type DocumentColumn array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
+ * @phpstan-type DocumentNeighbor array{'kid'?: string|null, 'lastActivityUtc'?: string}
+ * @phpstan-type DocumentNeighbors array{'previous'?: DocumentNeighbor, 'next'?: DocumentNeighbor}
  * @phpstan-type DocumentTable array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'columns'?: list<DocumentColumn>|null, 'rows'?: list<DocumentTableRow>|null}
  * @phpstan-type DocumentTableRow array{'ms2000'?: int, 'cells'?: list<DocumentCell>|null}
  * @phpstan-type DocumentUnitOption array{'kid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'unitType'?: int|null}
@@ -1380,24 +1382,22 @@ final class PortalClient extends BaseClient
 
     /**
      * Convert MS2000, MI2000, SS2000, UTC or a local wall time without floating-point integers.
-     * @param string $bankKid
      * @param ToolTimeRequest $body
      * @return ToolTimeResponse
      */
-    public function convertToolTime(mixed $bankKid, #[\SensitiveParameter] array $body): mixed
+    public function convertToolTime(#[\SensitiveParameter] array $body): mixed
     {
-        return $this->request('ConvertToolTime', ['bankKid' => $bankKid], $body);
+        return $this->request('ConvertToolTime', [], $body);
     }
 
     /**
      * Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.
-     * @param string $bankKid
      * @param ToolKidInspectionRequest $body
      * @return ToolKidInspectionResponse
      */
-    public function inspectToolKid(mixed $bankKid, #[\SensitiveParameter] array $body): mixed
+    public function inspectToolKid(#[\SensitiveParameter] array $body): mixed
     {
-        return $this->request('InspectToolKid', ['bankKid' => $bankKid], $body);
+        return $this->request('InspectToolKid', [], $body);
     }
 
     /**
@@ -1420,6 +1420,16 @@ final class PortalClient extends BaseClient
     public function getUnitDocumentsCount(mixed $unitKid, array $options = []): mixed
     {
         return $this->request('GetUnitDocumentsCount', ['unitKid' => $unitKid] + $options, null);
+    }
+
+    /**
+     * Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.
+     * @param string $documentKid
+     * @return DocumentNeighbors
+     */
+    public function getUnitDocumentNeighbors(mixed $documentKid): mixed
+    {
+        return $this->request('GetUnitDocumentNeighbors', ['documentKid' => $documentKid], null);
     }
 
     /**

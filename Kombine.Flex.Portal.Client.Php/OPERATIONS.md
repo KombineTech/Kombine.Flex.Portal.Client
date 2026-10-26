@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `bcba9b0fd3738a5f434d97c2d7beaf8a0837e24fff3460e774dc522ca3357d00`).
-181 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `0e8b5f4d4525382214c884521b73234380e4325d5d9912dd43e241b433ec938d`).
+182 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -10,7 +10,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `bcba9b0fd3738a5f434
 | `confirmCameraCapture` | `ConfirmCameraCapture` | POST | `/api/v1/camera/confirmation` | Bearer |
 | `confirmManagerSignUp` | `ConfirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` | Anonymous |
 | `confirmMyManagerEmail` | `ConfirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` | Anonymous |
-| `convertToolTime` | `ConvertToolTime` | POST | `/api/v1/banks/{bankKid}/tools/time` | Bearer |
+| `convertToolTime` | `ConvertToolTime` | POST | `/api/v1/tenant/tools/time` | Bearer |
 | `createBankUser` | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` | Bearer |
 | `createManager` | `CreateManager` | POST | `/api/v1/managers` | Bearer |
 | `downloadBankSettlement` | `DownloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` | Bearer |
@@ -137,6 +137,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `bcba9b0fd3738a5f434
 | `getUnitDocumentGraph` | `GetUnitDocumentGraph` | GET | `/api/v1/documents/{documentKid}/graph` | Bearer |
 | `getUnitDocumentHtml` | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` | Bearer |
 | `getUnitDocumentIcon` | `GetUnitDocumentIcon` | GET | `/api/v1/documents/{documentKid}/icon.svg` | Bearer |
+| `getUnitDocumentNeighbors` | `GetUnitDocumentNeighbors` | GET | `/api/v1/documents/{documentKid}/neighbors` | Bearer |
 | `getUnitDocumentPng` | `GetUnitDocumentPng` | GET | `/api/v1/documents/{documentKid}/graph.png` | Bearer |
 | `getUnitDocumentSvg2` | `GetUnitDocumentSvg2` | GET | `/api/v1/documents/{documentKid}/graph2.svg` | Bearer |
 | `getUnitDocumentSvg` | `GetUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` | Bearer |
@@ -153,7 +154,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `bcba9b0fd3738a5f434
 | `getUserExportCount` | `GetUserExportCount` | GET | `/api/v1/users/export-count` | Bearer |
 | `getUserReceipts` | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` | Bearer |
 | `getUsers` | `GetUsers` | GET | `/api/v1/users` | Bearer |
-| `inspectToolKid` | `InspectToolKid` | POST | `/api/v1/banks/{bankKid}/tools/kid` | Bearer |
+| `inspectToolKid` | `InspectToolKid` | POST | `/api/v1/tenant/tools/kid` | Bearer |
 | `inviteManager` | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` | Bearer |
 | `loginManager` | `LoginManager` | POST | `/api/v1/session/login` | Anonymous |
 | `lookupObjectCoordinates` | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` | Bearer |
