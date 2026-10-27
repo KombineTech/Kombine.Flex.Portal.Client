@@ -3167,6 +3167,26 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string IconSet { get { return _IconSet; } set { _IconSet = value; } }
         private string _IconSet;
 
+        /// <summary>Personal eLanguage identity; null follows browser/tenant policy. Danish is zero.</summary>
+        [JsonField("language")]
+        public int? Language { get { return _Language; } set { _Language = value; } }
+        private int? _Language;
+
+        /// <summary>Allowlisted short-date pattern; empty follows the language.</summary>
+        [JsonField("dateFormat")]
+        public string DateFormat { get { return _DateFormat; } set { _DateFormat = value; } }
+        private string _DateFormat;
+
+        /// <summary>Number-format culture; empty follows the language. Does not change currency.</summary>
+        [JsonField("numberFormat")]
+        public string NumberFormat { get { return _NumberFormat; } set { _NumberFormat = value; } }
+        private string _NumberFormat;
+
+        /// <summary>Personal table/list vertical spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid values use 1.</summary>
+        [JsonField("lineSpacing")]
+        public double? LineSpacing { get { return _LineSpacing; } set { _LineSpacing = value; } }
+        private double? _LineSpacing;
+
         /// <summary>Names and IDs from the shared eTab enum, limited to the manager's recognized grants.</summary>
         [JsonField("tabDetails")]
         public ManagerTabResponse[] TabDetails { get { return _TabDetails; } set { _TabDetails = value; } }
@@ -3691,6 +3711,26 @@ namespace Kombine.Flex.Portal.Client.Net45
         [JsonField("iconSet")]
         public string IconSet { get { return _IconSet; } set { _IconSet = value; } }
         private string _IconSet;
+
+        /// <summary>language</summary>
+        [JsonField("language")]
+        public int? Language { get { return _Language; } set { _Language = value; } }
+        private int? _Language;
+
+        /// <summary>dateFormat</summary>
+        [JsonField("dateFormat")]
+        public string DateFormat { get { return _DateFormat; } set { _DateFormat = value; } }
+        private string _DateFormat;
+
+        /// <summary>numberFormat</summary>
+        [JsonField("numberFormat")]
+        public string NumberFormat { get { return _NumberFormat; } set { _NumberFormat = value; } }
+        private string _NumberFormat;
+
+        /// <summary>lineSpacing</summary>
+        [JsonField("lineSpacing")]
+        public double? LineSpacing { get { return _LineSpacing; } set { _LineSpacing = value; } }
+        private double? _LineSpacing;
 
     }
 
@@ -6391,6 +6431,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         [JsonField("refreshAfterSeconds")]
         public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
         private int? _RefreshAfterSeconds;
+
+        /// <summary>documentKidText</summary>
+        [JsonField("documentKidText")]
+        public string DocumentKidText { get { return _DocumentKidText; } set { _DocumentKidText = value; } }
+        private string _DocumentKidText;
 
     }
 

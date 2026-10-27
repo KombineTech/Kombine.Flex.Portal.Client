@@ -2955,6 +2955,23 @@
           "type": "string",
           "nullable": true
         },
+        "language": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "dateFormat": {
+          "type": "string",
+          "nullable": true
+        },
+        "numberFormat": {
+          "type": "string",
+          "nullable": true
+        },
+        "lineSpacing": {
+          "type": "number",
+          "format": "double"
+        },
         "tabDetails": {
           "type": "array",
           "items": {
@@ -3466,6 +3483,23 @@
         "iconSet": {
           "type": "string",
           "nullable": true
+        },
+        "language": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "dateFormat": {
+          "type": "string",
+          "nullable": true
+        },
+        "numberFormat": {
+          "type": "string",
+          "nullable": true
+        },
+        "lineSpacing": {
+          "type": "number",
+          "format": "double"
         }
       },
       "additionalProperties": false
@@ -5967,6 +6001,10 @@
         "refreshAfterSeconds": {
           "type": "integer",
           "format": "int32"
+        },
+        "documentKidText": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false

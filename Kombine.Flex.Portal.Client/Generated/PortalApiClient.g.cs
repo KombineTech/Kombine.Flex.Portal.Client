@@ -1953,7 +1953,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- API-key login performs no duplicate-account cleanup. Inactive accounts and invalid keys return 401.
         /// <br/>- Key replacement revokes key-authenticated sessions within 60 seconds; renewal preserves the key proof.
         /// <br/>- Use `accessToken` in `Authorization: Bearer {accessToken}` when calling `GetCurrentManager`.
-        /// <br/>- The opaque token lasts **259,200 seconds (three days)**. Do not decode it as a JWT.
+        /// <br/>- The opaque token lasts **864,000 seconds (ten days)**. Do not decode it as a JWT.
         /// <br/>- Before expiry, use `RenewManagerSession` to replace it after user activity. No separate refresh token is issued.
         /// <br/>
         /// <br/>### Tenant and access
@@ -1983,7 +1983,7 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Renew an unexpired manager session for three days.
+        /// Renew an unexpired manager session for ten days.
         /// </summary>
         /// <remarks>
         /// Send the current bearer token and no request body. The site's current account state and password
@@ -2175,7 +2175,12 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// ### Access and fields
         /// <br/>- Requires an active manager bearer session on this tenant with a current credential stamp. No Tabs, Kids or Managers Write are needed.
-        /// <br/>- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, revision and availableIcons.
+        /// <br/>- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, language, dateFormat, numberFormat, lineSpacing, revision and availableIcons.
+        /// <br/>- language is a numeric operational eLanguage identity (0 is Danish), or null for automatic browser/tenant selection. Last/None/All are rejected.
+        /// <br/>- dateFormat is empty (follow language) or dd-MM-yyyy, dd.MM.yyyy, dd/MM/yyyy, MM/dd/yyyy, yyyy-MM-dd,
+        /// <br/>  optionally followed by HH:mm (24-hour) or hh:mm tt (12-hour AM/PM). Date-only values keep the language's clock format.
+        /// <br/>- lineSpacing is a numeric table/list spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid stored values use 1.
+        /// <br/>- numberFormat is empty (follow language) or da-DK, en-GB, sv-SE, de-DE, fr-FR, ar-SA. Preferences affect presentation only.
         /// <br/>- retentionDays is the number of days deleted records remain visible within your existing access; 0 hides deleted records. Missing/invalid stored values return 0.
         /// <br/>- emailVerified is proof of this exact current email log version, not an old or manually assigned flag.
         /// <br/>- No target manager or tenant selector is accepted. Passwords and internal verification data are never returned.
@@ -2255,9 +2260,12 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// ### Request
-        /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays or IconSet. Other settings are rejected.
+        /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays, IconSet, Language, DateFormat, NumberFormat or LineSpacing. Other settings are rejected.
         /// <br/>- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.
         /// <br/>- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.
+        /// <br/>- Language requires a numeric operational eLanguage identity (0–15), or null for automatic. Last/None/All are rejected.
+        /// <br/>- LineSpacing requires a JSON number: 0.75, 1, 1.25, 1.5, 1.75 or 2. Default 1 preserves the established table/list spacing.
+        /// <br/>- DateFormat and NumberFormat require the finite string choices documented by GetMyManagerProfile; empty strings follow the language.
         /// <br/>- IconSet requires the exact JSON string "g" or "line". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as "line"; an explicit saved "g" is preserved.
         /// <br/>- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.
         /// <br/>- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.
@@ -2783,11 +2791,12 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Render a text-free visual WashDoc preview for document lists and icon grids.
+        /// Render the first WashDoc curve as a monochrome line icon.
         /// </summary>
         /// <remarks>
         /// Uses the same authorized historical measurements, cycle window and private graph artifact as GetUnitDocumentSvg2.
-        /// <br/>Curves are reduced while preserving local peaks. No axes, labels, target overlays or quantitative reading scale.
+        /// <br/>Uses only the first available curve in graph-picker order, reduced while preserving local peaks.
+        /// <br/>Transparent 24-unit square with a currentColor outline. No fill, axes, labels, gradient or quantitative reading scale.
         /// <br/>Access and visibility are checked before every cache lookup. Finished artifacts share the graph cache; responses use no-store.
         /// <br/>Empty/non-numeric measurements return 422. Clients should load visible previews lazily with bounded concurrency.
         /// </remarks>
@@ -3834,9 +3843,11 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Only the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.
         /// <br/>Uses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.
         /// <br/>The original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.
-        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. Finished graphs use the bounded private graph cache.
-        /// <br/>Refresh visible widgets every 60 seconds. HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
-        /// <br/>422 no numeric graph/oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
+        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. GraphSvg is null when the document has no drawable measurements.
+        /// <br/>Finished graphs and metadata-only documents use the bounded private graph cache.
+        /// <br/>Refresh visible running widgets every 15 seconds; stop when a pinned document completes. Unpinned widgets check for a new document every 60 seconds after completion.
+        /// <br/>HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
+        /// <br/>422 oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
         /// <br/>Implemented locally, unreleased.
         /// </remarks>
         /// <returns>OK</returns>
@@ -16077,7 +16088,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- API-key login performs no duplicate-account cleanup. Inactive accounts and invalid keys return 401.
         /// <br/>- Key replacement revokes key-authenticated sessions within 60 seconds; renewal preserves the key proof.
         /// <br/>- Use `accessToken` in `Authorization: Bearer {accessToken}` when calling `GetCurrentManager`.
-        /// <br/>- The opaque token lasts **259,200 seconds (three days)**. Do not decode it as a JWT.
+        /// <br/>- The opaque token lasts **864,000 seconds (ten days)**. Do not decode it as a JWT.
         /// <br/>- Before expiry, use `RenewManagerSession` to replace it after user activity. No separate refresh token is issued.
         /// <br/>
         /// <br/>### Tenant and access
@@ -16250,7 +16261,7 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Renew an unexpired manager session for three days.
+        /// Renew an unexpired manager session for ten days.
         /// </summary>
         /// <remarks>
         /// Send the current bearer token and no request body. The site's current account state and password
@@ -17356,7 +17367,12 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// ### Access and fields
         /// <br/>- Requires an active manager bearer session on this tenant with a current credential stamp. No Tabs, Kids or Managers Write are needed.
-        /// <br/>- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, revision and availableIcons.
+        /// <br/>- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, language, dateFormat, numberFormat, lineSpacing, revision and availableIcons.
+        /// <br/>- language is a numeric operational eLanguage identity (0 is Danish), or null for automatic browser/tenant selection. Last/None/All are rejected.
+        /// <br/>- dateFormat is empty (follow language) or dd-MM-yyyy, dd.MM.yyyy, dd/MM/yyyy, MM/dd/yyyy, yyyy-MM-dd,
+        /// <br/>  optionally followed by HH:mm (24-hour) or hh:mm tt (12-hour AM/PM). Date-only values keep the language's clock format.
+        /// <br/>- lineSpacing is a numeric table/list spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid stored values use 1.
+        /// <br/>- numberFormat is empty (follow language) or da-DK, en-GB, sv-SE, de-DE, fr-FR, ar-SA. Preferences affect presentation only.
         /// <br/>- retentionDays is the number of days deleted records remain visible within your existing access; 0 hides deleted records. Missing/invalid stored values return 0.
         /// <br/>- emailVerified is proof of this exact current email log version, not an old or manually assigned flag.
         /// <br/>- No target manager or tenant selector is accepted. Passwords and internal verification data are never returned.
@@ -17908,9 +17924,12 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// ### Request
-        /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays or IconSet. Other settings are rejected.
+        /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays, IconSet, Language, DateFormat, NumberFormat or LineSpacing. Other settings are rejected.
         /// <br/>- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.
         /// <br/>- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.
+        /// <br/>- Language requires a numeric operational eLanguage identity (0–15), or null for automatic. Last/None/All are rejected.
+        /// <br/>- LineSpacing requires a JSON number: 0.75, 1, 1.25, 1.5, 1.75 or 2. Default 1 preserves the established table/list spacing.
+        /// <br/>- DateFormat and NumberFormat require the finite string choices documented by GetMyManagerProfile; empty strings follow the language.
         /// <br/>- IconSet requires the exact JSON string "g" or "line". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as "line"; an explicit saved "g" is preserved.
         /// <br/>- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.
         /// <br/>- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.
@@ -21567,11 +21586,12 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Render a text-free visual WashDoc preview for document lists and icon grids.
+        /// Render the first WashDoc curve as a monochrome line icon.
         /// </summary>
         /// <remarks>
         /// Uses the same authorized historical measurements, cycle window and private graph artifact as GetUnitDocumentSvg2.
-        /// <br/>Curves are reduced while preserving local peaks. No axes, labels, target overlays or quantitative reading scale.
+        /// <br/>Uses only the first available curve in graph-picker order, reduced while preserving local peaks.
+        /// <br/>Transparent 24-unit square with a currentColor outline. No fill, axes, labels, gradient or quantitative reading scale.
         /// <br/>Access and visibility are checked before every cache lookup. Finished artifacts share the graph cache; responses use no-store.
         /// <br/>Empty/non-numeric measurements return 422. Clients should load visible previews lazily with bounded concurrency.
         /// </remarks>
@@ -28659,9 +28679,11 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Only the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.
         /// <br/>Uses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.
         /// <br/>The original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.
-        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. Finished graphs use the bounded private graph cache.
-        /// <br/>Refresh visible widgets every 60 seconds. HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
-        /// <br/>422 no numeric graph/oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
+        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. GraphSvg is null when the document has no drawable measurements.
+        /// <br/>Finished graphs and metadata-only documents use the bounded private graph cache.
+        /// <br/>Refresh visible running widgets every 15 seconds; stop when a pinned document completes. Unpinned widgets check for a new document every 60 seconds after completion.
+        /// <br/>HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
+        /// <br/>422 oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
         /// <br/>Implemented locally, unreleased.
         /// </remarks>
         /// <returns>OK</returns>
@@ -32325,6 +32347,30 @@ namespace Kombine.Flex.Portal.Client
         public string? IconSet { get; set; } = default!;
 
         /// <summary>
+        /// Personal eLanguage identity; null follows browser/tenant policy. Danish is zero.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("language")]
+        public int? Language { get; set; } = default!;
+
+        /// <summary>
+        /// Allowlisted short-date pattern; empty follows the language.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("dateFormat")]
+        public string? DateFormat { get; set; } = default!;
+
+        /// <summary>
+        /// Number-format culture; empty follows the language. Does not change currency.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("numberFormat")]
+        public string? NumberFormat { get; set; } = default!;
+
+        /// <summary>
+        /// Personal table/list vertical spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid values use 1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("lineSpacing")]
+        public double? LineSpacing { get; set; } = default!;
+
+        /// <summary>
         /// Names and IDs from the shared eTab enum, limited to the manager's recognized grants.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("tabDetails")]
@@ -32867,6 +32913,18 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("iconSet")]
         public string? IconSet { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("language")]
+        public int? Language { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("dateFormat")]
+        public string? DateFormat { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("numberFormat")]
+        public string? NumberFormat { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lineSpacing")]
+        public double? LineSpacing { get; set; } = default!;
 
     }
 
@@ -35307,6 +35365,9 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
         public int? RefreshAfterSeconds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("documentKidText")]
+        public string? DocumentKidText { get; set; } = default!;
 
     }
 

@@ -403,7 +403,7 @@ export class PortalClient extends BaseClient {
     return this.send("LoginManager", {"X-Portal-Login-Client-IP": options.xPortalLoginClientIp}, body, request) as Promise<Models.ManagerSessionResponse>;
   }
 
-  /** Renew an unexpired manager session for three days. */
+  /** Renew an unexpired manager session for ten days. */
   renewManagerSession(request: RequestOptions = {}): Promise<Models.ManagerSessionResponse> {
     return this.send("RenewManagerSession", {}, undefined, request) as Promise<Models.ManagerSessionResponse>;
   }
@@ -598,7 +598,7 @@ export class PortalClient extends BaseClient {
     return this.send("GetUnitDocumentPng", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
-  /** Render a text-free visual WashDoc preview for document lists and icon grids. */
+  /** Render the first WashDoc curve as a monochrome line icon. */
   getUnitDocumentIcon(documentKid: string, options: Models.GetUnitDocumentIconOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("GetUnitDocumentIcon", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }

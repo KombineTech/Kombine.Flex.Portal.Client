@@ -1,8 +1,10 @@
+Version 0.4.0 synkroniserer personlige valg af sprog, dato/tid, talformat og linjeafstand. WashDoc-widgets erstatter unitKidText med documentKidText; graphSvg kan være null uden målinger. Stop polling ved refreshAfterSeconds=0; igangværende dokumenter bruger 15 sekunder. Administratorsessioner varer ti dage: brug svarets expiresIn og forny kun efter aktivitet. UserBalance er fortsat kompatibel. Se [API-changelog](/docs#changelog).
+
 Version 0.3.0 flytter ConvertToolTime og InspectToolKid til /api/v1/tenant/tools/time og /api/v1/tenant/tools/kid. Fjern bankKid-argumentet ved genbygning; sitet vælger tenant. Aktiv manager, More1, Bank Read og et ressourcegrant i sitets tenant kræves fortsat. JSON-input og -svar er uændrede. GetUnitDocumentNeighbors giver autoriseret dokumentnavigation for samme enhed. Se [API-changelog](/docs#changelog).
 
 # Kombine Flex Portal Dart-klient
 
-Version **0.3.0** dÃ¦kker **182 operationer** fra den medfÃ¸lgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilfÃ¸j nedenstÃ¥ende sti i `pubspec.yaml`, og kÃ¸r `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
+Version **0.4.0** dÃ¦kker **182 operationer** fra den medfÃ¸lgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilfÃ¸j nedenstÃ¥ende sti i `pubspec.yaml`, og kÃ¸r `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
 
 ```yaml
 dependencies:

@@ -1646,11 +1646,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
 
-      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "name": null, "tabs": null, "hasBankAccess": false, "iconKid": null, "databaseAccess": <String, Object?>{"canWrite": null, "checkedAtUtc": "2026-10-20T10:00:00Z"}, "navigationBanks": null, "organisation": null, "gravatarUrl": null, "retentionDays": 7, "themeMode": 7, "iconSet": null, "tabDetails": null, "resourceGrants": null, "operationPermissions": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "name": null, "tabs": null, "hasBankAccess": false, "iconKid": null, "databaseAccess": <String, Object?>{"canWrite": null, "checkedAtUtc": "2026-10-20T10:00:00Z"}, "navigationBanks": null, "organisation": null, "gravatarUrl": null, "retentionDays": 7, "themeMode": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25, "tabDetails": null, "resourceGrants": null, "operationPermissions": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getCurrentManager();
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "name": null, "tabs": null, "hasBankAccess": false, "iconKid": null, "databaseAccess": <String, Object?>{"canWrite": null, "checkedAtUtc": "2026-10-20T10:00:00Z"}, "navigationBanks": null, "organisation": null, "gravatarUrl": null, "retentionDays": 7, "themeMode": 7, "iconSet": null, "tabDetails": null, "resourceGrants": null, "operationPermissions": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "name": null, "tabs": null, "hasBankAccess": false, "iconKid": null, "databaseAccess": <String, Object?>{"canWrite": null, "checkedAtUtc": "2026-10-20T10:00:00Z"}, "navigationBanks": null, "organisation": null, "gravatarUrl": null, "retentionDays": 7, "themeMode": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25, "tabDetails": null, "resourceGrants": null, "operationPermissions": null}));
     expect(sends, 1);
   });
 
@@ -1795,11 +1795,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
 
-      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "name": null, "organisation": null, "iconKid": null, "email": null, "emailVerified": false, "themeMode": 7, "revision": null, "availableIcons": null, "retentionDays": 7, "iconSet": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "name": null, "organisation": null, "iconKid": null, "email": null, "emailVerified": false, "themeMode": 7, "revision": null, "availableIcons": null, "retentionDays": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getMyManagerProfile();
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "name": null, "organisation": null, "iconKid": null, "email": null, "emailVerified": false, "themeMode": 7, "revision": null, "availableIcons": null, "retentionDays": 7, "iconSet": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "name": null, "organisation": null, "iconKid": null, "email": null, "emailVerified": false, "themeMode": 7, "revision": null, "availableIcons": null, "retentionDays": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25}));
     expect(sends, 1);
   });
 
@@ -1888,11 +1888,11 @@ void main() {
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.body, encodeApiJson(<String, Object?>{"revision": null, "value": null}));
       expect(request.headers['content-type'], contains('application/json'));
-      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "name": null, "organisation": null, "iconKid": null, "email": null, "emailVerified": false, "themeMode": 7, "revision": null, "availableIcons": null, "retentionDays": 7, "iconSet": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "name": null, "organisation": null, "iconKid": null, "email": null, "emailVerified": false, "themeMode": 7, "revision": null, "availableIcons": null, "retentionDays": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.setMyManagerProfileField(field: "fixture /\u00e6?&", body: <String, Object?>{"revision": null, "value": null});
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "name": null, "organisation": null, "iconKid": null, "email": null, "emailVerified": false, "themeMode": 7, "revision": null, "availableIcons": null, "retentionDays": 7, "iconSet": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "name": null, "organisation": null, "iconKid": null, "email": null, "emailVerified": false, "themeMode": 7, "revision": null, "availableIcons": null, "retentionDays": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25}));
     expect(sends, 1);
   });
 
@@ -3472,11 +3472,11 @@ void main() {
       expect(request.headers['authorization'], isNull);
       expect(request.url.queryParametersAll["documentKid"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["unitKid"], <Object?>["fixture"]);
-      return http.Response(encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7, "documentKidText": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getPublicWashDocWidget(documentKid: "fixture", unitKid: "fixture");
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7, "documentKidText": null}));
     expect(sends, 1);
   });
 
