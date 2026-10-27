@@ -1,3 +1,7 @@
+## 0.4.0
+
+Version 0.4.0 synchronizes personal language, date/time, number and line-spacing preferences. WashDoc widgets replace unitKidText with documentKidText; graphSvg may be null when no measurements exist. Treat refreshAfterSeconds=0 as stop polling; running documents use 15 seconds. Manager sessions last ten days: use the returned expiresIn and renew only after activity. UserBalance remains compatible. See the [API changelog](/docs#changelog).
+
 ## 0.3.0
 
 Breaking: More1 time/KID methods no longer accept bankKid and use tenant routes. Adds GetUnitDocumentNeighbors.

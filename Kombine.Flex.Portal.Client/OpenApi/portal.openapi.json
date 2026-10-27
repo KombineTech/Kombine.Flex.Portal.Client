@@ -14557,7 +14557,7 @@
           "ManagerSession"
         ],
         "summary": "Log in with manager email/password or manager username/API key.",
-        "description": "### Sign in\r\n            \r\n- Send exactly one complete pair: email/password or kid/apiKey, over HTTPS. Never hash credentials in the client.\r\n- The kid field accepts the manager Kid.ToUserId username (tenant.0-userId) or canonical bank-zero manager KID on this site. API keys use eSetting.ApiKeyHash, never Password.\r\n- API-key login performs no duplicate-account cleanup. Inactive accounts and invalid keys return 401.\r\n- Key replacement revokes key-authenticated sessions within 60 seconds; renewal preserves the key proof.\r\n- Use `accessToken` in `Authorization: Bearer {accessToken}` when calling `GetCurrentManager`.\r\n- The opaque token lasts **259,200 seconds (three days)**. Do not decode it as a JWT.\r\n- Before expiry, use `RenewManagerSession` to replace it after user activity. No separate refresh token is issued.\r\n            \r\n### Tenant and access\r\n            \r\n- The API site's configuration selects the tenant, not the request.\r\n- Credentials and current manager settings come from the site's `A{TenantId:D4}.Log7`, bank zero. Tenant 166 uses `A0166`; there is no fallback to another tenant.\r\n- Missing Tabs or Kids do not prevent login. Inspect `GetCurrentManager` and explain missing access in your UI.\r\n- If several managers match both email and password, the active, non-deleted manager with the newest `eSetting.Alive` krumb MS2000 wins.\r\n  Missing/invalid activity ranks last; equal activity (including all unknown) is resolved by the lowest UserId.\r\n  Login atomically clears Password on the other matching accounts; accounts with different passwords are unchanged.\r\n  Without an active match, no cleanup occurs. Grants are never merged. Read `GetCurrentManager` for the selected identity.\r\n            \r\n### Errors and diagnostics\r\n            \r\n- **HTTP 401:** incorrect credentials.\r\n- After password verification, **HTTP 403** distinguishes `disabled`, `deleted` and `account-settings`.\r\n- **HTTP 429:** wait for `Retry-After` before another attempt.\r\n- **HTTP 503:** credential storage or atomic duplicate cleanup is unavailable (also for more than 100 matching rows).\r\n  Do not automatically retry an uncertain cleanup result. No token is issued before cleanup commits.\r\n- Rejections may create sanitized internal diagnostics; these expose no additional account information to clients.\r\n- Failed attempts include the API-observed IP. Server-side portals may send `X-Portal-Login-Client-IP` as **untrusted diagnostic metadata only**; it never changes authorization or rate limits.",
+        "description": "### Sign in\r\n            \r\n- Send exactly one complete pair: email/password or kid/apiKey, over HTTPS. Never hash credentials in the client.\r\n- The kid field accepts the manager Kid.ToUserId username (tenant.0-userId) or canonical bank-zero manager KID on this site. API keys use eSetting.ApiKeyHash, never Password.\r\n- API-key login performs no duplicate-account cleanup. Inactive accounts and invalid keys return 401.\r\n- Key replacement revokes key-authenticated sessions within 60 seconds; renewal preserves the key proof.\r\n- Use `accessToken` in `Authorization: Bearer {accessToken}` when calling `GetCurrentManager`.\r\n- The opaque token lasts **864,000 seconds (ten days)**. Do not decode it as a JWT.\r\n- Before expiry, use `RenewManagerSession` to replace it after user activity. No separate refresh token is issued.\r\n            \r\n### Tenant and access\r\n            \r\n- The API site's configuration selects the tenant, not the request.\r\n- Credentials and current manager settings come from the site's `A{TenantId:D4}.Log7`, bank zero. Tenant 166 uses `A0166`; there is no fallback to another tenant.\r\n- Missing Tabs or Kids do not prevent login. Inspect `GetCurrentManager` and explain missing access in your UI.\r\n- If several managers match both email and password, the active, non-deleted manager with the newest `eSetting.Alive` krumb MS2000 wins.\r\n  Missing/invalid activity ranks last; equal activity (including all unknown) is resolved by the lowest UserId.\r\n  Login atomically clears Password on the other matching accounts; accounts with different passwords are unchanged.\r\n  Without an active match, no cleanup occurs. Grants are never merged. Read `GetCurrentManager` for the selected identity.\r\n            \r\n### Errors and diagnostics\r\n            \r\n- **HTTP 401:** incorrect credentials.\r\n- After password verification, **HTTP 403** distinguishes `disabled`, `deleted` and `account-settings`.\r\n- **HTTP 429:** wait for `Retry-After` before another attempt.\r\n- **HTTP 503:** credential storage or atomic duplicate cleanup is unavailable (also for more than 100 matching rows).\r\n  Do not automatically retry an uncertain cleanup result. No token is issued before cleanup commits.\r\n- Rejections may create sanitized internal diagnostics; these expose no additional account information to clients.\r\n- Failed attempts include the API-observed IP. Server-side portals may send `X-Portal-Login-Client-IP` as **untrusted diagnostic metadata only**; it never changes authorization or rate limits.",
         "operationId": "LoginManager",
         "parameters": [
           {
@@ -14609,7 +14609,7 @@
                 },
                 "example": {
                   "accessToken": "<opaque access token>",
-                  "expiresIn": 259200,
+                  "expiresIn": 864000,
                   "tokenType": "Bearer"
                 }
               },
@@ -14771,7 +14771,7 @@
         "tags": [
           "ManagerSession"
         ],
-        "summary": "Renew an unexpired manager session for three days.",
+        "summary": "Renew an unexpired manager session for ten days.",
         "description": "Send the current bearer token and no request body. The site's current account state and password\r\nstamp are revalidated through the same bounded (at most 60-second) snapshot as other operations.\r\nStore the returned accessToken and expiresIn in place of the old session. Ordinary API requests\r\ndo not extend token expiry. Renew only after user activity, not from an unattended keep-alive timer.\r\nExpired/revoked sessions require login (401); unavailable account storage returns 503.\r\nRenewal preserves local-development restrictions and grants no additional Tab/KID/operation access.\r\nOlder token copies retain their original expiry; no separate refresh token is issued.",
         "operationId": "RenewManagerSession",
         "responses": {
@@ -14789,7 +14789,7 @@
                 },
                 "example": {
                   "accessToken": "<replacement access token>",
-                  "expiresIn": 259200,
+                  "expiresIn": 864000,
                   "tokenType": "Bearer"
                 }
               },
@@ -15895,7 +15895,7 @@
           "PersonalManager"
         ],
         "summary": "Read your own personal settings and available person icons.",
-        "description": "### Access and fields\r\n- Requires an active manager bearer session on this tenant with a current credential stamp. No Tabs, Kids or Managers Write are needed.\r\n- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, revision and availableIcons.\r\n- retentionDays is the number of days deleted records remain visible within your existing access; 0 hides deleted records. Missing/invalid stored values return 0.\r\n- emailVerified is proof of this exact current email log version, not an old or manually assigned flag.\r\n- No target manager or tenant selector is accepted. Passwords and internal verification data are never returned.\r\n- Reads use the site's read connection only; no configured write connection or MySQL write privilege is required.\r\n### Errors\r\n- 401 stale/inactive session; 503 unavailable storage. Responses are not cacheable.",
+        "description": "### Access and fields\r\n- Requires an active manager bearer session on this tenant with a current credential stamp. No Tabs, Kids or Managers Write are needed.\r\n- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, language, dateFormat, numberFormat, lineSpacing, revision and availableIcons.\r\n- language is a numeric operational eLanguage identity (0 is Danish), or null for automatic browser/tenant selection. Last/None/All are rejected.\r\n- dateFormat is empty (follow language) or dd-MM-yyyy, dd.MM.yyyy, dd/MM/yyyy, MM/dd/yyyy, yyyy-MM-dd,\r\n  optionally followed by HH:mm (24-hour) or hh:mm tt (12-hour AM/PM). Date-only values keep the language's clock format.\r\n- lineSpacing is a numeric table/list spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid stored values use 1.\r\n- numberFormat is empty (follow language) or da-DK, en-GB, sv-SE, de-DE, fr-FR, ar-SA. Preferences affect presentation only.\r\n- retentionDays is the number of days deleted records remain visible within your existing access; 0 hides deleted records. Missing/invalid stored values return 0.\r\n- emailVerified is proof of this exact current email log version, not an old or manually assigned flag.\r\n- No target manager or tenant selector is accepted. Passwords and internal verification data are never returned.\r\n- Reads use the site's read connection only; no configured write connection or MySQL write privilege is required.\r\n### Errors\r\n- 401 stale/inactive session; 503 unavailable storage. Responses are not cacheable.",
         "operationId": "GetMyManagerProfile",
         "responses": {
           "200": {
@@ -16342,7 +16342,7 @@
           "PersonalManager"
         ],
         "summary": "Save one personal name, organisation, person icon, theme or deleted-record visibility preference.",
-        "description": "### Request\r\n- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays or IconSet. Other settings are rejected.\r\n- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.\r\n- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.\r\n- IconSet requires the exact JSON string \"g\" or \"line\". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as \"line\"; an explicit saved \"g\" is preserved.\r\n- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.\r\n- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.\r\n### Response and errors\r\n- 200 returns the acknowledged profile and new revision. Repeating an identical stored value creates no history.\r\n- 400 invalid-profile; 401 stale/inactive session; 409 profile-conflict: reload before deciding whether to overwrite; 503 unavailable/uncertain storage.\r\n- Do not automatically retry an uncertain write. Cache invalidation is immediate on this instance; other instances refresh within 60 seconds.",
+        "description": "### Request\r\n- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays, IconSet, Language, DateFormat, NumberFormat or LineSpacing. Other settings are rejected.\r\n- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.\r\n- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.\r\n- Language requires a numeric operational eLanguage identity (0–15), or null for automatic. Last/None/All are rejected.\r\n- LineSpacing requires a JSON number: 0.75, 1, 1.25, 1.5, 1.75 or 2. Default 1 preserves the established table/list spacing.\r\n- DateFormat and NumberFormat require the finite string choices documented by GetMyManagerProfile; empty strings follow the language.\r\n- IconSet requires the exact JSON string \"g\" or \"line\". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as \"line\"; an explicit saved \"g\" is preserved.\r\n- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.\r\n- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.\r\n### Response and errors\r\n- 200 returns the acknowledged profile and new revision. Repeating an identical stored value creates no history.\r\n- 400 invalid-profile; 401 stale/inactive session; 409 profile-conflict: reload before deciding whether to overwrite; 503 unavailable/uncertain storage.\r\n- Do not automatically retry an uncertain write. Cache invalidation is immediate on this instance; other instances refresh within 60 seconds.",
         "operationId": "SetMyManagerProfileField",
         "parameters": [
           {
@@ -20012,8 +20012,8 @@
         "tags": [
           "UnitDocuments"
         ],
-        "summary": "Render a text-free visual WashDoc preview for document lists and icon grids.",
-        "description": "Uses the same authorized historical measurements, cycle window and private graph artifact as GetUnitDocumentSvg2.\r\nCurves are reduced while preserving local peaks. No axes, labels, target overlays or quantitative reading scale.\r\nAccess and visibility are checked before every cache lookup. Finished artifacts share the graph cache; responses use no-store.\r\nEmpty/non-numeric measurements return 422. Clients should load visible previews lazily with bounded concurrency.",
+        "summary": "Render the first WashDoc curve as a monochrome line icon.",
+        "description": "Uses the same authorized historical measurements, cycle window and private graph artifact as GetUnitDocumentSvg2.\r\nUses only the first available curve in graph-picker order, reduced while preserving local peaks.\r\nTransparent 24-unit square with a currentColor outline. No fill, axes, labels, gradient or quantitative reading scale.\r\nAccess and visibility are checked before every cache lookup. Finished artifacts share the graph cache; responses use no-store.\r\nEmpty/non-numeric measurements return 422. Clients should load visible previews lazily with bounded concurrency.",
         "operationId": "GetUnitDocumentIcon",
         "parameters": [
           {
@@ -25764,7 +25764,7 @@
           "Public"
         ],
         "summary": "Get a square WashDoc widget's graph, machine/location names and document times.",
-        "description": "Anonymous publication explicitly requested by the owner. documentKid and unitKid are optional and mutually exclusive.\r\nA canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.\r\nWith neither, select the most recently started currently running public unit in this tenant. No random selection.\r\nPublic visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.\r\nOnly the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.\r\nUses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.\r\nThe original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.\r\nFixed measurement/event inputs and Cycle only; no caller-selected fields. Finished graphs use the bounded private graph cache.\r\nRefresh visible widgets every 60 seconds. HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;\r\n422 no numeric graph/oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.\r\nImplemented locally, unreleased.",
+        "description": "Anonymous publication explicitly requested by the owner. documentKid and unitKid are optional and mutually exclusive.\r\nA canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.\r\nWith neither, select the most recently started currently running public unit in this tenant. No random selection.\r\nPublic visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.\r\nOnly the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.\r\nUses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.\r\nThe original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.\r\nFixed measurement/event inputs and Cycle only; no caller-selected fields. GraphSvg is null when the document has no drawable measurements.\r\nFinished graphs and metadata-only documents use the bounded private graph cache.\r\nRefresh visible running widgets every 15 seconds; stop when a pinned document completes. Unpinned widgets check for a new document every 60 seconds after completion.\r\nHTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;\r\n422 oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.\r\nImplemented locally, unreleased.",
         "operationId": "GetPublicWashDocWidget",
         "parameters": [
           {
@@ -29287,6 +29287,27 @@
             "description": "Preferred icon set: g or line. Missing or unsupported stored values return line; an explicit g is preserved. This grants no permissions.",
             "nullable": true
           },
+          "language": {
+            "type": "integer",
+            "description": "Personal eLanguage identity; null follows browser/tenant policy. Danish is zero.",
+            "format": "int32",
+            "nullable": true
+          },
+          "dateFormat": {
+            "type": "string",
+            "description": "Allowlisted short-date pattern; empty follows the language.",
+            "nullable": true
+          },
+          "numberFormat": {
+            "type": "string",
+            "description": "Number-format culture; empty follows the language. Does not change currency.",
+            "nullable": true
+          },
+          "lineSpacing": {
+            "type": "number",
+            "description": "Personal table/list vertical spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid values use 1.",
+            "format": "double"
+          },
           "tabDetails": {
             "type": "array",
             "items": {
@@ -29855,6 +29876,23 @@
           "iconSet": {
             "type": "string",
             "nullable": true
+          },
+          "language": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "dateFormat": {
+            "type": "string",
+            "nullable": true
+          },
+          "numberFormat": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineSpacing": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false,
@@ -32538,6 +32576,10 @@
           "refreshAfterSeconds": {
             "type": "integer",
             "format": "int32"
+          },
+          "documentKidText": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -32779,7 +32821,7 @@
     "securitySchemes": {
       "ManagerBearer": {
         "type": "http",
-        "description": "Paste accessToken from POST /api/v1/session/login, without the Bearer prefix. Opaque site-bound token; expires after three days. RenewManagerSession replaces an unexpired token after activity. This is not a JWT.",
+        "description": "Paste accessToken from POST /api/v1/session/login, without the Bearer prefix. Opaque site-bound token; expires after ten days. RenewManagerSession replaces an unexpired token after activity. This is not a JWT.",
         "scheme": "bearer"
       }
     }

@@ -5740,7 +5740,7 @@
     "binary": false,
     "example": {
       "accessToken": "<opaque access token>",
-      "expiresIn": 259200,
+      "expiresIn": 864000,
       "tokenType": "Bearer"
     }
   },
@@ -5764,7 +5764,7 @@
     "binary": false,
     "example": {
       "accessToken": "<replacement access token>",
-      "expiresIn": 259200,
+      "expiresIn": 864000,
       "tokenType": "Bearer"
     }
   },

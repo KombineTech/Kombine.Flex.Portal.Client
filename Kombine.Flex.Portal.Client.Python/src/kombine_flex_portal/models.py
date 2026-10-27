@@ -843,6 +843,10 @@ ManagerProfileResponse = TypedDict('ManagerProfileResponse', {
     'retentionDays': 'int',
     'themeMode': 'EThemeMode',
     'iconSet': 'str | None',
+    'language': 'int | None',
+    'dateFormat': 'str | None',
+    'numberFormat': 'str | None',
+    'lineSpacing': 'float',
     'tabDetails': 'list[ManagerTabResponse] | None',
     'resourceGrants': 'list[ManagerResourceGrantResponse] | None',
     'operationPermissions': 'list[ManagerOperationPermissionResponse] | None',
@@ -996,6 +1000,10 @@ PersonalManagerProfile = TypedDict('PersonalManagerProfile', {
     'availableIcons': 'list[str] | None',
     'retentionDays': 'int',
     'iconSet': 'str | None',
+    'language': 'int | None',
+    'dateFormat': 'str | None',
+    'numberFormat': 'str | None',
+    'lineSpacing': 'float',
 }, total=False)
 
 PersonalManagerTab = TypedDict('PersonalManagerTab', {
@@ -1710,6 +1718,7 @@ PublicWashDocWidgetResponse = TypedDict('PublicWashDocWidgetResponse', {
     'finished': 'bool',
     'graphSvg': 'str | None',
     'refreshAfterSeconds': 'int',
+    'documentKidText': 'str | None',
 }, total=False)
 
 PublicWidgetPresentationResponse = TypedDict('PublicWidgetPresentationResponse', {

@@ -1361,7 +1361,7 @@ namespace Kombine.Flex.Portal.Client.Net20
             return (ManagerSessionResponse)SendJson("POST", path, body, headers, 200, typeof(ManagerSessionResponse));
         }
 
-        /// <summary>Renew an unexpired manager session for three days.</summary>
+        /// <summary>Renew an unexpired manager session for ten days.</summary>
         public ManagerSessionResponse RenewManagerSession()
         {
             string path = "api/v1/session/renew";
@@ -1860,13 +1860,13 @@ namespace Kombine.Flex.Portal.Client.Net20
             return SendDownload("GET", path, null, headers, 200);
         }
 
-        /// <summary>Render a text-free visual WashDoc preview for document lists and icon grids.</summary>
+        /// <summary>Render the first WashDoc curve as a monochrome line icon.</summary>
         public PortalDownload GetUnitDocumentIcon(string @documentKid)
         {
             return GetUnitDocumentIcon(@documentKid, null);
         }
 
-        /// <summary>Render a text-free visual WashDoc preview for document lists and icon grids.</summary>
+        /// <summary>Render the first WashDoc curve as a monochrome line icon.</summary>
         public PortalDownload GetUnitDocumentIcon(string @documentKid, GetUnitDocumentIconOptions options)
         {
             string path = "api/v1/documents/{documentKid}/icon.svg";

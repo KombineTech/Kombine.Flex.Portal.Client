@@ -5368,7 +5368,7 @@
     "dartMethod": "loginManager",
     "example": {
       "accessToken": "<opaque access token>",
-      "expiresIn": 259200,
+      "expiresIn": 864000,
       "tokenType": "Bearer"
     },
     "method": "POST",
@@ -5402,7 +5402,7 @@
     "dartMethod": "renewManagerSession",
     "example": {
       "accessToken": "<replacement access token>",
-      "expiresIn": 259200,
+      "expiresIn": 864000,
       "tokenType": "Bearer"
     },
     "method": "POST",

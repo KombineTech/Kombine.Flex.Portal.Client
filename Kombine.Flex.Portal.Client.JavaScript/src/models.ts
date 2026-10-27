@@ -1473,6 +1473,14 @@ export interface ManagerProfileResponse {
   "themeMode"?: EThemeMode;
   /** Preferred icon set: g or line. Missing or unsupported stored values return line; an explicit g is preserved. This grants no permissions. */
   "iconSet"?: string | null;
+  /** Personal eLanguage identity; null follows browser/tenant policy. Danish is zero. */
+  "language"?: number | null;
+  /** Allowlisted short-date pattern; empty follows the language. */
+  "dateFormat"?: string | null;
+  /** Number-format culture; empty follows the language. Does not change currency. */
+  "numberFormat"?: string | null;
+  /** Personal table/list vertical spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid values use 1. */
+  "lineSpacing"?: number;
   /** Names and IDs from the shared eTab enum, limited to the manager's recognized grants. */
   "tabDetails"?: (ManagerTabResponse)[] | null;
   /** Decoded bank/location scopes belonging only to this site. Empty means no bank/location access. */
@@ -1731,6 +1739,14 @@ export interface PersonalManagerProfile {
   "retentionDays"?: number;
   /** iconSet */
   "iconSet"?: string | null;
+  /** language */
+  "language"?: number | null;
+  /** dateFormat */
+  "dateFormat"?: string | null;
+  /** numberFormat */
+  "numberFormat"?: string | null;
+  /** lineSpacing */
+  "lineSpacing"?: number;
 }
 
 /** A stable numeric tab identity and its enum-derived name. */
@@ -2986,6 +3002,8 @@ export interface PublicWashDocWidgetResponse {
   "graphSvg"?: string | null;
   /** refreshAfterSeconds */
   "refreshAfterSeconds"?: number;
+  /** documentKidText */
+  "documentKidText"?: string | null;
 }
 
 /** Public presentation selected by this API site's trusted tenant. */

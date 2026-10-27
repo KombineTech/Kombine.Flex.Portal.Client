@@ -328,7 +328,7 @@ class PortalClient(BaseClient):
         return self._request('LoginManager', {'X-Portal-Login-Client-IP': x_portal_login_client_ip}, body)
 
     def renew_manager_session(self) -> ManagerSessionResponse:
-        'Renew an unexpired manager session for three days.'
+        'Renew an unexpired manager session for ten days.'
         return self._request('RenewManagerSession', {}, None)
 
     def get_current_manager(self) -> ManagerProfileResponse:
@@ -484,7 +484,7 @@ class PortalClient(BaseClient):
         return self._request('GetUnitDocumentPng', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
     def get_unit_document_icon(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
-        'Render a text-free visual WashDoc preview for document lists and icon grids.'
+        'Render the first WashDoc curve as a monochrome line icon.'
         return self._request('GetUnitDocumentIcon', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
     def get_unit_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, location_kid: str | None = None, terminal_kid: str | None = None, running_only: bool | None = None, auto_out_of_order_only: bool | None = None) -> DirectoryExportCountResponse:
