@@ -6910,7 +6910,7 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/table.csv": {
+    "/api/v1/documents/{cycleKid}/table.csv": {
       "get": {
         "tags": [
           "Downloads"
@@ -6920,7 +6920,7 @@
         "operationId": "DownloadUnitDocumentCsv",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -7032,7 +7032,7 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/table.xls": {
+    "/api/v1/documents/{cycleKid}/table.xls": {
       "get": {
         "tags": [
           "Downloads"
@@ -7042,7 +7042,7 @@
         "operationId": "DownloadUnitDocumentXls",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -11968,7 +11968,7 @@
           "ManagerInvitations"
         ],
         "summary": "Send an invitation allowing an existing manager to choose a password.",
-        "description": "### Access and target\r\n- Requires an active manager, Managers1 (28), Managers Read and Write and tenant-wide access.\r\n- The same own-profile lock and sole active tenant-wide manager exception apply as for profile editing.\r\n- Current actor credentials/permissions and target visibility are rechecked under transaction locks.\r\n- The target must be enabled, not deleted and have a valid saved email. Send the confirmed profileRevision; recipients cannot be supplied by the caller.\r\n### Invitation\r\n- HTTP 202 with code \u0060invitation-queued\u0060 means the mail queue transaction committed; it is not a delivery receipt.\r\n- Temporary delivery restriction: exact domains nortec.dk, kombinetech.com and arendt.dk receive directly; every other recipient goes to jens@arendt.dk. Cc/Bcc are cleared in every environment.\r\n- A single-use link to the configured portal expires after 30 minutes and uses ResetManagerPassword. No password, Enabled, Tabs, Kids or rights change when sending.\r\n- Language is en (default), da or es. Do not automatically retry an uncertain response: the mail may already be queued.\r\n### Errors\r\n- 400 invalid-manager-kid/invalid-invitation; 401 expired credentials; 403 missing rights/own-manager-permissions; 404 manager-not-found (including retention-hidden targets).\r\n- 409 profile-conflict: reload after a concurrent edit. 409 manager-invitation-invalid: enable the target, restore it or save a valid email first.\r\n- 429 invitation-rate: at most two invitations per target per 15 minutes per instance, separate from anonymous recovery. Follow Retry-After.\r\n- 503 manager-invitation-unavailable: storage/configuration failure. Request bodies and link tokens must never be logged.",
+        "description": "### Access and target\r\n- Requires an active manager, Managers1 (28), Managers Read and Write and tenant-wide access.\r\n- The same own-profile lock and sole active tenant-wide manager exception apply as for profile editing.\r\n- Current actor credentials/permissions and target visibility are rechecked under transaction locks.\r\n- The target must be enabled, not deleted and have a valid saved email. Send the confirmed profileRevision; recipients cannot be supplied by the caller.\r\n### Invitation\r\n- HTTP 202 with code \u0060invitation-queued\u0060 means the mail queue transaction committed; it is not a delivery receipt.\r\n- Temporary delivery restriction: exact domains nortec.dk, kombinetech.com and arendt.dk receive directly; every other recipient goes to jens@arendt.dk. Cc/Bcc are cleared in every environment.\r\n- A single-use link to the configured portal expires after 10 days and uses ResetManagerPassword. No password, Enabled, Tabs, Kids or rights change when sending.\r\n- The mail includes the target\u0027s readable API username, trusted PortalApi:BaseUrl links, and instructions for generating a personal API key and logging in through Swagger. No API key is generated or included in the mail.\r\n- Language is en (default), da or es. Do not automatically retry an uncertain response: the mail may already be queued.\r\n### Errors\r\n- 400 invalid-manager-kid/invalid-invitation; 401 expired credentials; 403 missing rights/own-manager-permissions; 404 manager-not-found (including retention-hidden targets).\r\n- 409 profile-conflict: reload after a concurrent edit. 409 manager-invitation-invalid: enable the target, restore it or save a valid email first.\r\n- 429 invitation-rate: at most two invitations per target per 15 minutes per instance, separate from anonymous recovery. Follow Retry-After.\r\n- 503 manager-invitation-unavailable: storage/configuration failure. Request bodies and link tokens must never be logged.",
         "operationId": "InviteManager",
         "parameters": [
           {
@@ -14557,7 +14557,7 @@
           "ManagerSession"
         ],
         "summary": "Log in with manager email/password or manager username/API key.",
-        "description": "### Sign in\r\n            \r\n- Send exactly one complete pair: email/password or kid/apiKey, over HTTPS. Never hash credentials in the client.\r\n- The kid field accepts the manager Kid.ToUserId username (tenant.0-userId) or canonical bank-zero manager KID on this site. API keys use eSetting.ApiKeyHash, never Password.\r\n- API-key login performs no duplicate-account cleanup. Inactive accounts and invalid keys return 401.\r\n- Key replacement revokes key-authenticated sessions within 60 seconds; renewal preserves the key proof.\r\n- Use \u0060accessToken\u0060 in \u0060Authorization: Bearer {accessToken}\u0060 when calling \u0060GetCurrentManager\u0060.\r\n- The opaque token lasts **864,000 seconds (ten days)**. Do not decode it as a JWT.\r\n- Before expiry, use \u0060RenewManagerSession\u0060 to replace it after user activity. No separate refresh token is issued.\r\n            \r\n### Tenant and access\r\n            \r\n- The API site\u0027s configuration selects the tenant, not the request.\r\n- Credentials and current manager settings come from the site\u0027s \u0060A{TenantId:D4}.Log7\u0060, bank zero. Tenant 166 uses \u0060A0166\u0060; there is no fallback to another tenant.\r\n- Missing Tabs or Kids do not prevent login. Inspect \u0060GetCurrentManager\u0060 and explain missing access in your UI.\r\n- If several managers match both email and password, the active, non-deleted manager with the newest \u0060eSetting.Alive\u0060 krumb MS2000 wins.\r\n  Missing/invalid activity ranks last; equal activity (including all unknown) is resolved by the lowest UserId.\r\n  Login atomically clears Password on the other matching accounts; accounts with different passwords are unchanged.\r\n  Without an active match, no cleanup occurs. Grants are never merged. Read \u0060GetCurrentManager\u0060 for the selected identity.\r\n            \r\n### Errors and diagnostics\r\n            \r\n- **HTTP 401:** incorrect credentials.\r\n- After password verification, **HTTP 403** distinguishes \u0060disabled\u0060, \u0060deleted\u0060 and \u0060account-settings\u0060.\r\n- **HTTP 429:** wait for \u0060Retry-After\u0060 before another attempt.\r\n- **HTTP 503:** credential storage or atomic duplicate cleanup is unavailable (also for more than 100 matching rows).\r\n  Do not automatically retry an uncertain cleanup result. No token is issued before cleanup commits.\r\n- Rejections may create sanitized internal diagnostics; these expose no additional account information to clients.\r\n- Failed attempts include the API-observed IP. Server-side portals may send \u0060X-Portal-Login-Client-IP\u0060 as **untrusted diagnostic metadata only**; it never changes authorization or rate limits.",
+        "description": "### Sign in\r\n            \r\n- Send exactly one complete pair: email/password or kid/apiKey, over HTTPS. Never hash credentials in the client.\r\n- The kid field accepts the manager Kid.ToUserId username (tenant.0-userId) or canonical bank-zero manager KID on this site. API keys use eSetting.ApiKeyHash, never Password.\r\n- API-key login performs no duplicate-account cleanup. Inactive accounts and invalid keys return 401.\r\n- Key replacement revokes key-authenticated sessions within 60 seconds; renewal preserves the key proof.\r\n- Use \u0060accessToken\u0060 in \u0060Authorization: Bearer {accessToken}\u0060 when calling \u0060GetCurrentManager\u0060.\r\n- The opaque token lasts **864,000 seconds (ten days)**. Do not decode it as a JWT.\r\n- Before expiry, use \u0060RenewManagerSession\u0060 to replace it after user activity. No separate refresh token is issued.\r\n            \r\n### Tenant and access\r\n            \r\n- The API site\u0027s configuration selects the tenant, not the request.\r\n- Credentials and current manager settings come from the site\u0027s \u0060A{TenantId:D4}.Log7\u0060, bank zero. Tenant 166 uses \u0060A0166\u0060; there is no fallback to another tenant.\r\n- Missing Tabs or Kids do not prevent login. Inspect \u0060GetCurrentManager\u0060 and explain missing access in your UI.\r\n- Authenticated response names/labels use the manager\u0027s saved Language preference; automatic language uses the tenant/browser policy.\r\n  Content-Language reports the selected culture. Changes use the existing manager snapshot cache and require no new token.\r\n- If several managers match both email and password, the active, non-deleted manager with the newest \u0060eSetting.Alive\u0060 krumb MS2000 wins.\r\n  Missing/invalid activity ranks last; equal activity (including all unknown) is resolved by the lowest UserId.\r\n  Login atomically clears Password on the other matching accounts; accounts with different passwords are unchanged.\r\n  Without an active match, no cleanup occurs. Grants are never merged. Read \u0060GetCurrentManager\u0060 for the selected identity.\r\n            \r\n### Errors and diagnostics\r\n            \r\n- **HTTP 401:** incorrect credentials.\r\n- After password verification, **HTTP 403** distinguishes \u0060disabled\u0060, \u0060deleted\u0060 and \u0060account-settings\u0060.\r\n- **HTTP 429:** wait for \u0060Retry-After\u0060 before another attempt.\r\n- **HTTP 503:** credential storage or atomic duplicate cleanup is unavailable (also for more than 100 matching rows).\r\n  Do not automatically retry an uncertain cleanup result. No token is issued before cleanup commits.\r\n- Rejections may create sanitized internal diagnostics; these expose no additional account information to clients.\r\n- Failed attempts include the API-observed IP. Server-side portals may send \u0060X-Portal-Login-Client-IP\u0060 as **untrusted diagnostic metadata only**; it never changes authorization or rate limits.",
         "operationId": "LoginManager",
         "parameters": [
           {
@@ -18124,7 +18124,7 @@
           "TenantStatus"
         ],
         "summary": "Read 25 status rows at a time with next/previous cursors.",
-        "description": "Same authorization, visibility and source failures as GetTenantStatus. pageSize is 1\u2013100 (default 25).\r\nWithout cursor, reads a fresh bounded snapshot (1,000 rows per source). Sources counts describe that snapshot,\r\nnot just the page; hasMore still reports source truncation. Status.items contains only this page.\r\nCopy previousCursor/nextCursor unchanged with the same pageSize and language. Snapshots last at most two minutes\r\nand may be evicted earlier. Every page rechecks credentials, Tab, operations, resource scope and RetentionDays.\r\nCursors are manager/site/scope/language bound and never grant access. HTTP is no-store.\r\nFor a 30-second refresh omit cursor. Optional offset (0\u20131999) and anchor (Kind:Kid, at most 300 characters)\r\npreserve the visible position: the anchor is matched only among authorized results; otherwise offset is clamped.\r\nDo not combine cursor with offset/anchor. 400 invalid paging input/cursor, 409 changed cursor context,\r\n410 expired/evicted snapshot: restart without cursor. 401/403/503 retain GetTenantStatus meanings.",
+        "description": "Same authorization, visibility and source failures as GetTenantStatus. pageSize is 1\u2013100 (default 25).\r\nWithout cursor, reads a fresh bounded snapshot (1,000 rows per source). Sources counts describe that snapshot,\r\nnot just the page; hasMore still reports source truncation. Status.items contains only this page.\r\nCopy previousCursor/nextCursor unchanged with the same pageSize and language. Snapshots last at most two minutes\r\nand may be evicted earlier. Every page rechecks credentials, Tab, operations, resource scope and RetentionDays.\r\nCursors are manager/site/scope/language bound and never grant access. HTTP is no-store.\r\nFor a 30-second refresh omit cursor. Optional offset (0\u20131999) and anchor (Kind:Kid, at most 300 characters)\r\npreserve the visible position: the anchor is matched only among authorized results; otherwise offset is clamped.\r\nDo not combine cursor with offset/anchor. 400 invalid paging input/cursor, 409 changed cursor context,\r\n410 expired/evicted snapshot: restart without cursor. 401/403/503 retain GetTenantStatus meanings.\r\nThe single-file example may call this operation from http://localhost:8080 or http://127.0.0.1:8080\r\nusing a manager bearer token; cookies and other local origins are not enabled.",
         "operationId": "GetTenantStatusPage",
         "parameters": [
           {
@@ -18587,7 +18587,7 @@
           "UnitDocumentList"
         ],
         "summary": "List document identities produced by the selected Unit for WashDoc3.",
-        "description": "### Access\r\nActive manager bearer session, WashDoc3 (55), Location Read, Unit Read and a matching tenant/bank/location grant.\r\nThe canonical unit KID must belong to the trusted site tenant. Location and unit visibility follow RetentionDays before history paging.\r\n### Time and ordering\r\ndate is a UTC calendar date (yyyy-MM-dd), defaulting to today. Includes that entire date and earlier history back to 2000-01-01.\r\nMatches tagged Cycle settings for exactly this unit. lastActivityUtc is the latest matching Cycle timestamp inside the interval,\r\nnot the document start/end. Open GetUnitDocumentTable to read its full interval and measurements.\r\nsort=activity (default) or documentId, direction=asc or desc (default). Document IDs sort numerically.\r\nStable identity breaks activity ties. limit 1\u2013100 (default 25), offset 0\u2013100000; hasMore indicates another page.\r\nLive changes can shift offset pages; reset offset when changing filters or refreshing. No total count or measurement reads.\r\n### Errors and limits\r\n400 invalid KID/time/sort/page; 401 inactive/expired session; 403 missing access; 404 hidden/missing location or unit;\r\n422 oversized metadata; 503 storage unavailable/busy. Twelve-second storage deadline; no response cache.\r\nImplemented locally, unreleased. Generated client and download package updates are deferred to beta preparation.",
+        "description": "### Access\r\nActive manager bearer session, WashDoc3 (55), Location Read, Unit Read and a matching tenant/bank/location grant.\r\nThe canonical unit KID must belong to the trusted site tenant. Location and unit visibility follow RetentionDays before history paging.\r\n### Time and ordering\r\ndate is a UTC calendar date (yyyy-MM-dd), defaulting to today. Includes that entire date and earlier history back to 2000-01-01.\r\nMatches tagged Cycle settings for exactly this unit. lastActivityUtc is the latest matching Cycle timestamp inside the interval,\r\nnot the document start/end. Open GetUnitDocumentTable to read its full interval and measurements.\r\nsort=activity (default) or documentId, direction=asc or desc (default). Document IDs sort numerically.\r\nStable identity breaks activity ties. limit 1\u2013100 (default 25), offset 0\u2013100000; hasMore indicates another page.\r\nLive changes can shift offset pages; reset offset when changing filters or refreshing. No total count or measurement reads.\r\nKnown name placeholders resolve in the manager\u0027s saved language, with Accept-Language as the automatic fallback.\r\n### Errors and limits\r\n400 invalid KID/time/sort/page; 401 inactive/expired session; 403 missing access; 404 hidden/missing location or unit;\r\n422 oversized metadata; 503 storage unavailable/busy. Twelve-second storage deadline; no response cache.\r\nImplemented locally, unreleased. Generated client and download package updates are deferred to beta preparation.",
         "operationId": "GetUnitDocuments",
         "parameters": [
           {
@@ -18981,7 +18981,7 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/neighbors": {
+    "/api/v1/documents/{cycleKid}/neighbors": {
       "get": {
         "tags": [
           "UnitDocuments"
@@ -18991,7 +18991,7 @@
         "operationId": "GetUnitDocumentNeighbors",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -19128,17 +19128,17 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/table": {
+    "/api/v1/documents/{cycleKid}/table": {
       "get": {
         "tags": [
           "UnitDocuments"
         ],
         "summary": "Read a document\u0027s table as JSON with original values and column metadata.",
-        "description": "### Access\r\n- Active manager bearer session; at least one of WashDoc1 (54), WashDoc3 (55), WashDoc2 (75); Location Read and Unit Read.\r\n- Requires a tenant/bank/location grant matching the canonical document KID. The site\u0027s tenant is fixed.\r\n- Location and unit deletion follow RetentionDays, including on SVG cache hits.\r\n### Fields and values\r\n- Optional \u0060states\u0060/\u0060settings\u0060: comma-separated exact enum names declared for this unit type. Omit for all permitted fields; an empty value selects none.\r\n- Optional \u0060historicalMeasurements=true\u0060 adds the fixed document-only measurement/event profile for older machine histories, independently of today\u0027s model. Default false; graph2 enables it automatically. It never adds settings or credential access.\r\n- Hidden, credential, unbound and other-object fields are never read. Unknown types return 422. Invalid/unavailable fields return 400.\r\n- Rows use exact MS2000 timestamps, with cells indexed by column position. Null cell means absent; a cell with null text/value is a stored null.\r\n- A selected column is omitted when every cell in the complete document has no numeric value and null, empty or whitespace-only text. Zero and false are data. Build column mappings from each response; rows and timestamps are preserved, even when no columns remain. Downloads use the same selection.\r\n- \u0060text\u0060 preserves the decoded original; \u0060value\u0060 is a finite double when possible. No interpolation or rounding. Use text for exact large numbers.\r\n- \u0060finished\u0060 requires a terminal Cycle and an InSync timestamp at least two minutes beyond the document end.\r\n### Limits and errors\r\n- One document, at most 31 days, 128 columns, 50,000 source samples and 500,000 cells. A 12-second storage deadline applies.\r\n- 400 invalid KID/selection; 401 inactive/expired session; 403 missing access; 404 missing/hidden object or document; 422 unsupported type/oversized document; 503 storage unavailable.\r\n- Tables and downloads are uncached. Original enum identifiers and UTC timestamps are language independent.",
+        "description": "### Access\r\n- Active manager bearer session; at least one of WashDoc1 (54), WashDoc3 (55), WashDoc2 (75); Location Read and Unit Read.\r\n- Requires a tenant/bank/location grant matching the canonical document KID. The site\u0027s tenant is fixed.\r\n- Location and unit deletion follow RetentionDays, including on SVG cache hits.\r\n### Fields and values\r\n- Optional \u0060states\u0060/\u0060settings\u0060: comma-separated exact enum names declared for this unit type. Omit for all permitted fields; an empty value selects none.\r\n- Optional \u0060historicalMeasurements=true\u0060 adds the fixed document-only measurement/event profile for older machine histories, independently of today\u0027s model. Default false; graph2 enables it automatically. It never adds settings or credential access.\r\n- Hidden, credential, unbound and other-object fields are never read. Unknown types return 422. Invalid/unavailable fields return 400.\r\n- Rows use exact MS2000 timestamps, with cells indexed by column position. Null cell means absent; a cell with null text/value is a stored null.\r\n- A selected column is omitted when every cell in the complete document has no numeric value and null, empty or whitespace-only text. Zero and false are data. Build column mappings from each response; rows and timestamps are preserved, even when no columns remain. Downloads use the same selection.\r\n- \u0060text\u0060 preserves the decoded original; \u0060value\u0060 is a finite double when possible. No interpolation or rounding. Use text for exact large numbers.\r\n- \u0060finished\u0060 requires a terminal Cycle and an InSync timestamp at least two minutes beyond the document end.\r\n### Limits and errors\r\n- One document, at most 31 days, 128 columns, 50,000 source samples and 500,000 cells. A 12-second storage deadline applies.\r\n- Omitted field categories use a bounded authorized catalog and count only encountered fields toward the 128-column limit; a large machine catalog alone does not reject a document. Explicit selections remain limited to 128 fields in total.\r\n- 400 invalid KID/selection; 401 inactive/expired session; 403 missing access; 404 missing/hidden object or document; 422 unsupported type/oversized document; 503 storage unavailable.\r\n- Tables and downloads are uncached. Original enum identifiers and UTC timestamps are language independent.",
         "operationId": "GetUnitDocumentTable",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -19319,7 +19319,7 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/table.html": {
+    "/api/v1/documents/{cycleKid}/table.html": {
       "get": {
         "tags": [
           "UnitDocuments"
@@ -19329,7 +19329,7 @@
         "operationId": "GetUnitDocumentHtml",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -19441,7 +19441,7 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/graph.svg": {
+    "/api/v1/documents/{cycleKid}/graph.svg": {
       "get": {
         "tags": [
           "UnitDocuments"
@@ -19451,7 +19451,7 @@
         "operationId": "GetUnitDocumentSvg",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -19572,7 +19572,7 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/graph2.svg": {
+    "/api/v1/documents/{cycleKid}/graph2.svg": {
       "get": {
         "tags": [
           "UnitDocuments"
@@ -19582,7 +19582,7 @@
         "operationId": "GetUnitDocumentSvg2",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -19694,7 +19694,7 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/graph": {
+    "/api/v1/documents/{cycleKid}/graph": {
       "get": {
         "tags": [
           "UnitDocuments"
@@ -19704,7 +19704,7 @@
         "operationId": "GetUnitDocumentGraph",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -19885,7 +19885,7 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/graph.png": {
+    "/api/v1/documents/{cycleKid}/graph.png": {
       "get": {
         "tags": [
           "UnitDocuments"
@@ -19895,7 +19895,7 @@
         "operationId": "GetUnitDocumentPng",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -20007,7 +20007,7 @@
         ]
       }
     },
-    "/api/v1/documents/{documentKid}/icon.svg": {
+    "/api/v1/documents/{cycleKid}/icon.svg": {
       "get": {
         "tags": [
           "UnitDocuments"
@@ -20017,7 +20017,7 @@
         "operationId": "GetUnitDocumentIcon",
         "parameters": [
           {
-            "name": "documentKid",
+            "name": "cycleKid",
             "in": "path",
             "required": true,
             "schema": {
@@ -25106,6 +25106,38 @@
         }
       }
     },
+    "/api/v1/public/cycle-chart/presentation": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get the portal chart\u0027s localized messages and stable state identifiers.",
+        "description": "No login or database reads. Accept-Language selects presentation only. Pass the Content-Language\r\n            from an authenticated graph response to use the manager\u0027s language. Load /components/cycle/js/cycle-component.mjs\r\n            and call mountCycleChart(host, { presentation, loadGraph }); loadGraph must use the normal authorized\r\n            GetUnitDocumentGraph endpoint. The public module and these labels grant no data access. Call destroy on removal/logout.\r\n            Implemented locally; available in each environment after deployment.",
+        "operationId": "GetCycleChartPresentation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleChartPresentationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleChartPresentationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleChartPresentationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/public/statistics/live-machines": {
       "get": {
         "tags": [
@@ -25385,6 +25417,134 @@
           },
           "503": {
             "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/public/widgets/cycle": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get a square WashDoc widget\u0027s graph, machine/location names and document times.",
+        "description": "Anonymous publication explicitly requested by the owner. cycleKid and unitKid are optional and mutually exclusive.\r\nA canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.\r\nWith neither, select the most recently started currently running public unit in this tenant. No random selection.\r\nPublic visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.\r\nOnly the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.\r\nUses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.\r\nThe original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.\r\nFixed measurement/event inputs and Cycle only; no caller-selected fields. GraphSvg is null when the document has no drawable measurements.\r\nFinished graphs and metadata-only documents use the bounded private graph cache.\r\nRefresh visible running widgets every 15 seconds; stop when a pinned document completes. Unpinned widgets check for a new document every 60 seconds after completion.\r\nHTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;\r\n422 oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.\r\nImplemented locally, unreleased.",
+        "operationId": "GetPublicCycleWidget",
+        "parameters": [
+          {
+            "name": "cycleKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCycleWidgetResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCycleWidgetResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCycleWidgetResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -25731,134 +25891,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ActiveUsersResponse"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Service Unavailable",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/public/widgets/washdoc": {
-      "get": {
-        "tags": [
-          "Public"
-        ],
-        "summary": "Get a square WashDoc widget\u0027s graph, machine/location names and document times.",
-        "description": "Anonymous publication explicitly requested by the owner. documentKid and unitKid are optional and mutually exclusive.\r\nA canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.\r\nWith neither, select the most recently started currently running public unit in this tenant. No random selection.\r\nPublic visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.\r\nOnly the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.\r\nUses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.\r\nThe original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.\r\nFixed measurement/event inputs and Cycle only; no caller-selected fields. GraphSvg is null when the document has no drawable measurements.\r\nFinished graphs and metadata-only documents use the bounded private graph cache.\r\nRefresh visible running widgets every 15 seconds; stop when a pinned document completes. Unpinned widgets check for a new document every 60 seconds after completion.\r\nHTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;\r\n422 oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.\r\nImplemented locally, unreleased.",
-        "operationId": "GetPublicWashDocWidget",
-        "parameters": [
-          {
-            "name": "documentKid",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "unitKid",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PublicWashDocWidgetResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PublicWashDocWidgetResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PublicWashDocWidgetResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Content",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -27325,7 +27357,7 @@
       "DocumentTable": {
         "type": "object",
         "properties": {
-          "documentKid": {
+          "cycleKid": {
             "type": "string",
             "nullable": true
           },
@@ -32118,7 +32150,7 @@
       "WashDocChartResponse": {
         "type": "object",
         "properties": {
-          "documentKid": {
+          "cycleKid": {
             "type": "string",
             "nullable": true
           },
@@ -32353,6 +32385,34 @@
         "additionalProperties": false,
         "description": "Describes public service availability without exposing database or customer data."
       },
+      "CycleChartPresentationResponse": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Culture selected by Accept-Language.",
+            "nullable": true
+          },
+          "messages": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Localized graph labels, help and status messages from the portal resources.",
+            "nullable": true
+          },
+          "stateNames": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Stable enum identifiers for grouped controls.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Public presentation for the shared chart, without business data or credentials."
+      },
       "IconPresentationResponse": {
         "type": "object",
         "properties": {
@@ -32411,6 +32471,53 @@
         },
         "additionalProperties": false,
         "description": "Public thumbnail URL and relative portal destination; no original or sensor metadata."
+      },
+      "PublicCycleWidgetResponse": {
+        "type": "object",
+        "properties": {
+          "cycleKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitName": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "finished": {
+            "type": "boolean"
+          },
+          "graphSvg": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cycleKidText": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table."
       },
       "PublicMachineError": {
         "type": "object",
@@ -32537,53 +32644,6 @@
         },
         "additionalProperties": false,
         "description": "A bounded page of public progress for the exact site-bound scope."
-      },
-      "PublicWashDocWidgetResponse": {
-        "type": "object",
-        "properties": {
-          "documentKid": {
-            "type": "string",
-            "nullable": true
-          },
-          "unitKid": {
-            "type": "string",
-            "nullable": true
-          },
-          "unitName": {
-            "type": "string",
-            "nullable": true
-          },
-          "locationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "startedAtUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endedAtUtc": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "finished": {
-            "type": "boolean"
-          },
-          "graphSvg": {
-            "type": "string",
-            "nullable": true
-          },
-          "refreshAfterSeconds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "documentKidText": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table."
       },
       "PublicWidgetPresentationResponse": {
         "type": "object",

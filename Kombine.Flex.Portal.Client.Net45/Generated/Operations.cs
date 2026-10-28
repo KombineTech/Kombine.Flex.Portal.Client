@@ -692,16 +692,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>Download a UTF-8 CSV table for one document.</summary>
-        public PortalDownload DownloadUnitDocumentCsv(string @documentKid)
+        public PortalDownload DownloadUnitDocumentCsv(string @cycleKid)
         {
-            return DownloadUnitDocumentCsv(@documentKid, null);
+            return DownloadUnitDocumentCsv(@cycleKid, null);
         }
 
         /// <summary>Download a UTF-8 CSV table for one document.</summary>
-        public PortalDownload DownloadUnitDocumentCsv(string @documentKid, DownloadUnitDocumentCsvOptions options)
+        public PortalDownload DownloadUnitDocumentCsv(string @cycleKid, DownloadUnitDocumentCsvOptions options)
         {
-            string path = "api/v1/documents/{documentKid}/table.csv";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/table.csv";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             if (options != null)
             {
@@ -713,16 +713,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>Download an Excel 97–2003 binary .xls workbook for one document.</summary>
-        public PortalDownload DownloadUnitDocumentXls(string @documentKid)
+        public PortalDownload DownloadUnitDocumentXls(string @cycleKid)
         {
-            return DownloadUnitDocumentXls(@documentKid, null);
+            return DownloadUnitDocumentXls(@cycleKid, null);
         }
 
         /// <summary>Download an Excel 97–2003 binary .xls workbook for one document.</summary>
-        public PortalDownload DownloadUnitDocumentXls(string @documentKid, DownloadUnitDocumentXlsOptions options)
+        public PortalDownload DownloadUnitDocumentXls(string @cycleKid, DownloadUnitDocumentXlsOptions options)
         {
-            string path = "api/v1/documents/{documentKid}/table.xls";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/table.xls";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             if (options != null)
             {
@@ -1725,25 +1725,25 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.</summary>
-        public DocumentNeighbors GetUnitDocumentNeighbors(string @documentKid)
+        public DocumentNeighbors GetUnitDocumentNeighbors(string @cycleKid)
         {
-            string path = "api/v1/documents/{documentKid}/neighbors";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/neighbors";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (DocumentNeighbors)SendJson("GET", path, null, headers, 200, typeof(DocumentNeighbors));
         }
 
         /// <summary>Read a document's table as JSON with original values and column metadata.</summary>
-        public DocumentTable GetUnitDocumentTable(string @documentKid)
+        public DocumentTable GetUnitDocumentTable(string @cycleKid)
         {
-            return GetUnitDocumentTable(@documentKid, null);
+            return GetUnitDocumentTable(@cycleKid, null);
         }
 
         /// <summary>Read a document's table as JSON with original values and column metadata.</summary>
-        public DocumentTable GetUnitDocumentTable(string @documentKid, GetUnitDocumentTableOptions options)
+        public DocumentTable GetUnitDocumentTable(string @cycleKid, GetUnitDocumentTableOptions options)
         {
-            string path = "api/v1/documents/{documentKid}/table";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/table";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             if (options != null)
             {
@@ -1755,16 +1755,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>View a document as a printable HTML table.</summary>
-        public PortalDownload GetUnitDocumentHtml(string @documentKid)
+        public PortalDownload GetUnitDocumentHtml(string @cycleKid)
         {
-            return GetUnitDocumentHtml(@documentKid, null);
+            return GetUnitDocumentHtml(@cycleKid, null);
         }
 
         /// <summary>View a document as a printable HTML table.</summary>
-        public PortalDownload GetUnitDocumentHtml(string @documentKid, GetUnitDocumentHtmlOptions options)
+        public PortalDownload GetUnitDocumentHtml(string @cycleKid, GetUnitDocumentHtmlOptions options)
         {
-            string path = "api/v1/documents/{documentKid}/table.html";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/table.html";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             if (options != null)
             {
@@ -1776,16 +1776,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>Render a document's numeric series as an SVG chart, caching completed documents privately.</summary>
-        public PortalDownload GetUnitDocumentSvg(string @documentKid)
+        public PortalDownload GetUnitDocumentSvg(string @cycleKid)
         {
-            return GetUnitDocumentSvg(@documentKid, null);
+            return GetUnitDocumentSvg(@cycleKid, null);
         }
 
         /// <summary>Render a document's numeric series as an SVG chart, caching completed documents privately.</summary>
-        public PortalDownload GetUnitDocumentSvg(string @documentKid, GetUnitDocumentSvgOptions options)
+        public PortalDownload GetUnitDocumentSvg(string @cycleKid, GetUnitDocumentSvgOptions options)
         {
-            string path = "api/v1/documents/{documentKid}/graph.svg";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/graph.svg";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             if (options != null)
             {
@@ -1798,16 +1798,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>Render a responsive WashDoc chart with independent text and graph layers.</summary>
-        public PortalDownload GetUnitDocumentSvg2(string @documentKid)
+        public PortalDownload GetUnitDocumentSvg2(string @cycleKid)
         {
-            return GetUnitDocumentSvg2(@documentKid, null);
+            return GetUnitDocumentSvg2(@cycleKid, null);
         }
 
         /// <summary>Render a responsive WashDoc chart with independent text and graph layers.</summary>
-        public PortalDownload GetUnitDocumentSvg2(string @documentKid, GetUnitDocumentSvg2Options options)
+        public PortalDownload GetUnitDocumentSvg2(string @cycleKid, GetUnitDocumentSvg2Options options)
         {
-            string path = "api/v1/documents/{documentKid}/graph2.svg";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/graph2.svg";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             if (options != null)
             {
@@ -1819,16 +1819,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>Read semantic WashDoc graph JSON for interactive charts and image rendering.</summary>
-        public WashDocChartResponse GetUnitDocumentGraph(string @documentKid)
+        public WashDocChartResponse GetUnitDocumentGraph(string @cycleKid)
         {
-            return GetUnitDocumentGraph(@documentKid, null);
+            return GetUnitDocumentGraph(@cycleKid, null);
         }
 
         /// <summary>Read semantic WashDoc graph JSON for interactive charts and image rendering.</summary>
-        public WashDocChartResponse GetUnitDocumentGraph(string @documentKid, GetUnitDocumentGraphOptions options)
+        public WashDocChartResponse GetUnitDocumentGraph(string @cycleKid, GetUnitDocumentGraphOptions options)
         {
-            string path = "api/v1/documents/{documentKid}/graph";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/graph";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             if (options != null)
             {
@@ -1840,16 +1840,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>Render a document KID as a PNG image with the shared local Chart.js renderer.</summary>
-        public PortalDownload GetUnitDocumentPng(string @documentKid)
+        public PortalDownload GetUnitDocumentPng(string @cycleKid)
         {
-            return GetUnitDocumentPng(@documentKid, null);
+            return GetUnitDocumentPng(@cycleKid, null);
         }
 
         /// <summary>Render a document KID as a PNG image with the shared local Chart.js renderer.</summary>
-        public PortalDownload GetUnitDocumentPng(string @documentKid, GetUnitDocumentPngOptions options)
+        public PortalDownload GetUnitDocumentPng(string @cycleKid, GetUnitDocumentPngOptions options)
         {
-            string path = "api/v1/documents/{documentKid}/graph.png";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/graph.png";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             if (options != null)
             {
@@ -1861,16 +1861,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         }
 
         /// <summary>Render the first WashDoc curve as a monochrome line icon.</summary>
-        public PortalDownload GetUnitDocumentIcon(string @documentKid)
+        public PortalDownload GetUnitDocumentIcon(string @cycleKid)
         {
-            return GetUnitDocumentIcon(@documentKid, null);
+            return GetUnitDocumentIcon(@cycleKid, null);
         }
 
         /// <summary>Render the first WashDoc curve as a monochrome line icon.</summary>
-        public PortalDownload GetUnitDocumentIcon(string @documentKid, GetUnitDocumentIconOptions options)
+        public PortalDownload GetUnitDocumentIcon(string @cycleKid, GetUnitDocumentIconOptions options)
         {
-            string path = "api/v1/documents/{documentKid}/icon.svg";
-            path = path.Replace("{documentKid}", PathValue(@documentKid));
+            string path = "api/v1/documents/{cycleKid}/icon.svg";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             if (options != null)
             {
@@ -2512,6 +2512,14 @@ namespace Kombine.Flex.Portal.Client.Net45
             return SendDownload("GET", path, null, headers, 200);
         }
 
+        /// <summary>Get the portal chart's localized messages and stable state identifiers.</summary>
+        public CycleChartPresentationResponse GetCycleChartPresentation()
+        {
+            string path = "api/v1/public/cycle-chart/presentation";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (CycleChartPresentationResponse)SendJson("GET", path, null, headers, 200, typeof(CycleChartPresentationResponse));
+        }
+
         /// <summary>Returns the site overview's running-machine pool, refreshed at most once a minute.</summary>
         public LiveMachineResponse[] GetPublicLiveMachines()
         {
@@ -2554,6 +2562,25 @@ namespace Kombine.Flex.Portal.Client.Net45
             path = path.Replace("{id}", PathValue(@id));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Get a square WashDoc widget's graph, machine/location names and document times.</summary>
+        public PublicCycleWidgetResponse GetPublicCycleWidget()
+        {
+            return GetPublicCycleWidget(null);
+        }
+
+        /// <summary>Get a square WashDoc widget's graph, machine/location names and document times.</summary>
+        public PublicCycleWidgetResponse GetPublicCycleWidget(GetPublicCycleWidgetOptions options)
+        {
+            string path = "api/v1/public/widgets/cycle";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "cycleKid", options.CycleKid);
+                path = AddQuery(path, "unitKid", options.UnitKid);
+            }
+            return (PublicCycleWidgetResponse)SendJson("GET", path, null, headers, 200, typeof(PublicCycleWidgetResponse));
         }
 
         /// <summary>Draws purchase counts for the last hour in twelve five-minute intervals.</summary>
@@ -2617,25 +2644,6 @@ namespace Kombine.Flex.Portal.Client.Net45
             string path = "api/v1/public/statistics/active-users";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (ActiveUsersResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveUsersResponse));
-        }
-
-        /// <summary>Get a square WashDoc widget's graph, machine/location names and document times.</summary>
-        public PublicWashDocWidgetResponse GetPublicWashDocWidget()
-        {
-            return GetPublicWashDocWidget(null);
-        }
-
-        /// <summary>Get a square WashDoc widget's graph, machine/location names and document times.</summary>
-        public PublicWashDocWidgetResponse GetPublicWashDocWidget(GetPublicWashDocWidgetOptions options)
-        {
-            string path = "api/v1/public/widgets/washdoc";
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            if (options != null)
-            {
-                path = AddQuery(path, "documentKid", options.DocumentKid);
-                path = AddQuery(path, "unitKid", options.UnitKid);
-            }
-            return (PublicWashDocWidgetResponse)SendJson("GET", path, null, headers, 200, typeof(PublicWashDocWidgetResponse));
         }
 
         /// <summary>Get localized labels and the site's palette for the shared JavaScript widgets.</summary>

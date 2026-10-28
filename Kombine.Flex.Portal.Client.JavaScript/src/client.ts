@@ -199,13 +199,13 @@ export class PortalClient extends BaseClient {
   }
 
   /** Download a UTF-8 CSV table for one document. */
-  downloadUnitDocumentCsv(documentKid: string, options: Models.DownloadUnitDocumentCsvOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("DownloadUnitDocumentCsv", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  downloadUnitDocumentCsv(cycleKid: string, options: Models.DownloadUnitDocumentCsvOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("DownloadUnitDocumentCsv", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Download an Excel 97–2003 binary .xls workbook for one document. */
-  downloadUnitDocumentXls(documentKid: string, options: Models.DownloadUnitDocumentXlsOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("DownloadUnitDocumentXls", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  downloadUnitDocumentXls(cycleKid: string, options: Models.DownloadUnitDocumentXlsOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("DownloadUnitDocumentXls", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Read recent DigitalOcean runtime logs for a configured shared app. */
@@ -564,43 +564,43 @@ export class PortalClient extends BaseClient {
   }
 
   /** Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit. */
-  getUnitDocumentNeighbors(documentKid: string, request: RequestOptions = {}): Promise<Models.DocumentNeighbors> {
-    return this.send("GetUnitDocumentNeighbors", {"documentKid": documentKid}, undefined, request) as Promise<Models.DocumentNeighbors>;
+  getUnitDocumentNeighbors(cycleKid: string, request: RequestOptions = {}): Promise<Models.DocumentNeighbors> {
+    return this.send("GetUnitDocumentNeighbors", {"cycleKid": cycleKid}, undefined, request) as Promise<Models.DocumentNeighbors>;
   }
 
   /** Read a document's table as JSON with original values and column metadata. */
-  getUnitDocumentTable(documentKid: string, options: Models.GetUnitDocumentTableOptions = {}, request: RequestOptions = {}): Promise<Models.DocumentTable> {
-    return this.send("GetUnitDocumentTable", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<Models.DocumentTable>;
+  getUnitDocumentTable(cycleKid: string, options: Models.GetUnitDocumentTableOptions = {}, request: RequestOptions = {}): Promise<Models.DocumentTable> {
+    return this.send("GetUnitDocumentTable", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<Models.DocumentTable>;
   }
 
   /** View a document as a printable HTML table. */
-  getUnitDocumentHtml(documentKid: string, options: Models.GetUnitDocumentHtmlOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("GetUnitDocumentHtml", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  getUnitDocumentHtml(cycleKid: string, options: Models.GetUnitDocumentHtmlOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetUnitDocumentHtml", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Render a document's numeric series as an SVG chart, caching completed documents privately. */
-  getUnitDocumentSvg(documentKid: string, options: Models.GetUnitDocumentSvgOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("GetUnitDocumentSvg", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements, "width": options.width}, undefined, request) as Promise<PortalDownload>;
+  getUnitDocumentSvg(cycleKid: string, options: Models.GetUnitDocumentSvgOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetUnitDocumentSvg", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements, "width": options.width}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Render a responsive WashDoc chart with independent text and graph layers. */
-  getUnitDocumentSvg2(documentKid: string, options: Models.GetUnitDocumentSvg2Options = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("GetUnitDocumentSvg2", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  getUnitDocumentSvg2(cycleKid: string, options: Models.GetUnitDocumentSvg2Options = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetUnitDocumentSvg2", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Read semantic WashDoc graph JSON for interactive charts and image rendering. */
-  getUnitDocumentGraph(documentKid: string, options: Models.GetUnitDocumentGraphOptions = {}, request: RequestOptions = {}): Promise<Models.WashDocChartResponse> {
-    return this.send("GetUnitDocumentGraph", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<Models.WashDocChartResponse>;
+  getUnitDocumentGraph(cycleKid: string, options: Models.GetUnitDocumentGraphOptions = {}, request: RequestOptions = {}): Promise<Models.WashDocChartResponse> {
+    return this.send("GetUnitDocumentGraph", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<Models.WashDocChartResponse>;
   }
 
   /** Render a document KID as a PNG image with the shared local Chart.js renderer. */
-  getUnitDocumentPng(documentKid: string, options: Models.GetUnitDocumentPngOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("GetUnitDocumentPng", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  getUnitDocumentPng(cycleKid: string, options: Models.GetUnitDocumentPngOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetUnitDocumentPng", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Render the first WashDoc curve as a monochrome line icon. */
-  getUnitDocumentIcon(documentKid: string, options: Models.GetUnitDocumentIconOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("GetUnitDocumentIcon", {"documentKid": documentKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  getUnitDocumentIcon(cycleKid: string, options: Models.GetUnitDocumentIconOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("GetUnitDocumentIcon", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Count the complete filtered export selection using the same directory authorization and visibility. */
@@ -843,6 +843,11 @@ export class PortalClient extends BaseClient {
     return this.send("GetKombineLogoTextWithBackground", {"color": color, "background": background, "width": width}, undefined, request) as Promise<PortalDownload>;
   }
 
+  /** Get the portal chart's localized messages and stable state identifiers. */
+  getCycleChartPresentation(request: RequestOptions = {}): Promise<Models.CycleChartPresentationResponse> {
+    return this.send("GetCycleChartPresentation", {}, undefined, request) as Promise<Models.CycleChartPresentationResponse>;
+  }
+
   /** Returns the site overview's running-machine pool, refreshed at most once a minute. */
   getPublicLiveMachines(request: RequestOptions = {}): Promise<Models.LiveMachineResponse[]> {
     return this.send("GetPublicLiveMachines", {}, undefined, request) as Promise<Models.LiveMachineResponse[]>;
@@ -861,6 +866,11 @@ export class PortalClient extends BaseClient {
   /** Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket. */
   getPublicCameraThumbnail(id: string, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("GetPublicCameraThumbnail", {"id": id}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Get a square WashDoc widget's graph, machine/location names and document times. */
+  getPublicCycleWidget(options: Models.GetPublicCycleWidgetOptions = {}, request: RequestOptions = {}): Promise<Models.PublicCycleWidgetResponse> {
+    return this.send("GetPublicCycleWidget", {"cycleKid": options.cycleKid, "unitKid": options.unitKid}, undefined, request) as Promise<Models.PublicCycleWidgetResponse>;
   }
 
   /** Draws purchase counts for the last hour in twelve five-minute intervals. */
@@ -886,11 +896,6 @@ export class PortalClient extends BaseClient {
   /** Counts active users in the site's current Log7 during the last 100 days, without login. */
   getPublicActiveUsers(request: RequestOptions = {}): Promise<Models.ActiveUsersResponse> {
     return this.send("GetPublicActiveUsers", {}, undefined, request) as Promise<Models.ActiveUsersResponse>;
-  }
-
-  /** Get a square WashDoc widget's graph, machine/location names and document times. */
-  getPublicWashDocWidget(options: Models.GetPublicWashDocWidgetOptions = {}, request: RequestOptions = {}): Promise<Models.PublicWashDocWidgetResponse> {
-    return this.send("GetPublicWashDocWidget", {"documentKid": options.documentKid, "unitKid": options.unitKid}, undefined, request) as Promise<Models.PublicWashDocWidgetResponse>;
   }
 
   /** Get localized labels and the site's palette for the shared JavaScript widgets. */

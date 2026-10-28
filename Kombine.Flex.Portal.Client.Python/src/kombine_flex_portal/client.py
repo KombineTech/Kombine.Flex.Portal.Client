@@ -163,13 +163,13 @@ class PortalClient(BaseClient):
         'Downloads a ZIP with one settlement file per group and currency, plus a reconciliation manifest.'
         return self._request('DownloadBankSettlement', {'bankKid': bank_kid, 'period': period, 'format': format}, None)
 
-    def download_unit_document_csv(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
+    def download_unit_document_csv(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'Download a UTF-8 CSV table for one document.'
-        return self._request('DownloadUnitDocumentCsv', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+        return self._request('DownloadUnitDocumentCsv', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
-    def download_unit_document_xls(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
+    def download_unit_document_xls(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'Download an Excel 97–2003 binary .xls workbook for one document.'
-        return self._request('DownloadUnitDocumentXls', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+        return self._request('DownloadUnitDocumentXls', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
     def get_hosting_logs(self, *, environment: str | None = None, application: str | None = None) -> HostingLogsResponse:
         'Read recent DigitalOcean runtime logs for a configured shared app.'
@@ -455,37 +455,37 @@ class PortalClient(BaseClient):
         'Count distinct WashDoc3 document identities for exactly one unit, separately from list loading.'
         return self._request('GetUnitDocumentsCount', {'unitKid': unit_kid, 'Search': search, 'Date': date}, None)
 
-    def get_unit_document_neighbors(self, document_kid: str) -> DocumentNeighbors:
+    def get_unit_document_neighbors(self, cycle_kid: str) -> DocumentNeighbors:
         'Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.'
-        return self._request('GetUnitDocumentNeighbors', {'documentKid': document_kid}, None)
+        return self._request('GetUnitDocumentNeighbors', {'cycleKid': cycle_kid}, None)
 
-    def get_unit_document_table(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> DocumentTable:
+    def get_unit_document_table(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> DocumentTable:
         "Read a document's table as JSON with original values and column metadata."
-        return self._request('GetUnitDocumentTable', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+        return self._request('GetUnitDocumentTable', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
-    def get_unit_document_html(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
+    def get_unit_document_html(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'View a document as a printable HTML table.'
-        return self._request('GetUnitDocumentHtml', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+        return self._request('GetUnitDocumentHtml', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
-    def get_unit_document_svg(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None, width: int | None = None) -> PortalDownload:
+    def get_unit_document_svg(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None, width: int | None = None) -> PortalDownload:
         "Render a document's numeric series as an SVG chart, caching completed documents privately."
-        return self._request('GetUnitDocumentSvg', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements, 'width': width}, None)
+        return self._request('GetUnitDocumentSvg', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements, 'width': width}, None)
 
-    def get_unit_document_svg2(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
+    def get_unit_document_svg2(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'Render a responsive WashDoc chart with independent text and graph layers.'
-        return self._request('GetUnitDocumentSvg2', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+        return self._request('GetUnitDocumentSvg2', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
-    def get_unit_document_graph(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> WashDocChartResponse:
+    def get_unit_document_graph(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> WashDocChartResponse:
         'Read semantic WashDoc graph JSON for interactive charts and image rendering.'
-        return self._request('GetUnitDocumentGraph', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+        return self._request('GetUnitDocumentGraph', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
-    def get_unit_document_png(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
+    def get_unit_document_png(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'Render a document KID as a PNG image with the shared local Chart.js renderer.'
-        return self._request('GetUnitDocumentPng', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+        return self._request('GetUnitDocumentPng', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
-    def get_unit_document_icon(self, document_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
+    def get_unit_document_icon(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'Render the first WashDoc curve as a monochrome line icon.'
-        return self._request('GetUnitDocumentIcon', {'documentKid': document_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+        return self._request('GetUnitDocumentIcon', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
     def get_unit_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, location_kid: str | None = None, terminal_kid: str | None = None, running_only: bool | None = None, auto_out_of_order_only: bool | None = None) -> DirectoryExportCountResponse:
         'Count the complete filtered export selection using the same directory authorization and visibility.'
@@ -679,6 +679,10 @@ class PortalClient(BaseClient):
         'Renders the combined Kombine logo with an explicit background and width.'
         return self._request('GetKombineLogoTextWithBackground', {'color': color, 'background': background, 'width': width}, None)
 
+    def get_cycle_chart_presentation(self) -> CycleChartPresentationResponse:
+        "Get the portal chart's localized messages and stable state identifiers."
+        return self._request('GetCycleChartPresentation', {}, None)
+
     def get_public_live_machines(self) -> list[LiveMachineResponse]:
         "Returns the site overview's running-machine pool, refreshed at most once a minute."
         return self._request('GetPublicLiveMachines', {}, None)
@@ -694,6 +698,10 @@ class PortalClient(BaseClient):
     def get_public_camera_thumbnail(self, id: str) -> PortalDownload:
         'Read only the JPEG thumbnail authorized by a ten-minute, tenant-bound public ticket.'
         return self._request('GetPublicCameraThumbnail', {'id': id}, None)
+
+    def get_public_cycle_widget(self, *, cycle_kid: str | None = None, unit_kid: str | None = None) -> PublicCycleWidgetResponse:
+        "Get a square WashDoc widget's graph, machine/location names and document times."
+        return self._request('GetPublicCycleWidget', {'cycleKid': cycle_kid, 'unitKid': unit_kid}, None)
 
     def get_public_purchases_chart(self, color: str) -> PortalDownload:
         'Draws purchase counts for the last hour in twelve five-minute intervals.'
@@ -714,10 +722,6 @@ class PortalClient(BaseClient):
     def get_public_active_users(self) -> ActiveUsersResponse:
         "Counts active users in the site's current Log7 during the last 100 days, without login."
         return self._request('GetPublicActiveUsers', {}, None)
-
-    def get_public_wash_doc_widget(self, *, document_kid: str | None = None, unit_kid: str | None = None) -> PublicWashDocWidgetResponse:
-        "Get a square WashDoc widget's graph, machine/location names and document times."
-        return self._request('GetPublicWashDocWidget', {'documentKid': document_kid, 'unitKid': unit_kid}, None)
 
     def get_public_widget_presentation(self) -> PublicWidgetPresentationResponse:
         "Get localized labels and the site's palette for the shared JavaScript widgets."

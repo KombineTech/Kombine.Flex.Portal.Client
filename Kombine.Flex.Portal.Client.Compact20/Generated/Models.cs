@@ -1312,10 +1312,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
     /// <summary>Only columns with data are returned, with values indexed by column position. A missing cell is null; a stored null is a cell with null text/value.</summary>
     public sealed class DocumentTable
     {
-        /// <summary>documentKid</summary>
-        [JsonField("documentKid")]
-        public string DocumentKid { get { return _DocumentKid; } set { _DocumentKid = value; } }
-        private string _DocumentKid;
+        /// <summary>cycleKid</summary>
+        [JsonField("cycleKid")]
+        public string CycleKid { get { return _CycleKid; } set { _CycleKid = value; } }
+        private string _CycleKid;
 
         /// <summary>unitKid</summary>
         [JsonField("unitKid")]
@@ -5977,10 +5977,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
     /// <summary>Renderer-independent WashDoc measurements. All times are UTC milliseconds since 2000-01-01.</summary>
     public sealed class WashDocChartResponse
     {
-        /// <summary>documentKid</summary>
-        [JsonField("documentKid")]
-        public string DocumentKid { get { return _DocumentKid; } set { _DocumentKid = value; } }
-        private string _DocumentKid;
+        /// <summary>cycleKid</summary>
+        [JsonField("cycleKid")]
+        public string CycleKid { get { return _CycleKid; } set { _CycleKid = value; } }
+        private string _CycleKid;
 
         /// <summary>unitKid</summary>
         [JsonField("unitKid")]
@@ -6204,6 +6204,26 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Public presentation for the shared chart, without business data or credentials.</summary>
+    public sealed class CycleChartPresentationResponse
+    {
+        /// <summary>Culture selected by Accept-Language.</summary>
+        [JsonField("language")]
+        public string Language { get { return _Language; } set { _Language = value; } }
+        private string _Language;
+
+        /// <summary>Localized graph labels, help and status messages from the portal resources.</summary>
+        [JsonField("messages")]
+        public Dictionary<string, string> Messages { get { return _Messages; } set { _Messages = value; } }
+        private Dictionary<string, string> _Messages;
+
+        /// <summary>Stable enum identifiers for grouped controls.</summary>
+        [JsonField("stateNames")]
+        public Dictionary<string, string> StateNames { get { return _StateNames; } set { _StateNames = value; } }
+        private Dictionary<string, string> _StateNames;
+
+    }
+
     /// <summary>Opaque image identity: eIcon name for an icon alone, otherwise canonical Kid.ToString().</summary>
     public sealed class IconPresentationResponse
     {
@@ -6261,6 +6281,61 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("workspacePath")]
         public string WorkspacePath { get { return _WorkspacePath; } set { _WorkspacePath = value; } }
         private string _WorkspacePath;
+
+    }
+
+    /// <summary>Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table.</summary>
+    public sealed class PublicCycleWidgetResponse
+    {
+        /// <summary>cycleKid</summary>
+        [JsonField("cycleKid")]
+        public string CycleKid { get { return _CycleKid; } set { _CycleKid = value; } }
+        private string _CycleKid;
+
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>unitName</summary>
+        [JsonField("unitName")]
+        public string UnitName { get { return _UnitName; } set { _UnitName = value; } }
+        private string _UnitName;
+
+        /// <summary>locationName</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>startedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("startedAtUtc")]
+        public string StartedAtUtc { get { return _StartedAtUtc; } set { _StartedAtUtc = value; } }
+        private string _StartedAtUtc;
+
+        /// <summary>endedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("endedAtUtc")]
+        public string EndedAtUtc { get { return _EndedAtUtc; } set { _EndedAtUtc = value; } }
+        private string _EndedAtUtc;
+
+        /// <summary>finished</summary>
+        [JsonField("finished")]
+        public bool? Finished { get { return _Finished; } set { _Finished = value; } }
+        private bool? _Finished;
+
+        /// <summary>graphSvg</summary>
+        [JsonField("graphSvg")]
+        public string GraphSvg { get { return _GraphSvg; } set { _GraphSvg = value; } }
+        private string _GraphSvg;
+
+        /// <summary>refreshAfterSeconds</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+        /// <summary>cycleKidText</summary>
+        [JsonField("cycleKidText")]
+        public string CycleKidText { get { return _CycleKidText; } set { _CycleKidText = value; } }
+        private string _CycleKidText;
 
     }
 
@@ -6381,61 +6456,6 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("nextCursor")]
         public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
         private string _NextCursor;
-
-    }
-
-    /// <summary>Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table.</summary>
-    public sealed class PublicWashDocWidgetResponse
-    {
-        /// <summary>documentKid</summary>
-        [JsonField("documentKid")]
-        public string DocumentKid { get { return _DocumentKid; } set { _DocumentKid = value; } }
-        private string _DocumentKid;
-
-        /// <summary>unitKid</summary>
-        [JsonField("unitKid")]
-        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
-        private string _UnitKid;
-
-        /// <summary>unitName</summary>
-        [JsonField("unitName")]
-        public string UnitName { get { return _UnitName; } set { _UnitName = value; } }
-        private string _UnitName;
-
-        /// <summary>locationName</summary>
-        [JsonField("locationName")]
-        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
-        private string _LocationName;
-
-        /// <summary>startedAtUtc ISO 8601 text, sent unchanged.</summary>
-        [JsonField("startedAtUtc")]
-        public string StartedAtUtc { get { return _StartedAtUtc; } set { _StartedAtUtc = value; } }
-        private string _StartedAtUtc;
-
-        /// <summary>endedAtUtc ISO 8601 text, sent unchanged.</summary>
-        [JsonField("endedAtUtc")]
-        public string EndedAtUtc { get { return _EndedAtUtc; } set { _EndedAtUtc = value; } }
-        private string _EndedAtUtc;
-
-        /// <summary>finished</summary>
-        [JsonField("finished")]
-        public bool? Finished { get { return _Finished; } set { _Finished = value; } }
-        private bool? _Finished;
-
-        /// <summary>graphSvg</summary>
-        [JsonField("graphSvg")]
-        public string GraphSvg { get { return _GraphSvg; } set { _GraphSvg = value; } }
-        private string _GraphSvg;
-
-        /// <summary>refreshAfterSeconds</summary>
-        [JsonField("refreshAfterSeconds")]
-        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
-        private int? _RefreshAfterSeconds;
-
-        /// <summary>documentKidText</summary>
-        [JsonField("documentKidText")]
-        public string DocumentKidText { get { return _DocumentKidText; } set { _DocumentKidText = value; } }
-        private string _DocumentKidText;
 
     }
 
@@ -8292,6 +8312,19 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Optional query/header parameters for GetPublicCycleWidget. Null values use API defaults.</summary>
+    public sealed class GetPublicCycleWidgetOptions
+    {
+        /// <summary>cycleKid</summary>
+        public string CycleKid { get { return _CycleKid; } set { _CycleKid = value; } }
+        private string _CycleKid;
+
+        /// <summary>unitKid</summary>
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+    }
+
     /// <summary>Optional query/header parameters for GetPublicDisp73. Null values use API defaults.</summary>
     public sealed class GetPublicDisp73Options
     {
@@ -8311,19 +8344,6 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>cursor</summary>
         public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
         private string _Cursor;
-
-    }
-
-    /// <summary>Optional query/header parameters for GetPublicWashDocWidget. Null values use API defaults.</summary>
-    public sealed class GetPublicWashDocWidgetOptions
-    {
-        /// <summary>documentKid</summary>
-        public string DocumentKid { get { return _DocumentKid; } set { _DocumentKid = value; } }
-        private string _DocumentKid;
-
-        /// <summary>unitKid</summary>
-        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
-        private string _UnitKid;
 
     }
 

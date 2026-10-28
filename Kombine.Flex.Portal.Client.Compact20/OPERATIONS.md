@@ -13,8 +13,8 @@
 | `DownloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
 | `DownloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` |
-| `DownloadUnitDocumentCsv` | GET | `/api/v1/documents/{documentKid}/table.csv` |
-| `DownloadUnitDocumentXls` | GET | `/api/v1/documents/{documentKid}/table.xls` |
+| `DownloadUnitDocumentCsv` | GET | `/api/v1/documents/{cycleKid}/table.csv` |
+| `DownloadUnitDocumentXls` | GET | `/api/v1/documents/{cycleKid}/table.xls` |
 | `ExecuteBankBookingCommand` | POST | `/api/v1/banks/{bankKid}/bookings/{bookingKid}/commands` |
 | `ExecuteBankUserCommand` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` |
 | `ExportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |
@@ -58,6 +58,7 @@
 | `GetControllerGroup` | GET | `/api/v1/controllers/{controllerKid}/groups/{kind}/{group}` |
 | `GetControllerOverview` | GET | `/api/v1/controllers/{controllerKid}` |
 | `GetCurrentManager` | GET | `/api/v1/session/me` |
+| `GetCycleChartPresentation` | GET | `/api/v1/public/cycle-chart/presentation` |
 | `GetHostingLogs` | GET | `/api/v1/hosting/logs` |
 | `GetHostingMetrics` | GET | `/api/v1/hosting/metrics` |
 | `GetIconAssetCatalog` | GET | `/api/v1/icon/catalog/{iconSet}` |
@@ -110,6 +111,7 @@
 | `GetPortalStatus` | GET | `/api/v1/status` |
 | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
 | `GetPublicCameraThumbnail` | GET | `/api/v1/public/camera/photos/{id}/thumbnail` |
+| `GetPublicCycleWidget` | GET | `/api/v1/public/widgets/cycle` |
 | `GetPublicDisp73` | GET | `/api/v1/public/displays/Map1` |
 | `GetPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` |
 | `GetPublicMachineErrors` | GET | `/api/v1/public/widgets/machine-errors` |
@@ -119,7 +121,6 @@
 | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |
-| `GetPublicWashDocWidget` | GET | `/api/v1/public/widgets/washdoc` |
 | `GetPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
 | `GetRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` |
 | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` |
@@ -131,14 +132,14 @@
 | `GetTenantStatus` | GET | `/api/v1/tenant/status` |
 | `GetTerminalExportCount` | GET | `/api/v1/terminals/export-count` |
 | `GetTerminals` | GET | `/api/v1/terminals` |
-| `GetUnitDocumentGraph` | GET | `/api/v1/documents/{documentKid}/graph` |
-| `GetUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` |
-| `GetUnitDocumentIcon` | GET | `/api/v1/documents/{documentKid}/icon.svg` |
-| `GetUnitDocumentNeighbors` | GET | `/api/v1/documents/{documentKid}/neighbors` |
-| `GetUnitDocumentPng` | GET | `/api/v1/documents/{documentKid}/graph.png` |
-| `GetUnitDocumentSvg2` | GET | `/api/v1/documents/{documentKid}/graph2.svg` |
-| `GetUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
-| `GetUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` |
+| `GetUnitDocumentGraph` | GET | `/api/v1/documents/{cycleKid}/graph` |
+| `GetUnitDocumentHtml` | GET | `/api/v1/documents/{cycleKid}/table.html` |
+| `GetUnitDocumentIcon` | GET | `/api/v1/documents/{cycleKid}/icon.svg` |
+| `GetUnitDocumentNeighbors` | GET | `/api/v1/documents/{cycleKid}/neighbors` |
+| `GetUnitDocumentPng` | GET | `/api/v1/documents/{cycleKid}/graph.png` |
+| `GetUnitDocumentSvg2` | GET | `/api/v1/documents/{cycleKid}/graph2.svg` |
+| `GetUnitDocumentSvg` | GET | `/api/v1/documents/{cycleKid}/graph.svg` |
+| `GetUnitDocumentTable` | GET | `/api/v1/documents/{cycleKid}/table` |
 | `GetUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` |
 | `GetUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |
 | `GetUnitExportCount` | GET | `/api/v1/units/export-count` |

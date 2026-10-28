@@ -275,7 +275,7 @@ array{'previous'?: DocumentNeighbor, 'next'?: DocumentNeighbor}
 ### DocumentTable
 
 ```php
-array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'columns'?: list<DocumentColumn>|null, 'rows'?: list<DocumentTableRow>|null}
+array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'columns'?: list<DocumentColumn>|null, 'rows'?: list<DocumentTableRow>|null}
 ```
 
 ### DocumentTableRow
@@ -1211,7 +1211,7 @@ array{'ms2000'?: int, 'value'?: int|float|null, 'isCalculated'?: bool, 'isEdge'?
 ### WashDocChartResponse
 
 ```php
-array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'startedMs2000'?: int|null, 'endedMs2000'?: int|null, 'series'?: list<WashDocChartSeries>|null, 'events'?: list<WashDocChartEvent>|null, 'signals'?: list<WashDocChartSignal>|null, 'dosing'?: list<WashDocChartDosing>|null, 'presentation'?: WashDocPresentation}
+array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'startedMs2000'?: int|null, 'endedMs2000'?: int|null, 'series'?: list<WashDocChartSeries>|null, 'events'?: list<WashDocChartEvent>|null, 'signals'?: list<WashDocChartSignal>|null, 'dosing'?: list<WashDocChartDosing>|null, 'presentation'?: WashDocPresentation}
 ```
 
 ### WashDocChartSeries
@@ -1250,6 +1250,12 @@ array{'tenantKid'?: string|null, 'count'?: int, 'lookbackDays'?: int, 'sinceUtc'
 array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|null}
 ```
 
+### CycleChartPresentationResponse
+
+```php
+array{'language'?: string|null, 'messages'?: array<string,mixed>|null, 'stateNames'?: array<string,mixed>|null}
+```
+
 ### IconPresentationResponse
 
 ```php
@@ -1266,6 +1272,12 @@ array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string
 
 ```php
 array{'thumbnailUrl'?: string|null, 'workspacePath'?: string|null}
+```
+
+### PublicCycleWidgetResponse
+
+```php
+array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'endedAtUtc'?: string|null, 'finished'?: bool, 'graphSvg'?: string|null, 'refreshAfterSeconds'?: int, 'cycleKidText'?: string|null}
 ```
 
 ### PublicMachineError
@@ -1290,12 +1302,6 @@ array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string
 
 ```php
 array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PublicScopedProgressItem>|null, 'nextCursor'?: string|null}
-```
-
-### PublicWashDocWidgetResponse
-
-```php
-array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'endedAtUtc'?: string|null, 'finished'?: bool, 'graphSvg'?: string|null, 'refreshAfterSeconds'?: int, 'documentKidText'?: string|null}
 ```
 
 ### PublicWidgetPresentationResponse
