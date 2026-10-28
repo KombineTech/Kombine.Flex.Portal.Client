@@ -354,7 +354,7 @@ DocumentNeighbors = TypedDict('DocumentNeighbors', {
 }, total=False)
 
 DocumentTable = TypedDict('DocumentTable', {
-    'documentKid': 'str | None',
+    'cycleKid': 'str | None',
     'unitKid': 'str | None',
     'unitName': 'str | None',
     'finished': 'bool',
@@ -1599,7 +1599,7 @@ WashDocChartPoint = TypedDict('WashDocChartPoint', {
 }, total=False)
 
 WashDocChartResponse = TypedDict('WashDocChartResponse', {
-    'documentKid': 'str | None',
+    'cycleKid': 'str | None',
     'unitKid': 'str | None',
     'unitName': 'str | None',
     'finished': 'bool',
@@ -1658,6 +1658,12 @@ ApiStatusResponse = TypedDict('ApiStatusResponse', {
     'apiVersion': 'str | None',
 }, total=False)
 
+CycleChartPresentationResponse = TypedDict('CycleChartPresentationResponse', {
+    'language': 'str | None',
+    'messages': 'dict[str, str] | None',
+    'stateNames': 'dict[str, str] | None',
+}, total=False)
+
 IconPresentationResponse = TypedDict('IconPresentationResponse', {
     'iconKid': 'str | None',
 }, total=False)
@@ -1674,6 +1680,19 @@ LiveMachineResponse = TypedDict('LiveMachineResponse', {
 PublicCameraPhoto = TypedDict('PublicCameraPhoto', {
     'thumbnailUrl': 'str | None',
     'workspacePath': 'str | None',
+}, total=False)
+
+PublicCycleWidgetResponse = TypedDict('PublicCycleWidgetResponse', {
+    'cycleKid': 'str | None',
+    'unitKid': 'str | None',
+    'unitName': 'str | None',
+    'locationName': 'str | None',
+    'startedAtUtc': 'str',
+    'endedAtUtc': 'str | None',
+    'finished': 'bool',
+    'graphSvg': 'str | None',
+    'refreshAfterSeconds': 'int',
+    'cycleKidText': 'str | None',
 }, total=False)
 
 PublicMachineError = TypedDict('PublicMachineError', {
@@ -1706,19 +1725,6 @@ PublicScopedProgressResponse = TypedDict('PublicScopedProgressResponse', {
     'refreshAfterSeconds': 'int',
     'items': 'list[PublicScopedProgressItem] | None',
     'nextCursor': 'str | None',
-}, total=False)
-
-PublicWashDocWidgetResponse = TypedDict('PublicWashDocWidgetResponse', {
-    'documentKid': 'str | None',
-    'unitKid': 'str | None',
-    'unitName': 'str | None',
-    'locationName': 'str | None',
-    'startedAtUtc': 'str',
-    'endedAtUtc': 'str | None',
-    'finished': 'bool',
-    'graphSvg': 'str | None',
-    'refreshAfterSeconds': 'int',
-    'documentKidText': 'str | None',
 }, total=False)
 
 PublicWidgetPresentationResponse = TypedDict('PublicWidgetPresentationResponse', {

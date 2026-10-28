@@ -2214,14 +2214,14 @@
     "dartMethod": "downloadUnitDocumentCsv",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table.csv",
+    "path": "api/v1/documents/{cycleKid}/table.csv",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -2267,14 +2267,14 @@
     "dartMethod": "downloadUnitDocumentXls",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table.xls",
+    "path": "api/v1/documents/{cycleKid}/table.xls",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -6509,14 +6509,14 @@
     "dartMethod": "getUnitDocumentNeighbors",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/neighbors",
+    "path": "api/v1/documents/{cycleKid}/neighbors",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -6537,14 +6537,14 @@
     "dartMethod": "getUnitDocumentTable",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table",
+    "path": "api/v1/documents/{cycleKid}/table",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -6589,14 +6589,14 @@
     "dartMethod": "getUnitDocumentHtml",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table.html",
+    "path": "api/v1/documents/{cycleKid}/table.html",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -6642,14 +6642,14 @@
     "dartMethod": "getUnitDocumentSvg",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/graph.svg",
+    "path": "api/v1/documents/{cycleKid}/graph.svg",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -6704,14 +6704,14 @@
     "dartMethod": "getUnitDocumentSvg2",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/graph2.svg",
+    "path": "api/v1/documents/{cycleKid}/graph2.svg",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -6757,14 +6757,14 @@
     "dartMethod": "getUnitDocumentGraph",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/graph",
+    "path": "api/v1/documents/{cycleKid}/graph",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -6809,14 +6809,14 @@
     "dartMethod": "getUnitDocumentPng",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/graph.png",
+    "path": "api/v1/documents/{cycleKid}/graph.png",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -6862,14 +6862,14 @@
     "dartMethod": "getUnitDocumentIcon",
     "example": null,
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/icon.svg",
+    "path": "api/v1/documents/{cycleKid}/icon.svg",
     "auth": true,
     "statuses": [
       200
     ],
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
         "required": true,
         "schema": {
@@ -9070,6 +9070,25 @@
     "binary": true
   },
   {
+    "operation": "GetCycleChartPresentation",
+    "dartMethod": "getCycleChartPresentation",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/public/cycle-chart/presentation",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CycleChartPresentationResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetPublicLiveMachines",
     "dartMethod": "getPublicLiveMachines",
     "example": null,
@@ -9178,6 +9197,42 @@
       "format": "binary"
     },
     "binary": true
+  },
+  {
+    "operation": "GetPublicCycleWidget",
+    "dartMethod": "getPublicCycleWidget",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/public/widgets/cycle",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "unitKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicCycleWidgetResponse"
+    },
+    "binary": false
   },
   {
     "operation": "GetPublicPurchasesChart",
@@ -9341,42 +9396,6 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ActiveUsersResponse"
-    },
-    "binary": false
-  },
-  {
-    "operation": "GetPublicWashDocWidget",
-    "dartMethod": "getPublicWashDocWidget",
-    "example": null,
-    "method": "GET",
-    "path": "api/v1/public/widgets/washdoc",
-    "auth": false,
-    "statuses": [
-      200
-    ],
-    "parameters": [
-      {
-        "name": "documentKid",
-        "where": "query",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      {
-        "name": "unitKid",
-        "where": "query",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
-    "body": null,
-    "bodyRequired": false,
-    "multipart": null,
-    "response": {
-      "$ref": "#/components/schemas/PublicWashDocWidgetResponse"
     },
     "binary": false
   },

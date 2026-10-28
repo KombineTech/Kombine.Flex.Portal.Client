@@ -50,7 +50,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type DocumentColumn array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
  * @phpstan-type DocumentNeighbor array{'kid'?: string|null, 'lastActivityUtc'?: string}
  * @phpstan-type DocumentNeighbors array{'previous'?: DocumentNeighbor, 'next'?: DocumentNeighbor}
- * @phpstan-type DocumentTable array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'columns'?: list<DocumentColumn>|null, 'rows'?: list<DocumentTableRow>|null}
+ * @phpstan-type DocumentTable array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'columns'?: list<DocumentColumn>|null, 'rows'?: list<DocumentTableRow>|null}
  * @phpstan-type DocumentTableRow array{'ms2000'?: int, 'cells'?: list<DocumentCell>|null}
  * @phpstan-type DocumentUnitOption array{'kid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'unitType'?: int|null}
  * @phpstan-type HostingBandwidth array{'dateUtc'?: string, 'bytes'?: string|null, 'errorCode'?: string|null}
@@ -206,21 +206,22 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type WashDocChartDosing array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
  * @phpstan-type WashDocChartEvent array{'ms2000'?: int, 'kind'?: string|null, 'name'?: string|null, 'value'?: int|float|null, 'label'?: string|null, 'localization'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type WashDocChartPoint array{'ms2000'?: int, 'value'?: int|float|null, 'isCalculated'?: bool, 'isEdge'?: bool, 'unit'?: string|null}
- * @phpstan-type WashDocChartResponse array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'startedMs2000'?: int|null, 'endedMs2000'?: int|null, 'series'?: list<WashDocChartSeries>|null, 'events'?: list<WashDocChartEvent>|null, 'signals'?: list<WashDocChartSignal>|null, 'dosing'?: list<WashDocChartDosing>|null, 'presentation'?: WashDocPresentation}
+ * @phpstan-type WashDocChartResponse array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'startedMs2000'?: int|null, 'endedMs2000'?: int|null, 'series'?: list<WashDocChartSeries>|null, 'events'?: list<WashDocChartEvent>|null, 'signals'?: list<WashDocChartSignal>|null, 'dosing'?: list<WashDocChartDosing>|null, 'presentation'?: WashDocPresentation}
  * @phpstan-type WashDocChartSeries array{'kind'?: string|null, 'name'?: string|null, 'label'?: string|null, 'localization'?: string|null, 'group'?: string|null, 'role'?: string|null, 'unit'?: string|null, 'step'?: bool, 'points'?: list<WashDocChartPoint>|null}
  * @phpstan-type WashDocChartSignal array{'ms2000'?: int, 'flags'?: int|null, 'heat'?: bool|null, 'inlet'?: bool|null, 'outlet'?: bool|null, 'isCalculated'?: bool, 'airflow'?: bool|null}
  * @phpstan-type WashDocPresentation array{'unitType'?: int|null, 'kind'?: string|null, 'groupOrder'?: list<string>|null}
  * @phpstan-type eThemeMode int
  * @phpstan-type ActiveUsersResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackDays'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string}
  * @phpstan-type ApiStatusResponse array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|null}
+ * @phpstan-type CycleChartPresentationResponse array{'language'?: string|null, 'messages'?: array<string,mixed>|null, 'stateNames'?: array<string,mixed>|null}
  * @phpstan-type IconPresentationResponse array{'iconKid'?: string|null}
  * @phpstan-type LiveMachineResponse array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'temperature'?: int|float|null}
  * @phpstan-type PublicCameraPhoto array{'thumbnailUrl'?: string|null, 'workspacePath'?: string|null}
+ * @phpstan-type PublicCycleWidgetResponse array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'endedAtUtc'?: string|null, 'finished'?: bool, 'graphSvg'?: string|null, 'refreshAfterSeconds'?: int, 'cycleKidText'?: string|null}
  * @phpstan-type PublicMachineError array{'kid'?: string|null, 'name'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'errorId'?: string|null}
  * @phpstan-type PublicMachineErrorsPage array{'items'?: list<PublicMachineError>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
  * @phpstan-type PublicScopedProgressItem array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string|null, 'doneAtUtc'?: string|null, 'progress'?: UnitProgressResponse}
  * @phpstan-type PublicScopedProgressResponse array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PublicScopedProgressItem>|null, 'nextCursor'?: string|null}
- * @phpstan-type PublicWashDocWidgetResponse array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'endedAtUtc'?: string|null, 'finished'?: bool, 'graphSvg'?: string|null, 'refreshAfterSeconds'?: int, 'documentKidText'?: string|null}
  * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null}
  * @phpstan-type PurchaseCurrencySnapshot array{'currency'?: string|null, 'count'?: int, 'amount'?: int|float}
  * @phpstan-type PurchaseHeatmapPoint array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
@@ -663,26 +664,26 @@ final class PortalClient extends BaseClient
 
     /**
      * Download a UTF-8 CSV table for one document.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @param resource $destination Writable stream; may contain partial data on failure.
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DownloadResponse
      */
-    public function downloadUnitDocumentCsv(mixed $documentKid, mixed $destination, array $options = []): mixed
+    public function downloadUnitDocumentCsv(mixed $cycleKid, mixed $destination, array $options = []): mixed
     {
-        return $this->request('DownloadUnitDocumentCsv', ['documentKid' => $documentKid] + $options, null, $destination);
+        return $this->request('DownloadUnitDocumentCsv', ['cycleKid' => $cycleKid] + $options, null, $destination);
     }
 
     /**
      * Download an Excel 97–2003 binary .xls workbook for one document.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @param resource $destination Writable stream; may contain partial data on failure.
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DownloadResponse
      */
-    public function downloadUnitDocumentXls(mixed $documentKid, mixed $destination, array $options = []): mixed
+    public function downloadUnitDocumentXls(mixed $cycleKid, mixed $destination, array $options = []): mixed
     {
-        return $this->request('DownloadUnitDocumentXls', ['documentKid' => $documentKid] + $options, null, $destination);
+        return $this->request('DownloadUnitDocumentXls', ['cycleKid' => $cycleKid] + $options, null, $destination);
     }
 
     /**
@@ -1424,94 +1425,94 @@ final class PortalClient extends BaseClient
 
     /**
      * Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @return DocumentNeighbors
      */
-    public function getUnitDocumentNeighbors(mixed $documentKid): mixed
+    public function getUnitDocumentNeighbors(mixed $cycleKid): mixed
     {
-        return $this->request('GetUnitDocumentNeighbors', ['documentKid' => $documentKid], null);
+        return $this->request('GetUnitDocumentNeighbors', ['cycleKid' => $cycleKid], null);
     }
 
     /**
      * Read a document's table as JSON with original values and column metadata.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DocumentTable
      */
-    public function getUnitDocumentTable(mixed $documentKid, array $options = []): mixed
+    public function getUnitDocumentTable(mixed $cycleKid, array $options = []): mixed
     {
-        return $this->request('GetUnitDocumentTable', ['documentKid' => $documentKid] + $options, null);
+        return $this->request('GetUnitDocumentTable', ['cycleKid' => $cycleKid] + $options, null);
     }
 
     /**
      * View a document as a printable HTML table.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @param resource $destination Writable stream; may contain partial data on failure.
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DownloadResponse
      */
-    public function getUnitDocumentHtml(mixed $documentKid, mixed $destination, array $options = []): mixed
+    public function getUnitDocumentHtml(mixed $cycleKid, mixed $destination, array $options = []): mixed
     {
-        return $this->request('GetUnitDocumentHtml', ['documentKid' => $documentKid] + $options, null, $destination);
+        return $this->request('GetUnitDocumentHtml', ['cycleKid' => $cycleKid] + $options, null, $destination);
     }
 
     /**
      * Render a document's numeric series as an SVG chart, caching completed documents privately.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @param resource $destination Writable stream; may contain partial data on failure.
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool, 'width'?: int} $options
      * @return DownloadResponse
      */
-    public function getUnitDocumentSvg(mixed $documentKid, mixed $destination, array $options = []): mixed
+    public function getUnitDocumentSvg(mixed $cycleKid, mixed $destination, array $options = []): mixed
     {
-        return $this->request('GetUnitDocumentSvg', ['documentKid' => $documentKid] + $options, null, $destination);
+        return $this->request('GetUnitDocumentSvg', ['cycleKid' => $cycleKid] + $options, null, $destination);
     }
 
     /**
      * Render a responsive WashDoc chart with independent text and graph layers.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @param resource $destination Writable stream; may contain partial data on failure.
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DownloadResponse
      */
-    public function getUnitDocumentSvg2(mixed $documentKid, mixed $destination, array $options = []): mixed
+    public function getUnitDocumentSvg2(mixed $cycleKid, mixed $destination, array $options = []): mixed
     {
-        return $this->request('GetUnitDocumentSvg2', ['documentKid' => $documentKid] + $options, null, $destination);
+        return $this->request('GetUnitDocumentSvg2', ['cycleKid' => $cycleKid] + $options, null, $destination);
     }
 
     /**
      * Read semantic WashDoc graph JSON for interactive charts and image rendering.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return WashDocChartResponse
      */
-    public function getUnitDocumentGraph(mixed $documentKid, array $options = []): mixed
+    public function getUnitDocumentGraph(mixed $cycleKid, array $options = []): mixed
     {
-        return $this->request('GetUnitDocumentGraph', ['documentKid' => $documentKid] + $options, null);
+        return $this->request('GetUnitDocumentGraph', ['cycleKid' => $cycleKid] + $options, null);
     }
 
     /**
      * Render a document KID as a PNG image with the shared local Chart.js renderer.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @param resource $destination Writable stream; may contain partial data on failure.
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DownloadResponse
      */
-    public function getUnitDocumentPng(mixed $documentKid, mixed $destination, array $options = []): mixed
+    public function getUnitDocumentPng(mixed $cycleKid, mixed $destination, array $options = []): mixed
     {
-        return $this->request('GetUnitDocumentPng', ['documentKid' => $documentKid] + $options, null, $destination);
+        return $this->request('GetUnitDocumentPng', ['cycleKid' => $cycleKid] + $options, null, $destination);
     }
 
     /**
      * Render the first WashDoc curve as a monochrome line icon.
-     * @param string $documentKid
+     * @param string $cycleKid
      * @param resource $destination Writable stream; may contain partial data on failure.
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
      * @return DownloadResponse
      */
-    public function getUnitDocumentIcon(mixed $documentKid, mixed $destination, array $options = []): mixed
+    public function getUnitDocumentIcon(mixed $cycleKid, mixed $destination, array $options = []): mixed
     {
-        return $this->request('GetUnitDocumentIcon', ['documentKid' => $documentKid] + $options, null, $destination);
+        return $this->request('GetUnitDocumentIcon', ['cycleKid' => $cycleKid] + $options, null, $destination);
     }
 
     /**
@@ -2066,6 +2067,15 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Get the portal chart's localized messages and stable state identifiers.
+     * @return CycleChartPresentationResponse
+     */
+    public function getCycleChartPresentation(): mixed
+    {
+        return $this->request('GetCycleChartPresentation', [], null);
+    }
+
+    /**
      * Returns the site overview's running-machine pool, refreshed at most once a minute.
      * @return list<LiveMachineResponse>
      */
@@ -2102,6 +2112,16 @@ final class PortalClient extends BaseClient
     public function getPublicCameraThumbnail(mixed $id, mixed $destination): mixed
     {
         return $this->request('GetPublicCameraThumbnail', ['id' => $id], null, $destination);
+    }
+
+    /**
+     * Get a square WashDoc widget's graph, machine/location names and document times.
+     * @param array{'cycleKid'?: string, 'unitKid'?: string} $options
+     * @return PublicCycleWidgetResponse
+     */
+    public function getPublicCycleWidget(array $options = []): mixed
+    {
+        return $this->request('GetPublicCycleWidget', [] + $options, null);
     }
 
     /**
@@ -2152,16 +2172,6 @@ final class PortalClient extends BaseClient
     public function getPublicActiveUsers(): mixed
     {
         return $this->request('GetPublicActiveUsers', [], null);
-    }
-
-    /**
-     * Get a square WashDoc widget's graph, machine/location names and document times.
-     * @param array{'documentKid'?: string, 'unitKid'?: string} $options
-     * @return PublicWashDocWidgetResponse
-     */
-    public function getPublicWashDocWidget(array $options = []): mixed
-    {
-        return $this->request('GetPublicWashDocWidget', [] + $options, null);
     }
 
     /**

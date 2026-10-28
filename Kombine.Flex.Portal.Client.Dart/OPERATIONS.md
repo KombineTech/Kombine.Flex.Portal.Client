@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-182 operations. OpenAPI SHA-256: `f7e61314ecaa04916ebf6ada583dbd8f1eb0f2f90d2a2764ac011dbc2fbac6f9`.
+183 operations. OpenAPI SHA-256: `d9d1e152304da4620795b5ee28d39abe6b4126dc000792408b3c4d5a6a09107a`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -43,8 +43,8 @@
 | `ExportBankAccount` | `exportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsers` | `exportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` |
 | `DownloadBankSettlement` | `downloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
-| `DownloadUnitDocumentCsv` | `downloadUnitDocumentCsv` | GET | `/api/v1/documents/{documentKid}/table.csv` |
-| `DownloadUnitDocumentXls` | `downloadUnitDocumentXls` | GET | `/api/v1/documents/{documentKid}/table.xls` |
+| `DownloadUnitDocumentCsv` | `downloadUnitDocumentCsv` | GET | `/api/v1/documents/{cycleKid}/table.csv` |
+| `DownloadUnitDocumentXls` | `downloadUnitDocumentXls` | GET | `/api/v1/documents/{cycleKid}/table.xls` |
 | `GetHostingLogs` | `getHostingLogs` | GET | `/api/v1/hosting/logs` |
 | `GetHostingMetrics` | `getHostingMetrics` | GET | `/api/v1/hosting/metrics` |
 | `SetInstallerIcon` | `setInstallerIcon` | POST | `/api/v1/installers/{installerKid}/icon` |
@@ -116,14 +116,14 @@
 | `InspectToolKid` | `inspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
 | `GetUnitDocuments` | `getUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |
 | `GetUnitDocumentsCount` | `getUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` |
-| `GetUnitDocumentNeighbors` | `getUnitDocumentNeighbors` | GET | `/api/v1/documents/{documentKid}/neighbors` |
-| `GetUnitDocumentTable` | `getUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` |
-| `GetUnitDocumentHtml` | `getUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` |
-| `GetUnitDocumentSvg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` |
-| `GetUnitDocumentSvg2` | `getUnitDocumentSvg2` | GET | `/api/v1/documents/{documentKid}/graph2.svg` |
-| `GetUnitDocumentGraph` | `getUnitDocumentGraph` | GET | `/api/v1/documents/{documentKid}/graph` |
-| `GetUnitDocumentPng` | `getUnitDocumentPng` | GET | `/api/v1/documents/{documentKid}/graph.png` |
-| `GetUnitDocumentIcon` | `getUnitDocumentIcon` | GET | `/api/v1/documents/{documentKid}/icon.svg` |
+| `GetUnitDocumentNeighbors` | `getUnitDocumentNeighbors` | GET | `/api/v1/documents/{cycleKid}/neighbors` |
+| `GetUnitDocumentTable` | `getUnitDocumentTable` | GET | `/api/v1/documents/{cycleKid}/table` |
+| `GetUnitDocumentHtml` | `getUnitDocumentHtml` | GET | `/api/v1/documents/{cycleKid}/table.html` |
+| `GetUnitDocumentSvg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{cycleKid}/graph.svg` |
+| `GetUnitDocumentSvg2` | `getUnitDocumentSvg2` | GET | `/api/v1/documents/{cycleKid}/graph2.svg` |
+| `GetUnitDocumentGraph` | `getUnitDocumentGraph` | GET | `/api/v1/documents/{cycleKid}/graph` |
+| `GetUnitDocumentPng` | `getUnitDocumentPng` | GET | `/api/v1/documents/{cycleKid}/graph.png` |
+| `GetUnitDocumentIcon` | `getUnitDocumentIcon` | GET | `/api/v1/documents/{cycleKid}/icon.svg` |
 | `GetUnitExportCount` | `getUnitExportCount` | GET | `/api/v1/units/export-count` |
 | `GetTerminalExportCount` | `getTerminalExportCount` | GET | `/api/v1/terminals/export-count` |
 | `GetActiveUnitCount` | `getActiveUnitCount` | GET | `/api/v1/units/active-count` |
@@ -172,16 +172,17 @@
 | `GetKombineLogoText` | `getKombineLogoText` | GET | `/api/v1/logos/kombine-logo-text/{color}.svg` |
 | `GetKombineLogoTextSized` | `getKombineLogoTextSized` | GET | `/api/v1/logos/kombine-logo-text/{color}/{width}.svg` |
 | `GetKombineLogoTextWithBackground` | `getKombineLogoTextWithBackground` | GET | `/api/v1/logos/kombine-logo-text/{color}/{background}/{width}.svg` |
+| `GetCycleChartPresentation` | `getCycleChartPresentation` | GET | `/api/v1/public/cycle-chart/presentation` |
 | `GetPublicLiveMachines` | `getPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` |
 | `GetPublicMachineErrors` | `getPublicMachineErrors` | GET | `/api/v1/public/widgets/machine-errors` |
 | `GetPublicRecentCameraPhotos` | `getPublicRecentCameraPhotos` | GET | `/api/v1/public/camera/photos` |
 | `GetPublicCameraThumbnail` | `getPublicCameraThumbnail` | GET | `/api/v1/public/camera/photos/{id}/thumbnail` |
+| `GetPublicCycleWidget` | `getPublicCycleWidget` | GET | `/api/v1/public/widgets/cycle` |
 | `GetPublicPurchasesChart` | `getPublicPurchasesChart` | GET | `/api/v1/public/statistics/purchases/chart/{color}.svg` |
 | `GetPublicDisp73` | `getPublicDisp73` | GET | `/api/v1/public/displays/Map1` |
 | `GetPublicScopedUnitProgress` | `getPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |
 | `GetPublicPurchases` | `getPublicPurchases` | GET | `/api/v1/public/statistics/purchases` |
 | `GetPublicActiveUsers` | `getPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
-| `GetPublicWashDocWidget` | `getPublicWashDocWidget` | GET | `/api/v1/public/widgets/washdoc` |
 | `GetPublicWidgetPresentation` | `getPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
 | `GetPublicReservations` | `getPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachines` | `getPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |

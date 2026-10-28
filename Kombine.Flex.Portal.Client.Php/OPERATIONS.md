@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `d5fbb23e58b2c8e69ea3a7e5ebb788a56055abf4aa16ce538d81dc62c6b457ac`).
-182 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `950ef6f0eeb0a160e36fb26d5c0fd6917389044452d834c72821787922daa3b4`).
+183 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -16,8 +16,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `d5fbb23e58b2c8e69ea
 | `downloadBankSettlement` | `DownloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` | Bearer |
 | `downloadPortalWindowsAppInstaller` | `DownloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` | Anonymous |
 | `downloadPortalWindowsPackage` | `DownloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` | Anonymous |
-| `downloadUnitDocumentCsv` | `DownloadUnitDocumentCsv` | GET | `/api/v1/documents/{documentKid}/table.csv` | Bearer |
-| `downloadUnitDocumentXls` | `DownloadUnitDocumentXls` | GET | `/api/v1/documents/{documentKid}/table.xls` | Bearer |
+| `downloadUnitDocumentCsv` | `DownloadUnitDocumentCsv` | GET | `/api/v1/documents/{cycleKid}/table.csv` | Bearer |
+| `downloadUnitDocumentXls` | `DownloadUnitDocumentXls` | GET | `/api/v1/documents/{cycleKid}/table.xls` | Bearer |
 | `executeBankBookingCommand` | `ExecuteBankBookingCommand` | POST | `/api/v1/banks/{bankKid}/bookings/{bookingKid}/commands` | Bearer |
 | `executeBankUserCommand` | `ExecuteBankUserCommand` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` | Bearer |
 | `exportBankAccount` | `ExportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` | Bearer |
@@ -61,6 +61,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `d5fbb23e58b2c8e69ea
 | `getControllerGroup` | `GetControllerGroup` | GET | `/api/v1/controllers/{controllerKid}/groups/{kind}/{group}` | Bearer |
 | `getControllerOverview` | `GetControllerOverview` | GET | `/api/v1/controllers/{controllerKid}` | Bearer |
 | `getCurrentManager` | `GetCurrentManager` | GET | `/api/v1/session/me` | Bearer |
+| `getCycleChartPresentation` | `GetCycleChartPresentation` | GET | `/api/v1/public/cycle-chart/presentation` | Anonymous |
 | `getHostingLogs` | `GetHostingLogs` | GET | `/api/v1/hosting/logs` | Bearer |
 | `getHostingMetrics` | `GetHostingMetrics` | GET | `/api/v1/hosting/metrics` | Bearer |
 | `getIconAssetCatalog` | `GetIconAssetCatalog` | GET | `/api/v1/icon/catalog/{iconSet}` | Anonymous |
@@ -113,6 +114,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `d5fbb23e58b2c8e69ea
 | `getPortalStatus` | `GetPortalStatus` | GET | `/api/v1/status` | Anonymous |
 | `getPublicActiveUsers` | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` | Anonymous |
 | `getPublicCameraThumbnail` | `GetPublicCameraThumbnail` | GET | `/api/v1/public/camera/photos/{id}/thumbnail` | Anonymous |
+| `getPublicCycleWidget` | `GetPublicCycleWidget` | GET | `/api/v1/public/widgets/cycle` | Anonymous |
 | `getPublicDisp73` | `GetPublicDisp73` | GET | `/api/v1/public/displays/Map1` | Anonymous |
 | `getPublicLiveMachines` | `GetPublicLiveMachines` | GET | `/api/v1/public/statistics/live-machines` | Anonymous |
 | `getPublicMachineErrors` | `GetPublicMachineErrors` | GET | `/api/v1/public/widgets/machine-errors` | Anonymous |
@@ -122,7 +124,6 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `d5fbb23e58b2c8e69ea
 | `getPublicReservations` | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` | Anonymous |
 | `getPublicRunningMachines` | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` | Anonymous |
 | `getPublicScopedUnitProgress` | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` | Anonymous |
-| `getPublicWashDocWidget` | `GetPublicWashDocWidget` | GET | `/api/v1/public/widgets/washdoc` | Anonymous |
 | `getPublicWidgetPresentation` | `GetPublicWidgetPresentation` | GET | `/api/v1/public/widgets` | Anonymous |
 | `getRecentCameraPhotoMetadata` | `GetRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` | Bearer |
 | `getSearchBank` | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` | Bearer |
@@ -134,14 +135,14 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `d5fbb23e58b2c8e69ea
 | `getTenantStatus` | `GetTenantStatus` | GET | `/api/v1/tenant/status` | Bearer |
 | `getTerminalExportCount` | `GetTerminalExportCount` | GET | `/api/v1/terminals/export-count` | Bearer |
 | `getTerminals` | `GetTerminals` | GET | `/api/v1/terminals` | Bearer |
-| `getUnitDocumentGraph` | `GetUnitDocumentGraph` | GET | `/api/v1/documents/{documentKid}/graph` | Bearer |
-| `getUnitDocumentHtml` | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{documentKid}/table.html` | Bearer |
-| `getUnitDocumentIcon` | `GetUnitDocumentIcon` | GET | `/api/v1/documents/{documentKid}/icon.svg` | Bearer |
-| `getUnitDocumentNeighbors` | `GetUnitDocumentNeighbors` | GET | `/api/v1/documents/{documentKid}/neighbors` | Bearer |
-| `getUnitDocumentPng` | `GetUnitDocumentPng` | GET | `/api/v1/documents/{documentKid}/graph.png` | Bearer |
-| `getUnitDocumentSvg2` | `GetUnitDocumentSvg2` | GET | `/api/v1/documents/{documentKid}/graph2.svg` | Bearer |
-| `getUnitDocumentSvg` | `GetUnitDocumentSvg` | GET | `/api/v1/documents/{documentKid}/graph.svg` | Bearer |
-| `getUnitDocumentTable` | `GetUnitDocumentTable` | GET | `/api/v1/documents/{documentKid}/table` | Bearer |
+| `getUnitDocumentGraph` | `GetUnitDocumentGraph` | GET | `/api/v1/documents/{cycleKid}/graph` | Bearer |
+| `getUnitDocumentHtml` | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{cycleKid}/table.html` | Bearer |
+| `getUnitDocumentIcon` | `GetUnitDocumentIcon` | GET | `/api/v1/documents/{cycleKid}/icon.svg` | Bearer |
+| `getUnitDocumentNeighbors` | `GetUnitDocumentNeighbors` | GET | `/api/v1/documents/{cycleKid}/neighbors` | Bearer |
+| `getUnitDocumentPng` | `GetUnitDocumentPng` | GET | `/api/v1/documents/{cycleKid}/graph.png` | Bearer |
+| `getUnitDocumentSvg2` | `GetUnitDocumentSvg2` | GET | `/api/v1/documents/{cycleKid}/graph2.svg` | Bearer |
+| `getUnitDocumentSvg` | `GetUnitDocumentSvg` | GET | `/api/v1/documents/{cycleKid}/graph.svg` | Bearer |
+| `getUnitDocumentTable` | `GetUnitDocumentTable` | GET | `/api/v1/documents/{cycleKid}/table` | Bearer |
 | `getUnitDocumentsCount` | `GetUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` | Bearer |
 | `getUnitDocuments` | `GetUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` | Bearer |
 | `getUnitExportCount` | `GetUnitExportCount` | GET | `/api/v1/units/export-count` | Bearer |

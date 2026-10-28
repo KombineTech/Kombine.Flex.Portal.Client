@@ -1197,7 +1197,7 @@
     "DocumentTable": {
       "type": "object",
       "properties": {
-        "documentKid": {
+        "cycleKid": {
           "type": "string",
           "nullable": true
         },
@@ -5581,7 +5581,7 @@
     "WashDocChartResponse": {
       "type": "object",
       "properties": {
-        "documentKid": {
+        "cycleKid": {
           "type": "string",
           "nullable": true
         },
@@ -5796,6 +5796,30 @@
       },
       "additionalProperties": false
     },
+    "CycleChartPresentationResponse": {
+      "type": "object",
+      "properties": {
+        "language": {
+          "type": "string",
+          "nullable": true
+        },
+        "messages": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "nullable": true
+        },
+        "stateNames": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "IconPresentationResponse": {
       "type": "object",
       "properties": {
@@ -5846,6 +5870,52 @@
           "nullable": true
         },
         "workspacePath": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PublicCycleWidgetResponse": {
+      "type": "object",
+      "properties": {
+        "cycleKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitName": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationName": {
+          "type": "string",
+          "nullable": true
+        },
+        "startedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endedAtUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "finished": {
+          "type": "boolean"
+        },
+        "graphSvg": {
+          "type": "string",
+          "nullable": true
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cycleKidText": {
           "type": "string",
           "nullable": true
         }
@@ -5957,52 +6027,6 @@
           "nullable": true
         },
         "nextCursor": {
-          "type": "string",
-          "nullable": true
-        }
-      },
-      "additionalProperties": false
-    },
-    "PublicWashDocWidgetResponse": {
-      "type": "object",
-      "properties": {
-        "documentKid": {
-          "type": "string",
-          "nullable": true
-        },
-        "unitKid": {
-          "type": "string",
-          "nullable": true
-        },
-        "unitName": {
-          "type": "string",
-          "nullable": true
-        },
-        "locationName": {
-          "type": "string",
-          "nullable": true
-        },
-        "startedAtUtc": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "endedAtUtc": {
-          "type": "string",
-          "format": "date-time",
-          "nullable": true
-        },
-        "finished": {
-          "type": "boolean"
-        },
-        "graphSvg": {
-          "type": "string",
-          "nullable": true
-        },
-        "refreshAfterSeconds": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "documentKidText": {
           "type": "string",
           "nullable": true
         }
@@ -8251,14 +8275,14 @@
     },
     "DownloadUnitDocumentCsv": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/table.csv",
+      "path": "api/v1/documents/{cycleKid}/table.csv",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -8300,14 +8324,14 @@
     },
     "DownloadUnitDocumentXls": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/table.xls",
+      "path": "api/v1/documents/{cycleKid}/table.xls",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -10553,14 +10577,14 @@
     },
     "GetUnitDocumentNeighbors": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/neighbors",
+      "path": "api/v1/documents/{cycleKid}/neighbors",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -10577,14 +10601,14 @@
     },
     "GetUnitDocumentTable": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/table",
+      "path": "api/v1/documents/{cycleKid}/table",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -10625,14 +10649,14 @@
     },
     "GetUnitDocumentHtml": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/table.html",
+      "path": "api/v1/documents/{cycleKid}/table.html",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -10674,14 +10698,14 @@
     },
     "GetUnitDocumentSvg": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/graph.svg",
+      "path": "api/v1/documents/{cycleKid}/graph.svg",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -10732,14 +10756,14 @@
     },
     "GetUnitDocumentSvg2": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/graph2.svg",
+      "path": "api/v1/documents/{cycleKid}/graph2.svg",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -10781,14 +10805,14 @@
     },
     "GetUnitDocumentGraph": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/graph",
+      "path": "api/v1/documents/{cycleKid}/graph",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -10829,14 +10853,14 @@
     },
     "GetUnitDocumentPng": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/graph.png",
+      "path": "api/v1/documents/{cycleKid}/graph.png",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -10878,14 +10902,14 @@
     },
     "GetUnitDocumentIcon": {
       "method": "GET",
-      "path": "api/v1/documents/{documentKid}/icon.svg",
+      "path": "api/v1/documents/{cycleKid}/icon.svg",
       "statuses": [
         200
       ],
       "auth": true,
       "parameters": [
         {
-          "name": "documentKid",
+          "name": "cycleKid",
           "where": "path",
           "required": true,
           "schema": {
@@ -12865,6 +12889,21 @@
       },
       "binary": true
     },
+    "GetCycleChartPresentation": {
+      "method": "GET",
+      "path": "api/v1/public/cycle-chart/presentation",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/CycleChartPresentationResponse"
+      },
+      "binary": false
+    },
     "GetPublicLiveMachines": {
       "method": "GET",
       "path": "api/v1/public/statistics/live-machines",
@@ -12958,6 +12997,38 @@
         "format": "binary"
       },
       "binary": true
+    },
+    "GetPublicCycleWidget": {
+      "method": "GET",
+      "path": "api/v1/public/widgets/cycle",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "cycleKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "unitKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PublicCycleWidgetResponse"
+      },
+      "binary": false
     },
     "GetPublicPurchasesChart": {
       "method": "GET",
@@ -13077,38 +13148,6 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ActiveUsersResponse"
-      },
-      "binary": false
-    },
-    "GetPublicWashDocWidget": {
-      "method": "GET",
-      "path": "api/v1/public/widgets/washdoc",
-      "statuses": [
-        200
-      ],
-      "auth": false,
-      "parameters": [
-        {
-          "name": "documentKid",
-          "where": "query",
-          "required": false,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "unitKid",
-          "where": "query",
-          "required": false,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "body": null,
-      "multipart": null,
-      "response": {
-        "$ref": "#/components/schemas/PublicWashDocWidgetResponse"
       },
       "binary": false
     },

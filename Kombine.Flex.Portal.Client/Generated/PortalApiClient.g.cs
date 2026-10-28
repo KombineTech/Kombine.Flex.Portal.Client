@@ -912,7 +912,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentCsvAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentCsvAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -931,7 +931,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentXlsAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentXlsAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1693,7 +1693,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Invitation
         /// <br/>- HTTP 202 with code `invitation-queued` means the mail queue transaction committed; it is not a delivery receipt.
         /// <br/>- Temporary delivery restriction: exact domains nortec.dk, kombinetech.com and arendt.dk receive directly; every other recipient goes to jens@arendt.dk. Cc/Bcc are cleared in every environment.
-        /// <br/>- A single-use link to the configured portal expires after 30 minutes and uses ResetManagerPassword. No password, Enabled, Tabs, Kids or rights change when sending.
+        /// <br/>- A single-use link to the configured portal expires after 10 days and uses ResetManagerPassword. No password, Enabled, Tabs, Kids or rights change when sending.
+        /// <br/>- The mail includes the target's readable API username, trusted PortalApi:BaseUrl links, and instructions for generating a personal API key and logging in through Swagger. No API key is generated or included in the mail.
         /// <br/>- Language is en (default), da or es. Do not automatically retry an uncertain response: the mail may already be queued.
         /// <br/>### Errors
         /// <br/>- 400 invalid-manager-kid/invalid-invitation; 401 expired credentials; 403 missing rights/own-manager-permissions; 404 manager-not-found (including retention-hidden targets).
@@ -1961,6 +1962,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- The API site's configuration selects the tenant, not the request.
         /// <br/>- Credentials and current manager settings come from the site's `A{TenantId:D4}.Log7`, bank zero. Tenant 166 uses `A0166`; there is no fallback to another tenant.
         /// <br/>- Missing Tabs or Kids do not prevent login. Inspect `GetCurrentManager` and explain missing access in your UI.
+        /// <br/>- Authenticated response names/labels use the manager's saved Language preference; automatic language uses the tenant/browser policy.
+        /// <br/>  Content-Language reports the selected culture. Changes use the existing manager snapshot cache and require no new token.
         /// <br/>- If several managers match both email and password, the active, non-deleted manager with the newest `eSetting.Alive` krumb MS2000 wins.
         /// <br/>  Missing/invalid activity ranks last; equal activity (including all unknown) is resolved by the lowest UserId.
         /// <br/>  Login atomically clears Password on the other matching accounts; accounts with different passwords are unchanged.
@@ -2550,6 +2553,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>preserve the visible position: the anchor is matched only among authorized results; otherwise offset is clamped.
         /// <br/>Do not combine cursor with offset/anchor. 400 invalid paging input/cursor, 409 changed cursor context,
         /// <br/>410 expired/evicted snapshot: restart without cursor. 401/403/503 retain GetTenantStatus meanings.
+        /// <br/>The single-file example may call this operation from http://localhost:8080 or http://127.0.0.1:8080
+        /// <br/>using a manager bearer token; cookies and other local origins are not enabled.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -2602,6 +2607,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>sort=activity (default) or documentId, direction=asc or desc (default). Document IDs sort numerically.
         /// <br/>Stable identity breaks activity ties. limit 1–100 (default 25), offset 0–100000; hasMore indicates another page.
         /// <br/>Live changes can shift offset pages; reset offset when changing filters or refreshing. No total count or measurement reads.
+        /// <br/>Known name placeholders resolve in the manager's saved language, with Accept-Language as the automatic fallback.
         /// <br/>### Errors and limits
         /// <br/>400 invalid KID/time/sort/page; 401 inactive/expired session; 403 missing access; 404 hidden/missing location or unit;
         /// <br/>422 oversized metadata; 503 storage unavailable/busy. Twelve-second storage deadline; no response cache.
@@ -2650,7 +2656,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DocumentNeighbors> GetUnitDocumentNeighborsAsync(string documentKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<DocumentNeighbors> GetUnitDocumentNeighborsAsync(string cycleKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2671,6 +2677,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- `finished` requires a terminal Cycle and an InSync timestamp at least two minutes beyond the document end.
         /// <br/>### Limits and errors
         /// <br/>- One document, at most 31 days, 128 columns, 50,000 source samples and 500,000 cells. A 12-second storage deadline applies.
+        /// <br/>- Omitted field categories use a bounded authorized catalog and count only encountered fields toward the 128-column limit; a large machine catalog alone does not reject a document. Explicit selections remain limited to 128 fields in total.
         /// <br/>- 400 invalid KID/selection; 401 inactive/expired session; 403 missing access; 404 missing/hidden object or document; 422 unsupported type/oversized document; 503 storage unavailable.
         /// <br/>- Tables and downloads are uncached. Original enum identifiers and UTC timestamps are language independent.
         /// </remarks>
@@ -2679,7 +2686,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DocumentTable> GetUnitDocumentTableAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<DocumentTable> GetUnitDocumentTableAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2696,7 +2703,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentHtmlAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentHtmlAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2719,7 +2726,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvgAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, int? width = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvgAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, int? width = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2741,7 +2748,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvg2Async(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvg2Async(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2769,7 +2776,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<WashDocChartResponse> GetUnitDocumentGraphAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<WashDocChartResponse> GetUnitDocumentGraphAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2787,7 +2794,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentPngAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentPngAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2805,7 +2812,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentIconAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> GetUnitDocumentIconAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -3653,6 +3660,21 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Get the portal chart's localized messages and stable state identifiers.
+        /// </summary>
+        /// <remarks>
+        /// No login or database reads. Accept-Language selects presentation only. Pass the Content-Language
+        /// <br/>            from an authenticated graph response to use the manager's language. Load /components/cycle/js/cycle-component.mjs
+        /// <br/>            and call mountCycleChart(host, { presentation, loadGraph }); loadGraph must use the normal authorized
+        /// <br/>            GetUnitDocumentGraph endpoint. The public module and these labels grant no data access. Call destroy on removal/logout.
+        /// <br/>            Implemented locally; available in each environment after deployment.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CycleChartPresentationResponse> GetCycleChartPresentationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Returns the site overview's running-machine pool, refreshed at most once a minute.
         /// </summary>
         /// <remarks>
@@ -3703,6 +3725,29 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<FileResponse> GetPublicCameraThumbnailAsync(string id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get a square WashDoc widget's graph, machine/location names and document times.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous publication explicitly requested by the owner. cycleKid and unitKid are optional and mutually exclusive.
+        /// <br/>A canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.
+        /// <br/>With neither, select the most recently started currently running public unit in this tenant. No random selection.
+        /// <br/>Public visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.
+        /// <br/>Only the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.
+        /// <br/>Uses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.
+        /// <br/>The original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.
+        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. GraphSvg is null when the document has no drawable measurements.
+        /// <br/>Finished graphs and metadata-only documents use the bounded private graph cache.
+        /// <br/>Refresh visible running widgets every 15 seconds; stop when a pinned document completes. Unpinned widgets check for a new document every 60 seconds after completion.
+        /// <br/>HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
+        /// <br/>422 oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
+        /// <br/>Implemented locally, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PublicCycleWidgetResponse> GetPublicCycleWidgetAsync(string? cycleKid = null, string? unitKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -3830,29 +3875,6 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ActiveUsersResponse> GetPublicActiveUsersAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get a square WashDoc widget's graph, machine/location names and document times.
-        /// </summary>
-        /// <remarks>
-        /// Anonymous publication explicitly requested by the owner. documentKid and unitKid are optional and mutually exclusive.
-        /// <br/>A canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.
-        /// <br/>With neither, select the most recently started currently running public unit in this tenant. No random selection.
-        /// <br/>Public visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.
-        /// <br/>Only the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.
-        /// <br/>Uses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.
-        /// <br/>The original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.
-        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. GraphSvg is null when the document has no drawable measurements.
-        /// <br/>Finished graphs and metadata-only documents use the bounded private graph cache.
-        /// <br/>Refresh visible running widgets every 15 seconds; stop when a pinned document completes. Unpinned widgets check for a new document every 60 seconds after completion.
-        /// <br/>HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
-        /// <br/>422 oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
-        /// <br/>Implemented locally, unreleased.
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PublicWashDocWidgetResponse> GetPublicWashDocWidgetAsync(string? documentKid = null, string? unitKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -10091,10 +10113,10 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentCsvAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentCsvAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -10107,9 +10129,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/table.csv"
+                    // Operation Path: "api/v1/documents/{cycleKid}/table.csv"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/table.csv");
                     urlBuilder_.Append('?');
                     if (states != null)
@@ -10253,10 +10275,10 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentXlsAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> DownloadUnitDocumentXlsAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -10269,9 +10291,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/table.xls"
+                    // Operation Path: "api/v1/documents/{cycleKid}/table.xls"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/table.xls");
                     urlBuilder_.Append('?');
                     if (states != null)
@@ -14582,7 +14604,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Invitation
         /// <br/>- HTTP 202 with code `invitation-queued` means the mail queue transaction committed; it is not a delivery receipt.
         /// <br/>- Temporary delivery restriction: exact domains nortec.dk, kombinetech.com and arendt.dk receive directly; every other recipient goes to jens@arendt.dk. Cc/Bcc are cleared in every environment.
-        /// <br/>- A single-use link to the configured portal expires after 30 minutes and uses ResetManagerPassword. No password, Enabled, Tabs, Kids or rights change when sending.
+        /// <br/>- A single-use link to the configured portal expires after 10 days and uses ResetManagerPassword. No password, Enabled, Tabs, Kids or rights change when sending.
+        /// <br/>- The mail includes the target's readable API username, trusted PortalApi:BaseUrl links, and instructions for generating a personal API key and logging in through Swagger. No API key is generated or included in the mail.
         /// <br/>- Language is en (default), da or es. Do not automatically retry an uncertain response: the mail may already be queued.
         /// <br/>### Errors
         /// <br/>- 400 invalid-manager-kid/invalid-invitation; 401 expired credentials; 403 missing rights/own-manager-permissions; 404 manager-not-found (including retention-hidden targets).
@@ -16096,6 +16119,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- The API site's configuration selects the tenant, not the request.
         /// <br/>- Credentials and current manager settings come from the site's `A{TenantId:D4}.Log7`, bank zero. Tenant 166 uses `A0166`; there is no fallback to another tenant.
         /// <br/>- Missing Tabs or Kids do not prevent login. Inspect `GetCurrentManager` and explain missing access in your UI.
+        /// <br/>- Authenticated response names/labels use the manager's saved Language preference; automatic language uses the tenant/browser policy.
+        /// <br/>  Content-Language reports the selected culture. Changes use the existing manager snapshot cache and require no new token.
         /// <br/>- If several managers match both email and password, the active, non-deleted manager with the newest `eSetting.Alive` krumb MS2000 wins.
         /// <br/>  Missing/invalid activity ranks last; equal activity (including all unknown) is resolved by the lowest UserId.
         /// <br/>  Login atomically clears Password on the other matching accounts; accounts with different passwords are unchanged.
@@ -19696,6 +19721,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>preserve the visible position: the anchor is matched only among authorized results; otherwise offset is clamped.
         /// <br/>Do not combine cursor with offset/anchor. 400 invalid paging input/cursor, 409 changed cursor context,
         /// <br/>410 expired/evicted snapshot: restart without cursor. 401/403/503 retain GetTenantStatus meanings.
+        /// <br/>The single-file example may call this operation from http://localhost:8080 or http://127.0.0.1:8080
+        /// <br/>using a manager bearer token; cookies and other local origins are not enabled.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -20112,6 +20139,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>sort=activity (default) or documentId, direction=asc or desc (default). Document IDs sort numerically.
         /// <br/>Stable identity breaks activity ties. limit 1–100 (default 25), offset 0–100000; hasMore indicates another page.
         /// <br/>Live changes can shift offset pages; reset offset when changing filters or refreshing. No total count or measurement reads.
+        /// <br/>Known name placeholders resolve in the manager's saved language, with Accept-Language as the automatic fallback.
         /// <br/>### Errors and limits
         /// <br/>400 invalid KID/time/sort/page; 401 inactive/expired session; 403 missing access; 404 hidden/missing location or unit;
         /// <br/>422 oversized metadata; 503 storage unavailable/busy. Twelve-second storage deadline; no response cache.
@@ -20458,10 +20486,10 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<DocumentNeighbors> GetUnitDocumentNeighborsAsync(string documentKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<DocumentNeighbors> GetUnitDocumentNeighborsAsync(string cycleKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -20474,9 +20502,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/neighbors"
+                    // Operation Path: "api/v1/documents/{cycleKid}/neighbors"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/neighbors");
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -20600,6 +20628,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- `finished` requires a terminal Cycle and an InSync timestamp at least two minutes beyond the document end.
         /// <br/>### Limits and errors
         /// <br/>- One document, at most 31 days, 128 columns, 50,000 source samples and 500,000 cells. A 12-second storage deadline applies.
+        /// <br/>- Omitted field categories use a bounded authorized catalog and count only encountered fields toward the 128-column limit; a large machine catalog alone does not reject a document. Explicit selections remain limited to 128 fields in total.
         /// <br/>- 400 invalid KID/selection; 401 inactive/expired session; 403 missing access; 404 missing/hidden object or document; 422 unsupported type/oversized document; 503 storage unavailable.
         /// <br/>- Tables and downloads are uncached. Original enum identifiers and UTC timestamps are language independent.
         /// </remarks>
@@ -20608,10 +20637,10 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<DocumentTable> GetUnitDocumentTableAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<DocumentTable> GetUnitDocumentTableAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -20624,9 +20653,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/table"
+                    // Operation Path: "api/v1/documents/{cycleKid}/table"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/table");
                     urlBuilder_.Append('?');
                     if (states != null)
@@ -20770,10 +20799,10 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentHtmlAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentHtmlAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -20786,9 +20815,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/table.html"
+                    // Operation Path: "api/v1/documents/{cycleKid}/table.html"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/table.html");
                     urlBuilder_.Append('?');
                     if (states != null)
@@ -20936,10 +20965,10 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvgAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, int? width = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvgAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, int? width = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -20952,9 +20981,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/graph.svg"
+                    // Operation Path: "api/v1/documents/{cycleKid}/graph.svg"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/graph.svg");
                     urlBuilder_.Append('?');
                     if (states != null)
@@ -21105,10 +21134,10 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvg2Async(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentSvg2Async(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -21121,9 +21150,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/graph2.svg"
+                    // Operation Path: "api/v1/documents/{cycleKid}/graph2.svg"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/graph2.svg");
                     urlBuilder_.Append('?');
                     if (states != null)
@@ -21276,10 +21305,10 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<WashDocChartResponse> GetUnitDocumentGraphAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<WashDocChartResponse> GetUnitDocumentGraphAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -21292,9 +21321,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/graph"
+                    // Operation Path: "api/v1/documents/{cycleKid}/graph"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/graph");
                     urlBuilder_.Append('?');
                     if (states != null)
@@ -21439,10 +21468,10 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentPngAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentPngAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -21455,9 +21484,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/graph.png"
+                    // Operation Path: "api/v1/documents/{cycleKid}/graph.png"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/graph.png");
                     urlBuilder_.Append('?');
                     if (states != null)
@@ -21600,10 +21629,10 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentIconAsync(string documentKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> GetUnitDocumentIconAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (documentKid == null)
-                throw new System.ArgumentNullException("documentKid");
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -21616,9 +21645,9 @@ namespace Kombine.Flex.Portal.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/v1/documents/{documentKid}/icon.svg"
+                    // Operation Path: "api/v1/documents/{cycleKid}/icon.svg"
                     urlBuilder_.Append("api/v1/documents/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/icon.svg");
                     urlBuilder_.Append('?');
                     if (states != null)
@@ -27711,6 +27740,87 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Get the portal chart's localized messages and stable state identifiers.
+        /// </summary>
+        /// <remarks>
+        /// No login or database reads. Accept-Language selects presentation only. Pass the Content-Language
+        /// <br/>            from an authenticated graph response to use the manager's language. Load /components/cycle/js/cycle-component.mjs
+        /// <br/>            and call mountCycleChart(host, { presentation, loadGraph }); loadGraph must use the normal authorized
+        /// <br/>            GetUnitDocumentGraph endpoint. The public module and these labels grant no data access. Call destroy on removal/logout.
+        /// <br/>            Implemented locally; available in each environment after deployment.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CycleChartPresentationResponse> GetCycleChartPresentationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/cycle-chart/presentation"
+                    urlBuilder_.Append("api/v1/public/cycle-chart/presentation");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CycleChartPresentationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Returns the site overview's running-machine pool, refreshed at most once a minute.
         /// </summary>
         /// <remarks>
@@ -28080,6 +28190,145 @@ namespace Kombine.Flex.Portal.Client
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
                             throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get a square WashDoc widget's graph, machine/location names and document times.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous publication explicitly requested by the owner. cycleKid and unitKid are optional and mutually exclusive.
+        /// <br/>A canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.
+        /// <br/>With neither, select the most recently started currently running public unit in this tenant. No random selection.
+        /// <br/>Public visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.
+        /// <br/>Only the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.
+        /// <br/>Uses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.
+        /// <br/>The original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.
+        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. GraphSvg is null when the document has no drawable measurements.
+        /// <br/>Finished graphs and metadata-only documents use the bounded private graph cache.
+        /// <br/>Refresh visible running widgets every 15 seconds; stop when a pinned document completes. Unpinned widgets check for a new document every 60 seconds after completion.
+        /// <br/>HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
+        /// <br/>422 oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
+        /// <br/>Implemented locally, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PublicCycleWidgetResponse> GetPublicCycleWidgetAsync(string? cycleKid = null, string? unitKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/widgets/cycle"
+                    urlBuilder_.Append("api/v1/public/widgets/cycle");
+                    urlBuilder_.Append('?');
+                    if (cycleKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cycleKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (unitKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("unitKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PublicCycleWidgetResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -28636,145 +28885,6 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 503)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get a square WashDoc widget's graph, machine/location names and document times.
-        /// </summary>
-        /// <remarks>
-        /// Anonymous publication explicitly requested by the owner. documentKid and unitKid are optional and mutually exclusive.
-        /// <br/>A canonical document KID selects that document. A unit KID follows its current stored WashDocId, including its last completed document.
-        /// <br/>With neither, select the most recently started currently running public unit in this tenant. No random selection.
-        /// <br/>Public visibility requires an enabled location and non-deleted bank/location/unit; it is rechecked through a bounded 60-second snapshot.
-        /// <br/>Only the simplified graph, canonical document/unit KIDs, names, times and finished status are published; no raw tables, residents, payments or credentials.
-        /// <br/>Uses the same WashDoc data acquisition, legacy numeric decoding, cycle window and type-specific rendering profile as the full graph.
-        /// <br/>The original UnitType selects measurement emphasis; Alliance dryers 19/29/30 interpret legacy Level as Temperature2, not water.
-        /// <br/>Fixed measurement/event inputs and Cycle only; no caller-selected fields. GraphSvg is null when the document has no drawable measurements.
-        /// <br/>Finished graphs and metadata-only documents use the bounded private graph cache.
-        /// <br/>Refresh visible running widgets every 15 seconds; stop when a pinned document completes. Unpinned widgets check for a new document every 60 seconds after completion.
-        /// <br/>HTTP no-store and anonymous GET-only CORS. 400 invalid/foreign KID; 404 no public unit/document;
-        /// <br/>422 oversized data; 503 busy/unavailable with Retry-After: 60. Full documents and downloads remain authenticated.
-        /// <br/>Implemented locally, unreleased.
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PublicWashDocWidgetResponse> GetPublicWashDocWidgetAsync(string? documentKid = null, string? unitKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-
-                    // Operation Path: "api/v1/public/widgets/washdoc"
-                    urlBuilder_.Append("api/v1/public/widgets/washdoc");
-                    urlBuilder_.Append('?');
-                    if (documentKid != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("documentKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(documentKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    if (unitKid != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("unitKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    urlBuilder_.Length--;
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<PublicWashDocWidgetResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 422)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -30492,8 +30602,8 @@ namespace Kombine.Flex.Portal.Client
     public partial class DocumentTable
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("documentKid")]
-        public string? DocumentKid { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("cycleKid")]
+        public string? CycleKid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
         public string? UnitKid { get; set; } = default!;
@@ -34943,8 +35053,8 @@ namespace Kombine.Flex.Portal.Client
     public partial class WashDocChartResponse
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("documentKid")]
-        public string? DocumentKid { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("cycleKid")]
+        public string? CycleKid { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
         public string? UnitKid { get; set; } = default!;
@@ -35150,6 +35260,33 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Public presentation for the shared chart, without business data or credentials.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CycleChartPresentationResponse
+    {
+
+        /// <summary>
+        /// Culture selected by Accept-Language.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("language")]
+        public string? Language { get; set; } = default!;
+
+        /// <summary>
+        /// Localized graph labels, help and status messages from the portal resources.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("messages")]
+        public System.Collections.Generic.IDictionary<string, string>? Messages { get; set; } = default!;
+
+        /// <summary>
+        /// Stable enum identifiers for grouped controls.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("stateNames")]
+        public System.Collections.Generic.IDictionary<string, string>? StateNames { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Opaque image identity: eIcon name for an icon alone, otherwise canonical Kid.ToString().
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -35200,6 +35337,45 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("workspacePath")]
         public string? WorkspacePath { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PublicCycleWidgetResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("cycleKid")]
+        public string? CycleKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
+        public string? UnitName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
+        public string? LocationName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("startedAtUtc")]
+        public System.DateTimeOffset? StartedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("endedAtUtc")]
+        public System.DateTimeOffset? EndedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("finished")]
+        public bool? Finished { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("graphSvg")]
+        public string? GraphSvg { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("cycleKidText")]
+        public string? CycleKidText { get; set; } = default!;
 
     }
 
@@ -35329,45 +35505,6 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
         public string? NextCursor { get; set; } = default!;
-
-    }
-
-    /// <summary>
-    /// Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table.
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PublicWashDocWidgetResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("documentKid")]
-        public string? DocumentKid { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
-        public string? UnitKid { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
-        public string? UnitName { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
-        public string? LocationName { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("startedAtUtc")]
-        public System.DateTimeOffset? StartedAtUtc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("endedAtUtc")]
-        public System.DateTimeOffset? EndedAtUtc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("finished")]
-        public bool? Finished { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("graphSvg")]
-        public string? GraphSvg { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
-        public int? RefreshAfterSeconds { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("documentKidText")]
-        public string? DocumentKidText { get; set; } = default!;
 
     }
 

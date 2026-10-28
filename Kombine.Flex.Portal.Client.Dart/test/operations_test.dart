@@ -844,7 +844,7 @@ void main() {
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.downloadUnitDocumentCsv(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    final result = await client.downloadUnitDocumentCsv(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -864,7 +864,7 @@ void main() {
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.downloadUnitDocumentXls(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    final result = await client.downloadUnitDocumentXls(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -2235,7 +2235,7 @@ void main() {
       return http.Response(encodeApiJson(<String, Object?>{"previous": <String, Object?>{"kid": null, "lastActivityUtc": "2026-10-20T10:00:00Z"}, "next": <String, Object?>{"kid": null, "lastActivityUtc": "2026-10-20T10:00:00Z"}}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentNeighbors(documentKid: "fixture /\u00e6?&");
+    final result = await client.getUnitDocumentNeighbors(cycleKid: "fixture /\u00e6?&");
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"previous": <String, Object?>{"kid": null, "lastActivityUtc": "2026-10-20T10:00:00Z"}, "next": <String, Object?>{"kid": null, "lastActivityUtc": "2026-10-20T10:00:00Z"}}));
     expect(sends, 1);
   });
@@ -2252,11 +2252,11 @@ void main() {
       expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
-      return http.Response(encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "columns": null, "rows": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "columns": null, "rows": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentTable(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "columns": null, "rows": null}));
+    final result = await client.getUnitDocumentTable(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "columns": null, "rows": null}));
     expect(sends, 1);
   });
 
@@ -2275,7 +2275,7 @@ void main() {
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentHtml(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    final result = await client.getUnitDocumentHtml(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -2296,7 +2296,7 @@ void main() {
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentSvg(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false, width: 7);
+    final result = await client.getUnitDocumentSvg(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false, width: 7);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -2316,7 +2316,7 @@ void main() {
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentSvg2(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    final result = await client.getUnitDocumentSvg2(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -2333,11 +2333,11 @@ void main() {
       expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
-      return http.Response(encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "startedMs2000": null, "endedMs2000": null, "series": null, "events": null, "signals": null, "dosing": null, "presentation": <String, Object?>{"unitType": null, "kind": null, "groupOrder": null}}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "startedMs2000": null, "endedMs2000": null, "series": null, "events": null, "signals": null, "dosing": null, "presentation": <String, Object?>{"unitType": null, "kind": null, "groupOrder": null}}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentGraph(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "startedMs2000": null, "endedMs2000": null, "series": null, "events": null, "signals": null, "dosing": null, "presentation": <String, Object?>{"unitType": null, "kind": null, "groupOrder": null}}));
+    final result = await client.getUnitDocumentGraph(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "unitName": null, "finished": false, "fromMs2000": BigInt.parse('9007199254740993'), "toMs2000": BigInt.parse('9007199254740993'), "startedMs2000": null, "endedMs2000": null, "series": null, "events": null, "signals": null, "dosing": null, "presentation": <String, Object?>{"unitType": null, "kind": null, "groupOrder": null}}));
     expect(sends, 1);
   });
 
@@ -2356,7 +2356,7 @@ void main() {
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentPng(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    final result = await client.getUnitDocumentPng(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -2376,7 +2376,7 @@ void main() {
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getUnitDocumentIcon(documentKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    final result = await client.getUnitDocumentIcon(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -3297,6 +3297,24 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetCycleChartPresentation", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/public/cycle-chart/presentation");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+
+      return http.Response(encodeApiJson(<String, Object?>{"language": null, "messages": null, "stateNames": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getCycleChartPresentation();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"language": null, "messages": null, "stateNames": null}));
+    expect(sends, 1);
+  });
+
   test("wire GetPublicLiveMachines", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -3367,6 +3385,25 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getPublicCameraThumbnail(id: "fixture /\u00e6?&");
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
+    expect(sends, 1);
+  });
+
+  test("wire GetPublicCycleWidget", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/public/widgets/cycle");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+      expect(request.url.queryParametersAll["cycleKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["unitKid"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7, "cycleKidText": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getPublicCycleWidget(cycleKid: "fixture", unitKid: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7, "cycleKidText": null}));
     expect(sends, 1);
   });
 
@@ -3458,25 +3495,6 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getPublicActiveUsers();
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"tenantKid": null, "count": BigInt.parse('9007199254740993'), "lookbackDays": 7, "sinceUtc": "2026-10-20T10:00:00Z", "measuredAtUtc": "2026-10-20T10:00:00Z"}));
-    expect(sends, 1);
-  });
-
-  test("wire GetPublicWashDocWidget", () async {
-    var sends = 0;
-    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
-      sends++;
-      expect(request.method, "GET");
-      expect(request.url.origin, 'https://example.invalid');
-      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/public/widgets/washdoc");
-      expect(request.followRedirects, isFalse);
-      expect(request.headers['authorization'], isNull);
-      expect(request.url.queryParametersAll["documentKid"], <Object?>["fixture"]);
-      expect(request.url.queryParametersAll["unitKid"], <Object?>["fixture"]);
-      return http.Response(encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7, "documentKidText": null}), 200);
-    }));
-    addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getPublicWashDocWidget(documentKid: "fixture", unitKid: "fixture");
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"documentKid": null, "unitKid": null, "unitName": null, "locationName": null, "startedAtUtc": "2026-10-20T10:00:00Z", "endedAtUtc": null, "finished": false, "graphSvg": null, "refreshAfterSeconds": 7, "documentKidText": null}));
     expect(sends, 1);
   });
 

@@ -613,8 +613,8 @@ export interface DocumentNeighbors {
 
 /** Only columns with data are returned, with values indexed by column position. A missing cell is null; a stored null is a cell with null text/value. */
 export interface DocumentTable {
-  /** documentKid */
-  "documentKid"?: string | null;
+  /** cycleKid */
+  "cycleKid"?: string | null;
   /** unitKid */
   "unitKid"?: string | null;
   /** unitName */
@@ -2791,8 +2791,8 @@ export interface WashDocChartPoint {
 
 /** Renderer-independent WashDoc measurements. All times are UTC milliseconds since 2000-01-01. */
 export interface WashDocChartResponse {
-  /** documentKid */
-  "documentKid"?: string | null;
+  /** cycleKid */
+  "cycleKid"?: string | null;
   /** unitKid */
   "unitKid"?: string | null;
   /** unitName */
@@ -2896,6 +2896,16 @@ export interface ApiStatusResponse {
   "apiVersion"?: string | null;
 }
 
+/** Public presentation for the shared chart, without business data or credentials. */
+export interface CycleChartPresentationResponse {
+  /** Culture selected by Accept-Language. */
+  "language"?: string | null;
+  /** Localized graph labels, help and status messages from the portal resources. */
+  "messages"?: Record<string, string> | null;
+  /** Stable enum identifiers for grouped controls. */
+  "stateNames"?: Record<string, string> | null;
+}
+
 /** Opaque image identity: eIcon name for an icon alone, otherwise canonical Kid.ToString(). */
 export interface IconPresentationResponse {
   /** iconKid */
@@ -2924,6 +2934,30 @@ export interface PublicCameraPhoto {
   "thumbnailUrl"?: string | null;
   /** workspacePath */
   "workspacePath"?: string | null;
+}
+
+/** Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table. */
+export interface PublicCycleWidgetResponse {
+  /** cycleKid */
+  "cycleKid"?: string | null;
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** startedAtUtc */
+  "startedAtUtc"?: string;
+  /** endedAtUtc */
+  "endedAtUtc"?: string | null;
+  /** finished */
+  "finished"?: boolean;
+  /** graphSvg */
+  "graphSvg"?: string | null;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** cycleKidText */
+  "cycleKidText"?: string | null;
 }
 
 /** Public identity, display names and error code; no raw state payload. */
@@ -2980,30 +3014,6 @@ export interface PublicScopedProgressResponse {
   "items"?: (PublicScopedProgressItem)[] | null;
   /** Opaque next-page cursor, or null after the last page. */
   "nextCursor"?: string | null;
-}
-
-/** Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table. */
-export interface PublicWashDocWidgetResponse {
-  /** documentKid */
-  "documentKid"?: string | null;
-  /** unitKid */
-  "unitKid"?: string | null;
-  /** unitName */
-  "unitName"?: string | null;
-  /** locationName */
-  "locationName"?: string | null;
-  /** startedAtUtc */
-  "startedAtUtc"?: string;
-  /** endedAtUtc */
-  "endedAtUtc"?: string | null;
-  /** finished */
-  "finished"?: boolean;
-  /** graphSvg */
-  "graphSvg"?: string | null;
-  /** refreshAfterSeconds */
-  "refreshAfterSeconds"?: number;
-  /** documentKidText */
-  "documentKidText"?: string | null;
 }
 
 /** Public presentation selected by this API site's trusted tenant. */
@@ -3654,6 +3664,11 @@ export interface GetPublicMachineErrorsOptions {
   cursor?: string;
 }
 
+export interface GetPublicCycleWidgetOptions {
+  cycleKid?: string;
+  unitKid?: string;
+}
+
 export interface GetPublicDisp73Options {
   limit?: number;
 }
@@ -3661,10 +3676,5 @@ export interface GetPublicDisp73Options {
 export interface GetPublicScopedUnitProgressOptions {
   pageSize?: number;
   cursor?: string;
-}
-
-export interface GetPublicWashDocWidgetOptions {
-  documentKid?: string;
-  unitKid?: string;
 }
 

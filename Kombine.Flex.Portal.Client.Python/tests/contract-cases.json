@@ -2421,7 +2421,7 @@
     "python": "download_unit_document_csv",
     "javascript": "downloadUnitDocumentCsv",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table.csv",
+    "path": "api/v1/documents/{cycleKid}/table.csv",
     "status": 200,
     "statuses": [
       200
@@ -2429,10 +2429,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -2479,7 +2479,7 @@
     "python": "download_unit_document_xls",
     "javascript": "downloadUnitDocumentXls",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table.xls",
+    "path": "api/v1/documents/{cycleKid}/table.xls",
     "status": 200,
     "statuses": [
       200
@@ -2487,10 +2487,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -6923,7 +6923,7 @@
     "python": "get_unit_document_neighbors",
     "javascript": "getUnitDocumentNeighbors",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/neighbors",
+    "path": "api/v1/documents/{cycleKid}/neighbors",
     "status": 200,
     "statuses": [
       200
@@ -6931,10 +6931,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -6953,7 +6953,7 @@
     "python": "get_unit_document_table",
     "javascript": "getUnitDocumentTable",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table",
+    "path": "api/v1/documents/{cycleKid}/table",
     "status": 200,
     "statuses": [
       200
@@ -6961,10 +6961,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -7010,7 +7010,7 @@
     "python": "get_unit_document_html",
     "javascript": "getUnitDocumentHtml",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table.html",
+    "path": "api/v1/documents/{cycleKid}/table.html",
     "status": 200,
     "statuses": [
       200
@@ -7018,10 +7018,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -7068,7 +7068,7 @@
     "python": "get_unit_document_svg",
     "javascript": "getUnitDocumentSvg",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/graph.svg",
+    "path": "api/v1/documents/{cycleKid}/graph.svg",
     "status": 200,
     "statuses": [
       200
@@ -7076,10 +7076,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -7136,7 +7136,7 @@
     "python": "get_unit_document_svg2",
     "javascript": "getUnitDocumentSvg2",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/graph2.svg",
+    "path": "api/v1/documents/{cycleKid}/graph2.svg",
     "status": 200,
     "statuses": [
       200
@@ -7144,10 +7144,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -7194,7 +7194,7 @@
     "python": "get_unit_document_graph",
     "javascript": "getUnitDocumentGraph",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/graph",
+    "path": "api/v1/documents/{cycleKid}/graph",
     "status": 200,
     "statuses": [
       200
@@ -7202,10 +7202,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -7251,7 +7251,7 @@
     "python": "get_unit_document_png",
     "javascript": "getUnitDocumentPng",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/graph.png",
+    "path": "api/v1/documents/{cycleKid}/graph.png",
     "status": 200,
     "statuses": [
       200
@@ -7259,10 +7259,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -7309,7 +7309,7 @@
     "python": "get_unit_document_icon",
     "javascript": "getUnitDocumentIcon",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/icon.svg",
+    "path": "api/v1/documents/{cycleKid}/icon.svg",
     "status": 200,
     "statuses": [
       200
@@ -7317,10 +7317,10 @@
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -9709,6 +9709,26 @@
     "example": {}
   },
   {
+    "operation": "GetCycleChartPresentation",
+    "python": "get_cycle_chart_presentation",
+    "javascript": "getCycleChartPresentation",
+    "method": "GET",
+    "path": "api/v1/public/cycle-chart/presentation",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CycleChartPresentationResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetPublicLiveMachines",
     "python": "get_public_live_machines",
     "javascript": "getPublicLiveMachines",
@@ -9823,6 +9843,45 @@
       "format": "binary"
     },
     "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicCycleWidget",
+    "python": "get_public_cycle_widget",
+    "javascript": "getPublicCycleWidget",
+    "method": "GET",
+    "path": "api/v1/public/widgets/cycle",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "query",
+        "py": "cycle_kid",
+        "js": "cycleKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "unitKid",
+        "where": "query",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicCycleWidgetResponse"
+    },
+    "binary": false,
     "example": {}
   },
   {
@@ -9999,45 +10058,6 @@
       "sinceUtc": "2026-06-15T10:00:00+00:00",
       "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     }
-  },
-  {
-    "operation": "GetPublicWashDocWidget",
-    "python": "get_public_wash_doc_widget",
-    "javascript": "getPublicWashDocWidget",
-    "method": "GET",
-    "path": "api/v1/public/widgets/washdoc",
-    "status": 200,
-    "statuses": [
-      200
-    ],
-    "auth": false,
-    "parameters": [
-      {
-        "name": "documentKid",
-        "where": "query",
-        "py": "document_kid",
-        "js": "documentKid",
-        "schema": {
-          "type": "string"
-        }
-      },
-      {
-        "name": "unitKid",
-        "where": "query",
-        "py": "unit_kid",
-        "js": "unitKid",
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
-    "body": null,
-    "multipart": null,
-    "response": {
-      "$ref": "#/components/schemas/PublicWashDocWidgetResponse"
-    },
-    "binary": false,
-    "example": {}
   },
   {
     "operation": "GetPublicWidgetPresentation",
