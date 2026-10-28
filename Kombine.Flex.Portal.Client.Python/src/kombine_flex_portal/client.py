@@ -151,6 +151,14 @@ class PortalClient(BaseClient):
         'Read private capture metadata for a public recent-photo thumbnail.'
         return self._request('GetRecentCameraPhotoMetadata', {'id': id}, None)
 
+    def get_checklist(self, *, scope_kid: str | None = None, include_resolved: bool | None = None, page_size: int | None = None, cursor: str | None = None) -> ChecklistPage:
+        'List authorized settlement periods requiring attention, as in DatPro2 Checklist1.'
+        return self._request('GetChecklist', {'scopeKid': scope_kid, 'includeResolved': include_resolved, 'pageSize': page_size, 'cursor': cursor}, None)
+
+    def get_checklist_period(self, period_kid: str) -> ChecklistItem:
+        'Read one current checklist period, including its hidden/completed status.'
+        return self._request('GetChecklistPeriod', {'periodKid': period_kid}, None)
+
     def export_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None, format: str | None = None) -> PortalDownload:
         'Downloads the complete filtered selection as CSV or a genuine Excel workbook.'
         return self._request('ExportBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit, 'format': format}, None)
@@ -170,6 +178,18 @@ class PortalClient(BaseClient):
     def download_unit_document_xls(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> PortalDownload:
         'Download an Excel 97–2003 binary .xls workbook for one document.'
         return self._request('DownloadUnitDocumentXls', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+
+    def get_bank_errors(self, bank_kid: str, *, days: int | None = None, level: str | None = None, include_acknowledged: bool | None = None, page_size: int | None = None, cursor: str | None = None) -> UnitErrorPage:
+        "List a bank's machine errors, as in DatPro2 Errors2."
+        return self._request('GetBankErrors', {'bankKid': bank_kid, 'days': days, 'level': level, 'includeAcknowledged': include_acknowledged, 'pageSize': page_size, 'cursor': cursor}, None)
+
+    def get_error(self, error_kid: str) -> UnitErrorItem:
+        'Read one authorized error event, including its current acknowledgement and revision.'
+        return self._request('GetError', {'errorKid': error_kid}, None)
+
+    def acknowledge_error(self, error_kid: str, body: AcknowledgeErrorRequest) -> UnitErrorItem:
+        'Acknowledge one error without deleting its log or changing machine status.'
+        return self._request('AcknowledgeError', {'errorKid': error_kid}, body)
 
     def get_hosting_logs(self, *, environment: str | None = None, application: str | None = None) -> HostingLogsResponse:
         'Read recent DigitalOcean runtime logs for a configured shared app.'
@@ -487,6 +507,14 @@ class PortalClient(BaseClient):
         'Render the first WashDoc curve as a monochrome line icon.'
         return self._request('GetUnitDocumentIcon', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
 
+    def get_out_of_order_units(self, *, page_size: int | None = None, cursor: str | None = None) -> OutOfOrderPage:
+        'List out-of-order machines, including manual, automatic and repair states.'
+        return self._request('GetOutOfOrderUnits', {'pageSize': page_size, 'cursor': cursor}, None)
+
+    def restore_out_of_order_unit(self, unit_kid: str, body: OutOfOrderRestoreRequest) -> OutOfOrderRestoreResponse:
+        'Return one out-of-order machine to service by setting OutOfOrder to Enabled (0).'
+        return self._request('RestoreOutOfOrderUnit', {'unitKid': unit_kid}, body)
+
     def get_unit_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, enabled_only: bool | None = None, fields: str | None = None, location_kid: str | None = None, terminal_kid: str | None = None, running_only: bool | None = None, auto_out_of_order_only: bool | None = None) -> DirectoryExportCountResponse:
         'Count the complete filtered export selection using the same directory authorization and visibility.'
         return self._request('GetUnitExportCount', {'filter': filter, 'sort': sort, 'direction': direction, 'enabledOnly': enabled_only, 'fields': fields, 'locationKid': location_kid, 'terminalKid': terminal_kid, 'runningOnly': running_only, 'autoOutOfOrderOnly': auto_out_of_order_only}, None)
@@ -550,6 +578,10 @@ class PortalClient(BaseClient):
     def get_user_count(self) -> PeopleDirectoryCount:
         'Count active authorized residents for the UserFinder1 badge.'
         return self._request('GetUserCount', {}, None)
+
+    def create_user_evaskeri_session(self, user_kid: str) -> UserEvaskeriSession:
+        'Create an eVaskeri login link for one active Nortec resident.'
+        return self._request('CreateUserEvaskeriSession', {'userKid': user_kid}, None)
 
     def get_user_receipts(self, user_kid: str, *, offset: int | None = None, revision: str | None = None) -> UserReceiptsResponse:
         'Read complete receipts for one resident, newest first, twenty receipts at a time.'

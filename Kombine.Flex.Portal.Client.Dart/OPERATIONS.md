@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-183 operations. OpenAPI SHA-256: `d9d1e152304da4620795b5ee28d39abe6b4126dc000792408b3c4d5a6a09107a`.
+191 operations. OpenAPI SHA-256: `e17389d081396f7f1afb601b4fc026bf054b8d85ace689cc19347736a9c4f998`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -40,11 +40,16 @@
 | `ConfirmCameraCapture` | `confirmCameraCapture` | POST | `/api/v1/camera/confirmation` |
 | `GetCameraCaptureContent` | `getCameraCaptureContent` | GET | `/api/v1/camera/{id}/content` |
 | `GetRecentCameraPhotoMetadata` | `getRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` |
+| `GetChecklist` | `getChecklist` | GET | `/api/v1/settlement-checklist` |
+| `GetChecklistPeriod` | `getChecklistPeriod` | GET | `/api/v1/settlement-checklist/{periodKid}` |
 | `ExportBankAccount` | `exportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsers` | `exportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` |
 | `DownloadBankSettlement` | `downloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
 | `DownloadUnitDocumentCsv` | `downloadUnitDocumentCsv` | GET | `/api/v1/documents/{cycleKid}/table.csv` |
 | `DownloadUnitDocumentXls` | `downloadUnitDocumentXls` | GET | `/api/v1/documents/{cycleKid}/table.xls` |
+| `GetBankErrors` | `getBankErrors` | GET | `/api/v1/banks/{bankKid}/errors` |
+| `GetError` | `getError` | GET | `/api/v1/errors/{errorKid}` |
+| `AcknowledgeError` | `acknowledgeError` | POST | `/api/v1/errors/{errorKid}/acknowledge` |
 | `GetHostingLogs` | `getHostingLogs` | GET | `/api/v1/hosting/logs` |
 | `GetHostingMetrics` | `getHostingMetrics` | GET | `/api/v1/hosting/metrics` |
 | `SetInstallerIcon` | `setInstallerIcon` | POST | `/api/v1/installers/{installerKid}/icon` |
@@ -124,6 +129,8 @@
 | `GetUnitDocumentGraph` | `getUnitDocumentGraph` | GET | `/api/v1/documents/{cycleKid}/graph` |
 | `GetUnitDocumentPng` | `getUnitDocumentPng` | GET | `/api/v1/documents/{cycleKid}/graph.png` |
 | `GetUnitDocumentIcon` | `getUnitDocumentIcon` | GET | `/api/v1/documents/{cycleKid}/icon.svg` |
+| `GetOutOfOrderUnits` | `getOutOfOrderUnits` | GET | `/api/v1/units/out-of-service` |
+| `RestoreOutOfOrderUnit` | `restoreOutOfOrderUnit` | POST | `/api/v1/units/{unitKid}/out-of-service/restore` |
 | `GetUnitExportCount` | `getUnitExportCount` | GET | `/api/v1/units/export-count` |
 | `GetTerminalExportCount` | `getTerminalExportCount` | GET | `/api/v1/terminals/export-count` |
 | `GetActiveUnitCount` | `getActiveUnitCount` | GET | `/api/v1/units/active-count` |
@@ -140,6 +147,7 @@
 | `GetUserExportCount` | `getUserExportCount` | GET | `/api/v1/users/export-count` |
 | `GetUsers` | `getUsers` | GET | `/api/v1/users` |
 | `GetUserCount` | `getUserCount` | GET | `/api/v1/users/count` |
+| `CreateUserEvaskeriSession` | `createUserEvaskeriSession` | POST | `/api/v1/users/{userKid}/evaskeri-session` |
 | `GetUserReceipts` | `getUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
 | `SearchUsers` | `searchUsers` | GET | `/api/v1/search/users` |
 | `SearchUserSms` | `searchUserSms` | GET | `/api/v1/search/user-sms` |

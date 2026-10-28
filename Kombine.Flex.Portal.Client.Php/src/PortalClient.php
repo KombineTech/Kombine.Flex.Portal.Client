@@ -12,6 +12,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type AccountRevisionResponse array{'revision'?: string|null}
  * @phpstan-type AccountTotal array{'currency'?: string|null, 'entries'?: int, 'amountMinor'?: int}
  * @phpstan-type AccountUnitResponse array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: string|null, 'name'?: string|null}
+ * @phpstan-type AcknowledgeErrorRequest array{'expectedRevision': string|null}
  * @phpstan-type ActiveBankCountResponse array{'count'?: int, 'iconKid'?: string|null}
  * @phpstan-type ActiveLocationCountResponse array{'count'?: int, 'iconKid'?: string|null}
  * @phpstan-type ActiveUnitCountResponse array{'count'?: int, 'iconKid'?: string|null}
@@ -44,6 +45,10 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type CameraPrepareResponse array{'uploadToken'?: string|null}
  * @phpstan-type CameraResourceResponse array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'requiresProximityCheck'?: bool, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
  * @phpstan-type CameraSaveResponse array{'captureId'?: string|null, 'resourceKid'?: string|null}
+ * @phpstan-type ChecklistItem array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'period'?: int, 'isLatest'?: bool, 'bankName'?: string|null, 'locationName'?: string|null, 'hardware'?: string|null, 'periodDateUtc'?: string|null, 'nextSettlementUtc'?: string|null, 'lastRunUtc'?: string|null, 'updatedAtUtc'?: string|null, 'hidden'?: bool, 'onChecklist'?: bool, 'scheduleStatus'?: string|null, 'processing'?: ChecklistProcessing}
+ * @phpstan-type ChecklistPage array{'items'?: list<ChecklistItem>|null, 'nextCursor'?: string|null, 'readAtUtc'?: string}
+ * @phpstan-type ChecklistProcessing array{'invoice'?: ChecklistStatus, 'soapInvoice'?: ChecklistStatus, 'soapCredit'?: ChecklistStatus, 'easyPay'?: ChecklistStatus}
+ * @phpstan-type ChecklistStatus array{'code'?: int|null, 'state'?: string|null}
  * @phpstan-type DatabaseAccessResponse array{'canWrite'?: bool|null, 'checkedAtUtc'?: string}
  * @phpstan-type DirectoryExportCountResponse array{'count'?: int}
  * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
@@ -126,6 +131,10 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type OpeningHoursGroup array{'units'?: list<OpeningHoursUnit>|null, 'weekly'?: list<OpeningHoursLine>|null, 'exceptions'?: list<OpeningHoursLine>|null, 'isOpenNow'?: bool|null, 'nextChange'?: string|null}
  * @phpstan-type OpeningHoursLine array{'label'?: string|null, 'status'?: string|null, 'opens'?: string|null, 'closes'?: string|null, 'closesNextDay'?: bool, 'daysOfWeek'?: list<int>|null, 'date'?: string|null}
  * @phpstan-type OpeningHoursUnit array{'kid'?: string|null, 'name'?: string|null}
+ * @phpstan-type OutOfOrderItem array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'unitType'?: int, 'outOfOrder'?: int, 'status'?: string|null, 'statusLabel'?: string|null, 'timestampUtc'?: string, 'changedBy'?: UnitSettingEditorResponse, 'revision'?: string|null, 'canRestore'?: bool}
+ * @phpstan-type OutOfOrderPage array{'items'?: list<OutOfOrderItem>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
+ * @phpstan-type OutOfOrderRestoreRequest array{'expectedRevision': string|null}
+ * @phpstan-type OutOfOrderRestoreResponse array{'kid'?: string|null, 'outOfOrder'?: int, 'status'?: string|null, 'timestampUtc'?: string, 'revision'?: string|null, 'sync'?: int|null}
  * @phpstan-type PeopleDirectoryCount array{'count'?: int, 'iconKid'?: string|null}
  * @phpstan-type PersonalAccountResult array{'code'?: string|null}
  * @phpstan-type PersonalApiKeyRequest array{'revision': string|null}
@@ -140,7 +149,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PersonalProfileRequest array{'revision': string|null, 'value': mixed}
  * @phpstan-type PersonalTabRequest array{'revision': string|null, 'enabled': bool}
  * @phpstan-type ProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
- * @phpstan-type SearchResult array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'iconKid'?: string|null}
+ * @phpstan-type SearchResult array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type SearchResults array{'items'?: list<SearchResult>|null, 'hasMore'?: bool}
  * @phpstan-type ServiceApiKeyRequest array{'expectedRevision': string|null}
  * @phpstan-type ServiceApiKeyResponse array{'apiKey'?: string|null, 'details'?: ServiceDetailsResponse}
@@ -170,6 +179,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UnitDirectoryResponse array{'items'?: list<UnitDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
  * @phpstan-type UnitDocumentCount array{'count'?: int, 'from'?: string, 'through'?: string}
  * @phpstan-type UnitDocumentPage array{'items'?: list<BankDocumentItem>|null, 'from'?: string, 'through'?: string, 'sort'?: string|null, 'direction'?: string|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool}
+ * @phpstan-type UnitErrorItem array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'unitType'?: int|null, 'timestampUtc'?: string, 'severity'?: string|null, 'level'?: string|null, 'code'?: int|null, 'count'?: int|null, 'description'?: string|null, 'payloadFormat'?: string|null, 'acknowledged'?: bool, 'revision'?: string|null, 'canAcknowledge'?: bool}
+ * @phpstan-type UnitErrorPage array{'items'?: list<UnitErrorItem>|null, 'nextCursor'?: string|null, 'fromUtc'?: string, 'untilUtc'?: string}
  * @phpstan-type UnitGroupFieldResponse array{'name'?: string|null, 'valueType'?: string|null, 'scope'?: string|null, 'valueStatus'?: string|null, 'value'?: string|null, 'ms2000'?: int|null, 'canEdit'?: bool, 'revision'?: string|null, 'required'?: bool, 'minimum'?: int|null, 'maximum'?: int|null, 'options'?: list<UnitSettingOption>|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse, 'canReadHistory'?: bool, 'hasHistory'?: bool, 'valueFormat'?: string|null, 'pattern'?: string|null}
  * @phpstan-type UnitGroupResponse array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'kind'?: string|null, 'group'?: string|null, 'items'?: list<UnitGroupFieldResponse>|null}
  * @phpstan-type UnitIconResponse array{'kid'?: string|null, 'iconKid'?: string|null, 'offline'?: bool|null, 'status'?: int}
@@ -194,6 +205,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserCurrencyBalanceItem array{'currency'?: string|null, 'currentBalanceMinor'?: int, 'previousBalanceMinor'?: int|null, 'previousPeriod'?: int|null, 'previousPeriodIsProvisional'?: bool}
  * @phpstan-type UserDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'name'?: string|null, 'number'?: string|null, 'iconKid'?: string|null, 'deletedAt'?: string|null}
  * @phpstan-type UserDirectoryResponse array{'items'?: list<UserDirectoryItem>|null, 'nextCursor'?: string|null, 'scanLimitReached'?: bool}
+ * @phpstan-type UserEvaskeriSession array{'kid'?: string|null, 'url'?: string|null, 'expiresAtUtc'?: string}
  * @phpstan-type UserLocationResponse array{'kid'?: string|null, 'state'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type UserNumberSuggestionResponse array{'bankKid'?: string|null, 'number'?: string|null}
  * @phpstan-type UserReceipt array{'key'?: string|null, 'date'?: string, 'locationKid'?: string|null, 'locationName'?: string|null, 'period'?: int, 'provisional'?: bool, 'kind'?: string|null, 'currency'?: string|null, 'totalMinor'?: int, 'vatMinor'?: int|null, 'balanceAfterMinor'?: int, 'lines'?: list<UserReceiptLine>|null}
@@ -626,6 +638,26 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * List authorized settlement periods requiring attention, as in DatPro2 Checklist1.
+     * @param array{'scopeKid'?: string, 'includeResolved'?: bool, 'pageSize'?: int, 'cursor'?: string} $options
+     * @return ChecklistPage
+     */
+    public function getChecklist(array $options = []): mixed
+    {
+        return $this->request('GetChecklist', [] + $options, null);
+    }
+
+    /**
+     * Read one current checklist period, including its hidden/completed status.
+     * @param string $periodKid
+     * @return ChecklistItem
+     */
+    public function getChecklistPeriod(mixed $periodKid): mixed
+    {
+        return $this->request('GetChecklistPeriod', ['periodKid' => $periodKid], null);
+    }
+
+    /**
      * Downloads the complete filtered selection as CSV or a genuine Excel workbook.
      * @param string $bankKid
      * @param resource $destination Writable stream; may contain partial data on failure.
@@ -684,6 +716,38 @@ final class PortalClient extends BaseClient
     public function downloadUnitDocumentXls(mixed $cycleKid, mixed $destination, array $options = []): mixed
     {
         return $this->request('DownloadUnitDocumentXls', ['cycleKid' => $cycleKid] + $options, null, $destination);
+    }
+
+    /**
+     * List a bank's machine errors, as in DatPro2 Errors2.
+     * @param string $bankKid
+     * @param array{'days'?: int, 'level'?: string, 'includeAcknowledged'?: bool, 'pageSize'?: int, 'cursor'?: string} $options
+     * @return UnitErrorPage
+     */
+    public function getBankErrors(mixed $bankKid, array $options = []): mixed
+    {
+        return $this->request('GetBankErrors', ['bankKid' => $bankKid] + $options, null);
+    }
+
+    /**
+     * Read one authorized error event, including its current acknowledgement and revision.
+     * @param string $errorKid
+     * @return UnitErrorItem
+     */
+    public function getError(mixed $errorKid): mixed
+    {
+        return $this->request('GetError', ['errorKid' => $errorKid], null);
+    }
+
+    /**
+     * Acknowledge one error without deleting its log or changing machine status.
+     * @param string $errorKid
+     * @param AcknowledgeErrorRequest $body
+     * @return UnitErrorItem
+     */
+    public function acknowledgeError(mixed $errorKid, #[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('AcknowledgeError', ['errorKid' => $errorKid], $body);
     }
 
     /**
@@ -1516,6 +1580,27 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * List out-of-order machines, including manual, automatic and repair states.
+     * @param array{'pageSize'?: int, 'cursor'?: string} $options
+     * @return OutOfOrderPage
+     */
+    public function getOutOfOrderUnits(array $options = []): mixed
+    {
+        return $this->request('GetOutOfOrderUnits', [] + $options, null);
+    }
+
+    /**
+     * Return one out-of-order machine to service by setting OutOfOrder to Enabled (0).
+     * @param string $unitKid
+     * @param OutOfOrderRestoreRequest $body
+     * @return OutOfOrderRestoreResponse
+     */
+    public function restoreOutOfOrderUnit(mixed $unitKid, #[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('RestoreOutOfOrderUnit', ['unitKid' => $unitKid], $body);
+    }
+
+    /**
      * Count the complete filtered export selection using the same directory authorization and visibility.
      * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'enabledOnly'?: bool, 'fields'?: string, 'locationKid'?: string, 'terminalKid'?: string, 'runningOnly'?: bool, 'autoOutOfOrderOnly'?: bool} $options
      * @return DirectoryExportCountResponse
@@ -1679,6 +1764,16 @@ final class PortalClient extends BaseClient
     public function getUserCount(): mixed
     {
         return $this->request('GetUserCount', [], null);
+    }
+
+    /**
+     * Create an eVaskeri login link for one active Nortec resident.
+     * @param string $userKid
+     * @return UserEvaskeriSession
+     */
+    public function createUserEvaskeriSession(mixed $userKid): mixed
+    {
+        return $this->request('CreateUserEvaskeriSession', ['userKid' => $userKid], null);
     }
 
     /**

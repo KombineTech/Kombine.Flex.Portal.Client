@@ -38,11 +38,16 @@
 | `ConfirmCameraCapture` | `confirm_camera_capture` | `confirmCameraCapture` | POST | `/api/v1/camera/confirmation` |
 | `GetCameraCaptureContent` | `get_camera_capture_content` | `getCameraCaptureContent` | GET | `/api/v1/camera/{id}/content` |
 | `GetRecentCameraPhotoMetadata` | `get_recent_camera_photo_metadata` | `getRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` |
+| `GetChecklist` | `get_checklist` | `getChecklist` | GET | `/api/v1/settlement-checklist` |
+| `GetChecklistPeriod` | `get_checklist_period` | `getChecklistPeriod` | GET | `/api/v1/settlement-checklist/{periodKid}` |
 | `ExportBankAccount` | `export_bank_account` | `exportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsers` | `export_bank_users` | `exportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` |
 | `DownloadBankSettlement` | `download_bank_settlement` | `downloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
 | `DownloadUnitDocumentCsv` | `download_unit_document_csv` | `downloadUnitDocumentCsv` | GET | `/api/v1/documents/{cycleKid}/table.csv` |
 | `DownloadUnitDocumentXls` | `download_unit_document_xls` | `downloadUnitDocumentXls` | GET | `/api/v1/documents/{cycleKid}/table.xls` |
+| `GetBankErrors` | `get_bank_errors` | `getBankErrors` | GET | `/api/v1/banks/{bankKid}/errors` |
+| `GetError` | `get_error` | `getError` | GET | `/api/v1/errors/{errorKid}` |
+| `AcknowledgeError` | `acknowledge_error` | `acknowledgeError` | POST | `/api/v1/errors/{errorKid}/acknowledge` |
 | `GetHostingLogs` | `get_hosting_logs` | `getHostingLogs` | GET | `/api/v1/hosting/logs` |
 | `GetHostingMetrics` | `get_hosting_metrics` | `getHostingMetrics` | GET | `/api/v1/hosting/metrics` |
 | `SetInstallerIcon` | `set_installer_icon` | `setInstallerIcon` | POST | `/api/v1/installers/{installerKid}/icon` |
@@ -122,6 +127,8 @@
 | `GetUnitDocumentGraph` | `get_unit_document_graph` | `getUnitDocumentGraph` | GET | `/api/v1/documents/{cycleKid}/graph` |
 | `GetUnitDocumentPng` | `get_unit_document_png` | `getUnitDocumentPng` | GET | `/api/v1/documents/{cycleKid}/graph.png` |
 | `GetUnitDocumentIcon` | `get_unit_document_icon` | `getUnitDocumentIcon` | GET | `/api/v1/documents/{cycleKid}/icon.svg` |
+| `GetOutOfOrderUnits` | `get_out_of_order_units` | `getOutOfOrderUnits` | GET | `/api/v1/units/out-of-service` |
+| `RestoreOutOfOrderUnit` | `restore_out_of_order_unit` | `restoreOutOfOrderUnit` | POST | `/api/v1/units/{unitKid}/out-of-service/restore` |
 | `GetUnitExportCount` | `get_unit_export_count` | `getUnitExportCount` | GET | `/api/v1/units/export-count` |
 | `GetTerminalExportCount` | `get_terminal_export_count` | `getTerminalExportCount` | GET | `/api/v1/terminals/export-count` |
 | `GetActiveUnitCount` | `get_active_unit_count` | `getActiveUnitCount` | GET | `/api/v1/units/active-count` |
@@ -138,6 +145,7 @@
 | `GetUserExportCount` | `get_user_export_count` | `getUserExportCount` | GET | `/api/v1/users/export-count` |
 | `GetUsers` | `get_users` | `getUsers` | GET | `/api/v1/users` |
 | `GetUserCount` | `get_user_count` | `getUserCount` | GET | `/api/v1/users/count` |
+| `CreateUserEvaskeriSession` | `create_user_evaskeri_session` | `createUserEvaskeriSession` | POST | `/api/v1/users/{userKid}/evaskeri-session` |
 | `GetUserReceipts` | `get_user_receipts` | `getUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
 | `SearchUsers` | `search_users` | `searchUsers` | GET | `/api/v1/search/users` |
 | `SearchUserSms` | `search_user_sms` | `searchUserSms` | GET | `/api/v1/search/user-sms` |

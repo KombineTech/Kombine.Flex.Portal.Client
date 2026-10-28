@@ -34,11 +34,16 @@ GetCameraCaptures	GET	/api/v1/camera	200	{}
 ConfirmCameraCapture	POST	/api/v1/camera/confirmation	200	{}
 GetCameraCaptureContent	GET	/api/v1/camera/{id}/content	200	{}
 GetRecentCameraPhotoMetadata	GET	/api/v1/camera/recent/{id}/metadata	200	{}
+GetChecklist	GET	/api/v1/settlement-checklist	200	{}
+GetChecklistPeriod	GET	/api/v1/settlement-checklist/{periodKid}	200	{}
 ExportBankAccount	GET	/api/v1/banks/{bankKid}/account/export	200	{}
 ExportBankUsers	GET	/api/v1/banks/{bankKid}/users/export	200	{}
 DownloadBankSettlement	GET	/api/v1/banks/{bankKid}/settlements/{period}/download	200	{}
 DownloadUnitDocumentCsv	GET	/api/v1/documents/{cycleKid}/table.csv	200	{}
 DownloadUnitDocumentXls	GET	/api/v1/documents/{cycleKid}/table.xls	200	{}
+GetBankErrors	GET	/api/v1/banks/{bankKid}/errors	200	{}
+GetError	GET	/api/v1/errors/{errorKid}	200	{}
+AcknowledgeError	POST	/api/v1/errors/{errorKid}/acknowledge	200	{}
 GetHostingLogs	GET	/api/v1/hosting/logs	200	{}
 GetHostingMetrics	GET	/api/v1/hosting/metrics	200	{}
 SetInstallerIcon	POST	/api/v1/installers/{installerKid}/icon	200	{"kid":"A6Q32oA6b1h","iconKid":"angel","iconRevision":"5CE7200DE215F47D73E8C782F447813306BD7DD66F0C468AD961D92D0C950FDE","availableIcons":["angel","astrologer","astronaut","athlete","baby","bicyclist","bookkeeper","boy","businessman","businessman2","businessperson","businessperson2","businessperson3","businesswoman","businesswoman2","caesar","clown","cook","criminal","delivery_man","delivery_man_parcel","devil","disability","doctor","dude1","dude2","dude3","dude4","dude5","dude6","engineer","face_scan","firefighter","genius","girl","graduate","guard","hipster","holmes","judge","lecture","magician","motorcyclist","nurse","pastor","person","pilot","policeman","policeman_bobby","pontifex","schoolboy","scientist","security_agent","senior_citizen","senior_citizen2","singer","soldier","spy","stockbroker","stockbroker2","surgeon","teacher","teacher_blackboard","terrorist","user","user_earth","user_glasses","user_headphones","user_headset","user_message","user_mobile_phone","user_monitor","user_smartphone","user_sunglasses","user_telephone","video_chat","video_chat2","woman","woman2","woman3","woman4","worker","worker2","user_mobilephone","accessibility","accessibility_new","accessible","accessible_forward","account_box","account_circle","assignment_ind","contact_page","face","face_unlock","manage_accounts","no_accounts","perm_contact_calendar","perm_identity","pregnant_woman","record_voice_over","rowing","settings_accessibility","transcribe","voice_over_off","contacts","contact_emergency","contact_mail","contact_phone","co_present","person_add_disabled","person_search","attribution","how_to_reg","remember_me","face_retouching_natural","face_retouching_off","portrait","badge","directions_run","directions_walk","person_pin","person_pin_circle","run_circle","streetview","transfer_within_a_station","support_agent","child_care","assist_walker","blind","downhill_skiing","elderly","elderly_woman","emoji_people","engineering","face_2","face_3","face_4","face_5","face_6","follow_the_signs","hiking","kayaking","kitesurfing","man","man_2","man_3","man_4","nordic_walking","paragliding","personal_injury","person_2","person_3","person_4","person_add","person_add_alt","person_add_alt_1","person_off","person_outline","person_remove","person_remove_alt_1","psychology","psychology_alt","scuba_diving","self_improvement","skateboarding","sledding","snowboarding","snowshoeing","sports_gymnastics","sports_handball","sports_martial_arts","surfing","woman_2","adam","businessman3","businessman_add","businessman_delete","businessman_edit","businessman_find","businessman_preferences","businessman_view","dude","nurse2","patient","pilot2","pirate","policeman_german","policeman_usa","robber","security_agent_add","security_agent_delete","security_agent_edit","stockbroker3","superhero","surgeon2","user2","user3","user_add","user_back","user_delete","user_edit","user_find","user_information","user_into","user_lock","user_new","user_preferences","user_refresh","user_time","user_view"]}
@@ -118,6 +123,8 @@ GetUnitDocumentSvg2	GET	/api/v1/documents/{cycleKid}/graph2.svg	200	{}
 GetUnitDocumentGraph	GET	/api/v1/documents/{cycleKid}/graph	200	{}
 GetUnitDocumentPng	GET	/api/v1/documents/{cycleKid}/graph.png	200	{}
 GetUnitDocumentIcon	GET	/api/v1/documents/{cycleKid}/icon.svg	200	{}
+GetOutOfOrderUnits	GET	/api/v1/units/out-of-service	200	{}
+RestoreOutOfOrderUnit	POST	/api/v1/units/{unitKid}/out-of-service/restore	200	{}
 GetUnitExportCount	GET	/api/v1/units/export-count	200	{}
 GetTerminalExportCount	GET	/api/v1/terminals/export-count	200	{}
 GetActiveUnitCount	GET	/api/v1/units/active-count	200	{}
@@ -134,6 +141,7 @@ ExecuteBankUserCommand	POST	/api/v1/banks/{bankKid}/users/{userKid}/commands	200
 GetUserExportCount	GET	/api/v1/users/export-count	200	{}
 GetUsers	GET	/api/v1/users	200	{}
 GetUserCount	GET	/api/v1/users/count	200	{}
+CreateUserEvaskeriSession	POST	/api/v1/users/{userKid}/evaskeri-session	200	{}
 GetUserReceipts	GET	/api/v1/users/{userKid}/receipts	200	{}
 SearchUsers	GET	/api/v1/search/users	200	{}
 SearchUserSms	GET	/api/v1/search/user-sms	200	{}

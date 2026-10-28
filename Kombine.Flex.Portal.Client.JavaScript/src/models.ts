@@ -125,6 +125,12 @@ export interface AccountUnitResponse {
   "name"?: string | null;
 }
 
+/** The latest event revision; no arbitrary log value can be supplied. */
+export interface AcknowledgeErrorRequest {
+  /** expectedRevision */
+  "expectedRevision": string | null;
+}
+
 /** Accessible bank count for Enabled=1 and Deleted=0. */
 export interface ActiveBankCountResponse {
   /** count */
@@ -553,6 +559,72 @@ export interface CameraSaveResponse {
   "captureId"?: string | null;
   /** resourceKid */
   "resourceKid"?: string | null;
+}
+
+/** One bank schedule or location processing row. Processing is null for a bank-wide row. */
+export interface ChecklistItem {
+  /** kid */
+  "kid"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** period */
+  "period"?: number;
+  /** isLatest */
+  "isLatest"?: boolean;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** hardware */
+  "hardware"?: string | null;
+  /** periodDateUtc */
+  "periodDateUtc"?: string | null;
+  /** nextSettlementUtc */
+  "nextSettlementUtc"?: string | null;
+  /** lastRunUtc */
+  "lastRunUtc"?: string | null;
+  /** updatedAtUtc */
+  "updatedAtUtc"?: string | null;
+  /** hidden */
+  "hidden"?: boolean;
+  /** onChecklist */
+  "onChecklist"?: boolean;
+  /** scheduleStatus */
+  "scheduleStatus"?: string | null;
+  /** processing */
+  "processing"?: ChecklistProcessing;
+}
+
+/** A bounded checklist page; only read operations are supported. */
+export interface ChecklistPage {
+  /** items */
+  "items"?: (ChecklistItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** readAtUtc */
+  "readAtUtc"?: string;
+}
+
+/** The four independently stored processing states; no financial amounts. */
+export interface ChecklistProcessing {
+  /** invoice */
+  "invoice"?: ChecklistStatus;
+  /** soapInvoice */
+  "soapInvoice"?: ChecklistStatus;
+  /** soapCredit */
+  "soapCredit"?: ChecklistStatus;
+  /** easyPay */
+  "easyPay"?: ChecklistStatus;
+}
+
+/** Stored code and enum-derived state; null state means unknown, never success. */
+export interface ChecklistStatus {
+  /** code */
+  "code"?: number | null;
+  /** state */
+  "state"?: string | null;
 }
 
 /** Site database access indicator, never a manager permission or a guarantee for a business operation. */
@@ -1663,6 +1735,70 @@ export interface OpeningHoursUnit {
   "name"?: string | null;
 }
 
+/** Authorized machine, setting audit and revision. Status is null for an unknown nonzero stored code. */
+export interface OutOfOrderItem {
+  /** kid */
+  "kid"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** unitType */
+  "unitType"?: number;
+  /** outOfOrder */
+  "outOfOrder"?: number;
+  /** status */
+  "status"?: string | null;
+  /** statusLabel */
+  "statusLabel"?: string | null;
+  /** timestampUtc */
+  "timestampUtc"?: string;
+  /** changedBy */
+  "changedBy"?: UnitSettingEditorResponse;
+  /** revision */
+  "revision"?: string | null;
+  /** canRestore */
+  "canRestore"?: boolean;
+}
+
+/** Current out-of-order settings and an opaque next-page cursor. */
+export interface OutOfOrderPage {
+  /** items */
+  "items"?: (OutOfOrderItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+}
+
+/** Revision from the list; the action always writes Enabled (0). */
+export interface OutOfOrderRestoreRequest {
+  /** expectedRevision */
+  "expectedRevision": string | null;
+}
+
+/** Confirmed storage result; Sync zero is pending device synchronization, not physical acknowledgement. */
+export interface OutOfOrderRestoreResponse {
+  /** kid */
+  "kid"?: string | null;
+  /** outOfOrder */
+  "outOfOrder"?: number;
+  /** status */
+  "status"?: string | null;
+  /** timestampUtc */
+  "timestampUtc"?: string;
+  /** revision */
+  "revision"?: string | null;
+  /** sync */
+  "sync"?: number | null;
+}
+
 /** Authorized count and red badge icon; each operation documents its cache age and precision. */
 export interface PeopleDirectoryCount {
   /** count */
@@ -1813,7 +1949,7 @@ export interface ProblemDetails {
   "instance"?: string | null;
 }
 
-/** Mixed-result shape; kind is an enum-derived type and Kid is the sole object identifier. */
+/** Mixed-result shape; kind is an enum-derived type. Kid identifies the result; optional BankKid identifies a resident's parent bank. */
 export interface SearchResult {
   /** kid */
   "kid"?: string | null;
@@ -1831,6 +1967,8 @@ export interface SearchResult {
   "isContext"?: boolean;
   /** number */
   "number"?: string | null;
+  /** Canonical parent bank KID for a resident result. This identity grants no bank access; names require authorized context results. */
+  "bankKid"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
 }
@@ -2253,6 +2391,58 @@ export interface UnitDocumentPage {
   "hasMore"?: boolean;
 }
 
+/** One authorized error event. Null description/code/count means that the stored payload does not provide it. */
+export interface UnitErrorItem {
+  /** kid */
+  "kid"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** unitType */
+  "unitType"?: number | null;
+  /** timestampUtc */
+  "timestampUtc"?: string;
+  /** severity */
+  "severity"?: string | null;
+  /** level */
+  "level"?: string | null;
+  /** code */
+  "code"?: number | null;
+  /** count */
+  "count"?: number | null;
+  /** description */
+  "description"?: string | null;
+  /** payloadFormat */
+  "payloadFormat"?: string | null;
+  /** acknowledged */
+  "acknowledged"?: boolean;
+  /** revision */
+  "revision"?: string | null;
+  /** canAcknowledge */
+  "canAcknowledge"?: boolean;
+}
+
+/** A keyset page with a fixed UTC time window and optional opaque continuation. */
+export interface UnitErrorPage {
+  /** items */
+  "items"?: (UnitErrorItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** fromUtc */
+  "fromUtc"?: string;
+  /** untilUtc */
+  "untilUtc"?: string;
+}
+
 /** Stored current-unit value, or an explicit absence/scope/redaction status. MS2000 is the source krumb timestamp. */
 export interface UnitGroupFieldResponse {
   /** name */
@@ -2585,6 +2775,16 @@ export interface UserDirectoryResponse {
   "nextCursor"?: string | null;
   /** scanLimitReached */
   "scanLimitReached"?: boolean;
+}
+
+/** A sensitive resident login URL. Never log, persist, prefetch or share it. ExpiresAtUtc is the legacy admission deadline, not the duration of the resulting eVaskeri session. */
+export interface UserEvaskeriSession {
+  /** kid */
+  "kid"?: string | null;
+  /** url */
+  "url"?: string | null;
+  /** expiresAtUtc */
+  "expiresAtUtc"?: string;
 }
 
 /** A location KID, Access/NoAccess state and eIcon name (default house), cached up to 60 seconds. Location-scoped managers see only their locations. */
@@ -3295,6 +3495,13 @@ export interface GetCameraCaptureContentOptions {
   range?: string;
 }
 
+export interface GetChecklistOptions {
+  scopeKid?: string;
+  includeResolved?: boolean;
+  pageSize?: number;
+  cursor?: string;
+}
+
 export interface ExportBankAccountOptions {
   from?: string;
   through?: string;
@@ -3334,6 +3541,14 @@ export interface DownloadUnitDocumentXlsOptions {
   states?: string;
   settings?: string;
   historicalMeasurements?: boolean;
+}
+
+export interface GetBankErrorsOptions {
+  days?: number;
+  level?: string;
+  includeAcknowledged?: boolean;
+  pageSize?: number;
+  cursor?: string;
 }
 
 export interface GetHostingLogsOptions {
@@ -3560,6 +3775,11 @@ export interface GetUnitDocumentIconOptions {
   states?: string;
   settings?: string;
   historicalMeasurements?: boolean;
+}
+
+export interface GetOutOfOrderUnitsOptions {
+  pageSize?: number;
+  cursor?: string;
 }
 
 export interface GetUnitExportCountOptions {
