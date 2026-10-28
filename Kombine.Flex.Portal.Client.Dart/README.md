@@ -1,3 +1,5 @@
+Version 0.6.0 adds the read-only settlement checklist, machine error history and acknowledgement, out-of-service listing and restore, and authorized eVaskeri resident delegation. Resident search includes bankKid. All operations retain manager, tenant and resource authorization. eVaskeri links are sensitive bearer credentials: open immediately without opener/referrer and never log or persist them. Never replay mutation requests automatically after an uncertain response. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
 Version 0.5.0 uses GetPublicCycleWidget and GetCycleChartPresentation. Replace the retired WashDoc widget/presentation routes with /api/v1/public/widgets/cycle and /api/v1/public/cycle-chart/presentation. Document path parameters and table/graph/widget fields use cycleKid; the widget display field is cycleKidText. Existing KID values and document operation IDs remain valid. Rebuild callers and update property bindings. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
 
 Version 0.4.0 synchronizes personal language, date/time, number and line-spacing preferences. WashDoc widgets replace unitKidText with documentKidText; graphSvg may be null when no measurements exist. Treat refreshAfterSeconds=0 as stop polling; running documents use 15 seconds. Manager sessions last ten days: use the returned expiresIn and renew only after activity. UserBalance remains compatible. See the [API changelog](/docs#changelog).
@@ -28,7 +30,7 @@ try {
 ```
 ## Contract and runtime
 
-Version **0.5.0** contains **182 named operations**. See [OPERATIONS.md](OPERATIONS.md) and the bundled `OpenApi` snapshot for the exact contract; this package does not discover new server operations at runtime. Object models are wire-map typedefs (`Map<String, Object?>`), not field-typed classes. Keep JSON field names and KIDs unchanged. Server authorization, tenant binding and resource permissions always apply.
+Version **0.6.0** contains **182 named operations**. See [OPERATIONS.md](OPERATIONS.md) and the bundled `OpenApi` snapshot for the exact contract; this package does not discover new server operations at runtime. Object models are wire-map typedefs (`Map<String, Object?>`), not field-typed classes. Keep JSON field names and KIDs unchanged. Server authorization, tenant binding and resource permissions always apply.
 
 Dart SDK >=3.6.0 <4.0.0 is required. Tests cover Dart 3.6.2 and 3.13.6, including JavaScript compilation and 64-bit precision; Flutter device execution has not been tested. Runtime dependencies are `http` and `http_parser`. No private Kombine runtime dependency is required.
 

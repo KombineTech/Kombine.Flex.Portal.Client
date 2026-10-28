@@ -1,3 +1,5 @@
+Version 0.6.0 tilføjer afregningschecklisten med læseadgang, maskinfejlhistorik og kvittering, visning og genåbning af maskiner ude af drift samt autoriseret adgang til beboerens eVaskeri. Beboersøgning inkluderer bankKid. Alle operationer bevarer administrator-, tenant- og ressourcekontrol. eVaskeri-links er følsomme adgangsoplysninger: åbn straks uden opener/referrer, og gem eller log dem aldrig. Gentag aldrig ændringskald automatisk efter et usikkert svar. UserBalance er fortsat kompatibel. Se [API-changelog](https://api.team.kombine.technology/docs#changelog).
+
 Version 0.5.0 bruger GetPublicCycleWidget og GetCycleChartPresentation. Erstat de udgåede WashDoc-widget-/præsentationsruter med /api/v1/public/widgets/cycle og /api/v1/public/cycle-chart/presentation. Dokumenternes stiparametre og tabel-/graf-/widgetfelter bruger cycleKid; widgettens visningsfelt hedder cycleKidText. Eksisterende KID-værdier og dokumentoperationernes ID er bevaret. Genbyg klienterne, og opdater feltbindingerne. UserBalance er fortsat kompatibel. Se [API-changelog](https://api.team.kombine.technology/docs#changelog).
 
 Version 0.4.0 synkroniserer personlige valg af sprog, dato/tid, talformat og linjeafstand. WashDoc-widgets erstatter unitKidText med documentKidText; graphSvg kan være null uden målinger. Stop polling ved refreshAfterSeconds=0; igangværende dokumenter bruger 15 sekunder. Administratorsessioner varer ti dage: brug svarets expiresIn og forny kun efter aktivitet. UserBalance er fortsat kompatibel. Se [API-changelog](/docs#changelog).
@@ -6,7 +8,7 @@ Version 0.3.0 flytter ConvertToolTime og InspectToolKid til /api/v1/tenant/tools
 
 # Kombine Flex Portal Dart-klient
 
-Version **0.5.0** dÃ¦kker **182 operationer** fra den medfÃ¸lgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilfÃ¸j nedenstÃ¥ende sti i `pubspec.yaml`, og kÃ¸r `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
+Version **0.6.0** dÃ¦kker **182 operationer** fra den medfÃ¸lgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilfÃ¸j nedenstÃ¥ende sti i `pubspec.yaml`, og kÃ¸r `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
 
 ```yaml
 dependencies:

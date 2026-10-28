@@ -1,10 +1,11 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `950ef6f0eeb0a160e36fb26d5c0fd6917389044452d834c72821787922daa3b4`).
-183 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `78c8f213c46bb4169596c421874b99a3243c7f48e2843d4cac5e5c54389985c6`).
+191 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
+| `acknowledgeError` | `AcknowledgeError` | POST | `/api/v1/errors/{errorKid}/acknowledge` | Bearer |
 | `askPortalAssistant` | `AskPortalAssistant` | POST | `/api/v1/assistant/query` | Bearer |
 | `changeMyManagerPassword` | `ChangeMyManagerPassword` | POST | `/api/v1/session/me/password` | Bearer |
 | `confirmCameraCapture` | `ConfirmCameraCapture` | POST | `/api/v1/camera/confirmation` | Bearer |
@@ -13,6 +14,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `950ef6f0eeb0a160e36
 | `convertToolTime` | `ConvertToolTime` | POST | `/api/v1/tenant/tools/time` | Bearer |
 | `createBankUser` | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` | Bearer |
 | `createManager` | `CreateManager` | POST | `/api/v1/managers` | Bearer |
+| `createUserEvaskeriSession` | `CreateUserEvaskeriSession` | POST | `/api/v1/users/{userKid}/evaskeri-session` | Bearer |
 | `downloadBankSettlement` | `DownloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` | Bearer |
 | `downloadPortalWindowsAppInstaller` | `DownloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` | Anonymous |
 | `downloadPortalWindowsPackage` | `DownloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` | Anonymous |
@@ -34,6 +36,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `950ef6f0eeb0a160e36
 | `getBankBookings` | `GetBankBookings` | GET | `/api/v1/banks/{bankKid}/bookings` | Bearer |
 | `getBankDocumentsCount` | `GetBankDocumentsCount` | GET | `/api/v1/banks/{bankKid}/documents/count` | Bearer |
 | `getBankDocuments` | `GetBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` | Bearer |
+| `getBankErrors` | `GetBankErrors` | GET | `/api/v1/banks/{bankKid}/errors` | Bearer |
 | `getBankExportCount` | `GetBankExportCount` | GET | `/api/v1/banks/export-count` | Bearer |
 | `getBankIcons` | `GetBankIcons` | GET | `/api/v1/banks/icons` | Bearer |
 | `getBankLocations` | `GetBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` | Bearer |
@@ -52,6 +55,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `950ef6f0eeb0a160e36
 | `getCameraCaptures` | `GetCameraCaptures` | GET | `/api/v1/camera` | Bearer |
 | `getCameraNearestLocation` | `GetCameraNearestLocation` | GET | `/api/v1/camera/nearest-location` | Bearer |
 | `getCameraResource` | `GetCameraResource` | GET | `/api/v1/camera/resource` | Bearer |
+| `getChecklistPeriod` | `GetChecklistPeriod` | GET | `/api/v1/settlement-checklist/{periodKid}` | Bearer |
+| `getChecklist` | `GetChecklist` | GET | `/api/v1/settlement-checklist` | Bearer |
 | `getCircleGradientSized` | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` | Anonymous |
 | `getCircleGradient` | `GetCircleGradient` | GET | `/api/v1/circles/gradient/{colors}.svg` | Anonymous |
 | `getCircleProgressSized` | `GetCircleProgressSized` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg` | Anonymous |
@@ -62,6 +67,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `950ef6f0eeb0a160e36
 | `getControllerOverview` | `GetControllerOverview` | GET | `/api/v1/controllers/{controllerKid}` | Bearer |
 | `getCurrentManager` | `GetCurrentManager` | GET | `/api/v1/session/me` | Bearer |
 | `getCycleChartPresentation` | `GetCycleChartPresentation` | GET | `/api/v1/public/cycle-chart/presentation` | Anonymous |
+| `getError` | `GetError` | GET | `/api/v1/errors/{errorKid}` | Bearer |
 | `getHostingLogs` | `GetHostingLogs` | GET | `/api/v1/hosting/logs` | Bearer |
 | `getHostingMetrics` | `GetHostingMetrics` | GET | `/api/v1/hosting/metrics` | Bearer |
 | `getIconAssetCatalog` | `GetIconAssetCatalog` | GET | `/api/v1/icon/catalog/{iconSet}` | Anonymous |
@@ -110,6 +116,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `950ef6f0eeb0a160e36
 | `getMyManagerTabs` | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` | Bearer |
 | `getNearestLocations` | `GetNearestLocations` | GET | `/api/v1/locations/nearest` | Bearer |
 | `getObjectAddress` | `GetObjectAddress` | GET | `/api/v1/addresses/{kid}` | Bearer |
+| `getOutOfOrderUnits` | `GetOutOfOrderUnits` | GET | `/api/v1/units/out-of-service` | Bearer |
 | `getPortalAppDownloadPage` | `GetPortalAppDownloadPage` | GET | `/download` | Anonymous |
 | `getPortalStatus` | `GetPortalStatus` | GET | `/api/v1/status` | Anonymous |
 | `getPublicActiveUsers` | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` | Anonymous |
@@ -165,6 +172,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `950ef6f0eeb0a160e36
 | `requestManagerSignUp` | `RequestManagerSignUp` | POST | `/api/v1/session/signup` | Anonymous |
 | `requestMyManagerEmailVerification` | `RequestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` | Bearer |
 | `resetManagerPassword` | `ResetManagerPassword` | POST | `/api/v1/session/reset-password` | Anonymous |
+| `restoreOutOfOrderUnit` | `RestoreOutOfOrderUnit` | POST | `/api/v1/units/{unitKid}/out-of-service/restore` | Bearer |
 | `reverseBankAccountEntry` | `ReverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` | Bearer |
 | `saveCameraCapture` | `SaveCameraCapture` | POST | `/api/v1/camera` | Bearer |
 | `searchBankActivation` | `SearchBankActivation` | GET | `/api/v1/search/bank-activation` | Bearer |

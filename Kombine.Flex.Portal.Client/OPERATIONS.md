@@ -4,6 +4,7 @@ Generated from the checked-in public integration contract. All business rules ar
 
 | Method | HTTP | Path |
 | --- | --- | --- |
+| `AcknowledgeErrorAsync` | POST | `/api/v1/errors/{errorKid}/acknowledge` |
 | `AskPortalAssistantAsync` | POST | `/api/v1/assistant/query` |
 | `ChangeMyManagerPasswordAsync` | POST | `/api/v1/session/me/password` |
 | `ConfirmCameraCaptureAsync` | POST | `/api/v1/camera/confirmation` |
@@ -12,6 +13,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `ConvertToolTimeAsync` | POST | `/api/v1/tenant/tools/time` |
 | `CreateBankUserAsync` | POST | `/api/v1/banks/{bankKid}/users` |
 | `CreateManagerAsync` | POST | `/api/v1/managers` |
+| `CreateUserEvaskeriSessionAsync` | POST | `/api/v1/users/{userKid}/evaskeri-session` |
 | `DownloadBankSettlementAsync` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
 | `DownloadPortalWindowsAppInstallerAsync` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackageAsync` | GET | `/download/windows/{architecture}/{fileName}` |
@@ -33,6 +35,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetBankBookingsAsync` | GET | `/api/v1/banks/{bankKid}/bookings` |
 | `GetBankDocumentsAsync` | GET | `/api/v1/banks/{bankKid}/documents` |
 | `GetBankDocumentsCountAsync` | GET | `/api/v1/banks/{bankKid}/documents/count` |
+| `GetBankErrorsAsync` | GET | `/api/v1/banks/{bankKid}/errors` |
 | `GetBankExportCountAsync` | GET | `/api/v1/banks/export-count` |
 | `GetBankIconsAsync` | GET | `/api/v1/banks/icons` |
 | `GetBankLocationsAsync` | GET | `/api/v1/banks/{bankKid}/locations` |
@@ -51,6 +54,8 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetCameraCapturesAsync` | GET | `/api/v1/camera` |
 | `GetCameraNearestLocationAsync` | GET | `/api/v1/camera/nearest-location` |
 | `GetCameraResourceAsync` | GET | `/api/v1/camera/resource` |
+| `GetChecklistAsync` | GET | `/api/v1/settlement-checklist` |
+| `GetChecklistPeriodAsync` | GET | `/api/v1/settlement-checklist/{periodKid}` |
 | `GetCircleGradientAsync` | GET | `/api/v1/circles/gradient/{colors}.svg` |
 | `GetCircleGradientSizedAsync` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` |
 | `GetCircleProgressAsync` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}.svg` |
@@ -61,6 +66,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetControllerOverviewAsync` | GET | `/api/v1/controllers/{controllerKid}` |
 | `GetCurrentManagerAsync` | GET | `/api/v1/session/me` |
 | `GetCycleChartPresentationAsync` | GET | `/api/v1/public/cycle-chart/presentation` |
+| `GetErrorAsync` | GET | `/api/v1/errors/{errorKid}` |
 | `GetHostingLogsAsync` | GET | `/api/v1/hosting/logs` |
 | `GetHostingMetricsAsync` | GET | `/api/v1/hosting/metrics` |
 | `GetIconAssetCatalogAsync` | GET | `/api/v1/icon/catalog/{iconSet}` |
@@ -109,6 +115,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetMyManagerTabsAsync` | GET | `/api/v1/session/me/tabs` |
 | `GetNearestLocationsAsync` | GET | `/api/v1/locations/nearest` |
 | `GetObjectAddressAsync` | GET | `/api/v1/addresses/{kid}` |
+| `GetOutOfOrderUnitsAsync` | GET | `/api/v1/units/out-of-service` |
 | `GetPortalAppDownloadPageAsync` | GET | `/download` |
 | `GetPortalStatusAsync` | GET | `/api/v1/status` |
 | `GetPublicActiveUsersAsync` | GET | `/api/v1/public/statistics/active-users` |
@@ -164,6 +171,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `RequestManagerSignUpAsync` | POST | `/api/v1/session/signup` |
 | `RequestMyManagerEmailVerificationAsync` | POST | `/api/v1/session/me/email-verification` |
 | `ResetManagerPasswordAsync` | POST | `/api/v1/session/reset-password` |
+| `RestoreOutOfOrderUnitAsync` | POST | `/api/v1/units/{unitKid}/out-of-service/restore` |
 | `ReverseBankAccountEntryAsync` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` |
 | `SaveCameraCaptureAsync` | POST | `/api/v1/camera` |
 | `SearchBankActivationAsync` | GET | `/api/v1/search/bank-activation` |

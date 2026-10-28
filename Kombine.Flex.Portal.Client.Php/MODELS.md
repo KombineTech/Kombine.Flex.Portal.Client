@@ -44,6 +44,12 @@ array{'currency'?: string|null, 'entries'?: int, 'amountMinor'?: int}
 array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: string|null, 'name'?: string|null}
 ```
 
+### AcknowledgeErrorRequest
+
+```php
+array{'expectedRevision': string|null}
+```
+
 ### ActiveBankCountResponse
 
 ```php
@@ -234,6 +240,30 @@ array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null
 
 ```php
 array{'captureId'?: string|null, 'resourceKid'?: string|null}
+```
+
+### ChecklistItem
+
+```php
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'period'?: int, 'isLatest'?: bool, 'bankName'?: string|null, 'locationName'?: string|null, 'hardware'?: string|null, 'periodDateUtc'?: string|null, 'nextSettlementUtc'?: string|null, 'lastRunUtc'?: string|null, 'updatedAtUtc'?: string|null, 'hidden'?: bool, 'onChecklist'?: bool, 'scheduleStatus'?: string|null, 'processing'?: ChecklistProcessing}
+```
+
+### ChecklistPage
+
+```php
+array{'items'?: list<ChecklistItem>|null, 'nextCursor'?: string|null, 'readAtUtc'?: string}
+```
+
+### ChecklistProcessing
+
+```php
+array{'invoice'?: ChecklistStatus, 'soapInvoice'?: ChecklistStatus, 'soapCredit'?: ChecklistStatus, 'easyPay'?: ChecklistStatus}
+```
+
+### ChecklistStatus
+
+```php
+array{'code'?: int|null, 'state'?: string|null}
 ```
 
 ### DatabaseAccessResponse
@@ -728,6 +758,30 @@ array{'label'?: string|null, 'status'?: string|null, 'opens'?: string|null, 'clo
 array{'kid'?: string|null, 'name'?: string|null}
 ```
 
+### OutOfOrderItem
+
+```php
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'unitType'?: int, 'outOfOrder'?: int, 'status'?: string|null, 'statusLabel'?: string|null, 'timestampUtc'?: string, 'changedBy'?: UnitSettingEditorResponse, 'revision'?: string|null, 'canRestore'?: bool}
+```
+
+### OutOfOrderPage
+
+```php
+array{'items'?: list<OutOfOrderItem>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
+```
+
+### OutOfOrderRestoreRequest
+
+```php
+array{'expectedRevision': string|null}
+```
+
+### OutOfOrderRestoreResponse
+
+```php
+array{'kid'?: string|null, 'outOfOrder'?: int, 'status'?: string|null, 'timestampUtc'?: string, 'revision'?: string|null, 'sync'?: int|null}
+```
+
 ### PeopleDirectoryCount
 
 ```php
@@ -815,7 +869,7 @@ array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'
 ### SearchResult
 
 ```php
-array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'iconKid'?: string|null}
+array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
 ```
 
 ### SearchResults
@@ -992,6 +1046,18 @@ array{'count'?: int, 'from'?: string, 'through'?: string}
 array{'items'?: list<BankDocumentItem>|null, 'from'?: string, 'through'?: string, 'sort'?: string|null, 'direction'?: string|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool}
 ```
 
+### UnitErrorItem
+
+```php
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'unitType'?: int|null, 'timestampUtc'?: string, 'severity'?: string|null, 'level'?: string|null, 'code'?: int|null, 'count'?: int|null, 'description'?: string|null, 'payloadFormat'?: string|null, 'acknowledged'?: bool, 'revision'?: string|null, 'canAcknowledge'?: bool}
+```
+
+### UnitErrorPage
+
+```php
+array{'items'?: list<UnitErrorItem>|null, 'nextCursor'?: string|null, 'fromUtc'?: string, 'untilUtc'?: string}
+```
+
 ### UnitGroupFieldResponse
 
 ```php
@@ -1134,6 +1200,12 @@ array{'kid'?: string|null, 'bankKid'?: string|null, 'name'?: string|null, 'numbe
 
 ```php
 array{'items'?: list<UserDirectoryItem>|null, 'nextCursor'?: string|null, 'scanLimitReached'?: bool}
+```
+
+### UserEvaskeriSession
+
+```php
+array{'kid'?: string|null, 'url'?: string|null, 'expiresAtUtc'?: string}
 ```
 
 ### UserLocationResponse

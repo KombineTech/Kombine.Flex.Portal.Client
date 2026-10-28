@@ -183,6 +183,16 @@ export class PortalClient extends BaseClient {
     return this.send("GetRecentCameraPhotoMetadata", {"id": id}, undefined, request) as Promise<PortalDownload>;
   }
 
+  /** List authorized settlement periods requiring attention, as in DatPro2 Checklist1. */
+  getChecklist(options: Models.GetChecklistOptions = {}, request: RequestOptions = {}): Promise<Models.ChecklistPage> {
+    return this.send("GetChecklist", {"scopeKid": options.scopeKid, "includeResolved": options.includeResolved, "pageSize": options.pageSize, "cursor": options.cursor}, undefined, request) as Promise<Models.ChecklistPage>;
+  }
+
+  /** Read one current checklist period, including its hidden/completed status. */
+  getChecklistPeriod(periodKid: string, request: RequestOptions = {}): Promise<Models.ChecklistItem> {
+    return this.send("GetChecklistPeriod", {"periodKid": periodKid}, undefined, request) as Promise<Models.ChecklistItem>;
+  }
+
   /** Downloads the complete filtered selection as CSV or a genuine Excel workbook. */
   exportBankAccount(bankKid: string, options: Models.ExportBankAccountOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("ExportBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit, "format": options.format}, undefined, request) as Promise<PortalDownload>;
@@ -206,6 +216,21 @@ export class PortalClient extends BaseClient {
   /** Download an Excel 97–2003 binary .xls workbook for one document. */
   downloadUnitDocumentXls(cycleKid: string, options: Models.DownloadUnitDocumentXlsOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("DownloadUnitDocumentXls", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** List a bank's machine errors, as in DatPro2 Errors2. */
+  getBankErrors(bankKid: string, options: Models.GetBankErrorsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitErrorPage> {
+    return this.send("GetBankErrors", {"bankKid": bankKid, "days": options.days, "level": options.level, "includeAcknowledged": options.includeAcknowledged, "pageSize": options.pageSize, "cursor": options.cursor}, undefined, request) as Promise<Models.UnitErrorPage>;
+  }
+
+  /** Read one authorized error event, including its current acknowledgement and revision. */
+  getError(errorKid: string, request: RequestOptions = {}): Promise<Models.UnitErrorItem> {
+    return this.send("GetError", {"errorKid": errorKid}, undefined, request) as Promise<Models.UnitErrorItem>;
+  }
+
+  /** Acknowledge one error without deleting its log or changing machine status. */
+  acknowledgeError(errorKid: string, body: Models.AcknowledgeErrorRequest, request: RequestOptions = {}): Promise<Models.UnitErrorItem> {
+    return this.send("AcknowledgeError", {"errorKid": errorKid}, body, request) as Promise<Models.UnitErrorItem>;
   }
 
   /** Read recent DigitalOcean runtime logs for a configured shared app. */
@@ -603,6 +628,16 @@ export class PortalClient extends BaseClient {
     return this.send("GetUnitDocumentIcon", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<PortalDownload>;
   }
 
+  /** List out-of-order machines, including manual, automatic and repair states. */
+  getOutOfOrderUnits(options: Models.GetOutOfOrderUnitsOptions = {}, request: RequestOptions = {}): Promise<Models.OutOfOrderPage> {
+    return this.send("GetOutOfOrderUnits", {"pageSize": options.pageSize, "cursor": options.cursor}, undefined, request) as Promise<Models.OutOfOrderPage>;
+  }
+
+  /** Return one out-of-order machine to service by setting OutOfOrder to Enabled (0). */
+  restoreOutOfOrderUnit(unitKid: string, body: Models.OutOfOrderRestoreRequest, request: RequestOptions = {}): Promise<Models.OutOfOrderRestoreResponse> {
+    return this.send("RestoreOutOfOrderUnit", {"unitKid": unitKid}, body, request) as Promise<Models.OutOfOrderRestoreResponse>;
+  }
+
   /** Count the complete filtered export selection using the same directory authorization and visibility. */
   getUnitExportCount(options: Models.GetUnitExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
     return this.send("GetUnitExportCount", {"filter": options.filter, "sort": options.sort, "direction": options.direction, "enabledOnly": options.enabledOnly, "fields": options.fields, "locationKid": options.locationKid, "terminalKid": options.terminalKid, "runningOnly": options.runningOnly, "autoOutOfOrderOnly": options.autoOutOfOrderOnly}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
@@ -681,6 +716,11 @@ export class PortalClient extends BaseClient {
   /** Count active authorized residents for the UserFinder1 badge. */
   getUserCount(request: RequestOptions = {}): Promise<Models.PeopleDirectoryCount> {
     return this.send("GetUserCount", {}, undefined, request) as Promise<Models.PeopleDirectoryCount>;
+  }
+
+  /** Create an eVaskeri login link for one active Nortec resident. */
+  createUserEvaskeriSession(userKid: string, request: RequestOptions = {}): Promise<Models.UserEvaskeriSession> {
+    return this.send("CreateUserEvaskeriSession", {"userKid": userKid}, undefined, request) as Promise<Models.UserEvaskeriSession>;
   }
 
   /** Read complete receipts for one resident, newest first, twenty receipts at a time. */

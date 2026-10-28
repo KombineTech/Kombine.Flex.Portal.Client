@@ -1,3 +1,5 @@
+La versión 0.6.0 añade la lista de liquidaciones de solo lectura, el historial y reconocimiento de errores, la consulta y restauración de máquinas fuera de servicio y el acceso autorizado a eVaskeri del residente. La búsqueda de residentes incluye bankKid. Todas las operaciones mantienen la autorización del administrador, tenant y recurso. Los enlaces de eVaskeri son credenciales sensibles: ábralos inmediatamente sin opener/referrer y nunca los registre ni almacene. No repita automáticamente solicitudes de modificación tras una respuesta incierta. UserBalance conserva la compatibilidad. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
+
 La versión 0.5.0 utiliza GetPublicCycleWidget y GetCycleChartPresentation. Sustituya las rutas retiradas de widgets/presentación WashDoc por /api/v1/public/widgets/cycle y /api/v1/public/cycle-chart/presentation. Los parámetros de ruta y los campos de tablas/gráficos/widgets usan cycleKid; el campo de visualización del widget es cycleKidText. Se mantienen los valores KID y los ID de las operaciones de documentos. Recompile los clientes y actualice las referencias a campos. UserBalance conserva la compatibilidad. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
 
 La versión 0.4.0 sincroniza idioma, fecha/hora, formato numérico y espaciado personal. Los widgets WashDoc sustituyen unitKidText por documentKidText; graphSvg puede ser null sin mediciones. Detenga el sondeo con refreshAfterSeconds=0; los documentos en curso usan 15 segundos. Las sesiones de administrador duran diez días: use expiresIn de la respuesta y renueve solo tras actividad. UserBalance sigue siendo compatible. Consulte el [registro de cambios](/docs#changelog).
@@ -6,7 +8,7 @@ La versión 0.3.0 mueve ConvertToolTime e InspectToolKid a /api/v1/tenant/tools/
 
 # Cliente Dart de Kombine Flex Portal
 
-La versiÃ³n **0.5.0** incluye **182 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicaciÃ³n, aÃ±ada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicaciÃ³n proporciona las credenciales del ejemplo.
+La versiÃ³n **0.6.0** incluye **182 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicaciÃ³n, aÃ±ada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicaciÃ³n proporciona las credenciales del ejemplo.
 
 ```yaml
 dependencies:

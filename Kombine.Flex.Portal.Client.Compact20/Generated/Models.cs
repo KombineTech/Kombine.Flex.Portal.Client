@@ -284,6 +284,16 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>The latest event revision; no arbitrary log value can be supplied.</summary>
+    public sealed class AcknowledgeErrorRequest
+    {
+        /// <summary>expectedRevision</summary>
+        [JsonField("expectedRevision")]
+        public string ExpectedRevision { get { return _ExpectedRevision; } set { _ExpectedRevision = value; } }
+        private string _ExpectedRevision;
+
+    }
+
     /// <summary>Accessible bank count for Enabled=1 and Deleted=0.</summary>
     public sealed class ActiveBankCountResponse
     {
@@ -1196,6 +1206,151 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("resourceKid")]
         public string ResourceKid { get { return _ResourceKid; } set { _ResourceKid = value; } }
         private string _ResourceKid;
+
+    }
+
+    /// <summary>One bank schedule or location processing row. Processing is null for a bank-wide row.</summary>
+    public sealed class ChecklistItem
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>bankKid</summary>
+        [JsonField("bankKid")]
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
+
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>period</summary>
+        [JsonField("period")]
+        public int? Period { get { return _Period; } set { _Period = value; } }
+        private int? _Period;
+
+        /// <summary>isLatest</summary>
+        [JsonField("isLatest")]
+        public bool? IsLatest { get { return _IsLatest; } set { _IsLatest = value; } }
+        private bool? _IsLatest;
+
+        /// <summary>bankName</summary>
+        [JsonField("bankName")]
+        public string BankName { get { return _BankName; } set { _BankName = value; } }
+        private string _BankName;
+
+        /// <summary>locationName</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>hardware</summary>
+        [JsonField("hardware")]
+        public string Hardware { get { return _Hardware; } set { _Hardware = value; } }
+        private string _Hardware;
+
+        /// <summary>periodDateUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("periodDateUtc")]
+        public string PeriodDateUtc { get { return _PeriodDateUtc; } set { _PeriodDateUtc = value; } }
+        private string _PeriodDateUtc;
+
+        /// <summary>nextSettlementUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("nextSettlementUtc")]
+        public string NextSettlementUtc { get { return _NextSettlementUtc; } set { _NextSettlementUtc = value; } }
+        private string _NextSettlementUtc;
+
+        /// <summary>lastRunUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("lastRunUtc")]
+        public string LastRunUtc { get { return _LastRunUtc; } set { _LastRunUtc = value; } }
+        private string _LastRunUtc;
+
+        /// <summary>updatedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("updatedAtUtc")]
+        public string UpdatedAtUtc { get { return _UpdatedAtUtc; } set { _UpdatedAtUtc = value; } }
+        private string _UpdatedAtUtc;
+
+        /// <summary>hidden</summary>
+        [JsonField("hidden")]
+        public bool? Hidden { get { return _Hidden; } set { _Hidden = value; } }
+        private bool? _Hidden;
+
+        /// <summary>onChecklist</summary>
+        [JsonField("onChecklist")]
+        public bool? OnChecklist { get { return _OnChecklist; } set { _OnChecklist = value; } }
+        private bool? _OnChecklist;
+
+        /// <summary>scheduleStatus</summary>
+        [JsonField("scheduleStatus")]
+        public string ScheduleStatus { get { return _ScheduleStatus; } set { _ScheduleStatus = value; } }
+        private string _ScheduleStatus;
+
+        /// <summary>processing</summary>
+        [JsonField("processing")]
+        public ChecklistProcessing Processing { get { return _Processing; } set { _Processing = value; } }
+        private ChecklistProcessing _Processing;
+
+    }
+
+    /// <summary>A bounded checklist page; only read operations are supported.</summary>
+    public sealed class ChecklistPage
+    {
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public ChecklistItem[] Items { get { return _Items; } set { _Items = value; } }
+        private ChecklistItem[] _Items;
+
+        /// <summary>nextCursor</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+        /// <summary>readAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("readAtUtc")]
+        public string ReadAtUtc { get { return _ReadAtUtc; } set { _ReadAtUtc = value; } }
+        private string _ReadAtUtc;
+
+    }
+
+    /// <summary>The four independently stored processing states; no financial amounts.</summary>
+    public sealed class ChecklistProcessing
+    {
+        /// <summary>invoice</summary>
+        [JsonField("invoice")]
+        public ChecklistStatus Invoice { get { return _Invoice; } set { _Invoice = value; } }
+        private ChecklistStatus _Invoice;
+
+        /// <summary>soapInvoice</summary>
+        [JsonField("soapInvoice")]
+        public ChecklistStatus SoapInvoice { get { return _SoapInvoice; } set { _SoapInvoice = value; } }
+        private ChecklistStatus _SoapInvoice;
+
+        /// <summary>soapCredit</summary>
+        [JsonField("soapCredit")]
+        public ChecklistStatus SoapCredit { get { return _SoapCredit; } set { _SoapCredit = value; } }
+        private ChecklistStatus _SoapCredit;
+
+        /// <summary>easyPay</summary>
+        [JsonField("easyPay")]
+        public ChecklistStatus EasyPay { get { return _EasyPay; } set { _EasyPay = value; } }
+        private ChecklistStatus _EasyPay;
+
+    }
+
+    /// <summary>Stored code and enum-derived state; null state means unknown, never success.</summary>
+    public sealed class ChecklistStatus
+    {
+        /// <summary>code</summary>
+        [JsonField("code")]
+        public int? Code { get { return _Code; } set { _Code = value; } }
+        private int? _Code;
+
+        /// <summary>state</summary>
+        [JsonField("state")]
+        public string State { get { return _State; } set { _State = value; } }
+        private string _State;
 
     }
 
@@ -3559,6 +3714,146 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Authorized machine, setting audit and revision. Status is null for an unknown nonzero stored code.</summary>
+    public sealed class OutOfOrderItem
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>bankKid</summary>
+        [JsonField("bankKid")]
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
+
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>bankName</summary>
+        [JsonField("bankName")]
+        public string BankName { get { return _BankName; } set { _BankName = value; } }
+        private string _BankName;
+
+        /// <summary>locationName</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>unitName</summary>
+        [JsonField("unitName")]
+        public string UnitName { get { return _UnitName; } set { _UnitName = value; } }
+        private string _UnitName;
+
+        /// <summary>unitType</summary>
+        [JsonField("unitType")]
+        public int? UnitType { get { return _UnitType; } set { _UnitType = value; } }
+        private int? _UnitType;
+
+        /// <summary>outOfOrder</summary>
+        [JsonField("outOfOrder")]
+        public int? OutOfOrder { get { return _OutOfOrder; } set { _OutOfOrder = value; } }
+        private int? _OutOfOrder;
+
+        /// <summary>status</summary>
+        [JsonField("status")]
+        public string Status { get { return _Status; } set { _Status = value; } }
+        private string _Status;
+
+        /// <summary>statusLabel</summary>
+        [JsonField("statusLabel")]
+        public string StatusLabel { get { return _StatusLabel; } set { _StatusLabel = value; } }
+        private string _StatusLabel;
+
+        /// <summary>timestampUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("timestampUtc")]
+        public string TimestampUtc { get { return _TimestampUtc; } set { _TimestampUtc = value; } }
+        private string _TimestampUtc;
+
+        /// <summary>changedBy</summary>
+        [JsonField("changedBy")]
+        public UnitSettingEditorResponse ChangedBy { get { return _ChangedBy; } set { _ChangedBy = value; } }
+        private UnitSettingEditorResponse _ChangedBy;
+
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+        /// <summary>canRestore</summary>
+        [JsonField("canRestore")]
+        public bool? CanRestore { get { return _CanRestore; } set { _CanRestore = value; } }
+        private bool? _CanRestore;
+
+    }
+
+    /// <summary>Current out-of-order settings and an opaque next-page cursor.</summary>
+    public sealed class OutOfOrderPage
+    {
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public OutOfOrderItem[] Items { get { return _Items; } set { _Items = value; } }
+        private OutOfOrderItem[] _Items;
+
+        /// <summary>nextCursor</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+        /// <summary>refreshAfterSeconds</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+    }
+
+    /// <summary>Revision from the list; the action always writes Enabled (0).</summary>
+    public sealed class OutOfOrderRestoreRequest
+    {
+        /// <summary>expectedRevision</summary>
+        [JsonField("expectedRevision")]
+        public string ExpectedRevision { get { return _ExpectedRevision; } set { _ExpectedRevision = value; } }
+        private string _ExpectedRevision;
+
+    }
+
+    /// <summary>Confirmed storage result; Sync zero is pending device synchronization, not physical acknowledgement.</summary>
+    public sealed class OutOfOrderRestoreResponse
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>outOfOrder</summary>
+        [JsonField("outOfOrder")]
+        public int? OutOfOrder { get { return _OutOfOrder; } set { _OutOfOrder = value; } }
+        private int? _OutOfOrder;
+
+        /// <summary>status</summary>
+        [JsonField("status")]
+        public string Status { get { return _Status; } set { _Status = value; } }
+        private string _Status;
+
+        /// <summary>timestampUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("timestampUtc")]
+        public string TimestampUtc { get { return _TimestampUtc; } set { _TimestampUtc = value; } }
+        private string _TimestampUtc;
+
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+        /// <summary>sync</summary>
+        [JsonField("sync")]
+        public int? Sync { get { return _Sync; } set { _Sync = value; } }
+        private int? _Sync;
+
+    }
+
     /// <summary>Authorized count and red badge icon; each operation documents its cache age and precision.</summary>
     public sealed class PeopleDirectoryCount
     {
@@ -3864,7 +4159,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
-    /// <summary>Mixed-result shape; kind is an enum-derived type and Kid is the sole object identifier.</summary>
+    /// <summary>Mixed-result shape; kind is an enum-derived type. Kid identifies the result; optional BankKid identifies a resident's parent bank.</summary>
     public sealed class SearchResult
     {
         /// <summary>kid</summary>
@@ -3906,6 +4201,11 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("number")]
         public string Number { get { return _Number; } set { _Number = value; } }
         private string _Number;
+
+        /// <summary>Canonical parent bank KID for a resident result. This identity grants no bank access; names require authorized context results.</summary>
+        [JsonField("bankKid")]
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
 
         /// <summary>API-computed icon identity; use unchanged in the icon image URL.</summary>
         [JsonField("iconKid")]
@@ -4814,6 +5114,126 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>One authorized error event. Null description/code/count means that the stored payload does not provide it.</summary>
+    public sealed class UnitErrorItem
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>bankKid</summary>
+        [JsonField("bankKid")]
+        public string BankKid { get { return _BankKid; } set { _BankKid = value; } }
+        private string _BankKid;
+
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>bankName</summary>
+        [JsonField("bankName")]
+        public string BankName { get { return _BankName; } set { _BankName = value; } }
+        private string _BankName;
+
+        /// <summary>locationName</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>unitName</summary>
+        [JsonField("unitName")]
+        public string UnitName { get { return _UnitName; } set { _UnitName = value; } }
+        private string _UnitName;
+
+        /// <summary>unitType</summary>
+        [JsonField("unitType")]
+        public int? UnitType { get { return _UnitType; } set { _UnitType = value; } }
+        private int? _UnitType;
+
+        /// <summary>timestampUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("timestampUtc")]
+        public string TimestampUtc { get { return _TimestampUtc; } set { _TimestampUtc = value; } }
+        private string _TimestampUtc;
+
+        /// <summary>severity</summary>
+        [JsonField("severity")]
+        public string Severity { get { return _Severity; } set { _Severity = value; } }
+        private string _Severity;
+
+        /// <summary>level</summary>
+        [JsonField("level")]
+        public string Level { get { return _Level; } set { _Level = value; } }
+        private string _Level;
+
+        /// <summary>code</summary>
+        [JsonField("code")]
+        public int? Code { get { return _Code; } set { _Code = value; } }
+        private int? _Code;
+
+        /// <summary>count</summary>
+        [JsonField("count")]
+        public int? Count { get { return _Count; } set { _Count = value; } }
+        private int? _Count;
+
+        /// <summary>description</summary>
+        [JsonField("description")]
+        public string Description { get { return _Description; } set { _Description = value; } }
+        private string _Description;
+
+        /// <summary>payloadFormat</summary>
+        [JsonField("payloadFormat")]
+        public string PayloadFormat { get { return _PayloadFormat; } set { _PayloadFormat = value; } }
+        private string _PayloadFormat;
+
+        /// <summary>acknowledged</summary>
+        [JsonField("acknowledged")]
+        public bool? Acknowledged { get { return _Acknowledged; } set { _Acknowledged = value; } }
+        private bool? _Acknowledged;
+
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+        /// <summary>canAcknowledge</summary>
+        [JsonField("canAcknowledge")]
+        public bool? CanAcknowledge { get { return _CanAcknowledge; } set { _CanAcknowledge = value; } }
+        private bool? _CanAcknowledge;
+
+    }
+
+    /// <summary>A keyset page with a fixed UTC time window and optional opaque continuation.</summary>
+    public sealed class UnitErrorPage
+    {
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public UnitErrorItem[] Items { get { return _Items; } set { _Items = value; } }
+        private UnitErrorItem[] _Items;
+
+        /// <summary>nextCursor</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+        /// <summary>fromUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("fromUtc")]
+        public string FromUtc { get { return _FromUtc; } set { _FromUtc = value; } }
+        private string _FromUtc;
+
+        /// <summary>untilUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("untilUtc")]
+        public string UntilUtc { get { return _UntilUtc; } set { _UntilUtc = value; } }
+        private string _UntilUtc;
+
+    }
+
     /// <summary>Stored current-unit value, or an explicit absence/scope/redaction status. MS2000 is the source krumb timestamp.</summary>
     public sealed class UnitGroupFieldResponse
     {
@@ -5526,6 +5946,26 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("scanLimitReached")]
         public bool? ScanLimitReached { get { return _ScanLimitReached; } set { _ScanLimitReached = value; } }
         private bool? _ScanLimitReached;
+
+    }
+
+    /// <summary>A sensitive resident login URL. Never log, persist, prefetch or share it. ExpiresAtUtc is the legacy admission deadline, not the duration of the resulting eVaskeri session.</summary>
+    public sealed class UserEvaskeriSession
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>url</summary>
+        [JsonField("url")]
+        public string Url { get { return _Url; } set { _Url = value; } }
+        private string _Url;
+
+        /// <summary>expiresAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("expiresAtUtc")]
+        public string ExpiresAtUtc { get { return _ExpiresAtUtc; } set { _ExpiresAtUtc = value; } }
+        private string _ExpiresAtUtc;
 
     }
 
@@ -7242,6 +7682,27 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Optional query/header parameters for GetChecklist. Null values use API defaults.</summary>
+    public sealed class GetChecklistOptions
+    {
+        /// <summary>scopeKid</summary>
+        public string ScopeKid { get { return _ScopeKid; } set { _ScopeKid = value; } }
+        private string _ScopeKid;
+
+        /// <summary>includeResolved</summary>
+        public bool? IncludeResolved { get { return _IncludeResolved; } set { _IncludeResolved = value; } }
+        private bool? _IncludeResolved;
+
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
+
+    }
+
     /// <summary>Optional query/header parameters for ExportBankAccount. Null values use API defaults.</summary>
     public sealed class ExportBankAccountOptions
     {
@@ -7368,6 +7829,31 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
         public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
         private bool? _HistoricalMeasurements;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetBankErrors. Null values use API defaults.</summary>
+    public sealed class GetBankErrorsOptions
+    {
+        /// <summary>days</summary>
+        public int? Days { get { return _Days; } set { _Days = value; } }
+        private int? _Days;
+
+        /// <summary>level</summary>
+        public string Level { get { return _Level; } set { _Level = value; } }
+        private string _Level;
+
+        /// <summary>includeAcknowledged</summary>
+        public bool? IncludeAcknowledged { get { return _IncludeAcknowledged; } set { _IncludeAcknowledged = value; } }
+        private bool? _IncludeAcknowledged;
+
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
 
     }
 
@@ -7992,6 +8478,19 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
         public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
         private bool? _HistoricalMeasurements;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetOutOfOrderUnits. Null values use API defaults.</summary>
+    public sealed class GetOutOfOrderUnitsOptions
+    {
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
 
     }
 

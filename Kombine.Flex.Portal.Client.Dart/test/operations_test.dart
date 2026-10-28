@@ -758,6 +758,45 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetChecklist", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/settlement-checklist");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["scopeKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["includeResolved"], <Object?>["false"]);
+      expect(request.url.queryParametersAll["pageSize"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["cursor"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"items": null, "nextCursor": null, "readAtUtc": "2026-10-20T10:00:00Z"}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getChecklist(scopeKid: "fixture", includeResolved: false, pageSize: 7, cursor: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "nextCursor": null, "readAtUtc": "2026-10-20T10:00:00Z"}));
+    expect(sends, 1);
+  });
+
+  test("wire GetChecklistPeriod", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/settlement-checklist/fixture%20%2F%C3%A6%3F%26");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "bankKid": null, "locationKid": null, "period": 7, "isLatest": false, "bankName": null, "locationName": null, "hardware": null, "periodDateUtc": null, "nextSettlementUtc": null, "lastRunUtc": null, "updatedAtUtc": null, "hidden": false, "onChecklist": false, "scheduleStatus": null, "processing": <String, Object?>{"invoice": <String, Object?>{}, "soapInvoice": <String, Object?>{}, "soapCredit": <String, Object?>{}, "easyPay": <String, Object?>{}}}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getChecklistPeriod(periodKid: "fixture /\u00e6?&");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "bankKid": null, "locationKid": null, "period": 7, "isLatest": false, "bankName": null, "locationName": null, "hardware": null, "periodDateUtc": null, "nextSettlementUtc": null, "lastRunUtc": null, "updatedAtUtc": null, "hidden": false, "onChecklist": false, "scheduleStatus": null, "processing": <String, Object?>{"invoice": <String, Object?>{}, "soapInvoice": <String, Object?>{}, "soapCredit": <String, Object?>{}, "easyPay": <String, Object?>{}}}));
+    expect(sends, 1);
+  });
+
   test("wire ExportBankAccount", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -866,6 +905,65 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.downloadUnitDocumentXls(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
+    expect(sends, 1);
+  });
+
+  test("wire GetBankErrors", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/banks/fixture%20%2F%C3%A6%3F%26/errors");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["days"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["level"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["includeAcknowledged"], <Object?>["false"]);
+      expect(request.url.queryParametersAll["pageSize"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["cursor"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"items": null, "nextCursor": null, "fromUtc": "2026-10-20T10:00:00Z", "untilUtc": "2026-10-20T10:00:00Z"}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getBankErrors(bankKid: "fixture /\u00e6?&", days: 7, level: "fixture", includeAcknowledged: false, pageSize: 7, cursor: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "nextCursor": null, "fromUtc": "2026-10-20T10:00:00Z", "untilUtc": "2026-10-20T10:00:00Z"}));
+    expect(sends, 1);
+  });
+
+  test("wire GetError", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/errors/fixture%20%2F%C3%A6%3F%26");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "bankKid": null, "locationKid": null, "unitKid": null, "bankName": null, "locationName": null, "unitName": null, "unitType": null, "timestampUtc": "2026-10-20T10:00:00Z", "severity": null, "level": null, "code": null, "count": null, "description": null, "payloadFormat": null, "acknowledged": false, "revision": null, "canAcknowledge": false}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getError(errorKid: "fixture /\u00e6?&");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "bankKid": null, "locationKid": null, "unitKid": null, "bankName": null, "locationName": null, "unitName": null, "unitType": null, "timestampUtc": "2026-10-20T10:00:00Z", "severity": null, "level": null, "code": null, "count": null, "description": null, "payloadFormat": null, "acknowledged": false, "revision": null, "canAcknowledge": false}));
+    expect(sends, 1);
+  });
+
+  test("wire AcknowledgeError", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/errors/fixture%20%2F%C3%A6%3F%26/acknowledge");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{"expectedRevision": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "bankKid": null, "locationKid": null, "unitKid": null, "bankName": null, "locationName": null, "unitName": null, "unitType": null, "timestampUtc": "2026-10-20T10:00:00Z", "severity": null, "level": null, "code": null, "count": null, "description": null, "payloadFormat": null, "acknowledged": false, "revision": null, "canAcknowledge": false}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.acknowledgeError(errorKid: "fixture /\u00e6?&", body: <String, Object?>{"expectedRevision": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "bankKid": null, "locationKid": null, "unitKid": null, "bankName": null, "locationName": null, "unitName": null, "unitType": null, "timestampUtc": "2026-10-20T10:00:00Z", "severity": null, "level": null, "code": null, "count": null, "description": null, "payloadFormat": null, "acknowledged": false, "revision": null, "canAcknowledge": false}));
     expect(sends, 1);
   });
 
@@ -2381,6 +2479,44 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetOutOfOrderUnits", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/units/out-of-service");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["pageSize"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["cursor"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"items": null, "nextCursor": null, "refreshAfterSeconds": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getOutOfOrderUnits(pageSize: 7, cursor: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "nextCursor": null, "refreshAfterSeconds": 7}));
+    expect(sends, 1);
+  });
+
+  test("wire RestoreOutOfOrderUnit", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/units/fixture%20%2F%C3%A6%3F%26/out-of-service/restore");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{"expectedRevision": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "outOfOrder": 7, "status": null, "timestampUtc": "2026-10-20T10:00:00Z", "revision": null, "sync": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.restoreOutOfOrderUnit(unitKid: "fixture /\u00e6?&", body: <String, Object?>{"expectedRevision": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "outOfOrder": 7, "status": null, "timestampUtc": "2026-10-20T10:00:00Z", "revision": null, "sync": null}));
+    expect(sends, 1);
+  });
+
   test("wire GetUnitExportCount", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -2713,6 +2849,24 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getUserCount();
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "iconKid": null}));
+    expect(sends, 1);
+  });
+
+  test("wire CreateUserEvaskeriSession", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/users/fixture%20%2F%C3%A6%3F%26/evaskeri-session");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "url": null, "expiresAtUtc": "2026-10-20T10:00:00Z"}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.createUserEvaskeriSession(userKid: "fixture /\u00e6?&");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "url": null, "expiresAtUtc": "2026-10-20T10:00:00Z"}));
     expect(sends, 1);
   });
 

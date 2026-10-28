@@ -616,6 +616,36 @@ namespace Kombine.Flex.Portal.Client.Net45
             return SendDownload("GET", path, null, headers, 200);
         }
 
+        /// <summary>List authorized settlement periods requiring attention, as in DatPro2 Checklist1.</summary>
+        public ChecklistPage GetChecklist()
+        {
+            return GetChecklist(null);
+        }
+
+        /// <summary>List authorized settlement periods requiring attention, as in DatPro2 Checklist1.</summary>
+        public ChecklistPage GetChecklist(GetChecklistOptions options)
+        {
+            string path = "api/v1/settlement-checklist";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "scopeKid", options.ScopeKid);
+                path = AddQuery(path, "includeResolved", options.IncludeResolved);
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+            }
+            return (ChecklistPage)SendJson("GET", path, null, headers, 200, typeof(ChecklistPage));
+        }
+
+        /// <summary>Read one current checklist period, including its hidden/completed status.</summary>
+        public ChecklistItem GetChecklistPeriod(string @periodKid)
+        {
+            string path = "api/v1/settlement-checklist/{periodKid}";
+            path = path.Replace("{periodKid}", PathValue(@periodKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ChecklistItem)SendJson("GET", path, null, headers, 200, typeof(ChecklistItem));
+        }
+
         /// <summary>Downloads the complete filtered selection as CSV or a genuine Excel workbook.</summary>
         public PortalDownload ExportBankAccount(string @bankKid)
         {
@@ -731,6 +761,47 @@ namespace Kombine.Flex.Portal.Client.Net45
                 path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
             }
             return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>List a bank's machine errors, as in DatPro2 Errors2.</summary>
+        public UnitErrorPage GetBankErrors(string @bankKid)
+        {
+            return GetBankErrors(@bankKid, null);
+        }
+
+        /// <summary>List a bank's machine errors, as in DatPro2 Errors2.</summary>
+        public UnitErrorPage GetBankErrors(string @bankKid, GetBankErrorsOptions options)
+        {
+            string path = "api/v1/banks/{bankKid}/errors";
+            path = path.Replace("{bankKid}", PathValue(@bankKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "days", options.Days);
+                path = AddQuery(path, "level", options.Level);
+                path = AddQuery(path, "includeAcknowledged", options.IncludeAcknowledged);
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+            }
+            return (UnitErrorPage)SendJson("GET", path, null, headers, 200, typeof(UnitErrorPage));
+        }
+
+        /// <summary>Read one authorized error event, including its current acknowledgement and revision.</summary>
+        public UnitErrorItem GetError(string @errorKid)
+        {
+            string path = "api/v1/errors/{errorKid}";
+            path = path.Replace("{errorKid}", PathValue(@errorKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (UnitErrorItem)SendJson("GET", path, null, headers, 200, typeof(UnitErrorItem));
+        }
+
+        /// <summary>Acknowledge one error without deleting its log or changing machine status.</summary>
+        public UnitErrorItem AcknowledgeError(string @errorKid, AcknowledgeErrorRequest body)
+        {
+            string path = "api/v1/errors/{errorKid}/acknowledge";
+            path = path.Replace("{errorKid}", PathValue(@errorKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (UnitErrorItem)SendJson("POST", path, body, headers, 200, typeof(UnitErrorItem));
         }
 
         /// <summary>Read recent DigitalOcean runtime logs for a configured shared app.</summary>
@@ -1881,6 +1952,34 @@ namespace Kombine.Flex.Portal.Client.Net45
             return SendDownload("GET", path, null, headers, 200);
         }
 
+        /// <summary>List out-of-order machines, including manual, automatic and repair states.</summary>
+        public OutOfOrderPage GetOutOfOrderUnits()
+        {
+            return GetOutOfOrderUnits(null);
+        }
+
+        /// <summary>List out-of-order machines, including manual, automatic and repair states.</summary>
+        public OutOfOrderPage GetOutOfOrderUnits(GetOutOfOrderUnitsOptions options)
+        {
+            string path = "api/v1/units/out-of-service";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+            }
+            return (OutOfOrderPage)SendJson("GET", path, null, headers, 200, typeof(OutOfOrderPage));
+        }
+
+        /// <summary>Return one out-of-order machine to service by setting OutOfOrder to Enabled (0).</summary>
+        public OutOfOrderRestoreResponse RestoreOutOfOrderUnit(string @unitKid, OutOfOrderRestoreRequest body)
+        {
+            string path = "api/v1/units/{unitKid}/out-of-service/restore";
+            path = path.Replace("{unitKid}", PathValue(@unitKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (OutOfOrderRestoreResponse)SendJson("POST", path, body, headers, 200, typeof(OutOfOrderRestoreResponse));
+        }
+
         /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
         public DirectoryExportCountResponse GetUnitExportCount()
         {
@@ -2133,6 +2232,15 @@ namespace Kombine.Flex.Portal.Client.Net45
             string path = "api/v1/users/count";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (PeopleDirectoryCount)SendJson("GET", path, null, headers, 200, typeof(PeopleDirectoryCount));
+        }
+
+        /// <summary>Create an eVaskeri login link for one active Nortec resident.</summary>
+        public UserEvaskeriSession CreateUserEvaskeriSession(string @userKid)
+        {
+            string path = "api/v1/users/{userKid}/evaskeri-session";
+            path = path.Replace("{userKid}", PathValue(@userKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (UserEvaskeriSession)SendJson("POST", path, null, headers, 200, typeof(UserEvaskeriSession));
         }
 
         /// <summary>Read complete receipts for one resident, newest first, twenty receipts at a time.</summary>

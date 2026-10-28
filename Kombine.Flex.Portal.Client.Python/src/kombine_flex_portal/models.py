@@ -72,6 +72,10 @@ AccountUnitResponse = TypedDict('AccountUnitResponse', {
     'name': 'str | None',
 }, total=False)
 
+AcknowledgeErrorRequest = TypedDict('AcknowledgeErrorRequest', {
+    'expectedRevision': Required['str | None'],
+}, total=False)
+
 ActiveBankCountResponse = TypedDict('ActiveBankCountResponse', {
     'count': 'int',
     'iconKid': 'str | None',
@@ -317,6 +321,43 @@ CameraResourceResponse = TypedDict('CameraResourceResponse', {
 CameraSaveResponse = TypedDict('CameraSaveResponse', {
     'captureId': 'str | None',
     'resourceKid': 'str | None',
+}, total=False)
+
+ChecklistItem = TypedDict('ChecklistItem', {
+    'kid': 'str | None',
+    'bankKid': 'str | None',
+    'locationKid': 'str | None',
+    'period': 'int',
+    'isLatest': 'bool',
+    'bankName': 'str | None',
+    'locationName': 'str | None',
+    'hardware': 'str | None',
+    'periodDateUtc': 'str | None',
+    'nextSettlementUtc': 'str | None',
+    'lastRunUtc': 'str | None',
+    'updatedAtUtc': 'str | None',
+    'hidden': 'bool',
+    'onChecklist': 'bool',
+    'scheduleStatus': 'str | None',
+    'processing': 'ChecklistProcessing',
+}, total=False)
+
+ChecklistPage = TypedDict('ChecklistPage', {
+    'items': 'list[ChecklistItem] | None',
+    'nextCursor': 'str | None',
+    'readAtUtc': 'str',
+}, total=False)
+
+ChecklistProcessing = TypedDict('ChecklistProcessing', {
+    'invoice': 'ChecklistStatus',
+    'soapInvoice': 'ChecklistStatus',
+    'soapCredit': 'ChecklistStatus',
+    'easyPay': 'ChecklistStatus',
+}, total=False)
+
+ChecklistStatus = TypedDict('ChecklistStatus', {
+    'code': 'int | None',
+    'state': 'str | None',
 }, total=False)
 
 DatabaseAccessResponse = TypedDict('DatabaseAccessResponse', {
@@ -955,6 +996,42 @@ OpeningHoursUnit = TypedDict('OpeningHoursUnit', {
     'name': 'str | None',
 }, total=False)
 
+OutOfOrderItem = TypedDict('OutOfOrderItem', {
+    'kid': 'str | None',
+    'bankKid': 'str | None',
+    'locationKid': 'str | None',
+    'bankName': 'str | None',
+    'locationName': 'str | None',
+    'unitName': 'str | None',
+    'unitType': 'int',
+    'outOfOrder': 'int',
+    'status': 'str | None',
+    'statusLabel': 'str | None',
+    'timestampUtc': 'str',
+    'changedBy': 'UnitSettingEditorResponse',
+    'revision': 'str | None',
+    'canRestore': 'bool',
+}, total=False)
+
+OutOfOrderPage = TypedDict('OutOfOrderPage', {
+    'items': 'list[OutOfOrderItem] | None',
+    'nextCursor': 'str | None',
+    'refreshAfterSeconds': 'int',
+}, total=False)
+
+OutOfOrderRestoreRequest = TypedDict('OutOfOrderRestoreRequest', {
+    'expectedRevision': Required['str | None'],
+}, total=False)
+
+OutOfOrderRestoreResponse = TypedDict('OutOfOrderRestoreResponse', {
+    'kid': 'str | None',
+    'outOfOrder': 'int',
+    'status': 'str | None',
+    'timestampUtc': 'str',
+    'revision': 'str | None',
+    'sync': 'int | None',
+}, total=False)
+
 PeopleDirectoryCount = TypedDict('PeopleDirectoryCount', {
     'count': 'int',
     'iconKid': 'str | None',
@@ -1053,6 +1130,7 @@ SearchResult = TypedDict('SearchResult', {
     'matchedValue': 'str | None',
     'isContext': 'bool',
     'number': 'str | None',
+    'bankKid': 'str | None',
     'iconKid': 'str | None',
 }, total=False)
 
@@ -1294,6 +1372,34 @@ UnitDocumentPage = TypedDict('UnitDocumentPage', {
     'hasMore': 'bool',
 }, total=False)
 
+UnitErrorItem = TypedDict('UnitErrorItem', {
+    'kid': 'str | None',
+    'bankKid': 'str | None',
+    'locationKid': 'str | None',
+    'unitKid': 'str | None',
+    'bankName': 'str | None',
+    'locationName': 'str | None',
+    'unitName': 'str | None',
+    'unitType': 'int | None',
+    'timestampUtc': 'str',
+    'severity': 'str | None',
+    'level': 'str | None',
+    'code': 'int | None',
+    'count': 'int | None',
+    'description': 'str | None',
+    'payloadFormat': 'str | None',
+    'acknowledged': 'bool',
+    'revision': 'str | None',
+    'canAcknowledge': 'bool',
+}, total=False)
+
+UnitErrorPage = TypedDict('UnitErrorPage', {
+    'items': 'list[UnitErrorItem] | None',
+    'nextCursor': 'str | None',
+    'fromUtc': 'str',
+    'untilUtc': 'str',
+}, total=False)
+
 UnitGroupFieldResponse = TypedDict('UnitGroupFieldResponse', {
     'name': 'str | None',
     'valueType': 'str | None',
@@ -1483,6 +1589,12 @@ UserDirectoryResponse = TypedDict('UserDirectoryResponse', {
     'items': 'list[UserDirectoryItem] | None',
     'nextCursor': 'str | None',
     'scanLimitReached': 'bool',
+}, total=False)
+
+UserEvaskeriSession = TypedDict('UserEvaskeriSession', {
+    'kid': 'str | None',
+    'url': 'str | None',
+    'expiresAtUtc': 'str',
 }, total=False)
 
 UserLocationResponse = TypedDict('UserLocationResponse', {

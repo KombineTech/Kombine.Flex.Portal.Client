@@ -1949,6 +1949,87 @@
     "binary": true
   },
   {
+    "operation": "GetChecklist",
+    "dartMethod": "getChecklist",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/settlement-checklist",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "scopeKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeResolved",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ChecklistPage"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetChecklistPeriod",
+    "dartMethod": "getChecklistPeriod",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/settlement-checklist/{periodKid}",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "periodKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ChecklistItem"
+    },
+    "binary": false
+  },
+  {
     "operation": "ExportBankAccount",
     "dartMethod": "exportBankAccount",
     "example": null,
@@ -2314,6 +2395,134 @@
       "format": "binary"
     },
     "binary": true
+  },
+  {
+    "operation": "GetBankErrors",
+    "dartMethod": "getBankErrors",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/errors",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "level",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeAcknowledged",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitErrorPage"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetError",
+    "dartMethod": "getError",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/errors/{errorKid}",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "errorKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitErrorItem"
+    },
+    "binary": false
+  },
+  {
+    "operation": "AcknowledgeError",
+    "dartMethod": "acknowledgeError",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/errors/{errorKid}/acknowledge",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "errorKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/AcknowledgeErrorRequest"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitErrorItem"
+    },
+    "binary": false
   },
   {
     "operation": "GetHostingLogs",
@@ -6911,6 +7120,73 @@
     "binary": true
   },
   {
+    "operation": "GetOutOfOrderUnits",
+    "dartMethod": "getOutOfOrderUnits",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/units/out-of-service",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/OutOfOrderPage"
+    },
+    "binary": false
+  },
+  {
+    "operation": "RestoreOutOfOrderUnit",
+    "dartMethod": "restoreOutOfOrderUnit",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/units/{unitKid}/out-of-service/restore",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/OutOfOrderRestoreRequest"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/OutOfOrderRestoreResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetUnitExportCount",
     "dartMethod": "getUnitExportCount",
     "example": null,
@@ -7764,6 +8040,34 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PeopleDirectoryCount"
+    },
+    "binary": false
+  },
+  {
+    "operation": "CreateUserEvaskeriSession",
+    "dartMethod": "createUserEvaskeriSession",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/users/{userKid}/evaskeri-session",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "userKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UserEvaskeriSession"
     },
     "binary": false
   },

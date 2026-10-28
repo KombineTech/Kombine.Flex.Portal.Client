@@ -259,6 +259,19 @@
       },
       "additionalProperties": false
     },
+    "AcknowledgeErrorRequest": {
+      "required": [
+        "expectedRevision"
+      ],
+      "type": "object",
+      "properties": {
+        "expectedRevision": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "ActiveBankCountResponse": {
       "type": "object",
       "properties": {
@@ -1091,6 +1104,130 @@
           "nullable": true
         },
         "resourceKid": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ChecklistItem": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "period": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "isLatest": {
+          "type": "boolean"
+        },
+        "bankName": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationName": {
+          "type": "string",
+          "nullable": true
+        },
+        "hardware": {
+          "type": "string",
+          "nullable": true
+        },
+        "periodDateUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "nextSettlementUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "lastRunUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "updatedAtUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "onChecklist": {
+          "type": "boolean"
+        },
+        "scheduleStatus": {
+          "type": "string",
+          "nullable": true
+        },
+        "processing": {
+          "$ref": "#/components/schemas/ChecklistProcessing"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ChecklistPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ChecklistItem"
+          },
+          "nullable": true
+        },
+        "nextCursor": {
+          "type": "string",
+          "nullable": true
+        },
+        "readAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ChecklistProcessing": {
+      "type": "object",
+      "properties": {
+        "invoice": {
+          "$ref": "#/components/schemas/ChecklistStatus"
+        },
+        "soapInvoice": {
+          "$ref": "#/components/schemas/ChecklistStatus"
+        },
+        "soapCredit": {
+          "$ref": "#/components/schemas/ChecklistStatus"
+        },
+        "easyPay": {
+          "$ref": "#/components/schemas/ChecklistStatus"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ChecklistStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "state": {
           "type": "string",
           "nullable": true
         }
@@ -3338,6 +3475,131 @@
       },
       "additionalProperties": false
     },
+    "OutOfOrderItem": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankName": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationName": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitName": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitType": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "outOfOrder": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "status": {
+          "type": "string",
+          "nullable": true
+        },
+        "statusLabel": {
+          "type": "string",
+          "nullable": true
+        },
+        "timestampUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "changedBy": {
+          "$ref": "#/components/schemas/UnitSettingEditorResponse"
+        },
+        "revision": {
+          "type": "string",
+          "nullable": true
+        },
+        "canRestore": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OutOfOrderPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/OutOfOrderItem"
+          },
+          "nullable": true
+        },
+        "nextCursor": {
+          "type": "string",
+          "nullable": true
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OutOfOrderRestoreRequest": {
+      "required": [
+        "expectedRevision"
+      ],
+      "type": "object",
+      "properties": {
+        "expectedRevision": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "OutOfOrderRestoreResponse": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "outOfOrder": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "status": {
+          "type": "string",
+          "nullable": true
+        },
+        "timestampUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revision": {
+          "type": "string",
+          "nullable": true
+        },
+        "sync": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "PeopleDirectoryCount": {
       "type": "object",
       "properties": {
@@ -3666,6 +3928,10 @@
           "type": "boolean"
         },
         "number": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankKid": {
           "type": "string",
           "nullable": true
         },
@@ -4510,6 +4776,110 @@
       },
       "additionalProperties": false
     },
+    "UnitErrorItem": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "bankName": {
+          "type": "string",
+          "nullable": true
+        },
+        "locationName": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitName": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitType": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "timestampUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "severity": {
+          "type": "string",
+          "nullable": true
+        },
+        "level": {
+          "type": "string",
+          "nullable": true
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "description": {
+          "type": "string",
+          "nullable": true
+        },
+        "payloadFormat": {
+          "type": "string",
+          "nullable": true
+        },
+        "acknowledged": {
+          "type": "boolean"
+        },
+        "revision": {
+          "type": "string",
+          "nullable": true
+        },
+        "canAcknowledge": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "UnitErrorPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/UnitErrorItem"
+          },
+          "nullable": true
+        },
+        "nextCursor": {
+          "type": "string",
+          "nullable": true
+        },
+        "fromUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "untilUtc": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
     "UnitGroupFieldResponse": {
       "type": "object",
       "properties": {
@@ -5168,6 +5538,24 @@
         },
         "scanLimitReached": {
           "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "UserEvaskeriSession": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "url": {
+          "type": "string",
+          "nullable": true
+        },
+        "expiresAtUtc": {
+          "type": "string",
+          "format": "date-time"
         }
       },
       "additionalProperties": false
@@ -8024,6 +8412,79 @@
       },
       "binary": true
     },
+    "GetChecklist": {
+      "method": "GET",
+      "path": "api/v1/settlement-checklist",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "scopeKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "includeResolved",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "pageSize",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "cursor",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ChecklistPage"
+      },
+      "binary": false
+    },
+    "GetChecklistPeriod": {
+      "method": "GET",
+      "path": "api/v1/settlement-checklist/{periodKid}",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "periodKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ChecklistItem"
+      },
+      "binary": false
+    },
     "ExportBankAccount": {
       "method": "GET",
       "path": "api/v1/banks/{bankKid}/account/export",
@@ -8370,6 +8831,122 @@
         "format": "binary"
       },
       "binary": true
+    },
+    "GetBankErrors": {
+      "method": "GET",
+      "path": "api/v1/banks/{bankKid}/errors",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "bankKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "days",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "level",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "includeAcknowledged",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "pageSize",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "cursor",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/UnitErrorPage"
+      },
+      "binary": false
+    },
+    "GetError": {
+      "method": "GET",
+      "path": "api/v1/errors/{errorKid}",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "errorKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/UnitErrorItem"
+      },
+      "binary": false
+    },
+    "AcknowledgeError": {
+      "method": "POST",
+      "path": "api/v1/errors/{errorKid}/acknowledge",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "errorKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "$ref": "#/components/schemas/AcknowledgeErrorRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/UnitErrorItem"
+      },
+      "binary": false
     },
     "GetHostingLogs": {
       "method": "GET",
@@ -10949,6 +11526,65 @@
       },
       "binary": true
     },
+    "GetOutOfOrderUnits": {
+      "method": "GET",
+      "path": "api/v1/units/out-of-service",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "pageSize",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "cursor",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/OutOfOrderPage"
+      },
+      "binary": false
+    },
+    "RestoreOutOfOrderUnit": {
+      "method": "POST",
+      "path": "api/v1/units/{unitKid}/out-of-service/restore",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "unitKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "$ref": "#/components/schemas/OutOfOrderRestoreRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/OutOfOrderRestoreResponse"
+      },
+      "binary": false
+    },
     "GetUnitExportCount": {
       "method": "GET",
       "path": "api/v1/units/export-count",
@@ -11712,6 +12348,30 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PeopleDirectoryCount"
+      },
+      "binary": false
+    },
+    "CreateUserEvaskeriSession": {
+      "method": "POST",
+      "path": "api/v1/users/{userKid}/evaskeri-session",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "userKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/UserEvaskeriSession"
       },
       "binary": false
     },

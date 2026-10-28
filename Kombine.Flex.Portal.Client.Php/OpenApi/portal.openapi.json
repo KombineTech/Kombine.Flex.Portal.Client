@@ -6372,6 +6372,303 @@
         ]
       }
     },
+    "/api/v1/settlement-checklist": {
+      "get": {
+        "tags": [
+          "Checklist"
+        ],
+        "summary": "List authorized settlement periods requiring attention, as in DatPro2 Checklist1.",
+        "description": "Requires an active manager, Checklist1 (10), Bank Read, Location Read and same-site resource grants.\r\nOptional scopeKid is a canonical bank or location KID on this site. Location grants never expose bank-wide rows.\r\nReads tenant Periods under the explicit read-only exception; display metadata, enabled state and deletion visibility\r\ncome from Log24. Bank and location must be Log24-discovered; RetentionDays applies to both. Missing Enabled defaults\r\nto enabled, as in DatPro2; malformed/disabled values are excluded. Banks below 1000 are excluded.\r\nConsiders the latest bank period number and its two numeric predecessors, not three arbitrary distinct periods.\r\nBy default excludes Hide=255 and rows whose four processing codes are all 3 or 64. Bank-wide rows additionally\r\nrequire the latest period and a due/unknown schedule. includeResolved=true includes completed, hidden, scheduled\r\nand preceding bank rows within the same three-period window; it never expands authorization or deletion visibility.\r\npageSize: 1\u2013100, default 50. Order: bank/location/period ascending. Follow nextCursor unchanged with the same filters,\r\nsize and Accept-Language. The protected cursor expires after 15 minutes and binds manager, credentials, grants and retention.\r\nEach page reauthorizes; concurrent period/status changes can change results, so refresh from page one.\r\nStatus codes: 0 Waiting, 1 Created, 3 Completed, 8 Failed, 16 Recreating, 32 NoData, 64 NotRequired.\r\nUnknown codes preserve code with state=null. Processing is null for bank rows; their schedule is shown instead.\r\nDates are UTC instants; zero/invalid dates remain null. periodDateUtc is the stored period boundary, not a translated date.\r\nNo financial amounts, residents, job payloads or credentials are exposed. No writes, hide, recreate or invoice jobs.\r\n400 invalid query/cursor; 401 invalid session; 403 denied; 503 unavailable. No-store. Example: /examples/settlement-checklist.",
+        "operationId": "GetChecklist",
+        "parameters": [
+          {
+            "name": "scopeKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeResolved",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistPage"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistPage"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/settlement-checklist/{periodKid}": {
+      "get": {
+        "tags": [
+          "Checklist"
+        ],
+        "summary": "Read one current checklist period, including its hidden/completed status.",
+        "description": "Same Checklist1, Read, resource and RetentionDays checks as GetChecklist. periodKid is the canonical\r\n            period KID from the list, including bank/location and period. The period must still be in the latest three-number\r\n            bank window. Bank rows require whole-bank access. Hidden/completed rows remain readable with otherwise valid access;\r\n            disabled or invisible resources do not. No writes or jobs. 400 malformed/foreign KID; 401 invalid session; 403 denied;\r\n            404 absent, invisible, disabled or outside the recent window; 503 unavailable. No-store.",
+        "operationId": "GetChecklistPeriod",
+        "parameters": [
+          {
+            "name": "periodKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistItem"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistItem"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/banks/{bankKid}/account/export": {
       "get": {
         "tags": [
@@ -7140,6 +7437,507 @@
             "description": "Service Unavailable",
             "content": {
               "application/vnd.ms-excel": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/banks/{bankKid}/errors": {
+      "get": {
+        "tags": [
+          "Errors"
+        ],
+        "summary": "List a bank\u0027s machine errors, as in DatPro2 Errors2.",
+        "description": "Requires an active manager, Errors2 (17), Bank/Location/Unit Read and matching site/bank/location grants.\r\nbankKid is a canonical bank KID on this tenant. SearchBanks can resolve a bank name without Banks2 access.\r\nReads Error states from bank Log3 and Log4, with current Log24 unit discovery and bank/location/unit deletion visibility.\r\ndays: 1\u201370 (default 10). level is cumulative: ALR; JAN adds JAN (default); ERR adds ERR; WAR adds WAR; INF adds INF.\r\nincludeAcknowledged defaults false (Period != 1). Acknowledged entries remain available when true.\r\npageSize 1\u2013100 (default 50); follow nextCursor unchanged with the same filters, pageSize and Accept-Language.\r\nOrdering: location, unit, event time descending, source. Cursors freeze the time window, expire after 15 minutes,\r\nbind manager/credential/scope/retention and reauthorize every page. Concurrent acknowledgement may remove rows; refresh.\r\nUnlike the legacy UI, all matching events are pageable, not only four per machine.\r\nUnit type comes only from current original packed UnitType; missing/invalid remains null.\r\nDescriptions use stored event text; the obsolete Errors_ catalogue is never read or edited. Structured payloads expose\r\nonly Id, Miele.Count and Miele/Electrolux.Text. Unknown/invalid payloads return null fields and their payloadFormat.\r\nNo raw payload, resident, payment, TagId or editor identity is returned. Unknown severity has a null level.\r\n400 invalid query/cursor; 401 invalid session; 403 denied; 503 storage unavailable. No-store. See /examples/errors.",
+        "operationId": "GetBankErrors",
+        "parameters": [
+          {
+            "name": "bankKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "JAN"
+            }
+          },
+          {
+            "name": "includeAcknowledged",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitErrorPage"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitErrorPage"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitErrorPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/errors/{errorKid}": {
+      "get": {
+        "tags": [
+          "Errors"
+        ],
+        "summary": "Read one authorized error event, including its current acknowledgement and revision.",
+        "description": "Same Errors2, Read, scope and deletion visibility checks as GetBankErrors. The event must be within\r\n            the last 70 days. Includes acknowledged events and all severity codes. Canonical event KIDs distinguish Log3\r\n            from Log4 at the same timestamp. 400 invalid/foreign KID; 401/403 access; 404 missing, expired or invisible event;\r\n            503 unavailable. Does not accept event JSON or description overrides from the caller.",
+        "operationId": "GetError",
+        "parameters": [
+          {
+            "name": "errorKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitErrorItem"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitErrorItem"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitErrorItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/errors/{errorKid}/acknowledge": {
+      "post": {
+        "tags": [
+          "Errors"
+        ],
+        "summary": "Acknowledge one error without deleting its log or changing machine status.",
+        "description": "Requires GetError access plus Unit Write and expectedRevision from the current event.\r\n            Fresh account, password/API-key stamp, Errors2, Read/Write and resource grants are checked under database locks,\r\n            with current deletion visibility and a 70-day history bound. Writes only Period=1 in the identified Log3/Log4 row;\r\n            original time, text, UserId and other fields are preserved. Does not record a new editor or acknowledgement time,\r\n            clear machine state, restore OutOfOrder, repair a machine or edit the obsolete description catalogue.\r\n            409 stale revision/already acknowledged: reload. 400 invalid input; 401/403 access; 404 absent/invisible/expired;\r\n            503 storage unavailable or uncertain write. Never replay POST automatically after a lost response; GET the event first.",
+        "operationId": "AcknowledgeError",
+        "parameters": [
+          {
+            "name": "errorKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcknowledgeErrorRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcknowledgeErrorRequest"
+              }
+            },
+            "application/*\u002Bjson": {
+              "schema": {
+                "$ref": "#/components/schemas/AcknowledgeErrorRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitErrorItem"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitErrorItem"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitErrorItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -20129,6 +20927,327 @@
         ]
       }
     },
+    "/api/v1/units/out-of-service": {
+      "get": {
+        "tags": [
+          "Units"
+        ],
+        "summary": "List out-of-order machines, including manual, automatic and repair states.",
+        "description": "Requires an active manager, OutOfOrder1 (59), Bank/Location/Unit Read and matching site/bank/location grants.\r\nReads Log24 OutOfOrder numeric values 1\u2013255; known values are 1 OutOfOrder, 2 AutoOutOfOrder, 3 Repair.\r\nUnknown nonzero codes remain visible with a null status name. Enabled (0) and malformed values are excluded.\r\nAs in DatPro2, locations must be enabled; original packed UnitType excludes StartSMS_60, TimeSMS_61 and unknown types.\r\nUnitType2 is never consulted. Disabled units remain included. Bank/location/unit RetentionDays applies before paging.\r\nReturns canonical KIDs, localized names, type, status, timestamp, display-only editor, revision and canRestore.\r\nNo AutoOutOfOrder JSON/error ID is required. This is distinct from TenantStatus1 and the public machine-error widget.\r\npageSize 1\u2013100 (default 50). Follow nextCursor unchanged with the same pageSize and Accept-Language.\r\nCursors expire after 15 minutes and bind tenant, manager, credential, permissions, grants and retention.\r\nOrdered by setting timestamp descending, then numeric bank/location/unit. Concurrent edits can move rows;\r\nrefresh from the first page. There is no total-result cap. Every page reauthorizes the manager.\r\n400 invalid page/cursor; 401 invalid session; 403 missing access; 503 storage unavailable. No-store.\r\nRefresh at most every 30 seconds while visible. Local examples support only localhost/127.0.0.1 port 8080.",
+        "operationId": "GetOutOfOrderUnits",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutOfOrderPage"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutOfOrderPage"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutOfOrderPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/units/{unitKid}/out-of-service/restore": {
+      "post": {
+        "tags": [
+          "Units"
+        ],
+        "summary": "Return one out-of-order machine to service by setting OutOfOrder to Enabled (0).",
+        "description": "Requires GetOutOfOrderUnits access plus Unit Write. Send expectedRevision from the current list item.\r\nRechecks active account, credential, OutOfOrder1, Bank/Location/Unit Read, Unit Write, grants, deletion visibility,\r\nenabled location and original packed unit type under the existing transactional writer\u0027s database locks.\r\nA changed value, timestamp or type returns 409. Reload before retrying. Does not clear AutoOutOfOrder state,\r\nalter Enabled, start a cycle or promise that the physical machine has acknowledged the command.\r\nAppends bank Log2 history with the authenticated editor and Sync=0; verifies Log24 before commit.\r\nNo anonymous reset, GET mutation, tenant selector or arbitrary setting/value is accepted.\r\n400 invalid KID/revision; 401 session changed; 403 denied; 404 hidden/ineligible resource; 409 revision conflict;\r\n503 unavailable. Never automatically replay a POST after a lost response: read back first.",
+        "operationId": "RestoreOutOfOrderUnit",
+        "parameters": [
+          {
+            "name": "unitKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutOfOrderRestoreRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutOfOrderRestoreRequest"
+              }
+            },
+            "application/*\u002Bjson": {
+              "schema": {
+                "$ref": "#/components/schemas/OutOfOrderRestoreRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutOfOrderRestoreResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutOfOrderRestoreResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutOfOrderRestoreResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/units/export-count": {
       "get": {
         "tags": [
@@ -22189,6 +23308,159 @@
         ]
       }
     },
+    "/api/v1/users/{userKid}/evaskeri-session": {
+      "post": {
+        "tags": [
+          "UserEvaskeri"
+        ],
+        "summary": "Create an eVaskeri login link for one active Nortec resident.",
+        "description": "Requires an active manager, Users2, User Read and Create, and a tenant-wide or whole-bank grant.\r\nLocation-only grants are insufficient because eVaskeri opens the resident\u0027s whole account.\r\nSend a canonical resident KID belonging to this site\u0027s ordinary resident range and bank \u003E= 1000.\r\nThe manager snapshot is refreshed and authoritative resident Log7 data is read on each explicit POST.\r\nOnly Nortec is supported: the fixed eVaskeri destination belongs to Nortec; other tenants never fall back to it.\r\nOpen url immediately in a new window with no opener or referrer. Do not log/cache/store the returned bearer URL.\r\nThe legacy consumer accepts the link for ten days and does not provide one-time consumption or Portal logout revocation.\r\nThe resulting resident session follows eVaskeri\u0027s own rules and permits resident actions; this is not a read-only preview.\r\nNo resident settings, messages or bookings are changed by this endpoint.\r\nErrors: 400 invalid/foreign KID; 401 invalid or revoked session; 403 permissions/scope;\r\n404 missing/deleted resident; 409 resident has no active location; 501 tenant unsupported; 503 unavailable storage.",
+        "operationId": "CreateUserEvaskeriSession",
+        "parameters": [
+          {
+            "name": "userKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserEvaskeriSession"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserEvaskeriSession"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserEvaskeriSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Not Implemented"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/users/{userKid}/receipts": {
       "get": {
         "tags": [
@@ -22378,7 +23650,7 @@
           "UserSearch"
         ],
         "summary": "Search resident Number, Name, Email, SMS and partial numeric TagId using current Log7.",
-        "description": "### Access and identifiers\r\n            \r\n- Requires **Users2**, **User Read** and site/bank/location grants.\r\n- Only **BankId \u2265 1000**, ordinary users and records visible under **RetentionDays**.\r\n- An exact canonical or readable resident KID (\u0060tenant.bank-user\u0060 or \u0060bank-user\u0060 with the trusted site tenant) uses an exact bank/user lookup; \u0060matchedSetting\u0060 is \u0060Kid\u0060.\r\n- Cross-tenant or inaccessible identities return no results.\r\n            \r\n### Text matching\r\n            \r\n- Query length: **2\u2013128 characters**, literal and case-insensitive.\r\n- **Number and email:** exact text.\r\n- **Name:** substring matching.\r\n- **TagId:** substring matching for positive decimal input; optional spaces are accepted.\r\n- Use \u0060SearchUserSms\u0060 for the independent complete-phone-number lookup.\r\n            \r\n### KID-only lookup\r\n            \r\n- \u0060kidOnly=true\u0060 accepts only a complete resident KID and skips ordinary text search.\r\n- Invalid input returns no items without business storage. Existing authorization still applies.\r\n            \r\n### Results and parent banks\r\n            \r\n- At most **50 resident matches**; up to **501 candidates** are checked.\r\n- \u0060hasMore\u0060 also asks callers to refine broad queries when the candidate bound is reached.\r\n- \u0060matchedSetting\u0060 and \u0060matchedValue\u0060 explain each match.\r\n- When Bank Read is granted, includes distinct parent banks with \u0060isContext=true\u0060.\r\n- Limit and \u0060hasMore\u0060 count residents. **Merge all result types by KID.**\r\n            \r\n### Deadlines and cache\r\n            \r\n- Name/Tag queries allow **10 seconds SQL** and **12 seconds including cache wait**.\r\n- Cache: **60 seconds** per bank scope/query. Current permissions are reapplied.",
+        "description": "### Access and identifiers\r\n            \r\n- Requires **Users2**, **User Read** and site/bank/location grants.\r\n- Only **BankId \u2265 1000**, ordinary users and records visible under **RetentionDays**.\r\n- An exact canonical or readable resident KID (\u0060tenant.bank-user\u0060 or \u0060bank-user\u0060 with the trusted site tenant) uses an exact bank/user lookup; \u0060matchedSetting\u0060 is \u0060Kid\u0060.\r\n- Cross-tenant or inaccessible identities return no results.\r\n            \r\n### Text matching\r\n            \r\n- Query length: **2\u2013128 characters**, literal and case-insensitive.\r\n- **Number and email:** exact text.\r\n- **Name:** substring matching.\r\n- **TagId:** substring matching for positive decimal input; optional spaces are accepted.\r\n- Use \u0060SearchUserSms\u0060 for the independent complete-phone-number lookup.\r\n            \r\n### KID-only lookup\r\n            \r\n- \u0060kidOnly=true\u0060 accepts only a complete resident KID and skips ordinary text search.\r\n- Invalid input returns no items without business storage. Existing authorization still applies.\r\n            \r\n### Results and parent banks\r\n            \r\n- At most **50 resident matches**; up to **501 candidates** are checked.\r\n- \u0060hasMore\u0060 also asks callers to refine broad queries when the candidate bound is reached.\r\n- \u0060matchedSetting\u0060 and \u0060matchedValue\u0060 explain each match.\r\n- Resident results include their canonical \u0060bankKid\u0060; associate authorized parent-bank context by KID, never array position.\r\n- Searches all granted banks on this site\u0027s tenant without a bank selector. Example: \u0060/examples/resident-lookup\u0060.\r\n- When Bank Read is granted, includes distinct parent banks with \u0060isContext=true\u0060.\r\n- Limit and \u0060hasMore\u0060 count residents. **Merge all result types by KID.**\r\n            \r\n### Deadlines and cache\r\n            \r\n- Name/Tag queries allow **10 seconds SQL** and **12 seconds including cache wait**.\r\n- Cache: **60 seconds** per bank scope/query. Current permissions are reapplied.",
         "operationId": "SearchUsers",
         "parameters": [
           {
@@ -22512,7 +23784,7 @@
           "UserSearch"
         ],
         "summary": "Search complete resident SMS numbers with indexed exact Log7 Text matches.",
-        "description": "### Access and matching\r\n            \r\n- Uses the same authorization, retention, parent bank context and result bounds as \u0060SearchUsers\u0060.\r\n- Searches complete resident SMS numbers with **indexed exact Log7 Text matches**.\r\n- Accepts **8\u201315 digits**, spaces, hyphens, parentheses and an optional leading \u0060\u002B\u0060 or international \u006000\u0060.\r\n- Danish eight-digit numbers match both with and without \u006045\u0060.\r\n            \r\n### Independent lookup\r\n            \r\n- Runs independently of substring and TagId search.\r\n- Does not decode activation codes or charge the activation-code quota.",
+        "description": "### Access and matching\r\n            \r\n- Uses the same authorization, retention, parent bank context and result bounds as \u0060SearchUsers\u0060.\r\n- Resident \u0060bankKid\u0060 identifies the parent even if Bank Read is absent; bank names require authorized context results.\r\n- Searches complete resident SMS numbers with **indexed exact Log7 Text matches**.\r\n- Accepts **8\u201315 digits**, spaces, hyphens, parentheses and an optional leading \u0060\u002B\u0060 or international \u006000\u0060.\r\n- Danish eight-digit numbers match both with and without \u006045\u0060.\r\n            \r\n### Independent lookup\r\n            \r\n- Runs independently of substring and TagId search.\r\n- Does not decode activation codes or charge the activation-code quota.",
         "operationId": "SearchUserSms",
         "parameters": [
           {
@@ -26332,6 +27604,20 @@
         "additionalProperties": false,
         "description": "Scoped choices for the location and machine filters."
       },
+      "AcknowledgeErrorRequest": {
+        "required": [
+          "expectedRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedRevision": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The latest event revision; no arbitrary log value can be supplied."
+      },
       "ActiveBankCountResponse": {
         "type": "object",
         "properties": {
@@ -27247,6 +28533,134 @@
         },
         "additionalProperties": false,
         "description": "A complete media set exists in at least one region; the second copy continues independently."
+      },
+      "ChecklistItem": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "period": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isLatest": {
+            "type": "boolean"
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "hardware": {
+            "type": "string",
+            "nullable": true
+          },
+          "periodDateUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "nextSettlementUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastRunUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "onChecklist": {
+            "type": "boolean"
+          },
+          "scheduleStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "processing": {
+            "$ref": "#/components/schemas/ChecklistProcessing"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One bank schedule or location processing row. Processing is null for a bank-wide row."
+      },
+      "ChecklistPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItem"
+            },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "readAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A bounded checklist page; only read operations are supported."
+      },
+      "ChecklistProcessing": {
+        "type": "object",
+        "properties": {
+          "invoice": {
+            "$ref": "#/components/schemas/ChecklistStatus"
+          },
+          "soapInvoice": {
+            "$ref": "#/components/schemas/ChecklistStatus"
+          },
+          "soapCredit": {
+            "$ref": "#/components/schemas/ChecklistStatus"
+          },
+          "easyPay": {
+            "$ref": "#/components/schemas/ChecklistStatus"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The four independently stored processing states; no financial amounts."
+      },
+      "ChecklistStatus": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Stored code and enum-derived state; null state means unknown, never success."
       },
       "DatabaseAccessResponse": {
         "type": "object",
@@ -29756,6 +31170,135 @@
         "additionalProperties": false,
         "description": "An authorized unit identity and localized display name."
       },
+      "OutOfOrderItem": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outOfOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "timestampUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "changedBy": {
+            "$ref": "#/components/schemas/UnitSettingEditorResponse"
+          },
+          "revision": {
+            "type": "string",
+            "nullable": true
+          },
+          "canRestore": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Authorized machine, setting audit and revision. Status is null for an unknown nonzero stored code."
+      },
+      "OutOfOrderPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutOfOrderItem"
+            },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Current out-of-order settings and an opaque next-page cursor."
+      },
+      "OutOfOrderRestoreRequest": {
+        "required": [
+          "expectedRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedRevision": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Revision from the list; the action always writes Enabled (0)."
+      },
+      "OutOfOrderRestoreResponse": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "outOfOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "timestampUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revision": {
+            "type": "string",
+            "nullable": true
+          },
+          "sync": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Confirmed storage result; Sync zero is pending device synchronization, not physical acknowledgement."
+      },
       "PeopleDirectoryCount": {
         "type": "object",
         "properties": {
@@ -30100,6 +31643,11 @@
             "type": "string",
             "nullable": true
           },
+          "bankKid": {
+            "type": "string",
+            "description": "Canonical parent bank KID for a resident result. This identity grants no bank access; names require authorized context results.",
+            "nullable": true
+          },
           "iconKid": {
             "type": "string",
             "description": "API-computed icon identity; use unchanged in the icon image URL.",
@@ -30107,7 +31655,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Mixed-result shape; kind is an enum-derived type and Kid is the sole object identifier."
+        "description": "Mixed-result shape; kind is an enum-derived type. Kid identifies the result; optional BankKid identifies a resident\u0027s parent bank."
       },
       "SearchResults": {
         "type": "object",
@@ -31023,6 +32571,112 @@
         "additionalProperties": false,
         "description": "One bounded, sorted document page for the exact authorized unit."
       },
+      "UnitErrorItem": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "timestampUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "severity": {
+            "type": "string",
+            "nullable": true
+          },
+          "level": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "payloadFormat": {
+            "type": "string",
+            "nullable": true
+          },
+          "acknowledged": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "string",
+            "nullable": true
+          },
+          "canAcknowledge": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One authorized error event. Null description/code/count means that the stored payload does not provide it."
+      },
+      "UnitErrorPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnitErrorItem"
+            },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "untilUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A keyset page with a fixed UTC time window and optional opaque continuation."
+      },
       "UnitGroupFieldResponse": {
         "type": "object",
         "properties": {
@@ -31725,6 +33379,25 @@
         },
         "additionalProperties": false,
         "description": "Authorized resident page. A short page may still have a continuation."
+      },
+      "UserEvaskeriSession": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiresAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A sensitive resident login URL. Never log, persist, prefetch or share it. ExpiresAtUtc is the legacy admission deadline, not the duration of the resulting eVaskeri session."
       },
       "UserLocationResponse": {
         "type": "object",
@@ -32924,7 +34597,13 @@
       "name": "Camera"
     },
     {
+      "name": "Checklist"
+    },
+    {
       "name": "Downloads"
+    },
+    {
+      "name": "Errors"
     },
     {
       "name": "HostingLogs"
@@ -33017,6 +34696,9 @@
       "name": "UnitDocuments"
     },
     {
+      "name": "Units"
+    },
+    {
       "name": "UnitsDirectory"
     },
     {
@@ -33030,6 +34712,9 @@
     },
     {
       "name": "UserDirectoryCount"
+    },
+    {
+      "name": "UserEvaskeri"
     },
     {
       "name": "UserReceipts"

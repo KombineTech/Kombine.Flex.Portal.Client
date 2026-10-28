@@ -2129,6 +2129,94 @@
     "example": {}
   },
   {
+    "operation": "GetChecklist",
+    "python": "get_checklist",
+    "javascript": "getChecklist",
+    "method": "GET",
+    "path": "api/v1/settlement-checklist",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "scopeKid",
+        "where": "query",
+        "py": "scope_kid",
+        "js": "scopeKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeResolved",
+        "where": "query",
+        "py": "include_resolved",
+        "js": "includeResolved",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ChecklistPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetChecklistPeriod",
+    "python": "get_checklist_period",
+    "javascript": "getChecklistPeriod",
+    "method": "GET",
+    "path": "api/v1/settlement-checklist/{periodKid}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "periodKid",
+        "where": "path",
+        "py": "period_kid",
+        "js": "periodKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ChecklistItem"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "ExportBankAccount",
     "python": "export_bank_account",
     "javascript": "exportBankAccount",
@@ -2530,6 +2618,145 @@
       "format": "binary"
     },
     "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetBankErrors",
+    "python": "get_bank_errors",
+    "javascript": "getBankErrors",
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/errors",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "py": "days",
+        "js": "days",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "level",
+        "where": "query",
+        "py": "level",
+        "js": "level",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeAcknowledged",
+        "where": "query",
+        "py": "include_acknowledged",
+        "js": "includeAcknowledged",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitErrorPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetError",
+    "python": "get_error",
+    "javascript": "getError",
+    "method": "GET",
+    "path": "api/v1/errors/{errorKid}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "errorKid",
+        "where": "path",
+        "py": "error_kid",
+        "js": "errorKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitErrorItem"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "AcknowledgeError",
+    "python": "acknowledge_error",
+    "javascript": "acknowledgeError",
+    "method": "POST",
+    "path": "api/v1/errors/{errorKid}/acknowledge",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "errorKid",
+        "where": "path",
+        "py": "error_kid",
+        "js": "errorKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/AcknowledgeErrorRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitErrorItem"
+    },
+    "binary": false,
     "example": {}
   },
   {
@@ -7363,6 +7590,78 @@
     "example": {}
   },
   {
+    "operation": "GetOutOfOrderUnits",
+    "python": "get_out_of_order_units",
+    "javascript": "getOutOfOrderUnits",
+    "method": "GET",
+    "path": "api/v1/units/out-of-service",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/OutOfOrderPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "RestoreOutOfOrderUnit",
+    "python": "restore_out_of_order_unit",
+    "javascript": "restoreOutOfOrderUnit",
+    "method": "POST",
+    "path": "api/v1/units/{unitKid}/out-of-service/restore",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/OutOfOrderRestoreRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/OutOfOrderRestoreResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetUnitExportCount",
     "python": "get_unit_export_count",
     "javascript": "getUnitExportCount",
@@ -8294,6 +8593,36 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PeopleDirectoryCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "CreateUserEvaskeriSession",
+    "python": "create_user_evaskeri_session",
+    "javascript": "createUserEvaskeriSession",
+    "method": "POST",
+    "path": "api/v1/users/{userKid}/evaskeri-session",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "userKid",
+        "where": "path",
+        "py": "user_kid",
+        "js": "userKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UserEvaskeriSession"
     },
     "binary": false,
     "example": {}

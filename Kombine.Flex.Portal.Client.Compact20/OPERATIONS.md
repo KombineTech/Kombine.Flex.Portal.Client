@@ -2,6 +2,7 @@
 
 | Method | HTTP | Path |
 | --- | --- | --- |
+| `AcknowledgeError` | POST | `/api/v1/errors/{errorKid}/acknowledge` |
 | `AskPortalAssistant` | POST | `/api/v1/assistant/query` |
 | `ChangeMyManagerPassword` | POST | `/api/v1/session/me/password` |
 | `ConfirmCameraCapture` | POST | `/api/v1/camera/confirmation` |
@@ -10,6 +11,7 @@
 | `ConvertToolTime` | POST | `/api/v1/tenant/tools/time` |
 | `CreateBankUser` | POST | `/api/v1/banks/{bankKid}/users` |
 | `CreateManager` | POST | `/api/v1/managers` |
+| `CreateUserEvaskeriSession` | POST | `/api/v1/users/{userKid}/evaskeri-session` |
 | `DownloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
 | `DownloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` |
@@ -31,6 +33,7 @@
 | `GetBankBookings` | GET | `/api/v1/banks/{bankKid}/bookings` |
 | `GetBankDocumentsCount` | GET | `/api/v1/banks/{bankKid}/documents/count` |
 | `GetBankDocuments` | GET | `/api/v1/banks/{bankKid}/documents` |
+| `GetBankErrors` | GET | `/api/v1/banks/{bankKid}/errors` |
 | `GetBankExportCount` | GET | `/api/v1/banks/export-count` |
 | `GetBankIcons` | GET | `/api/v1/banks/icons` |
 | `GetBankLocations` | GET | `/api/v1/banks/{bankKid}/locations` |
@@ -49,6 +52,8 @@
 | `GetCameraCaptures` | GET | `/api/v1/camera` |
 | `GetCameraNearestLocation` | GET | `/api/v1/camera/nearest-location` |
 | `GetCameraResource` | GET | `/api/v1/camera/resource` |
+| `GetChecklistPeriod` | GET | `/api/v1/settlement-checklist/{periodKid}` |
+| `GetChecklist` | GET | `/api/v1/settlement-checklist` |
 | `GetCircleGradientSized` | GET | `/api/v1/circles/gradient/{colors}/{width}x{height}.svg` |
 | `GetCircleGradient` | GET | `/api/v1/circles/gradient/{colors}.svg` |
 | `GetCircleProgressSized` | GET | `/api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg` |
@@ -59,6 +64,7 @@
 | `GetControllerOverview` | GET | `/api/v1/controllers/{controllerKid}` |
 | `GetCurrentManager` | GET | `/api/v1/session/me` |
 | `GetCycleChartPresentation` | GET | `/api/v1/public/cycle-chart/presentation` |
+| `GetError` | GET | `/api/v1/errors/{errorKid}` |
 | `GetHostingLogs` | GET | `/api/v1/hosting/logs` |
 | `GetHostingMetrics` | GET | `/api/v1/hosting/metrics` |
 | `GetIconAssetCatalog` | GET | `/api/v1/icon/catalog/{iconSet}` |
@@ -107,6 +113,7 @@
 | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` |
 | `GetNearestLocations` | GET | `/api/v1/locations/nearest` |
 | `GetObjectAddress` | GET | `/api/v1/addresses/{kid}` |
+| `GetOutOfOrderUnits` | GET | `/api/v1/units/out-of-service` |
 | `GetPortalAppDownloadPage` | GET | `/download` |
 | `GetPortalStatus` | GET | `/api/v1/status` |
 | `GetPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
@@ -162,6 +169,7 @@
 | `RequestManagerSignUp` | POST | `/api/v1/session/signup` |
 | `RequestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` |
 | `ResetManagerPassword` | POST | `/api/v1/session/reset-password` |
+| `RestoreOutOfOrderUnit` | POST | `/api/v1/units/{unitKid}/out-of-service/restore` |
 | `ReverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` |
 | `SaveCameraCapture` | POST | `/api/v1/camera` |
 | `SearchBankActivation` | GET | `/api/v1/search/bank-activation` |
