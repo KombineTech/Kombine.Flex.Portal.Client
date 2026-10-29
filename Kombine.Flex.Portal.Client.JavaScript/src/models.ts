@@ -155,6 +155,12 @@ export interface ActiveUnitCountResponse {
   "iconKid"?: string | null;
 }
 
+/** ApproveWallboardPairing */
+export interface ApproveWallboardPairing {
+  /** location */
+  "location"?: WallboardScanLocation;
+}
+
 /** A portal link derived from an authorized API result, never from generated HTML. */
 export interface AssistantLink {
   /** kid */
@@ -2971,6 +2977,18 @@ export interface WallboardDeviceChallenge {
   "expiresIn"?: number;
 }
 
+/** WallboardDeviceInfo */
+export interface WallboardDeviceInfo {
+  /** deviceId */
+  "deviceId"?: string | null;
+  /** displayId */
+  "displayId"?: string | null;
+  /** createdAt */
+  "createdAt"?: string;
+  /** location */
+  "location"?: WallboardScanLocation;
+}
+
 /** WallboardPairingInfo */
 export interface WallboardPairingInfo {
   /** pairingId */
@@ -3005,6 +3023,18 @@ export interface WallboardPairingToken {
   "accessToken"?: string | null;
   /** expiresIn */
   "expiresIn"?: bigint | null;
+}
+
+/** WallboardScanLocation */
+export interface WallboardScanLocation {
+  /** latitude */
+  "latitude"?: number;
+  /** longitude */
+  "longitude"?: number;
+  /** accuracyMeters */
+  "accuracyMeters"?: number;
+  /** capturedAt */
+  "capturedAt"?: string;
 }
 
 /** Actual SoapInfo event. Missing duration/amounts remain null; quantity is never inferred from duration. */
@@ -3938,6 +3968,10 @@ export interface SearchUserSmsOptions {
 
 export interface SearchUserActivationOptions {
   q?: string;
+}
+
+export interface FindWallboardPairingsOptions {
+  displayId?: string;
 }
 
 export interface GetIconPresentationOptions {

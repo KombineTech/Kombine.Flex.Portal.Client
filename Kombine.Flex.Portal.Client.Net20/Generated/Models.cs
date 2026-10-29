@@ -339,6 +339,16 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>ApproveWallboardPairing</summary>
+    public sealed class ApproveWallboardPairing
+    {
+        /// <summary>location</summary>
+        [JsonField("location")]
+        public WallboardScanLocation Location { get { return _Location; } set { _Location = value; } }
+        private WallboardScanLocation _Location;
+
+    }
+
     /// <summary>A portal link derived from an authorized API result, never from generated HTML.</summary>
     public sealed class AssistantLink
     {
@@ -6364,6 +6374,31 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>WallboardDeviceInfo</summary>
+    public sealed class WallboardDeviceInfo
+    {
+        /// <summary>deviceId</summary>
+        [JsonField("deviceId")]
+        public string DeviceId { get { return _DeviceId; } set { _DeviceId = value; } }
+        private string _DeviceId;
+
+        /// <summary>displayId</summary>
+        [JsonField("displayId")]
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
+
+        /// <summary>createdAt ISO 8601 text, sent unchanged.</summary>
+        [JsonField("createdAt")]
+        public string CreatedAt { get { return _CreatedAt; } set { _CreatedAt = value; } }
+        private string _CreatedAt;
+
+        /// <summary>location</summary>
+        [JsonField("location")]
+        public WallboardScanLocation Location { get { return _Location; } set { _Location = value; } }
+        private WallboardScanLocation _Location;
+
+    }
+
     /// <summary>WallboardPairingInfo</summary>
     public sealed class WallboardPairingInfo
     {
@@ -6436,6 +6471,31 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("expiresIn")]
         public long? ExpiresIn { get { return _ExpiresIn; } set { _ExpiresIn = value; } }
         private long? _ExpiresIn;
+
+    }
+
+    /// <summary>WallboardScanLocation</summary>
+    public sealed class WallboardScanLocation
+    {
+        /// <summary>latitude</summary>
+        [JsonField("latitude")]
+        public double? Latitude { get { return _Latitude; } set { _Latitude = value; } }
+        private double? _Latitude;
+
+        /// <summary>longitude</summary>
+        [JsonField("longitude")]
+        public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
+        private double? _Longitude;
+
+        /// <summary>accuracyMeters</summary>
+        [JsonField("accuracyMeters")]
+        public double? AccuracyMeters { get { return _AccuracyMeters; } set { _AccuracyMeters = value; } }
+        private double? _AccuracyMeters;
+
+        /// <summary>capturedAt ISO 8601 text, sent unchanged.</summary>
+        [JsonField("capturedAt")]
+        public string CapturedAt { get { return _CapturedAt; } set { _CapturedAt = value; } }
+        private string _CapturedAt;
 
     }
 
@@ -8909,6 +8969,15 @@ namespace Kombine.Flex.Portal.Client.Net20
         /// <summary>q</summary>
         public string Q { get { return _Q; } set { _Q = value; } }
         private string _Q;
+
+    }
+
+    /// <summary>Optional query/header parameters for FindWallboardPairings. Null values use API defaults.</summary>
+    public sealed class FindWallboardPairingsOptions
+    {
+        /// <summary>displayId</summary>
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
 
     }
 

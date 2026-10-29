@@ -314,6 +314,15 @@
       },
       "additionalProperties": false
     },
+    "ApproveWallboardPairing": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "$ref": "#/components/schemas/WallboardScanLocation"
+        }
+      },
+      "additionalProperties": false
+    },
     "AssistantLink": {
       "type": "object",
       "properties": {
@@ -5926,6 +5935,27 @@
       },
       "additionalProperties": false
     },
+    "WallboardDeviceInfo": {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "type": "string",
+          "nullable": true
+        },
+        "displayId": {
+          "type": "string",
+          "nullable": true
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "location": {
+          "$ref": "#/components/schemas/WallboardScanLocation"
+        }
+      },
+      "additionalProperties": false
+    },
     "WallboardPairingInfo": {
       "type": "object",
       "properties": {
@@ -5988,6 +6018,28 @@
           "type": "integer",
           "format": "int64",
           "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardScanLocation": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "accuracyMeters": {
+          "type": "number",
+          "format": "double"
+        },
+        "capturedAt": {
+          "type": "string",
+          "format": "date-time"
         }
       },
       "additionalProperties": false
@@ -12635,6 +12687,33 @@
       },
       "binary": false
     },
+    "FindWallboardPairings": {
+      "method": "GET",
+      "path": "api/v1/wallboard/pairings",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "displayId",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/WallboardPairingInfo"
+        }
+      },
+      "binary": false
+    },
     "GetWallboardPairing": {
       "method": "GET",
       "path": "api/v1/wallboard/pairings/{pairingId}",
@@ -12676,7 +12755,9 @@
           }
         }
       ],
-      "body": null,
+      "body": {
+        "$ref": "#/components/schemas/ApproveWallboardPairing"
+      },
       "multipart": null,
       "response": null,
       "binary": false
@@ -12754,6 +12835,30 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/WallboardPairingToken"
+      },
+      "binary": false
+    },
+    "GetWallboardDevice": {
+      "method": "GET",
+      "path": "api/v1/wallboard/devices/{deviceId}",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "deviceId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardDeviceInfo"
       },
       "binary": false
     },

@@ -3455,6 +3455,17 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Find up to ten pending screens with an exact display ID in this tenant and environment.
+        /// </summary>
+        /// <remarks>
+        /// For one-scan setup. An ID is not proof of identity: compare the pairingId's first six characters on the physical screen before explicit approval. Returns no device secrets or location.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<WallboardPairingInfo>> FindWallboardPairingsAsync(string? displayId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read the screen ID and expiry before explicitly approving its QR code.
         /// </summary>
         /// <returns>OK</returns>
@@ -3470,9 +3481,11 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            has permanent read-only device approval until explicitly revoked or the manager credential/account is revoked.
         /// <br/>            Individual bearer sessions last ten days; the device signs a fresh challenge to reconnect after any time offline.
         /// </remarks>
+        /// <param name="pairingId">The random pending pairing ID.</param>
+        /// <param name="body">Optional phone location: latitude [-90,90], longitude [-180,180], nonnegative accuracyMeters up to 10000000, and capturedAt within the last ten minutes (up to one minute clock skew). No body is still supported. Stored encrypted; readable only by the approving manager.</param>
         /// <returns>No Content</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ApproveWallboardPairingAsync(string pairingId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task ApproveWallboardPairingAsync(string pairingId, ApproveWallboardPairing? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -3509,6 +3522,17 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<WallboardPairingToken> ResumeWallboardSessionAsync(string deviceId, ResumeWallboardSession? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read a screen you approved, including the optional scanner location stored with its approval.
+        /// </summary>
+        /// <remarks>
+        /// Only the approving active manager can read location. It is a phone measurement, not verified screen GPS. Unknown and other-owner devices both return 404.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<WallboardDeviceInfo> GetWallboardDeviceAsync(string deviceId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -26040,6 +26064,115 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Find up to ten pending screens with an exact display ID in this tenant and environment.
+        /// </summary>
+        /// <remarks>
+        /// For one-scan setup. An ID is not proof of identity: compare the pairingId's first six characters on the physical screen before explicit approval. Returns no device secrets or location.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<WallboardPairingInfo>> FindWallboardPairingsAsync(string? displayId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/wallboard/pairings"
+                    urlBuilder_.Append("api/v1/wallboard/pairings");
+                    urlBuilder_.Append('?');
+                    if (displayId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("displayId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(displayId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<WallboardPairingInfo>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read the screen ID and expiry before explicitly approving its QR code.
         /// </summary>
         /// <returns>OK</returns>
@@ -26151,9 +26284,11 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            has permanent read-only device approval until explicitly revoked or the manager credential/account is revoked.
         /// <br/>            Individual bearer sessions last ten days; the device signs a fresh challenge to reconnect after any time offline.
         /// </remarks>
+        /// <param name="pairingId">The random pending pairing ID.</param>
+        /// <param name="body">Optional phone location: latitude [-90,90], longitude [-180,180], nonnegative accuracyMeters up to 10000000, and capturedAt within the last ten minutes (up to one minute clock skew). No body is still supported. Stored encrypted; readable only by the approving manager.</param>
         /// <returns>No Content</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task ApproveWallboardPairingAsync(string pairingId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task ApproveWallboardPairingAsync(string pairingId, ApproveWallboardPairing? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (pairingId == null)
                 throw new System.ArgumentNullException("pairingId");
@@ -26164,7 +26299,10 @@ namespace Kombine.Flex.Portal.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
@@ -26200,6 +26338,16 @@ namespace Kombine.Flex.Portal.Client
                         if (status_ == 204)
                         {
                             return;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 403)
@@ -26536,6 +26684,113 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read a screen you approved, including the optional scanner location stored with its approval.
+        /// </summary>
+        /// <remarks>
+        /// Only the approving active manager can read location. It is a phone measurement, not verified screen GPS. Unknown and other-owner devices both return 404.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<WallboardDeviceInfo> GetWallboardDeviceAsync(string deviceId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (deviceId == null)
+                throw new System.ArgumentNullException("deviceId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/wallboard/devices/{deviceId}"
+                    urlBuilder_.Append("api/v1/wallboard/devices/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(deviceId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<WallboardDeviceInfo>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -31819,6 +32074,15 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
         public string? IconKid { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApproveWallboardPairing
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public WallboardScanLocation? Location { get; set; } = default!;
 
     }
 
@@ -37501,6 +37765,24 @@ namespace Kombine.Flex.Portal.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WallboardDeviceInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("deviceId")]
+        public string? DeviceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("displayId")]
+        public string? DisplayId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdAt")]
+        public System.DateTimeOffset? CreatedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public WallboardScanLocation? Location { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class WallboardPairingInfo
     {
 
@@ -37551,6 +37833,24 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("expiresIn")]
         public long? ExpiresIn { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WallboardScanLocation
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("latitude")]
+        public double? Latitude { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("longitude")]
+        public double? Longitude { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("accuracyMeters")]
+        public double? AccuracyMeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capturedAt")]
+        public System.DateTimeOffset? CapturedAt { get; set; } = default!;
 
     }
 

@@ -2326,6 +2326,24 @@ namespace Kombine.Flex.Portal.Client.Net20
             return (WallboardPairingStarted)SendJson("POST", path, body, headers, 200, typeof(WallboardPairingStarted));
         }
 
+        /// <summary>Find up to ten pending screens with an exact display ID in this tenant and environment.</summary>
+        public WallboardPairingInfo[] FindWallboardPairings()
+        {
+            return FindWallboardPairings(null);
+        }
+
+        /// <summary>Find up to ten pending screens with an exact display ID in this tenant and environment.</summary>
+        public WallboardPairingInfo[] FindWallboardPairings(FindWallboardPairingsOptions options)
+        {
+            string path = "api/v1/wallboard/pairings";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "displayId", options.DisplayId);
+            }
+            return (WallboardPairingInfo[])SendJson("GET", path, null, headers, 200, typeof(WallboardPairingInfo[]));
+        }
+
         /// <summary>Read the screen ID and expiry before explicitly approving its QR code.</summary>
         public WallboardPairingInfo GetWallboardPairing(string @pairingId)
         {
@@ -2336,12 +2354,12 @@ namespace Kombine.Flex.Portal.Client.Net20
         }
 
         /// <summary>Approve one screen using your current manager bearer session, including sessions created with kid and apiKey.</summary>
-        public void ApproveWallboardPairing(string @pairingId)
+        public void ApproveWallboardPairing(string @pairingId, ApproveWallboardPairing body)
         {
             string path = "api/v1/wallboard/pairings/{pairingId}/approve";
             path = path.Replace("{pairingId}", PathValue(@pairingId));
             Dictionary<string, string> headers = new Dictionary<string, string>();
-            SendJson("POST", path, null, headers, 204, typeof(object));
+            SendJson("POST", path, body, headers, 204, typeof(object));
         }
 
         /// <summary>Poll with the private deviceCode. Successful redemption consumes the pairing atomically.</summary>
@@ -2369,6 +2387,15 @@ namespace Kombine.Flex.Portal.Client.Net20
             path = path.Replace("{deviceId}", PathValue(@deviceId));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (WallboardPairingToken)SendJson("POST", path, body, headers, 200, typeof(WallboardPairingToken));
+        }
+
+        /// <summary>Read a screen you approved, including the optional scanner location stored with its approval.</summary>
+        public WallboardDeviceInfo GetWallboardDevice(string @deviceId)
+        {
+            string path = "api/v1/wallboard/devices/{deviceId}";
+            path = path.Replace("{deviceId}", PathValue(@deviceId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (WallboardDeviceInfo)SendJson("GET", path, null, headers, 200, typeof(WallboardDeviceInfo));
         }
 
         /// <summary>Revoke a screen you approved. Its existing bearer sessions also lose access.</summary>

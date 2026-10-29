@@ -603,13 +603,17 @@ class PortalClient(BaseClient):
         'Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code.'
         return self._request('StartWallboardPairing', {}, body)
 
+    def find_wallboard_pairings(self, *, display_id: str | None = None) -> list[WallboardPairingInfo]:
+        'Find up to ten pending screens with an exact display ID in this tenant and environment.'
+        return self._request('FindWallboardPairings', {'displayId': display_id}, None)
+
     def get_wallboard_pairing(self, pairing_id: str) -> WallboardPairingInfo:
         'Read the screen ID and expiry before explicitly approving its QR code.'
         return self._request('GetWallboardPairing', {'pairingId': pairing_id}, None)
 
-    def approve_wallboard_pairing(self, pairing_id: str) -> None:
+    def approve_wallboard_pairing(self, pairing_id: str, body: ApproveWallboardPairing) -> None:
         'Approve one screen using your current manager bearer session, including sessions created with kid and apiKey.'
-        return self._request('ApproveWallboardPairing', {'pairingId': pairing_id}, None)
+        return self._request('ApproveWallboardPairing', {'pairingId': pairing_id}, body)
 
     def redeem_wallboard_pairing(self, pairing_id: str, body: RedeemWallboardPairing) -> WallboardPairingToken:
         'Poll with the private deviceCode. Successful redemption consumes the pairing atomically.'
@@ -622,6 +626,10 @@ class PortalClient(BaseClient):
     def resume_wallboard_session(self, device_id: str, body: ResumeWallboardSession) -> WallboardPairingToken:
         'Resume a permanently approved screen after proving possession of its private signing key.'
         return self._request('ResumeWallboardSession', {'deviceId': device_id}, body)
+
+    def get_wallboard_device(self, device_id: str) -> WallboardDeviceInfo:
+        'Read a screen you approved, including the optional scanner location stored with its approval.'
+        return self._request('GetWallboardDevice', {'deviceId': device_id}, None)
 
     def revoke_wallboard_device(self, device_id: str) -> None:
         'Revoke a screen you approved. Its existing bearer sessions also lose access.'

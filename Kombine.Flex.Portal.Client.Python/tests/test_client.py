@@ -74,7 +74,7 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(api.get_location_weather("opaque-location")["current"], current)
 
     def test_every_public_operation(self):
-        self.assertEqual(len(CASES), 198)
+        self.assertEqual(len(CASES), 200)
         for case in CASES:
             with self.subTest(operation=case['operation']):
                 response_data = b'PK\x00\xff' if case['binary'] else json.dumps(sample(case['response']), ensure_ascii=False).encode() if case['response'] else b''

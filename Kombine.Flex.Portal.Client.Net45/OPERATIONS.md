@@ -23,6 +23,7 @@
 | `ExecuteBankUserCommand` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` |
 | `ExportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` |
+| `FindWallboardPairings` | GET | `/api/v1/wallboard/pairings` |
 | `GenerateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` |
 | `GenerateServiceApiKey` | POST | `/api/v1/services/{serviceKid}/api-key` |
 | `GetActiveBankCount` | GET | `/api/v1/banks/active-count` |
@@ -161,6 +162,7 @@
 | `GetUserExportCount` | GET | `/api/v1/users/export-count` |
 | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
 | `GetUsers` | GET | `/api/v1/users` |
+| `GetWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` |
 | `GetWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
 | `InspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
 | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` |

@@ -8230,6 +8230,37 @@
     "binary": false
   },
   {
+    "operation": "FindWallboardPairings",
+    "dartMethod": "findWallboardPairings",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/wallboard/pairings",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WallboardPairingInfo"
+      }
+    },
+    "binary": false
+  },
+  {
     "operation": "GetWallboardPairing",
     "dartMethod": "getWallboardPairing",
     "example": null,
@@ -8277,7 +8308,9 @@
         }
       }
     ],
-    "body": null,
+    "body": {
+      "$ref": "#/components/schemas/ApproveWallboardPairing"
+    },
     "bodyRequired": false,
     "multipart": null,
     "response": null,
@@ -8368,6 +8401,34 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/WallboardPairingToken"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetWallboardDevice",
+    "dartMethod": "getWallboardDevice",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/wallboard/devices/{deviceId}",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDeviceInfo"
     },
     "binary": false
   },

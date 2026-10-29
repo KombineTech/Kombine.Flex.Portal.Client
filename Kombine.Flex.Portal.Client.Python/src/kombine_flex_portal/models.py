@@ -91,6 +91,10 @@ ActiveUnitCountResponse = TypedDict('ActiveUnitCountResponse', {
     'iconKid': 'str | None',
 }, total=False)
 
+ApproveWallboardPairing = TypedDict('ApproveWallboardPairing', {
+    'location': 'WallboardScanLocation',
+}, total=False)
+
 AssistantLink = TypedDict('AssistantLink', {
     'kid': 'str | None',
     'path': 'str | None',
@@ -1702,6 +1706,13 @@ WallboardDeviceChallenge = TypedDict('WallboardDeviceChallenge', {
     'expiresIn': 'int',
 }, total=False)
 
+WallboardDeviceInfo = TypedDict('WallboardDeviceInfo', {
+    'deviceId': 'str | None',
+    'displayId': 'str | None',
+    'createdAt': 'str',
+    'location': 'WallboardScanLocation',
+}, total=False)
+
 WallboardPairingInfo = TypedDict('WallboardPairingInfo', {
     'pairingId': 'str | None',
     'displayId': 'str | None',
@@ -1721,6 +1732,13 @@ WallboardPairingToken = TypedDict('WallboardPairingToken', {
     'status': 'str | None',
     'accessToken': 'str | None',
     'expiresIn': 'int | None',
+}, total=False)
+
+WallboardScanLocation = TypedDict('WallboardScanLocation', {
+    'latitude': 'float',
+    'longitude': 'float',
+    'accuracyMeters': 'float',
+    'capturedAt': 'str',
 }, total=False)
 
 WashDocChartDosing = TypedDict('WashDocChartDosing', {

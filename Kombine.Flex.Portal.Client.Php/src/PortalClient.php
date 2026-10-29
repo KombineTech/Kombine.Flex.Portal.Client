@@ -16,6 +16,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ActiveBankCountResponse array{'count'?: int, 'iconKid'?: string|null}
  * @phpstan-type ActiveLocationCountResponse array{'count'?: int, 'iconKid'?: string|null}
  * @phpstan-type ActiveUnitCountResponse array{'count'?: int, 'iconKid'?: string|null}
+ * @phpstan-type ApproveWallboardPairing array{'location'?: WallboardScanLocation}
  * @phpstan-type AssistantLink array{'kid'?: string|null, 'path'?: string|null, 'name'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type AssistantMessage array{'role'?: string|null, 'content'?: string|null}
  * @phpstan-type AssistantRequest array{'question': string, 'history'?: list<AssistantMessage>|null}
@@ -219,9 +220,11 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserWorkspaceResponse array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'number'?: string|null, 'deletedAtUtc'?: string|null, 'deleteAtUtc'?: string|null, 'locations'?: list<UserScopeState>|null, 'tags'?: list<UserScopeState>|null, 'attributes'?: list<UserAttributeInput>|null, 'canWrite'?: bool, 'canCreate'?: bool, 'synchronization'?: string|null, 'canDelete'?: bool, 'canRenameExternalId'?: bool, 'canRename'?: bool, 'iconKid'?: string|null, 'availableIcons'?: list<string>|null, 'canEditIcon'?: bool}
  * @phpstan-type ValidationProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
  * @phpstan-type WallboardDeviceChallenge array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
+ * @phpstan-type WallboardDeviceInfo array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
  * @phpstan-type WallboardPairingInfo array{'pairingId'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'approved'?: bool}
  * @phpstan-type WallboardPairingStarted array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'intervalSeconds'?: int}
  * @phpstan-type WallboardPairingToken array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null}
+ * @phpstan-type WallboardScanLocation array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float, 'capturedAt'?: string}
  * @phpstan-type WashDocChartDosing array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
  * @phpstan-type WashDocChartEvent array{'ms2000'?: int, 'kind'?: string|null, 'name'?: string|null, 'value'?: int|float|null, 'label'?: string|null, 'localization'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type WashDocChartPoint array{'ms2000'?: int, 'value'?: int|float|null, 'isCalculated'?: bool, 'isEdge'?: bool, 'unit'?: string|null}
@@ -1835,6 +1838,16 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Find up to ten pending screens with an exact display ID in this tenant and environment.
+     * @param array{'displayId'?: string} $options
+     * @return list<WallboardPairingInfo>
+     */
+    public function findWallboardPairings(array $options = []): mixed
+    {
+        return $this->request('FindWallboardPairings', [] + $options, null);
+    }
+
+    /**
      * Read the screen ID and expiry before explicitly approving its QR code.
      * @param string $pairingId
      * @return WallboardPairingInfo
@@ -1847,11 +1860,12 @@ final class PortalClient extends BaseClient
     /**
      * Approve one screen using your current manager bearer session, including sessions created with kid and apiKey.
      * @param string $pairingId
+     * @param ApproveWallboardPairing $body
      * @return null
      */
-    public function approveWallboardPairing(mixed $pairingId): mixed
+    public function approveWallboardPairing(mixed $pairingId, #[\SensitiveParameter] array $body): mixed
     {
-        return $this->request('ApproveWallboardPairing', ['pairingId' => $pairingId], null);
+        return $this->request('ApproveWallboardPairing', ['pairingId' => $pairingId], $body);
     }
 
     /**
@@ -1884,6 +1898,16 @@ final class PortalClient extends BaseClient
     public function resumeWallboardSession(mixed $deviceId, #[\SensitiveParameter] array $body): mixed
     {
         return $this->request('ResumeWallboardSession', ['deviceId' => $deviceId], $body);
+    }
+
+    /**
+     * Read a screen you approved, including the optional scanner location stored with its approval.
+     * @param string $deviceId
+     * @return WallboardDeviceInfo
+     */
+    public function getWallboardDevice(mixed $deviceId): mixed
+    {
+        return $this->request('GetWallboardDevice', ['deviceId' => $deviceId], null);
     }
 
     /**

@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `176241d96e080aa799bd771d48cf8a68b290ff3fdcb1e52d4e2311796c246df1`).
-198 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `08900d67e594e30fbe6a4713aafa8691ca0dd7d3a29a53f9dac1487032012c3e`).
+200 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -26,6 +26,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `176241d96e080aa799b
 | `executeBankUserCommand` | `ExecuteBankUserCommand` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` | Bearer |
 | `exportBankAccount` | `ExportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` | Bearer |
 | `exportBankUsers` | `ExportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` | Bearer |
+| `findWallboardPairings` | `FindWallboardPairings` | GET | `/api/v1/wallboard/pairings` | Bearer |
 | `generateMyManagerApiKey` | `GenerateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` | Bearer |
 | `generateServiceApiKey` | `GenerateServiceApiKey` | POST | `/api/v1/services/{serviceKid}/api-key` | Bearer |
 | `getActiveBankCount` | `GetActiveBankCount` | GET | `/api/v1/banks/active-count` | Bearer |
@@ -164,6 +165,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `176241d96e080aa799b
 | `getUserExportCount` | `GetUserExportCount` | GET | `/api/v1/users/export-count` | Bearer |
 | `getUserReceipts` | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` | Bearer |
 | `getUsers` | `GetUsers` | GET | `/api/v1/users` | Bearer |
+| `getWallboardDevice` | `GetWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` | Bearer |
 | `getWallboardPairing` | `GetWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` | Bearer |
 | `inspectToolKid` | `InspectToolKid` | POST | `/api/v1/tenant/tools/kid` | Bearer |
 | `inviteManager` | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` | Bearer |
