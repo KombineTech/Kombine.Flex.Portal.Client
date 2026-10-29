@@ -5,6 +5,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | Method | HTTP | Path |
 | --- | --- | --- |
 | `AcknowledgeErrorAsync` | POST | `/api/v1/errors/{errorKid}/acknowledge` |
+| `AddMyManagerWallboardAsync` | POST | `/api/v1/session/me/wallboards` |
 | `ApproveWallboardPairingAsync` | POST | `/api/v1/wallboard/pairings/{pairingId}/approve` |
 | `AskPortalAssistantAsync` | POST | `/api/v1/assistant/query` |
 | `ChallengeWallboardDeviceAsync` | POST | `/api/v1/wallboard/devices/{deviceId}/challenge` |
@@ -116,6 +117,8 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetMyManagerApiKeyAsync` | GET | `/api/v1/session/me/api-key` |
 | `GetMyManagerProfileAsync` | GET | `/api/v1/session/me/profile` |
 | `GetMyManagerTabsAsync` | GET | `/api/v1/session/me/tabs` |
+| `GetMyManagerWallboardDisplayAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
+| `GetMyManagerWallboardsAsync` | GET | `/api/v1/session/me/wallboards` |
 | `GetNearestLocationsAsync` | GET | `/api/v1/locations/nearest` |
 | `GetObjectAddressAsync` | GET | `/api/v1/addresses/{kid}` |
 | `GetOutOfOrderUnitsAsync` | GET | `/api/v1/units/out-of-service` |
@@ -184,6 +187,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `ReverseBankAccountEntryAsync` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` |
 | `RevokeWallboardDeviceAsync` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
 | `SaveCameraCaptureAsync` | POST | `/api/v1/camera` |
+| `SaveMyManagerWallboardsAsync` | PUT | `/api/v1/session/me/wallboards` |
 | `SearchBankActivationAsync` | GET | `/api/v1/search/bank-activation` |
 | `SearchBanksAsync` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivationAsync` | GET | `/api/v1/search/location-activation` |

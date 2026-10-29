@@ -1525,6 +1525,50 @@ namespace Kombine.Flex.Portal.Client.Net20
             return (PersonalManagerProfile)SendJson("GET", path, null, headers, 200, typeof(PersonalManagerProfile));
         }
 
+        /// <summary>Add a scanned display to your own WallBoards layout setting.</summary>
+        public PersonalAccountResult AddMyManagerWallboard(PersonalWallboardRequest body)
+        {
+            string path = "api/v1/session/me/wallboards";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PersonalAccountResult)SendJson("POST", path, body, headers, 200, typeof(PersonalAccountResult));
+        }
+
+        /// <summary>Read your own Wallboard1 editor layouts and concurrency revision.</summary>
+        public PersonalWallboardsResponse GetMyManagerWallboards()
+        {
+            string path = "api/v1/session/me/wallboards";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PersonalWallboardsResponse)SendJson("GET", path, null, headers, 200, typeof(PersonalWallboardsResponse));
+        }
+
+        /// <summary>Save your own complete Wallboard1 layout collection.</summary>
+        public PersonalWallboardsResponse SaveMyManagerWallboards(SavePersonalWallboardsRequest body)
+        {
+            string path = "api/v1/session/me/wallboards";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PersonalWallboardsResponse)SendJson("PUT", path, body, headers, 200, typeof(PersonalWallboardsResponse));
+        }
+
+        /// <summary>Read the selected orientation for one of your Wallboards.</summary>
+        public WallboardDisplayResponse GetMyManagerWallboardDisplay(string @displayId)
+        {
+            return GetMyManagerWallboardDisplay(@displayId, null);
+        }
+
+        /// <summary>Read the selected orientation for one of your Wallboards.</summary>
+        public WallboardDisplayResponse GetMyManagerWallboardDisplay(string @displayId, GetMyManagerWallboardDisplayOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/display/{displayId}";
+            path = path.Replace("{displayId}", PathValue(@displayId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "portrait", options.Portrait);
+                path = AddQuery(path, "after", options.After);
+            }
+            return (WallboardDisplayResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardDisplayResponse));
+        }
+
         /// <summary>Read your own API-key configuration status and revision without exposing credentials.</summary>
         public PersonalManagerApiKey GetMyManagerApiKey()
         {

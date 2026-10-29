@@ -97,6 +97,10 @@
 | `GetManagerCount` | `get_manager_count` | `getManagerCount` | GET | `/api/v1/managers/count` |
 | `GetInstallerCount` | `get_installer_count` | `getInstallerCount` | GET | `/api/v1/installers/count` |
 | `GetMyManagerProfile` | `get_my_manager_profile` | `getMyManagerProfile` | GET | `/api/v1/session/me/profile` |
+| `AddMyManagerWallboard` | `add_my_manager_wallboard` | `addMyManagerWallboard` | POST | `/api/v1/session/me/wallboards` |
+| `GetMyManagerWallboards` | `get_my_manager_wallboards` | `getMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` |
+| `SaveMyManagerWallboards` | `save_my_manager_wallboards` | `saveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` |
+| `GetMyManagerWallboardDisplay` | `get_my_manager_wallboard_display` | `getMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerApiKey` | `get_my_manager_api_key` | `getMyManagerApiKey` | GET | `/api/v1/session/me/api-key` |
 | `GenerateMyManagerApiKey` | `generate_my_manager_api_key` | `generateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` |
 | `GetMyManagerTabs` | `get_my_manager_tabs` | `getMyManagerTabs` | GET | `/api/v1/session/me/tabs` |

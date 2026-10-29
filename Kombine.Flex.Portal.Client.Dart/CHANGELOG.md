@@ -1,3 +1,7 @@
+## 0.10.0
+
+Version 0.10.0 adds personal Wallboard layouts, scanned display registration and revision-aware display reads. Save only existing scanned display IDs with the latest revision. Preserve drafts on conflicts and never retry uncertain writes automatically. Screen sessions may read only their approved display. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
 ## 0.9.0
 
 Version 0.9.0 covers 202 operations, including GetUnitTimeline and GetUnitTimelineFields. Wallboard responses identify the exact approved display; screen sessions expose minimal identity without ordinary manager permissions. Use a normal manager login for Portal operations. Permanent device approval and UserBalance remain compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).

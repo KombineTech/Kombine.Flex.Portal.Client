@@ -478,6 +478,26 @@ export class PortalClient extends BaseClient {
     return this.send("GetMyManagerProfile", {}, undefined, request) as Promise<Models.PersonalManagerProfile>;
   }
 
+  /** Add a scanned display to your own WallBoards layout setting. */
+  addMyManagerWallboard(body: Models.PersonalWallboardRequest, request: RequestOptions = {}): Promise<Models.PersonalAccountResult> {
+    return this.send("AddMyManagerWallboard", {}, body, request) as Promise<Models.PersonalAccountResult>;
+  }
+
+  /** Read your own Wallboard1 editor layouts and concurrency revision. */
+  getMyManagerWallboards(request: RequestOptions = {}): Promise<Models.PersonalWallboardsResponse> {
+    return this.send("GetMyManagerWallboards", {}, undefined, request) as Promise<Models.PersonalWallboardsResponse>;
+  }
+
+  /** Save your own complete Wallboard1 layout collection. */
+  saveMyManagerWallboards(body: Models.SavePersonalWallboardsRequest, request: RequestOptions = {}): Promise<Models.PersonalWallboardsResponse> {
+    return this.send("SaveMyManagerWallboards", {}, body, request) as Promise<Models.PersonalWallboardsResponse>;
+  }
+
+  /** Read the selected orientation for one of your Wallboards. */
+  getMyManagerWallboardDisplay(displayId: string, options: Models.GetMyManagerWallboardDisplayOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardDisplayResponse> {
+    return this.send("GetMyManagerWallboardDisplay", {"displayId": displayId, "portrait": options.portrait, "after": options.after}, undefined, request) as Promise<Models.WallboardDisplayResponse>;
+  }
+
   /** Read your own API-key configuration status and revision without exposing credentials. */
   getMyManagerApiKey(request: RequestOptions = {}): Promise<Models.PersonalManagerApiKey> {
     return this.send("GetMyManagerApiKey", {}, undefined, request) as Promise<Models.PersonalManagerApiKey>;

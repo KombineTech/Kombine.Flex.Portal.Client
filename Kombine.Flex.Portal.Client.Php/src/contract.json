@@ -3883,6 +3883,36 @@
       },
       "additionalProperties": false
     },
+    "PersonalWallboardRequest": {
+      "required": [
+        "displayId"
+      ],
+      "type": "object",
+      "properties": {
+        "displayId": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PersonalWallboardsResponse": {
+      "type": "object",
+      "properties": {
+        "wallboards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Wallboard"
+          },
+          "nullable": true
+        },
+        "revision": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "ProblemDetails": {
       "type": "object",
       "properties": {
@@ -3931,6 +3961,20 @@
           "type": "string",
           "nullable": true
         }
+      },
+      "additionalProperties": false
+    },
+    "SavePersonalWallboardsRequest": {
+      "required": [
+        "wallboards"
+      ],
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "string",
+          "nullable": true
+        },
+        "wallboards": {}
       },
       "additionalProperties": false
     },
@@ -6077,6 +6121,30 @@
       },
       "additionalProperties": {}
     },
+    "Wallboard": {
+      "type": "object",
+      "properties": {
+        "displayId": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "isPortrait": {
+          "type": "boolean"
+        },
+        "pages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WallboardPage"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "WallboardDeviceChallenge": {
       "type": "object",
       "properties": {
@@ -6112,6 +6180,44 @@
         },
         "location": {
           "$ref": "#/components/schemas/WallboardScanLocation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardDisplayResponse": {
+      "type": "object",
+      "properties": {
+        "layout": {
+          "$ref": "#/components/schemas/Wallboard"
+        },
+        "revision": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardPage": {
+      "type": "object",
+      "properties": {
+        "pageId": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "displayDurationSeconds": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "widgets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WallboardWidget"
+          },
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -6204,6 +6310,39 @@
         "capturedAt": {
           "type": "string",
           "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardWidget": {
+      "type": "object",
+      "properties": {
+        "widgetId": {
+          "type": "string",
+          "nullable": true
+        },
+        "widgetType": {
+          "$ref": "#/components/schemas/eWidgetType"
+        },
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "column": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "row": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "additionalProperties": false
@@ -6475,6 +6614,10 @@
       "additionalProperties": false
     },
     "eThemeMode": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "eWidgetType": {
       "type": "integer",
       "format": "int32"
     },
@@ -10868,6 +11011,95 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalManagerProfile"
+      },
+      "binary": false
+    },
+    "AddMyManagerWallboard": {
+      "method": "POST",
+      "path": "api/v1/session/me/wallboards",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": {
+        "$ref": "#/components/schemas/PersonalWallboardRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PersonalAccountResult"
+      },
+      "binary": false
+    },
+    "GetMyManagerWallboards": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PersonalWallboardsResponse"
+      },
+      "binary": false
+    },
+    "SaveMyManagerWallboards": {
+      "method": "PUT",
+      "path": "api/v1/session/me/wallboards",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": {
+        "$ref": "#/components/schemas/SavePersonalWallboardsRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PersonalWallboardsResponse"
+      },
+      "binary": false
+    },
+    "GetMyManagerWallboardDisplay": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/display/{displayId}",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "displayId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "after",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardDisplayResponse"
       },
       "binary": false
     },

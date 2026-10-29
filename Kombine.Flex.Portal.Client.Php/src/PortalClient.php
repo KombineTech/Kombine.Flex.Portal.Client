@@ -149,9 +149,12 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PersonalPasswordRequest array{'currentPassword': string|null, 'password': string|null, 'confirmPassword': string|null, 'language'?: string|null}
  * @phpstan-type PersonalProfileRequest array{'revision': string|null, 'value': mixed}
  * @phpstan-type PersonalTabRequest array{'revision': string|null, 'enabled': bool}
+ * @phpstan-type PersonalWallboardRequest array{'displayId': string|null}
+ * @phpstan-type PersonalWallboardsResponse array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null}
  * @phpstan-type ProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
  * @phpstan-type RedeemWallboardPairing array{'deviceCode'?: string|null}
  * @phpstan-type ResumeWallboardSession array{'challenge'?: string|null, 'signature'?: string|null}
+ * @phpstan-type SavePersonalWallboardsRequest array{'revision'?: string|null, 'wallboards': mixed}
  * @phpstan-type SearchResult array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type SearchResults array{'items'?: list<SearchResult>|null, 'hasMore'?: bool}
  * @phpstan-type ServiceApiKeyRequest array{'expectedRevision': string|null}
@@ -223,12 +226,16 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserTagResponse array{'kid'?: string|null, 'state'?: string|null}
  * @phpstan-type UserWorkspaceResponse array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'number'?: string|null, 'deletedAtUtc'?: string|null, 'deleteAtUtc'?: string|null, 'locations'?: list<UserScopeState>|null, 'tags'?: list<UserScopeState>|null, 'attributes'?: list<UserAttributeInput>|null, 'canWrite'?: bool, 'canCreate'?: bool, 'synchronization'?: string|null, 'canDelete'?: bool, 'canRenameExternalId'?: bool, 'canRename'?: bool, 'iconKid'?: string|null, 'availableIcons'?: list<string>|null, 'canEditIcon'?: bool}
  * @phpstan-type ValidationProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
+ * @phpstan-type Wallboard array{'displayId'?: string|null, 'name'?: string|null, 'isPortrait'?: bool, 'pages'?: list<WallboardPage>|null}
  * @phpstan-type WallboardDeviceChallenge array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
  * @phpstan-type WallboardDeviceInfo array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
+ * @phpstan-type WallboardDisplayResponse array{'layout'?: Wallboard, 'revision'?: string|null}
+ * @phpstan-type WallboardPage array{'pageId'?: string|null, 'name'?: string|null, 'displayDurationSeconds'?: int, 'widgets'?: list<WallboardWidget>|null}
  * @phpstan-type WallboardPairingInfo array{'pairingId'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'approved'?: bool}
  * @phpstan-type WallboardPairingStarted array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'intervalSeconds'?: int}
  * @phpstan-type WallboardPairingToken array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null, 'displayId'?: string|null}
  * @phpstan-type WallboardScanLocation array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float, 'capturedAt'?: string}
+ * @phpstan-type WallboardWidget array{'widgetId'?: string|null, 'widgetType'?: eWidgetType, 'kid'?: string|null, 'column'?: int, 'row'?: int, 'width'?: int, 'height'?: int}
  * @phpstan-type WashDocChartDosing array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
  * @phpstan-type WashDocChartEvent array{'ms2000'?: int, 'kind'?: string|null, 'name'?: string|null, 'value'?: int|float|null, 'label'?: string|null, 'localization'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type WashDocChartPoint array{'ms2000'?: int, 'value'?: int|float|null, 'isCalculated'?: bool, 'isEdge'?: bool, 'unit'?: string|null}
@@ -237,6 +244,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type WashDocChartSignal array{'ms2000'?: int, 'flags'?: int|null, 'heat'?: bool|null, 'inlet'?: bool|null, 'outlet'?: bool|null, 'isCalculated'?: bool, 'airflow'?: bool|null}
  * @phpstan-type WashDocPresentation array{'unitType'?: int|null, 'kind'?: string|null, 'groupOrder'?: list<string>|null}
  * @phpstan-type eThemeMode int
+ * @phpstan-type eWidgetType int
  * @phpstan-type ActiveUsersResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackDays'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string}
  * @phpstan-type ApiStatusResponse array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|null}
  * @phpstan-type CycleChartPresentationResponse array{'language'?: string|null, 'messages'?: array<string,mixed>|null, 'stateNames'?: array<string,mixed>|null}
@@ -1273,6 +1281,46 @@ final class PortalClient extends BaseClient
     public function getMyManagerProfile(): mixed
     {
         return $this->request('GetMyManagerProfile', [], null);
+    }
+
+    /**
+     * Add a scanned display to your own WallBoards layout setting.
+     * @param PersonalWallboardRequest $body
+     * @return PersonalAccountResult
+     */
+    public function addMyManagerWallboard(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('AddMyManagerWallboard', [], $body);
+    }
+
+    /**
+     * Read your own Wallboard1 editor layouts and concurrency revision.
+     * @return PersonalWallboardsResponse
+     */
+    public function getMyManagerWallboards(): mixed
+    {
+        return $this->request('GetMyManagerWallboards', [], null);
+    }
+
+    /**
+     * Save your own complete Wallboard1 layout collection.
+     * @param SavePersonalWallboardsRequest $body
+     * @return PersonalWallboardsResponse
+     */
+    public function saveMyManagerWallboards(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('SaveMyManagerWallboards', [], $body);
+    }
+
+    /**
+     * Read the selected orientation for one of your Wallboards.
+     * @param string $displayId
+     * @param array{'portrait'?: bool, 'after'?: string} $options
+     * @return WallboardDisplayResponse
+     */
+    public function getMyManagerWallboardDisplay(mixed $displayId, array $options = []): mixed
+    {
+        return $this->request('GetMyManagerWallboardDisplay', ['displayId' => $displayId] + $options, null);
     }
 
     /**

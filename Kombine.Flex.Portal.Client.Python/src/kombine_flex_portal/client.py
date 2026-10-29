@@ -387,6 +387,22 @@ class PortalClient(BaseClient):
         'Read your own personal settings and available person icons.'
         return self._request('GetMyManagerProfile', {}, None)
 
+    def add_my_manager_wallboard(self, body: PersonalWallboardRequest) -> PersonalAccountResult:
+        'Add a scanned display to your own WallBoards layout setting.'
+        return self._request('AddMyManagerWallboard', {}, body)
+
+    def get_my_manager_wallboards(self) -> PersonalWallboardsResponse:
+        'Read your own Wallboard1 editor layouts and concurrency revision.'
+        return self._request('GetMyManagerWallboards', {}, None)
+
+    def save_my_manager_wallboards(self, body: SavePersonalWallboardsRequest) -> PersonalWallboardsResponse:
+        'Save your own complete Wallboard1 layout collection.'
+        return self._request('SaveMyManagerWallboards', {}, body)
+
+    def get_my_manager_wallboard_display(self, display_id: str, *, portrait: bool | None = None, after: str | None = None) -> WallboardDisplayResponse:
+        'Read the selected orientation for one of your Wallboards.'
+        return self._request('GetMyManagerWallboardDisplay', {'displayId': display_id, 'portrait': portrait, 'after': after}, None)
+
     def get_my_manager_api_key(self) -> PersonalManagerApiKey:
         'Read your own API-key configuration status and revision without exposing credentials.'
         return self._request('GetMyManagerApiKey', {}, None)

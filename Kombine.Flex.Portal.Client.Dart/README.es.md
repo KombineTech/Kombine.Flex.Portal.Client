@@ -1,4 +1,6 @@
-La versión 0.9.0 incluye 202 operaciones, entre ellas GetUnitTimeline y GetUnitTimelineFields. Las respuestas de Wallboard identifican la pantalla aprobada exacta; las sesiones de pantalla exponen solo una identidad mínima, sin permisos de administrador. Use una sesión normal para las operaciones de Portal. La aprobación permanente y UserBalance siguen siendo compatibles. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
+La versión 0.10.0 añade diseños personales de Wallboard, registro de pantallas escaneadas y lectura del diseño por revisión. Guarde solo identificadores ya escaneados con la última revisión. Conserve los borradores ante conflictos y nunca repita automáticamente escrituras inciertas. Las sesiones de pantalla solo pueden leer su pantalla aprobada. UserBalance conserva la compatibilidad. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
+
+La versión 0.10.0 incluye 206 operaciones, entre ellas GetUnitTimeline y GetUnitTimelineFields. Las respuestas de Wallboard identifican la pantalla aprobada exacta; las sesiones de pantalla exponen solo una identidad mínima, sin permisos de administrador. Use una sesión normal para las operaciones de Portal. La aprobación permanente y UserBalance siguen siendo compatibles. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
 
 La versión 0.8.0 añade FindWallboardPairings y GetWallboardDevice (200 operaciones en total), además de metadatos opcionales de ubicación al aprobar una pantalla. La configuración central de Wallboard utiliza un único escaneo QR; la ubicación privada solo está disponible para el administrador que aprobó el dispositivo. La aprobación no caduca automáticamente y conserva las comprobaciones de revocación, credenciales, tenant y entorno. Los clientes UserBalance existentes siguen siendo compatibles. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog) y la [guía Wallboard](https://api.team.kombine.technology/docs#wallboard-pairing).
 
@@ -14,7 +16,7 @@ La versión 0.3.0 mueve ConvertToolTime e InspectToolKid a /api/v1/tenant/tools/
 
 # Cliente Dart de Kombine Flex Portal
 
-La versiÃ³n **0.9.0** incluye **182 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicaciÃ³n, aÃ±ada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicaciÃ³n proporciona las credenciales del ejemplo.
+La versiÃ³n **0.10.0** incluye **182 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicaciÃ³n, aÃ±ada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicaciÃ³n proporciona las credenciales del ejemplo.
 
 ```yaml
 dependencies:

@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-202 operations. OpenAPI SHA-256: `7b1f48e6ae07a1a663cef021e1ddb38693c98a9351495b37e6cdc168adf4d837`.
+206 operations. OpenAPI SHA-256: `f0bdc3bf7d9d6f6ee90e3673948ed21b6aafd2152e94660f3e0c4b65c54ffc17`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -99,6 +99,10 @@
 | `GetManagerCount` | `getManagerCount` | GET | `/api/v1/managers/count` |
 | `GetInstallerCount` | `getInstallerCount` | GET | `/api/v1/installers/count` |
 | `GetMyManagerProfile` | `getMyManagerProfile` | GET | `/api/v1/session/me/profile` |
+| `AddMyManagerWallboard` | `addMyManagerWallboard` | POST | `/api/v1/session/me/wallboards` |
+| `GetMyManagerWallboards` | `getMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` |
+| `SaveMyManagerWallboards` | `saveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` |
+| `GetMyManagerWallboardDisplay` | `getMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerApiKey` | `getMyManagerApiKey` | GET | `/api/v1/session/me/api-key` |
 | `GenerateMyManagerApiKey` | `generateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` |
 | `GetMyManagerTabs` | `getMyManagerTabs` | GET | `/api/v1/session/me/tabs` |

@@ -5476,6 +5476,21 @@
           "iconKid": ""
         },
         {
+          "id": 85,
+          "name": "Zoom1",
+          "iconKid": ""
+        },
+        {
+          "id": 86,
+          "name": "Agent1",
+          "iconKid": ""
+        },
+        {
+          "id": 87,
+          "name": "Wallboard1",
+          "iconKid": ""
+        },
+        {
           "id": 5,
           "name": "Banks2",
           "iconKid": ""
@@ -5971,6 +5986,111 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerProfile"
+    },
+    "binary": false
+  },
+  {
+    "operation": "AddMyManagerWallboard",
+    "dartMethod": "addMyManagerWallboard",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/session/me/wallboards",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/PersonalWallboardRequest"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetMyManagerWallboards",
+    "dartMethod": "getMyManagerWallboards",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalWallboardsResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "SaveMyManagerWallboards",
+    "dartMethod": "saveMyManagerWallboards",
+    "example": null,
+    "method": "PUT",
+    "path": "api/v1/session/me/wallboards",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/SavePersonalWallboardsRequest"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalWallboardsResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetMyManagerWallboardDisplay",
+    "dartMethod": "getMyManagerWallboardDisplay",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "after",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDisplayResponse"
     },
     "binary": false
   },
