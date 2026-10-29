@@ -1535,6 +1535,8 @@ export interface ManagerProfileResponse {
   "tabs"?: (number)[] | null;
   /** Whether at least one bank/location grant applies on this site. */
   "hasBankAccess"?: boolean;
+  /** Exact approved display ID for a read-only Wallboard session, resolved from its device record. Null for ordinary managers. */
+  "wallboardDisplayId"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
   /** databaseAccess */
@@ -2665,6 +2667,84 @@ export interface UnitTerminalResponse {
   "iconKid"?: string | null;
 }
 
+/** One readable enum field; numeric IDs remain stable. */
+export interface UnitTimelineField {
+  /** kind */
+  "kind"?: string | null;
+  /** id */
+  "id"?: number;
+  /** name */
+  "name"?: string | null;
+}
+
+/** Authorized context and capabilities; a capability never replaces endpoint authorization. */
+export interface UnitTimelineFields {
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** unitType */
+  "unitType"?: number | null;
+  /** sources */
+  "sources"?: (string)[] | null;
+  /** fields */
+  "fields"?: (UnitTimelineField)[] | null;
+  /** canReadTextDiagnostics */
+  "canReadTextDiagnostics"?: boolean;
+  /** canReadDocuments */
+  "canReadDocuments"?: boolean;
+}
+
+/** One log row; eventKey is a unit-local source/time key, not a resource grant or object KID. */
+export interface UnitTimelineItem {
+  /** eventKey */
+  "eventKey"?: string | null;
+  /** source */
+  "source"?: string | null;
+  /** ms2000 */
+  "ms2000"?: string | null;
+  /** timestampUtc */
+  "timestampUtc"?: string;
+  /** sync */
+  "sync"?: number | null;
+  /** field */
+  "field"?: string | null;
+  /** amount */
+  "amount"?: string | null;
+  /** currency */
+  "currency"?: string | null;
+  /** text */
+  "text"?: string | null;
+  /** contentStatus */
+  "contentStatus"?: string | null;
+  /** period */
+  "period"?: number;
+  /** userKid */
+  "userKid"?: string | null;
+  /** documentKid */
+  "documentKid"?: string | null;
+  /** auxiliaryValue */
+  "auxiliaryValue"?: string | null;
+}
+
+/** Chronological page over an inclusive/exclusive UTC range. */
+export interface UnitTimelinePage {
+  /** context */
+  "context"?: UnitTimelineFields;
+  /** fromUtc */
+  "fromUtc"?: string;
+  /** untilUtc */
+  "untilUtc"?: string;
+  /** items */
+  "items"?: (UnitTimelineItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+}
+
 /** Both address components and the last observed revision are required. */
 export interface UpdateObjectAddressRequest {
   /** address */
@@ -3023,6 +3103,8 @@ export interface WallboardPairingToken {
   "accessToken"?: string | null;
   /** expiresIn */
   "expiresIn"?: bigint | null;
+  /** displayId */
+  "displayId"?: string | null;
 }
 
 /** WallboardScanLocation */
@@ -3816,6 +3898,15 @@ export interface GetTenantStatusPageOptions {
   cursor?: string;
   offset?: number;
   anchor?: string;
+}
+
+export interface GetUnitTimelineOptions {
+  fromUtc?: string;
+  untilUtc?: string;
+  sources?: string;
+  field?: string;
+  pageSize?: number;
+  cursor?: string;
 }
 
 export interface GetUnitDocumentsOptions {

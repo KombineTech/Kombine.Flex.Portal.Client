@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-200 operations. OpenAPI SHA-256: `6cf227ea9f1ef49b34bc52bf4bb3a632ec519f3b0d5bec8c1087bb0950af3339`.
+202 operations. OpenAPI SHA-256: `7b1f48e6ae07a1a663cef021e1ddb38693c98a9351495b37e6cdc168adf4d837`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -119,6 +119,8 @@
 | `GetTenantStatusPage` | `getTenantStatusPage` | GET | `/api/v1/tenant/status/page` |
 | `ConvertToolTime` | `convertToolTime` | POST | `/api/v1/tenant/tools/time` |
 | `InspectToolKid` | `inspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
+| `GetUnitTimelineFields` | `getUnitTimelineFields` | GET | `/api/v1/units/{unitKid}/timeline/fields` |
+| `GetUnitTimeline` | `getUnitTimeline` | GET | `/api/v1/units/{unitKid}/timeline` |
 | `GetUnitDocuments` | `getUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |
 | `GetUnitDocumentsCount` | `getUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` |
 | `GetUnitDocumentNeighbors` | `getUnitDocumentNeighbors` | GET | `/api/v1/documents/{cycleKid}/neighbors` |

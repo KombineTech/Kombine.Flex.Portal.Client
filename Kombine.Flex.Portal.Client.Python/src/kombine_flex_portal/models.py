@@ -880,6 +880,7 @@ ManagerProfileResponse = TypedDict('ManagerProfileResponse', {
     'name': 'str | None',
     'tabs': 'list[int] | None',
     'hasBankAccess': 'bool',
+    'wallboardDisplayId': 'str | None',
     'iconKid': 'str | None',
     'databaseAccess': 'DatabaseAccessResponse',
     'navigationBanks': 'list[BankNavigationResponse] | None',
@@ -1528,6 +1529,49 @@ UnitTerminalResponse = TypedDict('UnitTerminalResponse', {
     'iconKid': 'str | None',
 }, total=False)
 
+UnitTimelineField = TypedDict('UnitTimelineField', {
+    'kind': 'str | None',
+    'id': 'int',
+    'name': 'str | None',
+}, total=False)
+
+UnitTimelineFields = TypedDict('UnitTimelineFields', {
+    'unitKid': 'str | None',
+    'bankName': 'str | None',
+    'locationName': 'str | None',
+    'unitName': 'str | None',
+    'unitType': 'int | None',
+    'sources': 'list[str] | None',
+    'fields': 'list[UnitTimelineField] | None',
+    'canReadTextDiagnostics': 'bool',
+    'canReadDocuments': 'bool',
+}, total=False)
+
+UnitTimelineItem = TypedDict('UnitTimelineItem', {
+    'eventKey': 'str | None',
+    'source': 'str | None',
+    'ms2000': 'str | None',
+    'timestampUtc': 'str',
+    'sync': 'int | None',
+    'field': 'str | None',
+    'amount': 'str | None',
+    'currency': 'str | None',
+    'text': 'str | None',
+    'contentStatus': 'str | None',
+    'period': 'int',
+    'userKid': 'str | None',
+    'documentKid': 'str | None',
+    'auxiliaryValue': 'str | None',
+}, total=False)
+
+UnitTimelinePage = TypedDict('UnitTimelinePage', {
+    'context': 'UnitTimelineFields',
+    'fromUtc': 'str',
+    'untilUtc': 'str',
+    'items': 'list[UnitTimelineItem] | None',
+    'nextCursor': 'str | None',
+}, total=False)
+
 UpdateObjectAddressRequest = TypedDict('UpdateObjectAddressRequest', {
     'address': Required['str | None'],
     'zip': Required['str | None'],
@@ -1732,6 +1776,7 @@ WallboardPairingToken = TypedDict('WallboardPairingToken', {
     'status': 'str | None',
     'accessToken': 'str | None',
     'expiresIn': 'int | None',
+    'displayId': 'str | None',
 }, total=False)
 
 WallboardScanLocation = TypedDict('WallboardScanLocation', {

@@ -113,6 +113,8 @@ GetTenantStatus	GET	/api/v1/tenant/status	200	{}
 GetTenantStatusPage	GET	/api/v1/tenant/status/page	200	{}
 ConvertToolTime	POST	/api/v1/tenant/tools/time	200	{}
 InspectToolKid	POST	/api/v1/tenant/tools/kid	200	{}
+GetUnitTimelineFields	GET	/api/v1/units/{unitKid}/timeline/fields	200	{}
+GetUnitTimeline	GET	/api/v1/units/{unitKid}/timeline	200	{}
 GetUnitDocuments	GET	/api/v1/units/{unitKid}/documents	200	{}
 GetUnitDocumentsCount	GET	/api/v1/units/{unitKid}/documents/count	200	{}
 GetUnitDocumentNeighbors	GET	/api/v1/documents/{cycleKid}/neighbors	200	{}

@@ -1744,11 +1744,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
 
-      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "name": null, "tabs": null, "hasBankAccess": false, "iconKid": null, "databaseAccess": <String, Object?>{"canWrite": null, "checkedAtUtc": "2026-10-20T10:00:00Z"}, "navigationBanks": null, "organisation": null, "gravatarUrl": null, "retentionDays": 7, "themeMode": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25, "tabDetails": null, "resourceGrants": null, "operationPermissions": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "name": null, "tabs": null, "hasBankAccess": false, "wallboardDisplayId": null, "iconKid": null, "databaseAccess": <String, Object?>{"canWrite": null, "checkedAtUtc": "2026-10-20T10:00:00Z"}, "navigationBanks": null, "organisation": null, "gravatarUrl": null, "retentionDays": 7, "themeMode": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25, "tabDetails": null, "resourceGrants": null, "operationPermissions": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getCurrentManager();
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "name": null, "tabs": null, "hasBankAccess": false, "iconKid": null, "databaseAccess": <String, Object?>{"canWrite": null, "checkedAtUtc": "2026-10-20T10:00:00Z"}, "navigationBanks": null, "organisation": null, "gravatarUrl": null, "retentionDays": 7, "themeMode": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25, "tabDetails": null, "resourceGrants": null, "operationPermissions": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "name": null, "tabs": null, "hasBankAccess": false, "wallboardDisplayId": null, "iconKid": null, "databaseAccess": <String, Object?>{"canWrite": null, "checkedAtUtc": "2026-10-20T10:00:00Z"}, "navigationBanks": null, "organisation": null, "gravatarUrl": null, "retentionDays": 7, "themeMode": 7, "iconSet": null, "language": null, "dateFormat": null, "numberFormat": null, "lineSpacing": 1.25, "tabDetails": null, "resourceGrants": null, "operationPermissions": null}));
     expect(sends, 1);
   });
 
@@ -2275,6 +2275,47 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.inspectToolKid(body: <String, Object?>{"kid": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"canonicalKid": null, "fields": null, "normalized": false}));
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitTimelineFields", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/units/fixture%20%2F%C3%A6%3F%26/timeline/fields");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"unitKid": null, "bankName": null, "locationName": null, "unitName": null, "unitType": null, "sources": null, "fields": null, "canReadTextDiagnostics": false, "canReadDocuments": false}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitTimelineFields(unitKid: "fixture /\u00e6?&");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"unitKid": null, "bankName": null, "locationName": null, "unitName": null, "unitType": null, "sources": null, "fields": null, "canReadTextDiagnostics": false, "canReadDocuments": false}));
+    expect(sends, 1);
+  });
+
+  test("wire GetUnitTimeline", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/units/fixture%20%2F%C3%A6%3F%26/timeline");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["fromUtc"], <Object?>["2026-10-20T10:00:00Z"]);
+      expect(request.url.queryParametersAll["untilUtc"], <Object?>["2026-10-20T10:00:00Z"]);
+      expect(request.url.queryParametersAll["sources"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["field"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["pageSize"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["cursor"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"context": <String, Object?>{"unitKid": null, "bankName": null, "locationName": null, "unitName": null, "unitType": null, "sources": null, "fields": null, "canReadTextDiagnostics": false, "canReadDocuments": false}, "fromUtc": "2026-10-20T10:00:00Z", "untilUtc": "2026-10-20T10:00:00Z", "items": null, "nextCursor": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitTimeline(unitKid: "fixture /\u00e6?&", fromUtc: "2026-10-20T10:00:00Z", untilUtc: "2026-10-20T10:00:00Z", sources: "fixture", field: "fixture", pageSize: 7, cursor: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"context": <String, Object?>{"unitKid": null, "bankName": null, "locationName": null, "unitName": null, "unitType": null, "sources": null, "fields": null, "canReadTextDiagnostics": false, "canReadDocuments": false}, "fromUtc": "2026-10-20T10:00:00Z", "untilUtc": "2026-10-20T10:00:00Z", "items": null, "nextCursor": null}));
     expect(sends, 1);
   });
 
@@ -3029,11 +3070,11 @@ void main() {
       expect(request.headers['authorization'], isNull);
       expect(request.body, encodeApiJson(<String, Object?>{"deviceCode": null}));
       expect(request.headers['content-type'], contains('application/json'));
-      return http.Response(encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null, "displayId": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.redeemWallboardPairing(pairingId: "fixture /\u00e6?&", body: <String, Object?>{"deviceCode": null});
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null, "displayId": null}));
     expect(sends, 1);
   });
 
@@ -3066,11 +3107,11 @@ void main() {
       expect(request.headers['authorization'], isNull);
       expect(request.body, encodeApiJson(<String, Object?>{"challenge": null, "signature": null}));
       expect(request.headers['content-type'], contains('application/json'));
-      return http.Response(encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null, "displayId": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.resumeWallboardSession(deviceId: "fixture /\u00e6?&", body: <String, Object?>{"challenge": null, "signature": null});
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null, "displayId": null}));
     expect(sends, 1);
   });
 

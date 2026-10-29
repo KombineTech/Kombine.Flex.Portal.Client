@@ -1751,6 +1751,39 @@ namespace Kombine.Flex.Portal.Client.Net20
             return (ToolKidInspectionResponse)SendJson("POST", path, body, headers, 200, typeof(ToolKidInspectionResponse));
         }
 
+        /// <summary>Get the authorized machine context, log categories and readable timeline fields.</summary>
+        public UnitTimelineFields GetUnitTimelineFields(string @unitKid)
+        {
+            string path = "api/v1/units/{unitKid}/timeline/fields";
+            path = path.Replace("{unitKid}", PathValue(@unitKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (UnitTimelineFields)SendJson("GET", path, null, headers, 200, typeof(UnitTimelineFields));
+        }
+
+        /// <summary>Page chronologically through one machine's authorized Log0–Log6 events.</summary>
+        public UnitTimelinePage GetUnitTimeline(string @unitKid)
+        {
+            return GetUnitTimeline(@unitKid, null);
+        }
+
+        /// <summary>Page chronologically through one machine's authorized Log0–Log6 events.</summary>
+        public UnitTimelinePage GetUnitTimeline(string @unitKid, GetUnitTimelineOptions options)
+        {
+            string path = "api/v1/units/{unitKid}/timeline";
+            path = path.Replace("{unitKid}", PathValue(@unitKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "fromUtc", options.FromUtc);
+                path = AddQuery(path, "untilUtc", options.UntilUtc);
+                path = AddQuery(path, "sources", options.Sources);
+                path = AddQuery(path, "field", options.Field);
+                path = AddQuery(path, "pageSize", options.PageSize);
+                path = AddQuery(path, "cursor", options.Cursor);
+            }
+            return (UnitTimelinePage)SendJson("GET", path, null, headers, 200, typeof(UnitTimelinePage));
+        }
+
         /// <summary>List document identities produced by the selected Unit for WashDoc3.</summary>
         public UnitDocumentPage GetUnitDocuments(string @unitKid)
         {

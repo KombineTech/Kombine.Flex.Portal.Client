@@ -6592,6 +6592,113 @@
     "binary": false
   },
   {
+    "operation": "GetUnitTimelineFields",
+    "dartMethod": "getUnitTimelineFields",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/timeline/fields",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitTimelineFields"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetUnitTimeline",
+    "dartMethod": "getUnitTimeline",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/timeline",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "fromUtc",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      {
+        "name": "untilUtc",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      {
+        "name": "sources",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "field",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitTimelinePage"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetUnitDocuments",
     "dartMethod": "getUnitDocuments",
     "example": null,

@@ -22,7 +22,7 @@ function sample(spec) {
   }
 }
 
-assert.equal(cases.length, 200);
+assert.equal(cases.length, 202);
 test('background upload accepts 202 and confirmation preserves unknown progress', async () => {
   const client = new PortalClient('https://api.example.test/', { fetch: async (url) => {
     const request = new URL(url);

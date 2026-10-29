@@ -160,6 +160,8 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetUnitOverviewAsync` | GET | `/api/v1/units/{unitKid}` |
 | `GetUnitsAsync` | GET | `/api/v1/units` |
 | `GetUnitSettingHistoryAsync` | GET | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history` |
+| `GetUnitTimelineAsync` | GET | `/api/v1/units/{unitKid}/timeline` |
+| `GetUnitTimelineFieldsAsync` | GET | `/api/v1/units/{unitKid}/timeline/fields` |
 | `GetUserCountAsync` | GET | `/api/v1/users/count` |
 | `GetUserExportCountAsync` | GET | `/api/v1/users/export-count` |
 | `GetUserReceiptsAsync` | GET | `/api/v1/users/{userKid}/receipts` |

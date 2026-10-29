@@ -15672,7 +15672,7 @@
           "ManagerSession"
         ],
         "summary": "Get your profile, permitted tabs, bank/location access, and operation permissions.",
-        "description": "### Profile and navigation\r\n            \r\n- Returns the manager information used by the portal's overview cards in **one request**. Reuse it for all cards and navigation on the current view.\r\n- Optional `gravatarUrl` is the preferred profile picture. Use `iconKid` when null or the image fails (including 404); it is a display hint, never an access grant.\r\n- Empty `tabs` means no permitted pages. `hasBankAccess=false` means no banks or locations on this site.\r\n- `Banks2` (tab 5) is included when granted, like other recognized tabs.\r\n- `tabs` and `tabDetails` follow `AttributeMetaSortOrder` on `eTab`, then numeric tab ID. Missing sort metadata has order zero.\r\n            \r\n### Permissions\r\n            \r\n- Missing permission settings default to **Read**. An invalid nonempty value yields `level=null` and all rights false.\r\n- Operation permissions and tab ordering never expand `resourceGrants` or grant additional pages.\r\n- No manager ID or tenant override is accepted.\r\n- `operationPermissions` also includes **Service**, from `PermissionService2` (3017). Its flags are independent and do not grant login or permissions in other categories.\r\n- `operationPermissions` includes **Installer**, from `PermissionInstaller2`, alongside Managers, Bank, Location, Unit and User. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; these flags grant no other category's permissions.\r\n            \r\n### Caching and database indicator\r\n            \r\n- Rights and account state are cached for at most **60 seconds** per API instance. Requests do not extend this; do not poll continuously.\r\n- `databaseAccess` is an informational Log7 read/append check shared for **10 minutes**, or **1 minute** when unknown.\r\n- The indicator grants no manager rights, executes no writes and does not verify every bank, trigger or operation.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 401:** expired/revoked token or inactive account.\r\n- **HTTP 503:** permission data is unavailable.",
+        "description": "### Profile and navigation\r\n            \r\n- Returns the manager information used by the portal's overview cards in **one request**. Reuse it for all cards and navigation on the current view.\r\n- Optional `gravatarUrl` is the preferred profile picture. Use `iconKid` when null or the image fails (including 404); it is a display hint, never an access grant.\r\n- Empty `tabs` means no permitted pages. `hasBankAccess=false` means no banks or locations on this site.\r\n- `Banks2` (tab 5) is included when granted, like other recognized tabs.\r\n- `tabs` and `tabDetails` follow `AttributeMetaSortOrder` on `eTab`, then numeric tab ID. Missing sort metadata has order zero.\r\n            \r\n### Permissions\r\n            \r\n- Missing permission settings default to **Read**. An invalid nonempty value yields `level=null` and all rights false.\r\n- Operation permissions and tab ordering never expand `resourceGrants` or grant additional pages.\r\n- No manager ID or tenant override is accepted.\r\n- Restricted screen sessions include only the manager KID and `wallboardDisplayId` resolved from their registered device, with empty permission/navigation arrays, hasBankAccess=false and empty/default personal fields. Ordinary manager sessions return null for wallboardDisplayId and retain their authorized profile. Never infer screen approval from the requested URL.\r\n- This is the only API operation allowed for Wallboard bearers. All other API reads and writes return 403; a device approval does not grant normal Portal access.\r\n- `operationPermissions` also includes **Service**, from `PermissionService2` (3017). Its flags are independent and do not grant login or permissions in other categories.\r\n- `operationPermissions` includes **Installer**, from `PermissionInstaller2`, alongside Managers, Bank, Location, Unit and User. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; these flags grant no other category's permissions.\r\n            \r\n### Caching and database indicator\r\n            \r\n- Rights and account state are cached for at most **60 seconds** per API instance. Requests do not extend this; do not poll continuously.\r\n- `databaseAccess` is an informational Log7 read/append check shared for **10 minutes**, or **1 minute** when unknown.\r\n- The indicator grants no manager rights, executes no writes and does not verify every bank, trigger or operation.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 401:** expired/revoked token or inactive account.\r\n- **HTTP 503:** permission data is unavailable.",
         "operationId": "GetCurrentManager",
         "responses": {
           "200": {
@@ -19333,6 +19333,346 @@
           },
           "403": {
             "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/units/{unitKid}/timeline/fields": {
+      "get": {
+        "tags": [
+          "Unit timeline"
+        ],
+        "summary": "Get the authorized machine context, log categories and readable timeline fields.",
+        "description": "Requires Offline3 (32), Bank/Location/Unit Read and the exact site's resource grant.\r\n            Bank, location and unit must be Log24-discovered and visible within RetentionDays. Original packed UnitType alone\r\n            selects the catalog. Hidden, credential and other-object settings are excluded, including Configuration.\r\n            Tags/Messages additionally need Users2 and User Read; Transactions need Account2 and User Read;\r\n            Reservation needs Bookings1 and User Read. These categories also require a whole-bank or tenant grant.\r\n            Text diagnostics require all three personal-data tabs, User Read and a whole-bank grant; otherwise only numeric\r\n            and boolean machine values are returned. Missing rights never expand access. Unknown unit types retain only\r\n            the explicit diagnostic/measurement profile. Document reads independently require WashDoc1/2/3.\r\n            400 invalid/foreign KID, 401 invalid session, 403 denied, 404 missing/hidden resource, 503 storage unavailable.\r\n            See /examples/unit-timeline. Locally implemented, unreleased.",
+        "operationId": "GetUnitTimelineFields",
+        "parameters": [
+          {
+            "name": "unitKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitTimelineFields"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitTimelineFields"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitTimelineFields"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/units/{unitKid}/timeline": {
+      "get": {
+        "tags": [
+          "Unit timeline"
+        ],
+        "summary": "Page chronologically through one machine's authorized Log0–Log6 events.",
+        "description": "Same authorization and field rules as GetUnitTimelineFields, rechecked on every page.\r\n            fromUtc is inclusive and untilUtc exclusive; supply both UTC ISO timestamps or omit both for the last six hours.\r\n            Maximum interval: 24 hours. pageSize: 1–200, default 100. sources: comma-separated exact eEntryType names\r\n            returned by GetUnitTimelineFields; omit for all allowed categories. field is an exact setting/state enum name,\r\n            applied to Settings/Live/States only; use sources to exclude other categories. Invalid or denied filters return 400/403.\r\n            nextCursor is opaque, expires after 15 minutes and binds tenant, manager, credentials, grants, retention, type,\r\n            privacy bounds and filters. Repeat unchanged filters and pageSize. Equal timestamps preserve distinct source rows.\r\n            Concurrent late arrivals or Sync changes are visible after refresh; this is not a transactionally frozen export.\r\n            ms2000/amount are decimal strings, preserving exact integer precision. Amount on Settings/Live/States is a field ID;\r\n            Transactions amount is minor currency units. User and document identifiers are canonical KIDs; raw tag credentials\r\n            and separate numeric user IDs are never returned. Personal categories omit missing/hidden residents and obey\r\n            LawAccountingYears/LawSurveillanceDays. Opaque Tags/Messages text is withheld; transaction descriptions use the\r\n            existing decoder. Sensitive/unbound fields are excluded before SQL, and unavailable text is explicitly redacted.\r\n            400 invalid query/cursor, 401/403 access, 404 hidden resource, 503 unavailable/oversized data. No writes or cache.",
+        "operationId": "GetUnitTimeline",
+        "parameters": [
+          {
+            "name": "unitKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fromUtc",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "untilUtc",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "sources",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitTimelinePage"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitTimelinePage"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitTimelinePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "text/plain": {
                 "schema": {
@@ -23234,7 +23574,7 @@
           "UserDirectoryCount"
         ],
         "summary": "Count active authorized residents for the UserFinder1 badge.",
-        "description": "Requires current active manager, UserFinder1 and User Read. Applies the trusted tenant's bank/location\r\n            grants and the same resident location decoding as GetUsers. Counts only nondeleted residents, independently of\r\n            the current filter/page. The count is an approximate display value cached for up to 24 hours per exact resource\r\n            scope in this API process; restart/eviction causes a fresh count. Never use it for authorization or accounting.\r\n            Session/tab/permission/scope are rechecked before every cache access. Log7 only, no writes. First count has a\r\n            12-second deadline; 401 revoked session, 403 missing access, 503 unavailable, never a fabricated zero.",
+        "description": "Requires current active manager, UserFinder1 and User Read. Applies the trusted tenant's bank/location\r\n            grants and the same resident location decoding as GetUsers. Counts only nondeleted residents, independently of\r\n            the current filter/page. The count is an approximate display value cached for up to 24 hours per exact resource\r\n            scope in this API process; restart/eviction causes a fresh count. Never use it for authorization or accounting.\r\n            Session/tab/permission/scope are rechecked before every cache access. Log7 only, no writes. First count has a\r\n            12-second HTTP wait. A shared count continues for at most 60 seconds across navigation/timeouts;\r\n            retry a temporary 503 with backoff to retrieve the completed cached result. At most one computation\r\n            runs per tenant process, with 16 pending exact scopes. 401 revoked session, 403 missing access,\r\n            503 unavailable, never a fabricated zero.",
         "operationId": "GetUserCount",
         "responses": {
           "200": {
@@ -24449,7 +24789,7 @@
           "WallboardPairing"
         ],
         "summary": "Poll with the private deviceCode. Successful redemption consumes the pairing atomically.",
-        "description": "Returns pending, approved (with accessToken and expiresIn), or expired. An unknown code, wrong device secret,\r\n            replay or revoked manager returns expired. Store the returned bearer server-side; never put it in a URL or browser storage.",
+        "description": "Returns pending, approved (with accessToken, expiresIn and the approved displayId), or expired.\r\n            Bind the screen to this exact, case-sensitive displayId; never approve an arbitrary URL ID from a browser session.\r\n            An unknown code, wrong device secret,\r\n            replay or revoked manager returns expired. Store the returned bearer server-side; never put it in a URL or browser storage.",
         "operationId": "RedeemWallboardPairing",
         "parameters": [
           {
@@ -24618,7 +24958,7 @@
           "WallboardPairing"
         ],
         "summary": "Resume a permanently approved screen after proving possession of its private signing key.",
-        "description": "No maximum offline duration. Challenges are single-use; device approval itself has no expiry.\r\n            Rechecks the active manager and credential stamps before returning a ten-day read-only bearer.",
+        "description": "No maximum offline duration. Challenges are single-use; device approval itself has no expiry.\r\n            Rechecks the active manager and credential stamps before returning a ten-day screen-only bearer.\r\n            Only GetCurrentManager accepts this bearer, with no manager permissions or business data.\r\n            The returned displayId comes from the stored approval and must exactly match the requested screen ID.",
         "operationId": "ResumeWallboardSession",
         "parameters": [
           {
@@ -31509,6 +31849,11 @@
             "type": "boolean",
             "description": "Whether at least one bank/location grant applies on this site."
           },
+          "wallboardDisplayId": {
+            "type": "string",
+            "description": "Exact approved display ID for a read-only Wallboard session, resolved from its device record. Null for ordinary managers.",
+            "nullable": true
+          },
           "iconKid": {
             "type": "string",
             "description": "API-computed icon identity; use unchanged in the icon image URL.",
@@ -33923,6 +34268,166 @@
         "additionalProperties": false,
         "description": "Visible authorized main terminal identified by a canonical unit KID; no extra access is granted."
       },
+      "UnitTimelineField": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One readable enum field; numeric IDs remain stable."
+      },
+      "UnitTimelineFields": {
+        "type": "object",
+        "properties": {
+          "unitKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnitTimelineField"
+            },
+            "nullable": true
+          },
+          "canReadTextDiagnostics": {
+            "type": "boolean"
+          },
+          "canReadDocuments": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Authorized context and capabilities; a capability never replaces endpoint authorization."
+      },
+      "UnitTimelineItem": {
+        "type": "object",
+        "properties": {
+          "eventKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "ms2000": {
+            "type": "string",
+            "nullable": true
+          },
+          "timestampUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sync": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "field": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "period": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "auxiliaryValue": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One log row; eventKey is a unit-local source/time key, not a resource grant or object KID."
+      },
+      "UnitTimelinePage": {
+        "type": "object",
+        "properties": {
+          "context": {
+            "$ref": "#/components/schemas/UnitTimelineFields"
+          },
+          "fromUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "untilUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnitTimelineItem"
+            },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Chronological page over an inclusive/exclusive UTC range."
+      },
       "UpdateObjectAddressRequest": {
         "required": [
           "address",
@@ -34674,6 +35179,10 @@
           "expiresIn": {
             "type": "integer",
             "format": "int64",
+            "nullable": true
+          },
+          "displayId": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -35668,6 +36177,9 @@
     },
     {
       "name": "Tools"
+    },
+    {
+      "name": "Unit timeline"
     },
     {
       "name": "UnitDocumentList"
