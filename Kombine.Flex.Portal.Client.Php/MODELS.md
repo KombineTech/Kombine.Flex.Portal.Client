@@ -665,7 +665,7 @@ array{'field': string|null, 'name': string|null, 'organisation': string|null, 'e
 ### ManagerProfileResponse
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
+array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'wallboardDisplayId'?: string|null, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
 ```
 
 ### ManagerResetPasswordRequest
@@ -1160,6 +1160,30 @@ array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, '
 array{'kid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
 ```
 
+### UnitTimelineField
+
+```php
+array{'kind'?: string|null, 'id'?: int, 'name'?: string|null}
+```
+
+### UnitTimelineFields
+
+```php
+array{'unitKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'unitType'?: int|null, 'sources'?: list<string>|null, 'fields'?: list<UnitTimelineField>|null, 'canReadTextDiagnostics'?: bool, 'canReadDocuments'?: bool}
+```
+
+### UnitTimelineItem
+
+```php
+array{'eventKey'?: string|null, 'source'?: string|null, 'ms2000'?: string|null, 'timestampUtc'?: string, 'sync'?: int|null, 'field'?: string|null, 'amount'?: string|null, 'currency'?: string|null, 'text'?: string|null, 'contentStatus'?: string|null, 'period'?: int, 'userKid'?: string|null, 'documentKid'?: string|null, 'auxiliaryValue'?: string|null}
+```
+
+### UnitTimelinePage
+
+```php
+array{'context'?: UnitTimelineFields, 'fromUtc'?: string, 'untilUtc'?: string, 'items'?: list<UnitTimelineItem>|null, 'nextCursor'?: string|null}
+```
+
 ### UpdateObjectAddressRequest
 
 ```php
@@ -1313,7 +1337,7 @@ array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: strin
 ### WallboardPairingToken
 
 ```php
-array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null}
+array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null, 'displayId'?: string|null}
 ```
 
 ### WallboardScanLocation

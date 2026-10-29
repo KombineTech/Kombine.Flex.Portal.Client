@@ -117,6 +117,8 @@
 | `GetTenantStatusPage` | `get_tenant_status_page` | `getTenantStatusPage` | GET | `/api/v1/tenant/status/page` |
 | `ConvertToolTime` | `convert_tool_time` | `convertToolTime` | POST | `/api/v1/tenant/tools/time` |
 | `InspectToolKid` | `inspect_tool_kid` | `inspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
+| `GetUnitTimelineFields` | `get_unit_timeline_fields` | `getUnitTimelineFields` | GET | `/api/v1/units/{unitKid}/timeline/fields` |
+| `GetUnitTimeline` | `get_unit_timeline` | `getUnitTimeline` | GET | `/api/v1/units/{unitKid}/timeline` |
 | `GetUnitDocuments` | `get_unit_documents` | `getUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |
 | `GetUnitDocumentsCount` | `get_unit_documents_count` | `getUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` |
 | `GetUnitDocumentNeighbors` | `get_unit_document_neighbors` | `getUnitDocumentNeighbors` | GET | `/api/v1/documents/{cycleKid}/neighbors` |

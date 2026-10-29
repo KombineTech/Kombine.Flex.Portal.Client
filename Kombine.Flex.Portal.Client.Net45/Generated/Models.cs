@@ -3292,6 +3292,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         public bool? HasBankAccess { get { return _HasBankAccess; } set { _HasBankAccess = value; } }
         private bool? _HasBankAccess;
 
+        /// <summary>Exact approved display ID for a read-only Wallboard session, resolved from its device record. Null for ordinary managers.</summary>
+        [JsonField("wallboardDisplayId")]
+        public string WallboardDisplayId { get { return _WallboardDisplayId; } set { _WallboardDisplayId = value; } }
+        private string _WallboardDisplayId;
+
         /// <summary>API-computed icon identity; use unchanged in the icon image URL.</summary>
         [JsonField("iconKid")]
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
@@ -5704,6 +5709,181 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>One readable enum field; numeric IDs remain stable.</summary>
+    public sealed class UnitTimelineField
+    {
+        /// <summary>kind</summary>
+        [JsonField("kind")]
+        public string Kind { get { return _Kind; } set { _Kind = value; } }
+        private string _Kind;
+
+        /// <summary>id</summary>
+        [JsonField("id")]
+        public int? Id { get { return _Id; } set { _Id = value; } }
+        private int? _Id;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+    }
+
+    /// <summary>Authorized context and capabilities; a capability never replaces endpoint authorization.</summary>
+    public sealed class UnitTimelineFields
+    {
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>bankName</summary>
+        [JsonField("bankName")]
+        public string BankName { get { return _BankName; } set { _BankName = value; } }
+        private string _BankName;
+
+        /// <summary>locationName</summary>
+        [JsonField("locationName")]
+        public string LocationName { get { return _LocationName; } set { _LocationName = value; } }
+        private string _LocationName;
+
+        /// <summary>unitName</summary>
+        [JsonField("unitName")]
+        public string UnitName { get { return _UnitName; } set { _UnitName = value; } }
+        private string _UnitName;
+
+        /// <summary>unitType</summary>
+        [JsonField("unitType")]
+        public int? UnitType { get { return _UnitType; } set { _UnitType = value; } }
+        private int? _UnitType;
+
+        /// <summary>sources</summary>
+        [JsonField("sources")]
+        public string[] Sources { get { return _Sources; } set { _Sources = value; } }
+        private string[] _Sources;
+
+        /// <summary>fields</summary>
+        [JsonField("fields")]
+        public UnitTimelineField[] Fields { get { return _Fields; } set { _Fields = value; } }
+        private UnitTimelineField[] _Fields;
+
+        /// <summary>canReadTextDiagnostics</summary>
+        [JsonField("canReadTextDiagnostics")]
+        public bool? CanReadTextDiagnostics { get { return _CanReadTextDiagnostics; } set { _CanReadTextDiagnostics = value; } }
+        private bool? _CanReadTextDiagnostics;
+
+        /// <summary>canReadDocuments</summary>
+        [JsonField("canReadDocuments")]
+        public bool? CanReadDocuments { get { return _CanReadDocuments; } set { _CanReadDocuments = value; } }
+        private bool? _CanReadDocuments;
+
+    }
+
+    /// <summary>One log row; eventKey is a unit-local source/time key, not a resource grant or object KID.</summary>
+    public sealed class UnitTimelineItem
+    {
+        /// <summary>eventKey</summary>
+        [JsonField("eventKey")]
+        public string EventKey { get { return _EventKey; } set { _EventKey = value; } }
+        private string _EventKey;
+
+        /// <summary>source</summary>
+        [JsonField("source")]
+        public string Source { get { return _Source; } set { _Source = value; } }
+        private string _Source;
+
+        /// <summary>ms2000</summary>
+        [JsonField("ms2000")]
+        public string Ms2000 { get { return _Ms2000; } set { _Ms2000 = value; } }
+        private string _Ms2000;
+
+        /// <summary>timestampUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("timestampUtc")]
+        public string TimestampUtc { get { return _TimestampUtc; } set { _TimestampUtc = value; } }
+        private string _TimestampUtc;
+
+        /// <summary>sync</summary>
+        [JsonField("sync")]
+        public int? Sync { get { return _Sync; } set { _Sync = value; } }
+        private int? _Sync;
+
+        /// <summary>field</summary>
+        [JsonField("field")]
+        public string Field { get { return _Field; } set { _Field = value; } }
+        private string _Field;
+
+        /// <summary>amount</summary>
+        [JsonField("amount")]
+        public string Amount { get { return _Amount; } set { _Amount = value; } }
+        private string _Amount;
+
+        /// <summary>currency</summary>
+        [JsonField("currency")]
+        public string Currency { get { return _Currency; } set { _Currency = value; } }
+        private string _Currency;
+
+        /// <summary>text</summary>
+        [JsonField("text")]
+        public string Text { get { return _Text; } set { _Text = value; } }
+        private string _Text;
+
+        /// <summary>contentStatus</summary>
+        [JsonField("contentStatus")]
+        public string ContentStatus { get { return _ContentStatus; } set { _ContentStatus = value; } }
+        private string _ContentStatus;
+
+        /// <summary>period</summary>
+        [JsonField("period")]
+        public int? Period { get { return _Period; } set { _Period = value; } }
+        private int? _Period;
+
+        /// <summary>userKid</summary>
+        [JsonField("userKid")]
+        public string UserKid { get { return _UserKid; } set { _UserKid = value; } }
+        private string _UserKid;
+
+        /// <summary>documentKid</summary>
+        [JsonField("documentKid")]
+        public string DocumentKid { get { return _DocumentKid; } set { _DocumentKid = value; } }
+        private string _DocumentKid;
+
+        /// <summary>auxiliaryValue</summary>
+        [JsonField("auxiliaryValue")]
+        public string AuxiliaryValue { get { return _AuxiliaryValue; } set { _AuxiliaryValue = value; } }
+        private string _AuxiliaryValue;
+
+    }
+
+    /// <summary>Chronological page over an inclusive/exclusive UTC range.</summary>
+    public sealed class UnitTimelinePage
+    {
+        /// <summary>context</summary>
+        [JsonField("context")]
+        public UnitTimelineFields Context { get { return _Context; } set { _Context = value; } }
+        private UnitTimelineFields _Context;
+
+        /// <summary>fromUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("fromUtc")]
+        public string FromUtc { get { return _FromUtc; } set { _FromUtc = value; } }
+        private string _FromUtc;
+
+        /// <summary>untilUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("untilUtc")]
+        public string UntilUtc { get { return _UntilUtc; } set { _UntilUtc = value; } }
+        private string _UntilUtc;
+
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public UnitTimelineItem[] Items { get { return _Items; } set { _Items = value; } }
+        private UnitTimelineItem[] _Items;
+
+        /// <summary>nextCursor</summary>
+        [JsonField("nextCursor")]
+        public string NextCursor { get { return _NextCursor; } set { _NextCursor = value; } }
+        private string _NextCursor;
+
+    }
+
     /// <summary>Both address components and the last observed revision are required.</summary>
     public sealed class UpdateObjectAddressRequest
     {
@@ -6471,6 +6651,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         [JsonField("expiresIn")]
         public long? ExpiresIn { get { return _ExpiresIn; } set { _ExpiresIn = value; } }
         private long? _ExpiresIn;
+
+        /// <summary>displayId</summary>
+        [JsonField("displayId")]
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
 
     }
 
@@ -8508,6 +8693,35 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>anchor</summary>
         public string Anchor { get { return _Anchor; } set { _Anchor = value; } }
         private string _Anchor;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUnitTimeline. Null values use API defaults.</summary>
+    public sealed class GetUnitTimelineOptions
+    {
+        /// <summary>fromUtc ISO 8601 text, sent unchanged.</summary>
+        public string FromUtc { get { return _FromUtc; } set { _FromUtc = value; } }
+        private string _FromUtc;
+
+        /// <summary>untilUtc ISO 8601 text, sent unchanged.</summary>
+        public string UntilUtc { get { return _UntilUtc; } set { _UntilUtc = value; } }
+        private string _UntilUtc;
+
+        /// <summary>sources</summary>
+        public string Sources { get { return _Sources; } set { _Sources = value; } }
+        private string _Sources;
+
+        /// <summary>field</summary>
+        public string Field { get { return _Field; } set { _Field = value; } }
+        private string _Field;
+
+        /// <summary>pageSize</summary>
+        public int? PageSize { get { return _PageSize; } set { _PageSize = value; } }
+        private int? _PageSize;
+
+        /// <summary>cursor</summary>
+        public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
+        private string _Cursor;
 
     }
 

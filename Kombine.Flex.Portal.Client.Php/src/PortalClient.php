@@ -115,7 +115,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ManagerPermissionRoleResponse array{'role'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'canEditPermissions'?: bool, 'tabs'?: list<ManagerTabResponse>|null, 'tabsRevision'?: string|null, 'canEditTabs'?: bool, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool}
  * @phpstan-type ManagerProfileChangeRequest array{'value': mixed, 'expectedRevision': string|null}
  * @phpstan-type ManagerProfileChangeResponse array{'field': string|null, 'name': string|null, 'organisation': string|null, 'email': string|null, 'iconKid': string|null, 'gravatarUrl'?: string|null, 'availableIcons'?: list<string>|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedMs2000'?: int, 'deletedAt'?: string|null, 'retentionDays'?: int, 'profileRevision': string|null, 'canEditProfile'?: bool}
- * @phpstan-type ManagerProfileResponse array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
+ * @phpstan-type ManagerProfileResponse array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'wallboardDisplayId'?: string|null, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
  * @phpstan-type ManagerResetPasswordRequest array{'token': string, 'password': string, 'confirmPassword': string}
  * @phpstan-type ManagerResourceGrantResponse array{'kid'?: string|null, 'scope'?: string|null}
  * @phpstan-type ManagerSessionResponse array{'accessToken'?: string|null, 'expiresIn'?: int, 'tokenType'?: string|null}
@@ -198,6 +198,10 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UnitSettingRequest array{'value': string|null, 'expectedRevision': string|null}
  * @phpstan-type UnitSettingResponse array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, 'value'?: string|null, 'ms2000'?: int, 'revision'?: string|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse}
  * @phpstan-type UnitTerminalResponse array{'kid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
+ * @phpstan-type UnitTimelineField array{'kind'?: string|null, 'id'?: int, 'name'?: string|null}
+ * @phpstan-type UnitTimelineFields array{'unitKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'unitType'?: int|null, 'sources'?: list<string>|null, 'fields'?: list<UnitTimelineField>|null, 'canReadTextDiagnostics'?: bool, 'canReadDocuments'?: bool}
+ * @phpstan-type UnitTimelineItem array{'eventKey'?: string|null, 'source'?: string|null, 'ms2000'?: string|null, 'timestampUtc'?: string, 'sync'?: int|null, 'field'?: string|null, 'amount'?: string|null, 'currency'?: string|null, 'text'?: string|null, 'contentStatus'?: string|null, 'period'?: int, 'userKid'?: string|null, 'documentKid'?: string|null, 'auxiliaryValue'?: string|null}
+ * @phpstan-type UnitTimelinePage array{'context'?: UnitTimelineFields, 'fromUtc'?: string, 'untilUtc'?: string, 'items'?: list<UnitTimelineItem>|null, 'nextCursor'?: string|null}
  * @phpstan-type UpdateObjectAddressRequest array{'address': string|null, 'zip': string|null, 'expectedRevision': string|null}
  * @phpstan-type UserActivationResponse array{'kid'?: string|null, 'name'?: string|null, 'number'?: string|null, 'activationCode'?: string|null, 'qrCodeDataV1'?: string|null, 'qrCodeDataV2'?: string|null}
  * @phpstan-type UserAttributeInput array{'attribute'?: string|null, 'value'?: int}
@@ -223,7 +227,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type WallboardDeviceInfo array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
  * @phpstan-type WallboardPairingInfo array{'pairingId'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'approved'?: bool}
  * @phpstan-type WallboardPairingStarted array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'intervalSeconds'?: int}
- * @phpstan-type WallboardPairingToken array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null}
+ * @phpstan-type WallboardPairingToken array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null, 'displayId'?: string|null}
  * @phpstan-type WallboardScanLocation array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float, 'capturedAt'?: string}
  * @phpstan-type WashDocChartDosing array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
  * @phpstan-type WashDocChartEvent array{'ms2000'?: int, 'kind'?: string|null, 'name'?: string|null, 'value'?: int|float|null, 'label'?: string|null, 'localization'?: string|null, 'isCalculated'?: bool}
@@ -1473,6 +1477,27 @@ final class PortalClient extends BaseClient
     public function inspectToolKid(#[\SensitiveParameter] array $body): mixed
     {
         return $this->request('InspectToolKid', [], $body);
+    }
+
+    /**
+     * Get the authorized machine context, log categories and readable timeline fields.
+     * @param string $unitKid
+     * @return UnitTimelineFields
+     */
+    public function getUnitTimelineFields(mixed $unitKid): mixed
+    {
+        return $this->request('GetUnitTimelineFields', ['unitKid' => $unitKid], null);
+    }
+
+    /**
+     * Page chronologically through one machine's authorized Log0–Log6 events.
+     * @param string $unitKid
+     * @param array{'fromUtc'?: string, 'untilUtc'?: string, 'sources'?: string, 'field'?: string, 'pageSize'?: int, 'cursor'?: string} $options
+     * @return UnitTimelinePage
+     */
+    public function getUnitTimeline(mixed $unitKid, array $options = []): mixed
+    {
+        return $this->request('GetUnitTimeline', ['unitKid' => $unitKid] + $options, null);
     }
 
     /**

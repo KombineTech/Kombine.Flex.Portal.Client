@@ -467,6 +467,14 @@ class PortalClient(BaseClient):
         'Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.'
         return self._request('InspectToolKid', {}, body)
 
+    def get_unit_timeline_fields(self, unit_kid: str) -> UnitTimelineFields:
+        'Get the authorized machine context, log categories and readable timeline fields.'
+        return self._request('GetUnitTimelineFields', {'unitKid': unit_kid}, None)
+
+    def get_unit_timeline(self, unit_kid: str, *, from_utc: str | None = None, until_utc: str | None = None, sources: str | None = None, field: str | None = None, page_size: int | None = None, cursor: str | None = None) -> UnitTimelinePage:
+        "Page chronologically through one machine's authorized Log0–Log6 events."
+        return self._request('GetUnitTimeline', {'unitKid': unit_kid, 'fromUtc': from_utc, 'untilUtc': until_utc, 'sources': sources, 'field': field, 'pageSize': page_size, 'cursor': cursor}, None)
+
     def get_unit_documents(self, unit_kid: str, *, sort: str | None = None, direction: str | None = None, offset: int | None = None, limit: int | None = None, search: str | None = None, date: str | None = None) -> UnitDocumentPage:
         'List document identities produced by the selected Unit for WashDoc3.'
         return self._request('GetUnitDocuments', {'unitKid': unit_kid, 'Sort': sort, 'Direction': direction, 'Offset': offset, 'Limit': limit, 'Search': search, 'Date': date}, None)

@@ -157,6 +157,8 @@
 | `GetUnitIcons` | GET | `/api/v1/units/icons` |
 | `GetUnitOverview` | GET | `/api/v1/units/{unitKid}` |
 | `GetUnitSettingHistory` | GET | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history` |
+| `GetUnitTimelineFields` | GET | `/api/v1/units/{unitKid}/timeline/fields` |
+| `GetUnitTimeline` | GET | `/api/v1/units/{unitKid}/timeline` |
 | `GetUnits` | GET | `/api/v1/units` |
 | `GetUserCount` | GET | `/api/v1/users/count` |
 | `GetUserExportCount` | GET | `/api/v1/users/export-count` |

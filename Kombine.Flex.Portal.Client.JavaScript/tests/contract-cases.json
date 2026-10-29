@@ -7012,6 +7012,123 @@
     "example": {}
   },
   {
+    "operation": "GetUnitTimelineFields",
+    "python": "get_unit_timeline_fields",
+    "javascript": "getUnitTimelineFields",
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/timeline/fields",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitTimelineFields"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitTimeline",
+    "python": "get_unit_timeline",
+    "javascript": "getUnitTimeline",
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/timeline",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "fromUtc",
+        "where": "query",
+        "py": "from_utc",
+        "js": "fromUtc",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      {
+        "name": "untilUtc",
+        "where": "query",
+        "py": "until_utc",
+        "js": "untilUtc",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      {
+        "name": "sources",
+        "where": "query",
+        "py": "sources",
+        "js": "sources",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "field",
+        "where": "query",
+        "py": "field",
+        "js": "field",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitTimelinePage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetUnitDocuments",
     "python": "get_unit_documents",
     "javascript": "getUnitDocuments",

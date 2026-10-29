@@ -2116,6 +2116,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Missing permission settings default to **Read**. An invalid nonempty value yields `level=null` and all rights false.
         /// <br/>- Operation permissions and tab ordering never expand `resourceGrants` or grant additional pages.
         /// <br/>- No manager ID or tenant override is accepted.
+        /// <br/>- Restricted screen sessions include only the manager KID and `wallboardDisplayId` resolved from their registered device, with empty permission/navigation arrays, hasBankAccess=false and empty/default personal fields. Ordinary manager sessions return null for wallboardDisplayId and retain their authorized profile. Never infer screen approval from the requested URL.
+        /// <br/>- This is the only API operation allowed for Wallboard bearers. All other API reads and writes return 403; a device approval does not grant normal Portal access.
         /// <br/>- `operationPermissions` also includes **Service**, from `PermissionService2` (3017). Its flags are independent and do not grant login or permissions in other categories.
         /// <br/>- `operationPermissions` includes **Installer**, from `PermissionInstaller2`, alongside Managers, Bank, Location, Unit and User. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; these flags grant no other category's permissions.
         /// <br/>
@@ -2688,6 +2690,50 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ToolKidInspectionResponse> InspectToolKidAsync(ToolKidInspectionRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the authorized machine context, log categories and readable timeline fields.
+        /// </summary>
+        /// <remarks>
+        /// Requires Offline3 (32), Bank/Location/Unit Read and the exact site's resource grant.
+        /// <br/>            Bank, location and unit must be Log24-discovered and visible within RetentionDays. Original packed UnitType alone
+        /// <br/>            selects the catalog. Hidden, credential and other-object settings are excluded, including Configuration.
+        /// <br/>            Tags/Messages additionally need Users2 and User Read; Transactions need Account2 and User Read;
+        /// <br/>            Reservation needs Bookings1 and User Read. These categories also require a whole-bank or tenant grant.
+        /// <br/>            Text diagnostics require all three personal-data tabs, User Read and a whole-bank grant; otherwise only numeric
+        /// <br/>            and boolean machine values are returned. Missing rights never expand access. Unknown unit types retain only
+        /// <br/>            the explicit diagnostic/measurement profile. Document reads independently require WashDoc1/2/3.
+        /// <br/>            400 invalid/foreign KID, 401 invalid session, 403 denied, 404 missing/hidden resource, 503 storage unavailable.
+        /// <br/>            See /examples/unit-timeline. Locally implemented, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitTimelineFields> GetUnitTimelineFieldsAsync(string unitKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Page chronologically through one machine's authorized Log0–Log6 events.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization and field rules as GetUnitTimelineFields, rechecked on every page.
+        /// <br/>            fromUtc is inclusive and untilUtc exclusive; supply both UTC ISO timestamps or omit both for the last six hours.
+        /// <br/>            Maximum interval: 24 hours. pageSize: 1–200, default 100. sources: comma-separated exact eEntryType names
+        /// <br/>            returned by GetUnitTimelineFields; omit for all allowed categories. field is an exact setting/state enum name,
+        /// <br/>            applied to Settings/Live/States only; use sources to exclude other categories. Invalid or denied filters return 400/403.
+        /// <br/>            nextCursor is opaque, expires after 15 minutes and binds tenant, manager, credentials, grants, retention, type,
+        /// <br/>            privacy bounds and filters. Repeat unchanged filters and pageSize. Equal timestamps preserve distinct source rows.
+        /// <br/>            Concurrent late arrivals or Sync changes are visible after refresh; this is not a transactionally frozen export.
+        /// <br/>            ms2000/amount are decimal strings, preserving exact integer precision. Amount on Settings/Live/States is a field ID;
+        /// <br/>            Transactions amount is minor currency units. User and document identifiers are canonical KIDs; raw tag credentials
+        /// <br/>            and separate numeric user IDs are never returned. Personal categories omit missing/hidden residents and obey
+        /// <br/>            LawAccountingYears/LawSurveillanceDays. Opaque Tags/Messages text is withheld; transaction descriptions use the
+        /// <br/>            existing decoder. Sensitive/unbound fields are excluded before SQL, and unavailable text is explicitly redacted.
+        /// <br/>            400 invalid query/cursor, 401/403 access, 404 hidden resource, 503 unavailable/oversized data. No writes or cache.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitTimelinePage> GetUnitTimelineAsync(string unitKid, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? untilUtc = null, string? sources = null, string? field = null, int? pageSize = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -3297,7 +3343,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            the current filter/page. The count is an approximate display value cached for up to 24 hours per exact resource
         /// <br/>            scope in this API process; restart/eviction causes a fresh count. Never use it for authorization or accounting.
         /// <br/>            Session/tab/permission/scope are rechecked before every cache access. Log7 only, no writes. First count has a
-        /// <br/>            12-second deadline; 401 revoked session, 403 missing access, 503 unavailable, never a fabricated zero.
+        /// <br/>            12-second HTTP wait. A shared count continues for at most 60 seconds across navigation/timeouts;
+        /// <br/>            retry a temporary 503 with backoff to retrieve the completed cached result. At most one computation
+        /// <br/>            runs per tenant process, with 16 pending exact scopes. 401 revoked session, 403 missing access,
+        /// <br/>            503 unavailable, never a fabricated zero.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -3492,7 +3541,9 @@ namespace Kombine.Flex.Portal.Client
         /// Poll with the private deviceCode. Successful redemption consumes the pairing atomically.
         /// </summary>
         /// <remarks>
-        /// Returns pending, approved (with accessToken and expiresIn), or expired. An unknown code, wrong device secret,
+        /// Returns pending, approved (with accessToken, expiresIn and the approved displayId), or expired.
+        /// <br/>            Bind the screen to this exact, case-sensitive displayId; never approve an arbitrary URL ID from a browser session.
+        /// <br/>            An unknown code, wrong device secret,
         /// <br/>            replay or revoked manager returns expired. Store the returned bearer server-side; never put it in a URL or browser storage.
         /// </remarks>
         /// <returns>OK</returns>
@@ -3517,7 +3568,9 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// No maximum offline duration. Challenges are single-use; device approval itself has no expiry.
-        /// <br/>            Rechecks the active manager and credential stamps before returning a ten-day read-only bearer.
+        /// <br/>            Rechecks the active manager and credential stamps before returning a ten-day screen-only bearer.
+        /// <br/>            Only GetCurrentManager accepts this bearer, with no manager permissions or business data.
+        /// <br/>            The returned displayId comes from the stored approval and must exactly match the requested screen ID.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -17409,6 +17462,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Missing permission settings default to **Read**. An invalid nonempty value yields `level=null` and all rights false.
         /// <br/>- Operation permissions and tab ordering never expand `resourceGrants` or grant additional pages.
         /// <br/>- No manager ID or tenant override is accepted.
+        /// <br/>- Restricted screen sessions include only the manager KID and `wallboardDisplayId` resolved from their registered device, with empty permission/navigation arrays, hasBankAccess=false and empty/default personal fields. Ordinary manager sessions return null for wallboardDisplayId and retain their authorized profile. Never infer screen approval from the requested URL.
+        /// <br/>- This is the only API operation allowed for Wallboard bearers. All other API reads and writes return 403; a device approval does not grant normal Portal access.
         /// <br/>- `operationPermissions` also includes **Service**, from `PermissionService2` (3017). Its flags are independent and do not grant login or permissions in other categories.
         /// <br/>- `operationPermissions` includes **Installer**, from `PermissionInstaller2`, alongside Managers, Bank, Location, Unit and User. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; these flags grant no other category's permissions.
         /// <br/>
@@ -21086,6 +21141,318 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get the authorized machine context, log categories and readable timeline fields.
+        /// </summary>
+        /// <remarks>
+        /// Requires Offline3 (32), Bank/Location/Unit Read and the exact site's resource grant.
+        /// <br/>            Bank, location and unit must be Log24-discovered and visible within RetentionDays. Original packed UnitType alone
+        /// <br/>            selects the catalog. Hidden, credential and other-object settings are excluded, including Configuration.
+        /// <br/>            Tags/Messages additionally need Users2 and User Read; Transactions need Account2 and User Read;
+        /// <br/>            Reservation needs Bookings1 and User Read. These categories also require a whole-bank or tenant grant.
+        /// <br/>            Text diagnostics require all three personal-data tabs, User Read and a whole-bank grant; otherwise only numeric
+        /// <br/>            and boolean machine values are returned. Missing rights never expand access. Unknown unit types retain only
+        /// <br/>            the explicit diagnostic/measurement profile. Document reads independently require WashDoc1/2/3.
+        /// <br/>            400 invalid/foreign KID, 401 invalid session, 403 denied, 404 missing/hidden resource, 503 storage unavailable.
+        /// <br/>            See /examples/unit-timeline. Locally implemented, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitTimelineFields> GetUnitTimelineFieldsAsync(string unitKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (unitKid == null)
+                throw new System.ArgumentNullException("unitKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/units/{unitKid}/timeline/fields"
+                    urlBuilder_.Append("api/v1/units/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/timeline/fields");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitTimelineFields>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Page chronologically through one machine's authorized Log0–Log6 events.
+        /// </summary>
+        /// <remarks>
+        /// Same authorization and field rules as GetUnitTimelineFields, rechecked on every page.
+        /// <br/>            fromUtc is inclusive and untilUtc exclusive; supply both UTC ISO timestamps or omit both for the last six hours.
+        /// <br/>            Maximum interval: 24 hours. pageSize: 1–200, default 100. sources: comma-separated exact eEntryType names
+        /// <br/>            returned by GetUnitTimelineFields; omit for all allowed categories. field is an exact setting/state enum name,
+        /// <br/>            applied to Settings/Live/States only; use sources to exclude other categories. Invalid or denied filters return 400/403.
+        /// <br/>            nextCursor is opaque, expires after 15 minutes and binds tenant, manager, credentials, grants, retention, type,
+        /// <br/>            privacy bounds and filters. Repeat unchanged filters and pageSize. Equal timestamps preserve distinct source rows.
+        /// <br/>            Concurrent late arrivals or Sync changes are visible after refresh; this is not a transactionally frozen export.
+        /// <br/>            ms2000/amount are decimal strings, preserving exact integer precision. Amount on Settings/Live/States is a field ID;
+        /// <br/>            Transactions amount is minor currency units. User and document identifiers are canonical KIDs; raw tag credentials
+        /// <br/>            and separate numeric user IDs are never returned. Personal categories omit missing/hidden residents and obey
+        /// <br/>            LawAccountingYears/LawSurveillanceDays. Opaque Tags/Messages text is withheld; transaction descriptions use the
+        /// <br/>            existing decoder. Sensitive/unbound fields are excluded before SQL, and unavailable text is explicitly redacted.
+        /// <br/>            400 invalid query/cursor, 401/403 access, 404 hidden resource, 503 unavailable/oversized data. No writes or cache.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitTimelinePage> GetUnitTimelineAsync(string unitKid, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? untilUtc = null, string? sources = null, string? field = null, int? pageSize = null, string? cursor = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (unitKid == null)
+                throw new System.ArgumentNullException("unitKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/units/{unitKid}/timeline"
+                    urlBuilder_.Append("api/v1/units/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(unitKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/timeline");
+                    urlBuilder_.Append('?');
+                    if (fromUtc != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fromUtc")).Append('=').Append(System.Uri.EscapeDataString(fromUtc.Value.ToString("O", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (untilUtc != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("untilUtc")).Append('=').Append(System.Uri.EscapeDataString(untilUtc.Value.ToString("O", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (sources != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("sources")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sources, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (field != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("field")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(field, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitTimelinePage>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -25093,7 +25460,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            the current filter/page. The count is an approximate display value cached for up to 24 hours per exact resource
         /// <br/>            scope in this API process; restart/eviction causes a fresh count. Never use it for authorization or accounting.
         /// <br/>            Session/tab/permission/scope are rechecked before every cache access. Log7 only, no writes. First count has a
-        /// <br/>            12-second deadline; 401 revoked session, 403 missing access, 503 unavailable, never a fabricated zero.
+        /// <br/>            12-second HTTP wait. A shared count continues for at most 60 seconds across navigation/timeouts;
+        /// <br/>            retry a temporary 503 with backoff to retrieve the completed cached result. At most one computation
+        /// <br/>            runs per tenant process, with 16 pending exact scopes. 401 revoked session, 403 missing access,
+        /// <br/>            503 unavailable, never a fabricated zero.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -26400,7 +26770,9 @@ namespace Kombine.Flex.Portal.Client
         /// Poll with the private deviceCode. Successful redemption consumes the pairing atomically.
         /// </summary>
         /// <remarks>
-        /// Returns pending, approved (with accessToken and expiresIn), or expired. An unknown code, wrong device secret,
+        /// Returns pending, approved (with accessToken, expiresIn and the approved displayId), or expired.
+        /// <br/>            Bind the screen to this exact, case-sensitive displayId; never approve an arbitrary URL ID from a browser session.
+        /// <br/>            An unknown code, wrong device secret,
         /// <br/>            replay or revoked manager returns expired. Store the returned bearer server-side; never put it in a URL or browser storage.
         /// </remarks>
         /// <returns>OK</returns>
@@ -26614,7 +26986,9 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// No maximum offline duration. Challenges are single-use; device approval itself has no expiry.
-        /// <br/>            Rechecks the active manager and credential stamps before returning a ten-day read-only bearer.
+        /// <br/>            Rechecks the active manager and credential stamps before returning a ten-day screen-only bearer.
+        /// <br/>            Only GetCurrentManager accepts this bearer, with no manager permissions or business data.
+        /// <br/>            The returned displayId comes from the stored approval and must exactly match the requested screen ID.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -34953,6 +35327,12 @@ namespace Kombine.Flex.Portal.Client
         public bool? HasBankAccess { get; set; } = default!;
 
         /// <summary>
+        /// Exact approved display ID for a read-only Wallboard session, resolved from its device record. Null for ordinary managers.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("wallboardDisplayId")]
+        public string? WallboardDisplayId { get; set; } = default!;
+
+        /// <summary>
         /// API-computed icon identity; use unchanged in the icon image URL.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("iconKid")]
@@ -37179,6 +37559,135 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// One readable enum field; numeric IDs remain stable.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitTimelineField
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Authorized context and capabilities; a capability never replaces endpoint authorization.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitTimelineFields
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankName")]
+        public string? BankName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationName")]
+        public string? LocationName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitName")]
+        public string? UnitName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitType")]
+        public int? UnitType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sources")]
+        public System.Collections.Generic.ICollection<string>? Sources { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fields")]
+        public System.Collections.Generic.ICollection<UnitTimelineField>? Fields { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("canReadTextDiagnostics")]
+        public bool? CanReadTextDiagnostics { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("canReadDocuments")]
+        public bool? CanReadDocuments { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One log row; eventKey is a unit-local source/time key, not a resource grant or object KID.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitTimelineItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("eventKey")]
+        public string? EventKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("source")]
+        public string? Source { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ms2000")]
+        public string? Ms2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("timestampUtc")]
+        public System.DateTimeOffset? TimestampUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sync")]
+        public int? Sync { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("field")]
+        public string? Field { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("amount")]
+        public string? Amount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("currency")]
+        public string? Currency { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("text")]
+        public string? Text { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("contentStatus")]
+        public string? ContentStatus { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("period")]
+        public int? Period { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("userKid")]
+        public string? UserKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("documentKid")]
+        public string? DocumentKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("auxiliaryValue")]
+        public string? AuxiliaryValue { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Chronological page over an inclusive/exclusive UTC range.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitTimelinePage
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("context")]
+        public UnitTimelineFields? Context { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fromUtc")]
+        public System.DateTimeOffset? FromUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("untilUtc")]
+        public System.DateTimeOffset? UntilUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<UnitTimelineItem>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
+        public string? NextCursor { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Both address components and the last observed revision are required.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -37833,6 +38342,9 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("expiresIn")]
         public long? ExpiresIn { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("displayId")]
+        public string? DisplayId { get; set; } = default!;
 
     }
 

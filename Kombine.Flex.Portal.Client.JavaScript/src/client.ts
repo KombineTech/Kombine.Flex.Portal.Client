@@ -578,6 +578,16 @@ export class PortalClient extends BaseClient {
     return this.send("InspectToolKid", {}, body, request) as Promise<Models.ToolKidInspectionResponse>;
   }
 
+  /** Get the authorized machine context, log categories and readable timeline fields. */
+  getUnitTimelineFields(unitKid: string, request: RequestOptions = {}): Promise<Models.UnitTimelineFields> {
+    return this.send("GetUnitTimelineFields", {"unitKid": unitKid}, undefined, request) as Promise<Models.UnitTimelineFields>;
+  }
+
+  /** Page chronologically through one machine's authorized Log0–Log6 events. */
+  getUnitTimeline(unitKid: string, options: Models.GetUnitTimelineOptions = {}, request: RequestOptions = {}): Promise<Models.UnitTimelinePage> {
+    return this.send("GetUnitTimeline", {"unitKid": unitKid, "fromUtc": options.fromUtc, "untilUtc": options.untilUtc, "sources": options.sources, "field": options.field, "pageSize": options.pageSize, "cursor": options.cursor}, undefined, request) as Promise<Models.UnitTimelinePage>;
+  }
+
   /** List document identities produced by the selected Unit for WashDoc3. */
   getUnitDocuments(unitKid: string, options: Models.GetUnitDocumentsOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDocumentPage> {
     return this.send("GetUnitDocuments", {"unitKid": unitKid, "Sort": options.sort, "Direction": options.direction, "Offset": options.offset, "Limit": options.limit, "Search": options.search, "Date": options.date}, undefined, request) as Promise<Models.UnitDocumentPage>;

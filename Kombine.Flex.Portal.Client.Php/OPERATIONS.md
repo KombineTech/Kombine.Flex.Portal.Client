@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `08900d67e594e30fbe6a4713aafa8691ca0dd7d3a29a53f9dac1487032012c3e`).
-200 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `ab6ea78e745d81a9f712a55c0261b324f980344670da6d4624204b3c3d182c98`).
+202 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -160,6 +160,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `08900d67e594e30fbe6
 | `getUnitIcons` | `GetUnitIcons` | GET | `/api/v1/units/icons` | Bearer |
 | `getUnitOverview` | `GetUnitOverview` | GET | `/api/v1/units/{unitKid}` | Bearer |
 | `getUnitSettingHistory` | `GetUnitSettingHistory` | GET | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history` | Bearer |
+| `getUnitTimelineFields` | `GetUnitTimelineFields` | GET | `/api/v1/units/{unitKid}/timeline/fields` | Bearer |
+| `getUnitTimeline` | `GetUnitTimeline` | GET | `/api/v1/units/{unitKid}/timeline` | Bearer |
 | `getUnits` | `GetUnits` | GET | `/api/v1/units` | Bearer |
 | `getUserCount` | `GetUserCount` | GET | `/api/v1/users/count` | Bearer |
 | `getUserExportCount` | `GetUserExportCount` | GET | `/api/v1/users/export-count` | Bearer |

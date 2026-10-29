@@ -6,7 +6,7 @@
     <RestoreConfigFile>$(MSBuildThisFileDirectory)..\NuGet.Client.Config</RestoreConfigFile>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.18.0</Version>
+    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.19.0</Version>
     <IsPackable>true</IsPackable><PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Kombine Technology ApS</Authors><Company>Kombine Technology ApS</Company>
     <Copyright>Kombine Technology ApS</Copyright>
@@ -15,7 +15,7 @@
     <PackageProjectUrl>https://kombinetech.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KombineTech/Kombine.Flex.Portal.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Add pending Wallboard lookup and owner-authorized device details, including optional scan location. Durable device approvals, manager authorization and UserBalance remain compatible.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add authorized unit timeline operations and exact Wallboard display binding. Screen sessions expose only minimal identity and cannot access ordinary Portal operations. UserBalance remains compatible.</PackageReleaseNotes>
     <PackageTags>Flex;Portal;API;Client</PackageTags>
   </PropertyGroup>
   <ItemGroup>
