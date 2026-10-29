@@ -25,6 +25,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `ExecuteBankUserCommandAsync` | POST | `/api/v1/banks/{bankKid}/users/{userKid}/commands` |
 | `ExportBankAccountAsync` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsersAsync` | GET | `/api/v1/banks/{bankKid}/users/export` |
+| `FindWallboardPairingsAsync` | GET | `/api/v1/wallboard/pairings` |
 | `GenerateMyManagerApiKeyAsync` | POST | `/api/v1/session/me/api-key` |
 | `GenerateServiceApiKeyAsync` | POST | `/api/v1/services/{serviceKid}/api-key` |
 | `GetActiveBankCountAsync` | GET | `/api/v1/banks/active-count` |
@@ -163,6 +164,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetUserExportCountAsync` | GET | `/api/v1/users/export-count` |
 | `GetUserReceiptsAsync` | GET | `/api/v1/users/{userKid}/receipts` |
 | `GetUsersAsync` | GET | `/api/v1/users` |
+| `GetWallboardDeviceAsync` | GET | `/api/v1/wallboard/devices/{deviceId}` |
 | `GetWallboardPairingAsync` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
 | `InspectToolKidAsync` | POST | `/api/v1/tenant/tools/kid` |
 | `InviteManagerAsync` | POST | `/api/v1/managers/{managerKid}/invitation` |

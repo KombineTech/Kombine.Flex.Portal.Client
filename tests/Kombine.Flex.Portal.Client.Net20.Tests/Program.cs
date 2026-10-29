@@ -39,7 +39,7 @@ internal static class Program
             LoopbackCamera(false); LoopbackCamera(true); LoopbackTransport();
             LoopbackPost(false);
             LoopbackPost(true);
-            Console.WriteLine("PASS: " + _assertions + " checks, 198 API operations; CLR " + Environment.Version + ".");
+            Console.WriteLine("PASS: " + _assertions + " checks, 200 API operations; CLR " + Environment.Version + ".");
             return 0;
         }
         catch (Exception error)
@@ -189,7 +189,7 @@ internal static class Program
     private static void Contracts()
     {
         string[] rows = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ContractCases.tsv"));
-        Equal(198, rows.Length, "Published operation count");
+        Equal(200, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });

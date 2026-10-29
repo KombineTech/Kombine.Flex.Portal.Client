@@ -24142,6 +24142,102 @@
             "description": "Service Unavailable"
           }
         }
+      },
+      "get": {
+        "tags": [
+          "WallboardPairing"
+        ],
+        "summary": "Find up to ten pending screens with an exact display ID in this tenant and environment.",
+        "description": "For one-scan setup. An ID is not proof of identity: compare the pairingId's first six characters on the physical screen before explicit approval. Returns no device secrets or location.",
+        "operationId": "FindWallboardPairings",
+        "parameters": [
+          {
+            "name": "displayId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WallboardPairingInfo"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WallboardPairingInfo"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WallboardPairingInfo"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
       }
     },
     "/api/v1/wallboard/pairings/{pairingId}": {
@@ -24245,15 +24341,56 @@
           {
             "name": "pairingId",
             "in": "path",
+            "description": "The random pending pairing ID.",
             "required": true,
             "schema": {
               "type": "string"
             }
           }
         ],
+        "requestBody": {
+          "description": "Optional phone location: latitude [-90,90], longitude [-180,180], nonnegative accuracyMeters up to 10000000, and capturedAt within the last ten minutes (up to one minute clock skew). No body is still supported. Stored encrypted; readable only by the approving manager.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveWallboardPairing"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveWallboardPairing"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveWallboardPairing"
+              }
+            }
+          }
+        },
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "403": {
             "description": "Forbidden",
@@ -24560,6 +24697,94 @@
       }
     },
     "/api/v1/wallboard/devices/{deviceId}": {
+      "get": {
+        "tags": [
+          "WallboardPairing"
+        ],
+        "summary": "Read a screen you approved, including the optional scanner location stored with its approval.",
+        "description": "Only the approving active manager can read location. It is a phone measurement, not verified screen GPS. Unknown and other-owner devices both return 404.",
+        "operationId": "GetWallboardDevice",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardDeviceInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardDeviceInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardDeviceInfo"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      },
       "delete": {
         "tags": [
           "WallboardPairing"
@@ -28245,6 +28470,15 @@
         },
         "additionalProperties": false,
         "description": "Accessible active units or terminals, independent of search and paging, with a ready-to-render navigation icon."
+      },
+      "ApproveWallboardPairing": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "$ref": "#/components/schemas/WallboardScanLocation"
+          }
+        },
+        "additionalProperties": false
       },
       "AssistantLink": {
         "type": "object",
@@ -34358,6 +34592,27 @@
         },
         "additionalProperties": false
       },
+      "WallboardDeviceInfo": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayId": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "$ref": "#/components/schemas/WallboardScanLocation"
+          }
+        },
+        "additionalProperties": false
+      },
       "WallboardPairingInfo": {
         "type": "object",
         "properties": {
@@ -34420,6 +34675,28 @@
             "type": "integer",
             "format": "int64",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WallboardScanLocation": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "accuracyMeters": {
+            "type": "number",
+            "format": "double"
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

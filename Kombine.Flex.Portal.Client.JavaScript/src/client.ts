@@ -748,14 +748,19 @@ export class PortalClient extends BaseClient {
     return this.send("StartWallboardPairing", {}, body, request) as Promise<Models.WallboardPairingStarted>;
   }
 
+  /** Find up to ten pending screens with an exact display ID in this tenant and environment. */
+  findWallboardPairings(options: Models.FindWallboardPairingsOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardPairingInfo[]> {
+    return this.send("FindWallboardPairings", {"displayId": options.displayId}, undefined, request) as Promise<Models.WallboardPairingInfo[]>;
+  }
+
   /** Read the screen ID and expiry before explicitly approving its QR code. */
   getWallboardPairing(pairingId: string, request: RequestOptions = {}): Promise<Models.WallboardPairingInfo> {
     return this.send("GetWallboardPairing", {"pairingId": pairingId}, undefined, request) as Promise<Models.WallboardPairingInfo>;
   }
 
   /** Approve one screen using your current manager bearer session, including sessions created with kid and apiKey. */
-  approveWallboardPairing(pairingId: string, request: RequestOptions = {}): Promise<void> {
-    return this.send("ApproveWallboardPairing", {"pairingId": pairingId}, undefined, request) as Promise<void>;
+  approveWallboardPairing(pairingId: string, body: Models.ApproveWallboardPairing, request: RequestOptions = {}): Promise<void> {
+    return this.send("ApproveWallboardPairing", {"pairingId": pairingId}, body, request) as Promise<void>;
   }
 
   /** Poll with the private deviceCode. Successful redemption consumes the pairing atomically. */
@@ -771,6 +776,11 @@ export class PortalClient extends BaseClient {
   /** Resume a permanently approved screen after proving possession of its private signing key. */
   resumeWallboardSession(deviceId: string, body: Models.ResumeWallboardSession, request: RequestOptions = {}): Promise<Models.WallboardPairingToken> {
     return this.send("ResumeWallboardSession", {"deviceId": deviceId}, body, request) as Promise<Models.WallboardPairingToken>;
+  }
+
+  /** Read a screen you approved, including the optional scanner location stored with its approval. */
+  getWallboardDevice(deviceId: string, request: RequestOptions = {}): Promise<Models.WallboardDeviceInfo> {
+    return this.send("GetWallboardDevice", {"deviceId": deviceId}, undefined, request) as Promise<Models.WallboardDeviceInfo>;
   }
 
   /** Revoke a screen you approved. Its existing bearer sessions also lose access. */

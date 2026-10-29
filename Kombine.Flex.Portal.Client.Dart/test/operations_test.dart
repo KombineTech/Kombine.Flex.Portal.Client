@@ -2963,6 +2963,24 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire FindWallboardPairings", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/pairings");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["displayId"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<Object?>[<String, Object?>{"pairingId": null, "displayId": null, "expiresAt": "2026-10-20T10:00:00Z", "approved": false}]), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.findWallboardPairings(displayId: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<Object?>[<String, Object?>{"pairingId": null, "displayId": null, "expiresAt": "2026-10-20T10:00:00Z", "approved": false}]));
+    expect(sends, 1);
+  });
+
   test("wire GetWallboardPairing", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -2990,11 +3008,12 @@ void main() {
       expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/pairings/fixture%20%2F%C3%A6%3F%26/approve");
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
-
+      expect(request.body, encodeApiJson(<String, Object?>{"location": <String, Object?>{"latitude": 1.25, "longitude": 1.25, "accuracyMeters": 1.25, "capturedAt": "2026-10-20T10:00:00Z"}}));
+      expect(request.headers['content-type'], contains('application/json'));
       return http.Response("", 204);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    await client.approveWallboardPairing(pairingId: "fixture /\u00e6?&");
+    await client.approveWallboardPairing(pairingId: "fixture /\u00e6?&", body: <String, Object?>{"location": <String, Object?>{"latitude": 1.25, "longitude": 1.25, "accuracyMeters": 1.25, "capturedAt": "2026-10-20T10:00:00Z"}});
     
     expect(sends, 1);
   });
@@ -3052,6 +3071,24 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.resumeWallboardSession(deviceId: "fixture /\u00e6?&", body: <String, Object?>{"challenge": null, "signature": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetWallboardDevice", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/devices/fixture%20%2F%C3%A6%3F%26");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"deviceId": null, "displayId": null, "createdAt": "2026-10-20T10:00:00Z", "location": <String, Object?>{"latitude": 1.25, "longitude": 1.25, "accuracyMeters": 1.25, "capturedAt": "2026-10-20T10:00:00Z"}}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getWallboardDevice(deviceId: "fixture /\u00e6?&");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"deviceId": null, "displayId": null, "createdAt": "2026-10-20T10:00:00Z", "location": <String, Object?>{"latitude": 1.25, "longitude": 1.25, "accuracyMeters": 1.25, "capturedAt": "2026-10-20T10:00:00Z"}}));
     expect(sends, 1);
   });
 

@@ -68,6 +68,12 @@ array{'count'?: int, 'iconKid'?: string|null}
 array{'count'?: int, 'iconKid'?: string|null}
 ```
 
+### ApproveWallboardPairing
+
+```php
+array{'location'?: WallboardScanLocation}
+```
+
 ### AssistantLink
 
 ```php
@@ -1286,6 +1292,12 @@ array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'
 array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
 ```
 
+### WallboardDeviceInfo
+
+```php
+array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
+```
+
 ### WallboardPairingInfo
 
 ```php
@@ -1302,6 +1314,12 @@ array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: strin
 
 ```php
 array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null}
+```
+
+### WallboardScanLocation
+
+```php
+array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float, 'capturedAt'?: string}
 ```
 
 ### WashDocChartDosing

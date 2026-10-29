@@ -8798,6 +8798,39 @@
     "example": {}
   },
   {
+    "operation": "FindWallboardPairings",
+    "python": "find_wallboard_pairings",
+    "javascript": "findWallboardPairings",
+    "method": "GET",
+    "path": "api/v1/wallboard/pairings",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "query",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WallboardPairingInfo"
+      }
+    },
+    "binary": false,
+    "example": []
+  },
+  {
     "operation": "GetWallboardPairing",
     "python": "get_wallboard_pairing",
     "javascript": "getWallboardPairing",
@@ -8849,7 +8882,9 @@
         }
       }
     ],
-    "body": null,
+    "body": {
+      "$ref": "#/components/schemas/ApproveWallboardPairing"
+    },
     "multipart": null,
     "response": null,
     "binary": false,
@@ -8945,6 +8980,36 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/WallboardPairingToken"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDevice",
+    "python": "get_wallboard_device",
+    "javascript": "getWallboardDevice",
+    "method": "GET",
+    "path": "api/v1/wallboard/devices/{deviceId}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "py": "device_id",
+        "js": "deviceId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDeviceInfo"
     },
     "binary": false,
     "example": {}
