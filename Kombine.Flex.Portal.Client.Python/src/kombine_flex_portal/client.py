@@ -599,6 +599,34 @@ class PortalClient(BaseClient):
         'Decode an ordinary resident activation code and resolve name and icon from current Log7.'
         return self._request('SearchUserActivation', {'q': q}, None)
 
+    def start_wallboard_pairing(self, body: StartWallboardPairing) -> WallboardPairingStarted:
+        'Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code.'
+        return self._request('StartWallboardPairing', {}, body)
+
+    def get_wallboard_pairing(self, pairing_id: str) -> WallboardPairingInfo:
+        'Read the screen ID and expiry before explicitly approving its QR code.'
+        return self._request('GetWallboardPairing', {'pairingId': pairing_id}, None)
+
+    def approve_wallboard_pairing(self, pairing_id: str) -> None:
+        'Approve one screen using your current manager bearer session, including sessions created with kid and apiKey.'
+        return self._request('ApproveWallboardPairing', {'pairingId': pairing_id}, None)
+
+    def redeem_wallboard_pairing(self, pairing_id: str, body: RedeemWallboardPairing) -> WallboardPairingToken:
+        'Poll with the private deviceCode. Successful redemption consumes the pairing atomically.'
+        return self._request('RedeemWallboardPairing', {'pairingId': pairing_id}, body)
+
+    def challenge_wallboard_device(self, device_id: str) -> WallboardDeviceChallenge:
+        'Request a two-minute signing challenge for a permanently approved screen.'
+        return self._request('ChallengeWallboardDevice', {'deviceId': device_id}, None)
+
+    def resume_wallboard_session(self, device_id: str, body: ResumeWallboardSession) -> WallboardPairingToken:
+        'Resume a permanently approved screen after proving possession of its private signing key.'
+        return self._request('ResumeWallboardSession', {'deviceId': device_id}, body)
+
+    def revoke_wallboard_device(self, device_id: str) -> None:
+        'Revoke a screen you approved. Its existing bearer sessions also lose access.'
+        return self._request('RevokeWallboardDevice', {'deviceId': device_id}, None)
+
     def get_portal_app_download_page(self) -> PortalDownload:
         'Displays Windows downloads for this tenant, or an explicit unavailable state.'
         return self._request('GetPortalAppDownloadPage', {}, None)

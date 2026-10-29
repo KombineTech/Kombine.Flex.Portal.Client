@@ -37,6 +37,8 @@ def client(handler):
 
 
 def sample(spec):
+    if spec is None:
+        return None
     if '$ref' in spec:
         return sample(_CONTRACT['schemas'][spec['$ref'].split('/')[-1]])
     kind = spec.get('type')
@@ -72,10 +74,10 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(api.get_location_weather("opaque-location")["current"], current)
 
     def test_every_public_operation(self):
-        self.assertEqual(len(CASES), 191)
+        self.assertEqual(len(CASES), 198)
         for case in CASES:
             with self.subTest(operation=case['operation']):
-                response_data = b'PK\x00\xff' if case['binary'] else json.dumps(sample(case['response']), ensure_ascii=False).encode()
+                response_data = b'PK\x00\xff' if case['binary'] else json.dumps(sample(case['response']), ensure_ascii=False).encode() if case['response'] else b''
                 response = Response(response_data, case['status'])
                 observed = []
                 api = client(lambda req: (observed.append(req), response)[1])

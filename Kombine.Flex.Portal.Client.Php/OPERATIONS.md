@@ -1,12 +1,14 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `78c8f213c46bb4169596c421874b99a3243c7f48e2843d4cac5e5c54389985c6`).
-191 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `176241d96e080aa799bd771d48cf8a68b290ff3fdcb1e52d4e2311796c246df1`).
+198 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
 | `acknowledgeError` | `AcknowledgeError` | POST | `/api/v1/errors/{errorKid}/acknowledge` | Bearer |
+| `approveWallboardPairing` | `ApproveWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/approve` | Bearer |
 | `askPortalAssistant` | `AskPortalAssistant` | POST | `/api/v1/assistant/query` | Bearer |
+| `challengeWallboardDevice` | `ChallengeWallboardDevice` | POST | `/api/v1/wallboard/devices/{deviceId}/challenge` | Anonymous |
 | `changeMyManagerPassword` | `ChangeMyManagerPassword` | POST | `/api/v1/session/me/password` | Bearer |
 | `confirmCameraCapture` | `ConfirmCameraCapture` | POST | `/api/v1/camera/confirmation` | Bearer |
 | `confirmManagerSignUp` | `ConfirmManagerSignUp` | POST | `/api/v1/session/signup-confirmation` | Anonymous |
@@ -162,18 +164,22 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `78c8f213c46bb416959
 | `getUserExportCount` | `GetUserExportCount` | GET | `/api/v1/users/export-count` | Bearer |
 | `getUserReceipts` | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` | Bearer |
 | `getUsers` | `GetUsers` | GET | `/api/v1/users` | Bearer |
+| `getWallboardPairing` | `GetWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` | Bearer |
 | `inspectToolKid` | `InspectToolKid` | POST | `/api/v1/tenant/tools/kid` | Bearer |
 | `inviteManager` | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` | Bearer |
 | `loginManager` | `LoginManager` | POST | `/api/v1/session/login` | Anonymous |
 | `lookupObjectCoordinates` | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` | Bearer |
 | `prepareCameraCapture` | `PrepareCameraCapture` | POST | `/api/v1/camera/prepare` | Bearer |
+| `redeemWallboardPairing` | `RedeemWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` | Anonymous |
 | `renewManagerSession` | `RenewManagerSession` | POST | `/api/v1/session/renew` | Bearer |
 | `requestManagerPasswordReset` | `RequestManagerPasswordReset` | POST | `/api/v1/session/forgot-password` | Anonymous |
 | `requestManagerSignUp` | `RequestManagerSignUp` | POST | `/api/v1/session/signup` | Anonymous |
 | `requestMyManagerEmailVerification` | `RequestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` | Bearer |
 | `resetManagerPassword` | `ResetManagerPassword` | POST | `/api/v1/session/reset-password` | Anonymous |
 | `restoreOutOfOrderUnit` | `RestoreOutOfOrderUnit` | POST | `/api/v1/units/{unitKid}/out-of-service/restore` | Bearer |
+| `resumeWallboardSession` | `ResumeWallboardSession` | POST | `/api/v1/wallboard/devices/{deviceId}/session` | Anonymous |
 | `reverseBankAccountEntry` | `ReverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` | Bearer |
+| `revokeWallboardDevice` | `RevokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` | Bearer |
 | `saveCameraCapture` | `SaveCameraCapture` | POST | `/api/v1/camera` | Bearer |
 | `searchBankActivation` | `SearchBankActivation` | GET | `/api/v1/search/bank-activation` | Bearer |
 | `searchBanks` | `SearchBanks` | GET | `/api/v1/search/banks` | Bearer |
@@ -195,4 +201,5 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `78c8f213c46bb416959
 | `setObjectCoordinates` | `SetObjectCoordinates` | PUT | `/api/v1/addresses/{kid}/coordinates` | Bearer |
 | `setServiceProfileField` | `SetServiceProfileField` | POST | `/api/v1/services/{serviceKid}/profile/{field}` | Bearer |
 | `setUnitSetting` | `SetUnitSetting` | POST | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}` | Bearer |
+| `startWallboardPairing` | `StartWallboardPairing` | POST | `/api/v1/wallboard/pairings` | Anonymous |
 | `updateObjectAddress` | `UpdateObjectAddress` | PUT | `/api/v1/addresses/{kid}` | Bearer |

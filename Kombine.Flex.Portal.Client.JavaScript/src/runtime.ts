@@ -26,7 +26,7 @@ export class PortalApiError extends Error {
 }
 
 type Schema = { $ref?: string; type?: string; format?: string; properties?: Record<string, Schema>; items?: Schema; required?: string[]; additionalProperties?: Schema | boolean };
-type Operation = { method: string; path: string; auth: boolean; status: number; statuses: number[]; binary: boolean; body: Schema | null; multipart?: Schema | null; response: Schema; parameters: { name: string; where: string; schema: Schema }[] };
+type Operation = { method: string; path: string; auth: boolean; status: number; statuses: number[]; binary: boolean; body: Schema | null; multipart?: Schema | null; response: Schema | null; parameters: { name: string; where: string; schema: Schema }[] };
 const schemas = contract.schemas as Record<string, Schema>;
 const operations = contract.operations as Record<string, Operation>;
 
@@ -221,8 +221,10 @@ export class BaseClient {
       }
       const text = await this.readJsonBody(response, abort.signal);
       if (!spec.statuses.includes(response.status)) throw new PortalApiError(response.status, text, new Headers(response.headers));
+      if (spec.response === null && response.status === 204) return;
       const result = parseJson(text);
       if (result === null) throw new PortalProtocolError("Missing response data.");
+      if (spec.response === null) throw new PortalProtocolError("Unexpected response data.");
       return checkShape(result, spec.response, true);
     } finally {
       if (!transferred) {

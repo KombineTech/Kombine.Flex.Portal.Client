@@ -2318,6 +2318,68 @@ namespace Kombine.Flex.Portal.Client.Net20
             return (SearchResults)SendJson("GET", path, null, headers, 200, typeof(SearchResults));
         }
 
+        /// <summary>Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code.</summary>
+        public WallboardPairingStarted StartWallboardPairing(StartWallboardPairing body)
+        {
+            string path = "api/v1/wallboard/pairings";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (WallboardPairingStarted)SendJson("POST", path, body, headers, 200, typeof(WallboardPairingStarted));
+        }
+
+        /// <summary>Read the screen ID and expiry before explicitly approving its QR code.</summary>
+        public WallboardPairingInfo GetWallboardPairing(string @pairingId)
+        {
+            string path = "api/v1/wallboard/pairings/{pairingId}";
+            path = path.Replace("{pairingId}", PathValue(@pairingId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (WallboardPairingInfo)SendJson("GET", path, null, headers, 200, typeof(WallboardPairingInfo));
+        }
+
+        /// <summary>Approve one screen using your current manager bearer session, including sessions created with kid and apiKey.</summary>
+        public void ApproveWallboardPairing(string @pairingId)
+        {
+            string path = "api/v1/wallboard/pairings/{pairingId}/approve";
+            path = path.Replace("{pairingId}", PathValue(@pairingId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            SendJson("POST", path, null, headers, 204, typeof(object));
+        }
+
+        /// <summary>Poll with the private deviceCode. Successful redemption consumes the pairing atomically.</summary>
+        public WallboardPairingToken RedeemWallboardPairing(string @pairingId, RedeemWallboardPairing body)
+        {
+            string path = "api/v1/wallboard/pairings/{pairingId}/token";
+            path = path.Replace("{pairingId}", PathValue(@pairingId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (WallboardPairingToken)SendJson("POST", path, body, headers, 200, typeof(WallboardPairingToken));
+        }
+
+        /// <summary>Request a two-minute signing challenge for a permanently approved screen.</summary>
+        public WallboardDeviceChallenge ChallengeWallboardDevice(string @deviceId)
+        {
+            string path = "api/v1/wallboard/devices/{deviceId}/challenge";
+            path = path.Replace("{deviceId}", PathValue(@deviceId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (WallboardDeviceChallenge)SendJson("POST", path, null, headers, 200, typeof(WallboardDeviceChallenge));
+        }
+
+        /// <summary>Resume a permanently approved screen after proving possession of its private signing key.</summary>
+        public WallboardPairingToken ResumeWallboardSession(string @deviceId, ResumeWallboardSession body)
+        {
+            string path = "api/v1/wallboard/devices/{deviceId}/session";
+            path = path.Replace("{deviceId}", PathValue(@deviceId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (WallboardPairingToken)SendJson("POST", path, body, headers, 200, typeof(WallboardPairingToken));
+        }
+
+        /// <summary>Revoke a screen you approved. Its existing bearer sessions also lose access.</summary>
+        public void RevokeWallboardDevice(string @deviceId)
+        {
+            string path = "api/v1/wallboard/devices/{deviceId}";
+            path = path.Replace("{deviceId}", PathValue(@deviceId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            SendJson("DELETE", path, null, headers, 204, typeof(object));
+        }
+
         /// <summary>Displays Windows downloads for this tenant, or an explicit unavailable state.</summary>
         public PortalDownload GetPortalAppDownloadPage()
         {

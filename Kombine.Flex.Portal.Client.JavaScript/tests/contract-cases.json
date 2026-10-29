@@ -8776,6 +8776,208 @@
     "example": {}
   },
   {
+    "operation": "StartWallboardPairing",
+    "python": "start_wallboard_pairing",
+    "javascript": "startWallboardPairing",
+    "method": "POST",
+    "path": "api/v1/wallboard/pairings",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/StartWallboardPairing"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingStarted"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardPairing",
+    "python": "get_wallboard_pairing",
+    "javascript": "getWallboardPairing",
+    "method": "GET",
+    "path": "api/v1/wallboard/pairings/{pairingId}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pairingId",
+        "where": "path",
+        "py": "pairing_id",
+        "js": "pairingId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingInfo"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ApproveWallboardPairing",
+    "python": "approve_wallboard_pairing",
+    "javascript": "approveWallboardPairing",
+    "method": "POST",
+    "path": "api/v1/wallboard/pairings/{pairingId}/approve",
+    "status": 204,
+    "statuses": [
+      204
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pairingId",
+        "where": "path",
+        "py": "pairing_id",
+        "js": "pairingId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": null,
+    "binary": false,
+    "example": null
+  },
+  {
+    "operation": "RedeemWallboardPairing",
+    "python": "redeem_wallboard_pairing",
+    "javascript": "redeemWallboardPairing",
+    "method": "POST",
+    "path": "api/v1/wallboard/pairings/{pairingId}/token",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "pairingId",
+        "where": "path",
+        "py": "pairing_id",
+        "js": "pairingId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/RedeemWallboardPairing"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingToken"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ChallengeWallboardDevice",
+    "python": "challenge_wallboard_device",
+    "javascript": "challengeWallboardDevice",
+    "method": "POST",
+    "path": "api/v1/wallboard/devices/{deviceId}/challenge",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "py": "device_id",
+        "js": "deviceId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDeviceChallenge"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ResumeWallboardSession",
+    "python": "resume_wallboard_session",
+    "javascript": "resumeWallboardSession",
+    "method": "POST",
+    "path": "api/v1/wallboard/devices/{deviceId}/session",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "py": "device_id",
+        "js": "deviceId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/ResumeWallboardSession"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingToken"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "RevokeWallboardDevice",
+    "python": "revoke_wallboard_device",
+    "javascript": "revokeWallboardDevice",
+    "method": "DELETE",
+    "path": "api/v1/wallboard/devices/{deviceId}",
+    "status": 204,
+    "statuses": [
+      204
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "py": "device_id",
+        "js": "deviceId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": null,
+    "binary": false,
+    "example": null
+  },
+  {
     "operation": "GetPortalAppDownloadPage",
     "python": "get_portal_app_download_page",
     "javascript": "getPortalAppDownloadPage",

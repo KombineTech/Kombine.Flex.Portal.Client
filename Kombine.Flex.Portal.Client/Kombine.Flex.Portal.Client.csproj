@@ -6,7 +6,7 @@
     <RestoreConfigFile>$(MSBuildThisFileDirectory)..\NuGet.Client.Config</RestoreConfigFile>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.16.0</Version>
+    <PackageId>Kombine.Flex.Portal.Client</PackageId><Version>0.17.0</Version>
     <IsPackable>true</IsPackable><PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Kombine Technology ApS</Authors><Company>Kombine Technology ApS</Company>
     <Copyright>Kombine Technology ApS</Copyright>
@@ -15,7 +15,7 @@
     <PackageProjectUrl>https://kombinetech.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KombineTech/Kombine.Flex.Portal.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Add settlement checklist, machine error history and acknowledgement, out-of-service listing and restore, resident bank identity and authorized eVaskeri delegation.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add permanent read-only Wallboard device approval, signed challenge reconnection and explicit revocation. Existing manager sessions and UserBalance remain compatible.</PackageReleaseNotes>
     <PackageTags>Flex;Portal;API;Client</PackageTags>
   </PropertyGroup>
   <ItemGroup>

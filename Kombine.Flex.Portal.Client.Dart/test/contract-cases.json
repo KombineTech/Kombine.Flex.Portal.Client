@@ -8209,6 +8209,195 @@
     "binary": false
   },
   {
+    "operation": "StartWallboardPairing",
+    "dartMethod": "startWallboardPairing",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/wallboard/pairings",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/StartWallboardPairing"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingStarted"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetWallboardPairing",
+    "dartMethod": "getWallboardPairing",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/wallboard/pairings/{pairingId}",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "pairingId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingInfo"
+    },
+    "binary": false
+  },
+  {
+    "operation": "ApproveWallboardPairing",
+    "dartMethod": "approveWallboardPairing",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/wallboard/pairings/{pairingId}/approve",
+    "auth": true,
+    "statuses": [
+      204
+    ],
+    "parameters": [
+      {
+        "name": "pairingId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": null,
+    "binary": false
+  },
+  {
+    "operation": "RedeemWallboardPairing",
+    "dartMethod": "redeemWallboardPairing",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/wallboard/pairings/{pairingId}/token",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "pairingId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/RedeemWallboardPairing"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingToken"
+    },
+    "binary": false
+  },
+  {
+    "operation": "ChallengeWallboardDevice",
+    "dartMethod": "challengeWallboardDevice",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/wallboard/devices/{deviceId}/challenge",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDeviceChallenge"
+    },
+    "binary": false
+  },
+  {
+    "operation": "ResumeWallboardSession",
+    "dartMethod": "resumeWallboardSession",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/wallboard/devices/{deviceId}/session",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/ResumeWallboardSession"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingToken"
+    },
+    "binary": false
+  },
+  {
+    "operation": "RevokeWallboardDevice",
+    "dartMethod": "revokeWallboardDevice",
+    "example": null,
+    "method": "DELETE",
+    "path": "api/v1/wallboard/devices/{deviceId}",
+    "auth": true,
+    "statuses": [
+      204
+    ],
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": null,
+    "binary": false
+  },
+  {
     "operation": "GetPortalAppDownloadPage",
     "dartMethod": "getPortalAppDownloadPage",
     "example": null,

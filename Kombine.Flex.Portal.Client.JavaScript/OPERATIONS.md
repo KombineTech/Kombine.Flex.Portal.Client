@@ -150,6 +150,13 @@
 | `SearchUsers` | `search_users` | `searchUsers` | GET | `/api/v1/search/users` |
 | `SearchUserSms` | `search_user_sms` | `searchUserSms` | GET | `/api/v1/search/user-sms` |
 | `SearchUserActivation` | `search_user_activation` | `searchUserActivation` | GET | `/api/v1/search/user-activation` |
+| `StartWallboardPairing` | `start_wallboard_pairing` | `startWallboardPairing` | POST | `/api/v1/wallboard/pairings` |
+| `GetWallboardPairing` | `get_wallboard_pairing` | `getWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
+| `ApproveWallboardPairing` | `approve_wallboard_pairing` | `approveWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/approve` |
+| `RedeemWallboardPairing` | `redeem_wallboard_pairing` | `redeemWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` |
+| `ChallengeWallboardDevice` | `challenge_wallboard_device` | `challengeWallboardDevice` | POST | `/api/v1/wallboard/devices/{deviceId}/challenge` |
+| `ResumeWallboardSession` | `resume_wallboard_session` | `resumeWallboardSession` | POST | `/api/v1/wallboard/devices/{deviceId}/session` |
+| `RevokeWallboardDevice` | `revoke_wallboard_device` | `revokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
 | `GetPortalAppDownloadPage` | `get_portal_app_download_page` | `getPortalAppDownloadPage` | GET | `/download` |
 | `DownloadPortalWindowsAppInstaller` | `download_portal_windows_app_installer` | `downloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackage` | `download_portal_windows_package` | `downloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` |

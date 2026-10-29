@@ -106,11 +106,11 @@ for path, methods in contract['paths'].items():
         content = success.get('content', {})
         response = next(iter(content.values()))['schema'] if content else None
         binary = bool(response and response.get('format') == 'binary')
-        assert response is not None
+        assert response is not None or status == 204, oid
         operations[oid] = dict(method=verb.upper(), path=path.lstrip('/'), status=status, statuses=[s for s, _ in successes],
                                auth=bool(op.get('security', contract.get('security'))),
                                parameters=[dict(name=p['name'], where=p['in'], py=snake(p['name']), js=p['name'][0].lower()+p['name'][1:] if p['in'] != 'header' else re.sub(r'-(\w)', lambda m: m[1].upper(), p['name'].lower()), schema=shape(p['schema'])) for p in params],
-                               body=shape(body) if body else None, multipart=multipart, response=shape(response), binary=binary)
+                               body=shape(body) if body else None, multipart=multipart, response=shape(response) if response else None, binary=binary)
         metadata = operations[oid]
         pyargs = [snake(p['name']) + ': ' + kind(p['schema'], 'py') for p in pp]
         tsargs = [p['name'] + ': ' + kind(p['schema'], 'ts') for p in pp]
@@ -130,9 +130,9 @@ for path, methods in contract['paths'].items():
             tsm += '}\n\n'
             tsargs.append('options: Models.' + opt_name + ' = {}')
         tsargs.append('request: RequestOptions = {}')
-        pr = 'PortalDownload' if binary else kind(response, 'py')
-        tr = 'PortalDownload' if binary else ('Models.' + kind(response, 'ts') if '$ref' in response else kind(response, 'ts'))
-        if response.get('type') == 'array' and '$ref' in response.get('items', {}):
+        pr = 'PortalDownload' if binary else kind(response, 'py') if response else 'None'
+        tr = 'PortalDownload' if binary else ('Models.' + kind(response, 'ts') if '$ref' in response else kind(response, 'ts')) if response else 'void'
+        if response and response.get('type') == 'array' and '$ref' in response.get('items', {}):
             tr = 'Models.' + type_name(response['items']['$ref'].split('/')[-1]) + '[]'
         pyc += '\n    def ' + pn + '(self' + (', ' + ', '.join(pyargs) if pyargs else '') + ') -> ' + pr + ':\n'
         pyc += '        ' + repr(brief(op.get('summary', oid))) + '\n'
@@ -140,7 +140,7 @@ for path, methods in contract['paths'].items():
         tsc += '  /** ' + brief(op.get('summary', oid)) + ' */\n  ' + jn + '(' + ', '.join(tsargs) + '): Promise<' + tr + '> {\n'
         values = [json.dumps(p['name']) + ': ' + (p['name'] if p['in'] == 'path' else 'options.' + next(m['js'] for m in metadata['parameters'] if m['name'] == p['name'])) for p in params]
         tsc += '    return this.send(' + json.dumps(oid) + ', {' + ', '.join(values) + '}, ' + ('body' if body or multipart else 'undefined') + ', request) as Promise<' + tr + '>;\n  }\n\n'
-        example = next((c['example'] for c in content.values() if 'example' in c), [] if response.get('type') == 'array' else {})
+        example = next((c['example'] for c in content.values() if 'example' in c), [] if response and response.get('type') == 'array' else {} if response else None)
         cases.append(dict(operation=oid, python=pn, javascript=jn, **metadata, example=example))
         rows.append(f'| `{oid}` | `{pn}` | `{jn}` | {verb.upper()} | `{path}` |')
 tsc += '}\n'

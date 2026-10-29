@@ -39,7 +39,7 @@ internal static class Program
             LoopbackCamera(false); LoopbackCamera(true); LoopbackTransport();
             LoopbackPost(false);
             LoopbackPost(true);
-            Console.WriteLine("PASS: " + _assertions + " checks, 191 API operations; CLR " + Environment.Version + ".");
+            Console.WriteLine("PASS: " + _assertions + " checks, 198 API operations; CLR " + Environment.Version + ".");
             return 0;
         }
         catch (Exception error)
@@ -190,7 +190,7 @@ internal static class Program
     private static void Contracts()
     {
         string[] rows = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ContractCases.tsv"));
-        Equal(191, rows.Length, "Published operation count");
+        Equal(198, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });
@@ -215,7 +215,7 @@ internal static class Program
                 Equal(expected, Uri.UnescapeDataString(fake.Last.Uri.AbsolutePath), fields[0] + " route");
                 Equal("tenant.example", fake.Last.Uri.Host, fields[0] + " tenant");
                 Equal(1, fake.Calls, fields[0] + " no retry");
-                Check(result != null, fields[0] + " typed response");
+                Check(fields[3] == "204" ? result == null : result != null, fields[0] + " typed or no-content response");
                 IDisposable disposable = result as IDisposable;
                 if (disposable != null) disposable.Dispose();
                 Check(!fake.LastStream.CanRead, fields[0] + " response disposed");

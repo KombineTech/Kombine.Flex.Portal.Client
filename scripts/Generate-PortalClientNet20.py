@@ -137,7 +137,7 @@ for path, methods in contract['paths'].items():
         client += '            ' + ('' if result == 'void' else 'return ' + ('' if binary else '(' + result + ')')) + invocation + '(' + ', '.join(call_args) + ');\n        }\n\n'
         operations.append('| `' + method + '` | ' + verb.upper() + ' | `' + path + '` |')
         sample = next((c['example'] for c in content.values() if 'example' in c), [] if response_schema and response_schema.get('type') == 'array' else {})
-        cases.append('\t'.join([method, verb.upper(), path, str(status), json.dumps(sample, ensure_ascii=True, separators=(',', ':'))]))
+        cases.append('\t'.join([method, verb.upper(), path, str(status), json.dumps(sample, ensure_ascii=True, separators=(',', ':')) if response_schema else '']))
 models += '}\n'
 client += '    }\n}\n'
 (PROJECT / 'Generated').mkdir(parents=True, exist_ok=True)

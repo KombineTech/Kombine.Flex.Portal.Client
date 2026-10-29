@@ -1121,6 +1121,15 @@ ProblemDetails = TypedDict('ProblemDetails', {
     'instance': 'str | None',
 }, total=False)
 
+RedeemWallboardPairing = TypedDict('RedeemWallboardPairing', {
+    'deviceCode': 'str | None',
+}, total=False)
+
+ResumeWallboardSession = TypedDict('ResumeWallboardSession', {
+    'challenge': 'str | None',
+    'signature': 'str | None',
+}, total=False)
+
 SearchResult = TypedDict('SearchResult', {
     'kid': 'str | None',
     'kind': 'str | None',
@@ -1217,6 +1226,11 @@ SettlementPeriodResponse = TypedDict('SettlementPeriodResponse', {
     'lastTransaction': 'str | None',
     'amountMinor': 'int | None',
     'transactionCount': 'int | None',
+}, total=False)
+
+StartWallboardPairing = TypedDict('StartWallboardPairing', {
+    'displayId': 'str | None',
+    'publicKey': 'str | None',
 }, total=False)
 
 TenantStatusItem = TypedDict('TenantStatusItem', {
@@ -1680,6 +1694,33 @@ ValidationProblemDetails = TypedDict('ValidationProblemDetails', {
     'detail': 'str | None',
     'instance': 'str | None',
     'errors': 'dict[str, list[str]] | None',
+}, total=False)
+
+WallboardDeviceChallenge = TypedDict('WallboardDeviceChallenge', {
+    'challenge': 'str | None',
+    'message': 'str | None',
+    'expiresIn': 'int',
+}, total=False)
+
+WallboardPairingInfo = TypedDict('WallboardPairingInfo', {
+    'pairingId': 'str | None',
+    'displayId': 'str | None',
+    'expiresAt': 'str',
+    'approved': 'bool',
+}, total=False)
+
+WallboardPairingStarted = TypedDict('WallboardPairingStarted', {
+    'pairingId': 'str | None',
+    'deviceCode': 'str | None',
+    'displayId': 'str | None',
+    'expiresAt': 'str',
+    'intervalSeconds': 'int',
+}, total=False)
+
+WallboardPairingToken = TypedDict('WallboardPairingToken', {
+    'status': 'str | None',
+    'accessToken': 'str | None',
+    'expiresIn': 'int | None',
 }, total=False)
 
 WashDocChartDosing = TypedDict('WashDocChartDosing', {

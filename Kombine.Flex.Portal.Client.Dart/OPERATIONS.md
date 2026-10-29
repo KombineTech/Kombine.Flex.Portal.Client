@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-191 operations. OpenAPI SHA-256: `e17389d081396f7f1afb601b4fc026bf054b8d85ace689cc19347736a9c4f998`.
+198 operations. OpenAPI SHA-256: `f0d3012fd29d139ef7f9aefd32e53826d22951e172265ca9f0468a4db755e2e5`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -152,6 +152,13 @@
 | `SearchUsers` | `searchUsers` | GET | `/api/v1/search/users` |
 | `SearchUserSms` | `searchUserSms` | GET | `/api/v1/search/user-sms` |
 | `SearchUserActivation` | `searchUserActivation` | GET | `/api/v1/search/user-activation` |
+| `StartWallboardPairing` | `startWallboardPairing` | POST | `/api/v1/wallboard/pairings` |
+| `GetWallboardPairing` | `getWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
+| `ApproveWallboardPairing` | `approveWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/approve` |
+| `RedeemWallboardPairing` | `redeemWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` |
+| `ChallengeWallboardDevice` | `challengeWallboardDevice` | POST | `/api/v1/wallboard/devices/{deviceId}/challenge` |
+| `ResumeWallboardSession` | `resumeWallboardSession` | POST | `/api/v1/wallboard/devices/{deviceId}/session` |
+| `RevokeWallboardDevice` | `revokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
 | `GetPortalAppDownloadPage` | `getPortalAppDownloadPage` | GET | `/download` |
 | `DownloadPortalWindowsAppInstaller` | `downloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackage` | `downloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` |
