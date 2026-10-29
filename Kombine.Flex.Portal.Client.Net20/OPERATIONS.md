@@ -3,6 +3,7 @@
 | Method | HTTP | Path |
 | --- | --- | --- |
 | `AcknowledgeError` | POST | `/api/v1/errors/{errorKid}/acknowledge` |
+| `AddMyManagerWallboard` | POST | `/api/v1/session/me/wallboards` |
 | `ApproveWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/approve` |
 | `AskPortalAssistant` | POST | `/api/v1/assistant/query` |
 | `ChallengeWallboardDevice` | POST | `/api/v1/wallboard/devices/{deviceId}/challenge` |
@@ -114,6 +115,8 @@
 | `GetMyManagerApiKey` | GET | `/api/v1/session/me/api-key` |
 | `GetMyManagerProfile` | GET | `/api/v1/session/me/profile` |
 | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` |
+| `GetMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
+| `GetMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` |
 | `GetNearestLocations` | GET | `/api/v1/locations/nearest` |
 | `GetObjectAddress` | GET | `/api/v1/addresses/{kid}` |
 | `GetOutOfOrderUnits` | GET | `/api/v1/units/out-of-service` |
@@ -182,6 +185,7 @@
 | `ReverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` |
 | `RevokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
 | `SaveCameraCapture` | POST | `/api/v1/camera` |
+| `SaveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` |
 | `SearchBankActivation` | GET | `/api/v1/search/bank-activation` |
 | `SearchBanks` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` |

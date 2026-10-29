@@ -1943,6 +1943,20 @@ export interface PersonalTabRequest {
   "enabled": boolean;
 }
 
+/** Add a display to the authenticated manager's own layout list; grants no device or resource access. */
+export interface PersonalWallboardRequest {
+  /** displayId */
+  "displayId": string | null;
+}
+
+/** Own layout collection and opaque optimistic concurrency revision. */
+export interface PersonalWallboardsResponse {
+  /** wallboards */
+  "wallboards"?: (Wallboard)[] | null;
+  /** revision */
+  "revision"?: string | null;
+}
+
 /** ProblemDetails */
 export interface ProblemDetails {
   /** type */
@@ -1969,6 +1983,14 @@ export interface ResumeWallboardSession {
   "challenge"?: string | null;
   /** signature */
   "signature"?: string | null;
+}
+
+/** Replaces own layouts only when the current revision matches; no automatic retries. */
+export interface SavePersonalWallboardsRequest {
+  /** revision */
+  "revision"?: string | null;
+  /** wallboards */
+  "wallboards": unknown;
 }
 
 /** Mixed-result shape; kind is an enum-derived type. Kid identifies the result; optional BankKid identifies a resident's parent bank. */
@@ -3047,6 +3069,18 @@ export interface ValidationProblemDetails {
   "errors"?: Record<string, (string)[]> | null;
 }
 
+/** Wallboard */
+export interface Wallboard {
+  /** displayId */
+  "displayId"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** isPortrait */
+  "isPortrait"?: boolean;
+  /** pages */
+  "pages"?: (WallboardPage)[] | null;
+}
+
 /** WallboardDeviceChallenge */
 export interface WallboardDeviceChallenge {
   /** challenge */
@@ -3067,6 +3101,26 @@ export interface WallboardDeviceInfo {
   "createdAt"?: string;
   /** location */
   "location"?: WallboardScanLocation;
+}
+
+/** One display's selected orientation; null means no configured layout. */
+export interface WallboardDisplayResponse {
+  /** layout */
+  "layout"?: Wallboard;
+  /** revision */
+  "revision"?: string | null;
+}
+
+/** WallboardPage */
+export interface WallboardPage {
+  /** pageId */
+  "pageId"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** displayDurationSeconds */
+  "displayDurationSeconds"?: number;
+  /** widgets */
+  "widgets"?: (WallboardWidget)[] | null;
 }
 
 /** WallboardPairingInfo */
@@ -3117,6 +3171,24 @@ export interface WallboardScanLocation {
   "accuracyMeters"?: number;
   /** capturedAt */
   "capturedAt"?: string;
+}
+
+/** WallboardWidget */
+export interface WallboardWidget {
+  /** widgetId */
+  "widgetId"?: string | null;
+  /** widgetType */
+  "widgetType"?: EWidgetType;
+  /** kid */
+  "kid"?: string | null;
+  /** column */
+  "column"?: number;
+  /** row */
+  "row"?: number;
+  /** width */
+  "width"?: number;
+  /** height */
+  "height"?: number;
 }
 
 /** Actual SoapInfo event. Missing duration/amounts remain null; quantity is never inferred from duration. */
@@ -3251,6 +3323,9 @@ export interface WashDocPresentation {
 
 /** Wire values: [0, 1, 2]. */
 export type EThemeMode = number;
+
+/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]. */
+export type EWidgetType = number;
 
 /** Public tenant-wide count; does not expose or grant access to any individual account. */
 export interface ActiveUsersResponse {
@@ -3871,6 +3946,11 @@ export interface LoginManagerOptions {
 export interface GetNearestLocationsOptions {
   latitude?: number;
   longitude?: number;
+}
+
+export interface GetMyManagerWallboardDisplayOptions {
+  portrait?: boolean;
+  after?: string;
 }
 
 export interface GetServiceExportCountOptions {

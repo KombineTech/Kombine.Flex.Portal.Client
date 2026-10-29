@@ -2296,6 +2296,71 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Add a scanned display to your own WallBoards layout setting.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active tenant-bound manager session; screen sessions are forbidden.
+        /// <br/>            Accepts displayId only. Appends an empty landscape layout to eSetting.WallBoards in bank-zero Log7.
+        /// <br/>            Existing layouts, pages, widgets and orientations are preserved. Repeated exact IDs add no duplicate or history.
+        /// <br/>            This saves a personal preference only; device approval and resource permissions remain separate.
+        /// <br/>            Credentials are rechecked inside the transaction. Concurrent additions are merged under the existing lock.
+        /// <br/>            200 wallboard-saved; 400 invalid-wallboard; 401 stale/inactive session; 403 screen session;
+        /// <br/>            409 invalid-stored-wallboards or wallboards-limit (4096 characters); 503 unavailable/uncertain storage.
+        /// <br/>            No automatic write retries. IDs are case-sensitive, matching device registration and layout selection.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PersonalAccountResult> AddMyManagerWallboardAsync(PersonalWallboardRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read your own Wallboard1 editor layouts and concurrency revision.
+        /// </summary>
+        /// <remarks>
+        /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
+        /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards. Unknown stored fields or malformed layouts return 409 without changing them.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PersonalWallboardsResponse> GetMyManagerWallboardsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Save your own complete Wallboard1 layout collection.
+        /// </summary>
+        /// <remarks>
+        /// Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.
+        /// <br/>            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.
+        /// <br/>            Display IDs must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.
+        /// <br/>            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.
+        /// <br/>            Layouts have a 12x12 grid, non-overlapping widgets, positive page durations up to 86400 seconds, and unique display/orientation, page and widget IDs.
+        /// <br/>            WidgetType uses numeric eWidgetType values 1-10; reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.
+        /// <br/>            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.
+        /// <br/>            Empty lists remove layouts only. The serialized setting is limited to 4096 characters (409 wallboards-limit).
+        /// <br/>            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PersonalWallboardsResponse> SaveMyManagerWallboardsAsync(SavePersonalWallboardsRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read the selected orientation for one of your Wallboards.
+        /// </summary>
+        /// <remarks>
+        /// Active manager with Wallboard1, or an approved read-only screen bound to this exact display.
+        /// <br/>            Rechecks current credentials, tab and scoped-widget grants; device sessions additionally pass durable approval validation.
+        /// <br/>            Falls back to the other orientation. A missing layout returns 200 with layout=null. Does not reveal other display IDs or layouts.
+        /// <br/>            Optional after is the last 64-hex revision: waits up to eight seconds if unchanged. A committed save on this API instance wakes the request immediately.
+        /// <br/>            Returns the same response shape, including on timeout. Reconnect with the returned revision; credentials, grants and device approval are checked again before returning.
+        /// <br/>            Other replicas or external writers are discovered at timeout. Cancel when hidden. 400 invalid-wallboard-revision; 429 wallboard-watch-limit requires backoff.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<WallboardDisplayResponse> GetMyManagerWallboardDisplayAsync(string displayId, bool? portrait = null, string? after = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read your own API-key configuration status and revision without exposing credentials.
         /// </summary>
         /// <remarks>
@@ -18512,6 +18577,541 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Add a scanned display to your own WallBoards layout setting.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active tenant-bound manager session; screen sessions are forbidden.
+        /// <br/>            Accepts displayId only. Appends an empty landscape layout to eSetting.WallBoards in bank-zero Log7.
+        /// <br/>            Existing layouts, pages, widgets and orientations are preserved. Repeated exact IDs add no duplicate or history.
+        /// <br/>            This saves a personal preference only; device approval and resource permissions remain separate.
+        /// <br/>            Credentials are rechecked inside the transaction. Concurrent additions are merged under the existing lock.
+        /// <br/>            200 wallboard-saved; 400 invalid-wallboard; 401 stale/inactive session; 403 screen session;
+        /// <br/>            409 invalid-stored-wallboards or wallboards-limit (4096 characters); 503 unavailable/uncertain storage.
+        /// <br/>            No automatic write retries. IDs are case-sensitive, matching device registration and layout selection.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PersonalAccountResult> AddMyManagerWallboardAsync(PersonalWallboardRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/wallboards"
+                    urlBuilder_.Append("api/v1/session/me/wallboards");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalAccountResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalAccountResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<PersonalAccountResult>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read your own Wallboard1 editor layouts and concurrency revision.
+        /// </summary>
+        /// <remarks>
+        /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
+        /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards. Unknown stored fields or malformed layouts return 409 without changing them.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PersonalWallboardsResponse> GetMyManagerWallboardsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/wallboards"
+                    urlBuilder_.Append("api/v1/session/me/wallboards");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalWallboardsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Save your own complete Wallboard1 layout collection.
+        /// </summary>
+        /// <remarks>
+        /// Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.
+        /// <br/>            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.
+        /// <br/>            Display IDs must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.
+        /// <br/>            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.
+        /// <br/>            Layouts have a 12x12 grid, non-overlapping widgets, positive page durations up to 86400 seconds, and unique display/orientation, page and widget IDs.
+        /// <br/>            WidgetType uses numeric eWidgetType values 1-10; reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.
+        /// <br/>            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.
+        /// <br/>            Empty lists remove layouts only. The serialized setting is limited to 4096 characters (409 wallboards-limit).
+        /// <br/>            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PersonalWallboardsResponse> SaveMyManagerWallboardsAsync(SavePersonalWallboardsRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/wallboards"
+                    urlBuilder_.Append("api/v1/session/me/wallboards");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonalWallboardsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read the selected orientation for one of your Wallboards.
+        /// </summary>
+        /// <remarks>
+        /// Active manager with Wallboard1, or an approved read-only screen bound to this exact display.
+        /// <br/>            Rechecks current credentials, tab and scoped-widget grants; device sessions additionally pass durable approval validation.
+        /// <br/>            Falls back to the other orientation. A missing layout returns 200 with layout=null. Does not reveal other display IDs or layouts.
+        /// <br/>            Optional after is the last 64-hex revision: waits up to eight seconds if unchanged. A committed save on this API instance wakes the request immediately.
+        /// <br/>            Returns the same response shape, including on timeout. Reconnect with the returned revision; credentials, grants and device approval are checked again before returning.
+        /// <br/>            Other replicas or external writers are discovered at timeout. Cancel when hidden. 400 invalid-wallboard-revision; 429 wallboard-watch-limit requires backoff.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<WallboardDisplayResponse> GetMyManagerWallboardDisplayAsync(string displayId, bool? portrait = null, string? after = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (displayId == null)
+                throw new System.ArgumentNullException("displayId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/wallboards/display/{displayId}"
+                    urlBuilder_.Append("api/v1/session/me/wallboards/display/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(displayId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('?');
+                    if (portrait != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("portrait")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(portrait, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (after != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("after")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(after, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<WallboardDisplayResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -36154,6 +36754,33 @@ namespace Kombine.Flex.Portal.Client
 
     }
 
+    /// <summary>
+    /// Add a display to the authenticated manager's own layout list; grants no device or resource access.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PersonalWallboardRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("displayId")]
+        public string? DisplayId { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Own layout collection and opaque optimistic concurrency revision.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PersonalWallboardsResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("wallboards")]
+        public System.Collections.Generic.ICollection<Wallboard>? Wallboards { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public string? Revision { get; set; } = default!;
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ProblemDetails
     {
@@ -36202,6 +36829,21 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("signature")]
         public string? Signature { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Replaces own layouts only when the current revision matches; no automatic retries.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SavePersonalWallboardsRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public string? Revision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("wallboards")]
+        public object Wallboards { get; set; } = default!;
 
     }
 
@@ -38259,6 +38901,24 @@ namespace Kombine.Flex.Portal.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Wallboard
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("displayId")]
+        public string? DisplayId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPortrait")]
+        public bool? IsPortrait { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("pages")]
+        public System.Collections.Generic.ICollection<WallboardPage>? Pages { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class WallboardDeviceChallenge
     {
 
@@ -38288,6 +38948,39 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("location")]
         public WallboardScanLocation? Location { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One display's selected orientation; null means no configured layout.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WallboardDisplayResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("layout")]
+        public Wallboard? Layout { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public string? Revision { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WallboardPage
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("pageId")]
+        public string? PageId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("displayDurationSeconds")]
+        public int? DisplayDurationSeconds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("widgets")]
+        public System.Collections.Generic.ICollection<WallboardWidget>? Widgets { get; set; } = default!;
 
     }
 
@@ -38363,6 +39056,33 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("capturedAt")]
         public System.DateTimeOffset? CapturedAt { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WallboardWidget
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("widgetId")]
+        public string? WidgetId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("widgetType")]
+        public EWidgetType? WidgetType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("kid")]
+        public string? Kid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("column")]
+        public int? Column { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("row")]
+        public int? Row { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("width")]
+        public int? Width { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public int? Height { get; set; } = default!;
 
     }
 
@@ -38594,6 +39314,54 @@ namespace Kombine.Flex.Portal.Client
         _1 = 1,
 
         _2 = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum EWidgetType
+    {
+
+        _0 = 0,
+
+        _1 = 1,
+
+        _2 = 2,
+
+        _3 = 3,
+
+        _4 = 4,
+
+        _5 = 5,
+
+        _6 = 6,
+
+        _7 = 7,
+
+        _8 = 8,
+
+        _9 = 9,
+
+        _10 = 10,
+
+        _11 = 11,
+
+        _12 = 12,
+
+        _13 = 13,
+
+        _14 = 14,
+
+        _15 = 15,
+
+        _16 = 16,
+
+        _17 = 17,
+
+        _18 = 18,
+
+        _19 = 19,
+
+        _20 = 20,
 
     }
 

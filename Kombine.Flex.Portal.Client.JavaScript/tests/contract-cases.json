@@ -5860,6 +5860,21 @@
           "iconKid": ""
         },
         {
+          "id": 85,
+          "name": "Zoom1",
+          "iconKid": ""
+        },
+        {
+          "id": 86,
+          "name": "Agent1",
+          "iconKid": ""
+        },
+        {
+          "id": 87,
+          "name": "Wallboard1",
+          "iconKid": ""
+        },
+        {
           "id": 5,
           "name": "Banks2",
           "iconKid": ""
@@ -6349,6 +6364,118 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerProfile"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "AddMyManagerWallboard",
+    "python": "add_my_manager_wallboard",
+    "javascript": "addMyManagerWallboard",
+    "method": "POST",
+    "path": "api/v1/session/me/wallboards",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/PersonalWallboardRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyManagerWallboards",
+    "python": "get_my_manager_wallboards",
+    "javascript": "getMyManagerWallboards",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalWallboardsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "SaveMyManagerWallboards",
+    "python": "save_my_manager_wallboards",
+    "javascript": "saveMyManagerWallboards",
+    "method": "PUT",
+    "path": "api/v1/session/me/wallboards",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/SavePersonalWallboardsRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalWallboardsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyManagerWallboardDisplay",
+    "python": "get_my_manager_wallboard_display",
+    "javascript": "getMyManagerWallboardDisplay",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "after",
+        "where": "query",
+        "py": "after",
+        "js": "after",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDisplayResponse"
     },
     "binary": false,
     "example": {}

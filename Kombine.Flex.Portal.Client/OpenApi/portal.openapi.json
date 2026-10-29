@@ -15026,6 +15026,21 @@
                       "iconKid": ""
                     },
                     {
+                      "id": 85,
+                      "name": "Zoom1",
+                      "iconKid": ""
+                    },
+                    {
+                      "id": 86,
+                      "name": "Agent1",
+                      "iconKid": ""
+                    },
+                    {
+                      "id": 87,
+                      "name": "Wallboard1",
+                      "iconKid": ""
+                    },
+                    {
                       "id": 5,
                       "name": "Banks2",
                       "iconKid": ""
@@ -16718,6 +16733,544 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards": {
+      "post": {
+        "tags": [
+          "PersonalManager"
+        ],
+        "summary": "Add a scanned display to your own WallBoards layout setting.",
+        "description": "Requires an active tenant-bound manager session; screen sessions are forbidden.\r\n            Accepts displayId only. Appends an empty landscape layout to eSetting.WallBoards in bank-zero Log7.\r\n            Existing layouts, pages, widgets and orientations are preserved. Repeated exact IDs add no duplicate or history.\r\n            This saves a personal preference only; device approval and resource permissions remain separate.\r\n            Credentials are rechecked inside the transaction. Concurrent additions are merged under the existing lock.\r\n            200 wallboard-saved; 400 invalid-wallboard; 401 stale/inactive session; 403 screen session;\r\n            409 invalid-stored-wallboards or wallboards-limit (4096 characters); 503 unavailable/uncertain storage.\r\n            No automatic write retries. IDs are case-sensitive, matching device registration and layout selection.",
+        "operationId": "AddMyManagerWallboard",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalWallboardRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalWallboardRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonalWallboardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalAccountResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "PersonalManager"
+        ],
+        "summary": "Read your own Wallboard1 editor layouts and concurrency revision.",
+        "description": "Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.\r\n            Reads only the authenticated manager's bank-zero Log7 WallBoards. Unknown stored fields or malformed layouts return 409 without changing them.",
+        "operationId": "GetMyManagerWallboards",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalWallboardsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalWallboardsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalWallboardsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "PersonalManager"
+        ],
+        "summary": "Save your own complete Wallboard1 layout collection.",
+        "description": "Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.\r\n            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.\r\n            Display IDs must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.\r\n            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.\r\n            Layouts have a 12x12 grid, non-overlapping widgets, positive page durations up to 86400 seconds, and unique display/orientation, page and widget IDs.\r\n            WidgetType uses numeric eWidgetType values 1-10; reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.\r\n            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.\r\n            Empty lists remove layouts only. The serialized setting is limited to 4096 characters (409 wallboards-limit).\r\n            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.",
+        "operationId": "SaveMyManagerWallboards",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePersonalWallboardsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePersonalWallboardsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePersonalWallboardsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalWallboardsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalWallboardsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalWallboardsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/display/{displayId}": {
+      "get": {
+        "tags": [
+          "PersonalManager"
+        ],
+        "summary": "Read the selected orientation for one of your Wallboards.",
+        "description": "Active manager with Wallboard1, or an approved read-only screen bound to this exact display.\r\n            Rechecks current credentials, tab and scoped-widget grants; device sessions additionally pass durable approval validation.\r\n            Falls back to the other orientation. A missing layout returns 200 with layout=null. Does not reveal other display IDs or layouts.\r\n            Optional after is the last 64-hex revision: waits up to eight seconds if unchanged. A committed save on this API instance wakes the request immediately.\r\n            Returns the same response shape, including on timeout. Reconnect with the returned revision; credentials, grants and device approval are checked again before returning.\r\n            Other replicas or external writers are discovered at timeout. Cancel when hidden. 400 invalid-wallboard-revision; 429 wallboard-watch-limit requires backoff.",
+        "operationId": "GetMyManagerWallboardDisplay",
+        "parameters": [
+          {
+            "name": "displayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "portrait",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardDisplayResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardDisplayResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardDisplayResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
             "content": {
               "text/plain": {
                 "schema": {
@@ -32742,6 +33295,38 @@
         "additionalProperties": false,
         "description": "One own-tab toggle; the authenticated session is the sole target."
       },
+      "PersonalWallboardRequest": {
+        "required": [
+          "displayId"
+        ],
+        "type": "object",
+        "properties": {
+          "displayId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Add a display to the authenticated manager's own layout list; grants no device or resource access."
+      },
+      "PersonalWallboardsResponse": {
+        "type": "object",
+        "properties": {
+          "wallboards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Wallboard"
+            },
+            "nullable": true
+          },
+          "revision": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Own layout collection and opaque optimistic concurrency revision."
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -32792,6 +33377,21 @@
           }
         },
         "additionalProperties": false
+      },
+      "SavePersonalWallboardsRequest": {
+        "required": [
+          "wallboards"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "string",
+            "nullable": true
+          },
+          "wallboards": {}
+        },
+        "additionalProperties": false,
+        "description": "Replaces own layouts only when the current revision matches; no automatic retries."
       },
       "SearchResult": {
         "type": "object",
@@ -35079,6 +35679,30 @@
         },
         "additionalProperties": {}
       },
+      "Wallboard": {
+        "type": "object",
+        "properties": {
+          "displayId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPortrait": {
+            "type": "boolean"
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WallboardPage"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "WallboardDeviceChallenge": {
         "type": "object",
         "properties": {
@@ -35114,6 +35738,45 @@
           },
           "location": {
             "$ref": "#/components/schemas/WallboardScanLocation"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WallboardDisplayResponse": {
+        "type": "object",
+        "properties": {
+          "layout": {
+            "$ref": "#/components/schemas/Wallboard"
+          },
+          "revision": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One display's selected orientation; null means no configured layout."
+      },
+      "WallboardPage": {
+        "type": "object",
+        "properties": {
+          "pageId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayDurationSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "widgets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WallboardWidget"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -35206,6 +35869,39 @@
           "capturedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WallboardWidget": {
+        "type": "object",
+        "properties": {
+          "widgetId": {
+            "type": "string",
+            "nullable": true
+          },
+          "widgetType": {
+            "$ref": "#/components/schemas/eWidgetType"
+          },
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "column": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "row": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -35489,6 +36185,33 @@
           0,
           1,
           2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "eWidgetType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
         ],
         "type": "integer",
         "format": "int32"

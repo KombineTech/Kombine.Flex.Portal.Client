@@ -1901,6 +1901,81 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire AddMyManagerWallboard", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{"displayId": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"code": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.addMyManagerWallboard(body: <String, Object?>{"displayId": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"code": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetMyManagerWallboards", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyManagerWallboards();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null}));
+    expect(sends, 1);
+  });
+
+  test("wire SaveMyManagerWallboards", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "PUT");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{"revision": null, "wallboards": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.saveMyManagerWallboards(body: <String, Object?>{"revision": null, "wallboards": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetMyManagerWallboardDisplay", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/display/fixture%20%2F%C3%A6%3F%26");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      expect(request.url.queryParametersAll["after"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"layout": <String, Object?>{"displayId": null, "name": null, "isPortrait": false, "pages": null}, "revision": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyManagerWallboardDisplay(displayId: "fixture /\u00e6?&", portrait: false, after: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"layout": <String, Object?>{"displayId": null, "name": null, "isPortrait": false, "pages": null}, "revision": null}));
+    expect(sends, 1);
+  });
+
   test("wire GetMyManagerApiKey", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {

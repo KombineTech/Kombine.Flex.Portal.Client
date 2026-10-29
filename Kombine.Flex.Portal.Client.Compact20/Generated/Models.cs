@@ -4144,6 +4144,31 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Add a display to the authenticated manager's own layout list; grants no device or resource access.</summary>
+    public sealed class PersonalWallboardRequest
+    {
+        /// <summary>displayId</summary>
+        [JsonField("displayId")]
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
+
+    }
+
+    /// <summary>Own layout collection and opaque optimistic concurrency revision.</summary>
+    public sealed class PersonalWallboardsResponse
+    {
+        /// <summary>wallboards</summary>
+        [JsonField("wallboards")]
+        public Wallboard[] Wallboards { get { return _Wallboards; } set { _Wallboards = value; } }
+        private Wallboard[] _Wallboards;
+
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+    }
+
     /// <summary>ProblemDetails</summary>
     public sealed class ProblemDetails
     {
@@ -4196,6 +4221,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("signature")]
         public string Signature { get { return _Signature; } set { _Signature = value; } }
         private string _Signature;
+
+    }
+
+    /// <summary>Replaces own layouts only when the current revision matches; no automatic retries.</summary>
+    public sealed class SavePersonalWallboardsRequest
+    {
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+        /// <summary>wallboards</summary>
+        [JsonField("wallboards")]
+        public object Wallboards { get { return _Wallboards; } set { _Wallboards = value; } }
+        private object _Wallboards;
 
     }
 
@@ -6534,6 +6574,31 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Wallboard</summary>
+    public sealed class Wallboard
+    {
+        /// <summary>displayId</summary>
+        [JsonField("displayId")]
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>isPortrait</summary>
+        [JsonField("isPortrait")]
+        public bool? IsPortrait { get { return _IsPortrait; } set { _IsPortrait = value; } }
+        private bool? _IsPortrait;
+
+        /// <summary>pages</summary>
+        [JsonField("pages")]
+        public WallboardPage[] Pages { get { return _Pages; } set { _Pages = value; } }
+        private WallboardPage[] _Pages;
+
+    }
+
     /// <summary>WallboardDeviceChallenge</summary>
     public sealed class WallboardDeviceChallenge
     {
@@ -6576,6 +6641,46 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("location")]
         public WallboardScanLocation Location { get { return _Location; } set { _Location = value; } }
         private WallboardScanLocation _Location;
+
+    }
+
+    /// <summary>One display's selected orientation; null means no configured layout.</summary>
+    public sealed class WallboardDisplayResponse
+    {
+        /// <summary>layout</summary>
+        [JsonField("layout")]
+        public Wallboard Layout { get { return _Layout; } set { _Layout = value; } }
+        private Wallboard _Layout;
+
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+    }
+
+    /// <summary>WallboardPage</summary>
+    public sealed class WallboardPage
+    {
+        /// <summary>pageId</summary>
+        [JsonField("pageId")]
+        public string PageId { get { return _PageId; } set { _PageId = value; } }
+        private string _PageId;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>displayDurationSeconds</summary>
+        [JsonField("displayDurationSeconds")]
+        public int? DisplayDurationSeconds { get { return _DisplayDurationSeconds; } set { _DisplayDurationSeconds = value; } }
+        private int? _DisplayDurationSeconds;
+
+        /// <summary>widgets</summary>
+        [JsonField("widgets")]
+        public WallboardWidget[] Widgets { get { return _Widgets; } set { _Widgets = value; } }
+        private WallboardWidget[] _Widgets;
 
     }
 
@@ -6681,6 +6786,46 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("capturedAt")]
         public string CapturedAt { get { return _CapturedAt; } set { _CapturedAt = value; } }
         private string _CapturedAt;
+
+    }
+
+    /// <summary>WallboardWidget</summary>
+    public sealed class WallboardWidget
+    {
+        /// <summary>widgetId</summary>
+        [JsonField("widgetId")]
+        public string WidgetId { get { return _WidgetId; } set { _WidgetId = value; } }
+        private string _WidgetId;
+
+        /// <summary>widgetType</summary>
+        [JsonField("widgetType")]
+        public int? WidgetType { get { return _WidgetType; } set { _WidgetType = value; } }
+        private int? _WidgetType;
+
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>column</summary>
+        [JsonField("column")]
+        public int? Column { get { return _Column; } set { _Column = value; } }
+        private int? _Column;
+
+        /// <summary>row</summary>
+        [JsonField("row")]
+        public int? Row { get { return _Row; } set { _Row = value; } }
+        private int? _Row;
+
+        /// <summary>width</summary>
+        [JsonField("width")]
+        public int? Width { get { return _Width; } set { _Width = value; } }
+        private int? _Width;
+
+        /// <summary>height</summary>
+        [JsonField("height")]
+        public int? Height { get { return _Height; } set { _Height = value; } }
+        private int? _Height;
 
     }
 
@@ -8620,6 +8765,19 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>longitude</summary>
         public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
         private double? _Longitude;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetMyManagerWallboardDisplay. Null values use API defaults.</summary>
+    public sealed class GetMyManagerWallboardDisplayOptions
+    {
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
+
+        /// <summary>after</summary>
+        public string After { get { return _After; } set { _After = value; } }
+        private string _After;
 
     }
 

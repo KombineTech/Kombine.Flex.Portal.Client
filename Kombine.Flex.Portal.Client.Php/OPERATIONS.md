@@ -1,11 +1,12 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `ab6ea78e745d81a9f712a55c0261b324f980344670da6d4624204b3c3d182c98`).
-202 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `12ee65cc46b1b1a6a73fb5232b25e1fded6ec37144cb52adda40d002fed36218`).
+206 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
 | `acknowledgeError` | `AcknowledgeError` | POST | `/api/v1/errors/{errorKid}/acknowledge` | Bearer |
+| `addMyManagerWallboard` | `AddMyManagerWallboard` | POST | `/api/v1/session/me/wallboards` | Bearer |
 | `approveWallboardPairing` | `ApproveWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/approve` | Bearer |
 | `askPortalAssistant` | `AskPortalAssistant` | POST | `/api/v1/assistant/query` | Bearer |
 | `challengeWallboardDevice` | `ChallengeWallboardDevice` | POST | `/api/v1/wallboard/devices/{deviceId}/challenge` | Anonymous |
@@ -117,6 +118,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `ab6ea78e745d81a9f71
 | `getMyManagerApiKey` | `GetMyManagerApiKey` | GET | `/api/v1/session/me/api-key` | Bearer |
 | `getMyManagerProfile` | `GetMyManagerProfile` | GET | `/api/v1/session/me/profile` | Bearer |
 | `getMyManagerTabs` | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` | Bearer |
+| `getMyManagerWallboardDisplay` | `GetMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` | Bearer |
+| `getMyManagerWallboards` | `GetMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` | Bearer |
 | `getNearestLocations` | `GetNearestLocations` | GET | `/api/v1/locations/nearest` | Bearer |
 | `getObjectAddress` | `GetObjectAddress` | GET | `/api/v1/addresses/{kid}` | Bearer |
 | `getOutOfOrderUnits` | `GetOutOfOrderUnits` | GET | `/api/v1/units/out-of-service` | Bearer |
@@ -185,6 +188,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `ab6ea78e745d81a9f71
 | `reverseBankAccountEntry` | `ReverseBankAccountEntry` | POST | `/api/v1/banks/{bankKid}/account/{transactionKid}/reversal` | Bearer |
 | `revokeWallboardDevice` | `RevokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` | Bearer |
 | `saveCameraCapture` | `SaveCameraCapture` | POST | `/api/v1/camera` | Bearer |
+| `saveMyManagerWallboards` | `SaveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` | Bearer |
 | `searchBankActivation` | `SearchBankActivation` | GET | `/api/v1/search/bank-activation` | Bearer |
 | `searchBanks` | `SearchBanks` | GET | `/api/v1/search/banks` | Bearer |
 | `searchLocationActivation` | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` | Bearer |

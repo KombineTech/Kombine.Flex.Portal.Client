@@ -1118,6 +1118,15 @@ PersonalTabRequest = TypedDict('PersonalTabRequest', {
     'enabled': Required['bool'],
 }, total=False)
 
+PersonalWallboardRequest = TypedDict('PersonalWallboardRequest', {
+    'displayId': Required['str | None'],
+}, total=False)
+
+PersonalWallboardsResponse = TypedDict('PersonalWallboardsResponse', {
+    'wallboards': 'list[Wallboard] | None',
+    'revision': 'str | None',
+}, total=False)
+
 ProblemDetails = TypedDict('ProblemDetails', {
     'type': 'str | None',
     'title': 'str | None',
@@ -1133,6 +1142,11 @@ RedeemWallboardPairing = TypedDict('RedeemWallboardPairing', {
 ResumeWallboardSession = TypedDict('ResumeWallboardSession', {
     'challenge': 'str | None',
     'signature': 'str | None',
+}, total=False)
+
+SavePersonalWallboardsRequest = TypedDict('SavePersonalWallboardsRequest', {
+    'revision': 'str | None',
+    'wallboards': Required['Any'],
 }, total=False)
 
 SearchResult = TypedDict('SearchResult', {
@@ -1744,6 +1758,13 @@ ValidationProblemDetails = TypedDict('ValidationProblemDetails', {
     'errors': 'dict[str, list[str]] | None',
 }, total=False)
 
+Wallboard = TypedDict('Wallboard', {
+    'displayId': 'str | None',
+    'name': 'str | None',
+    'isPortrait': 'bool',
+    'pages': 'list[WallboardPage] | None',
+}, total=False)
+
 WallboardDeviceChallenge = TypedDict('WallboardDeviceChallenge', {
     'challenge': 'str | None',
     'message': 'str | None',
@@ -1755,6 +1776,18 @@ WallboardDeviceInfo = TypedDict('WallboardDeviceInfo', {
     'displayId': 'str | None',
     'createdAt': 'str',
     'location': 'WallboardScanLocation',
+}, total=False)
+
+WallboardDisplayResponse = TypedDict('WallboardDisplayResponse', {
+    'layout': 'Wallboard',
+    'revision': 'str | None',
+}, total=False)
+
+WallboardPage = TypedDict('WallboardPage', {
+    'pageId': 'str | None',
+    'name': 'str | None',
+    'displayDurationSeconds': 'int',
+    'widgets': 'list[WallboardWidget] | None',
 }, total=False)
 
 WallboardPairingInfo = TypedDict('WallboardPairingInfo', {
@@ -1784,6 +1817,16 @@ WallboardScanLocation = TypedDict('WallboardScanLocation', {
     'longitude': 'float',
     'accuracyMeters': 'float',
     'capturedAt': 'str',
+}, total=False)
+
+WallboardWidget = TypedDict('WallboardWidget', {
+    'widgetId': 'str | None',
+    'widgetType': 'EWidgetType',
+    'kid': 'str | None',
+    'column': 'int',
+    'row': 'int',
+    'width': 'int',
+    'height': 'int',
 }, total=False)
 
 WashDocChartDosing = TypedDict('WashDocChartDosing', {
@@ -1859,6 +1902,8 @@ WashDocPresentation = TypedDict('WashDocPresentation', {
 }, total=False)
 
 EThemeMode = int
+
+EWidgetType = int
 
 ActiveUsersResponse = TypedDict('ActiveUsersResponse', {
     'tenantKid': 'str | None',

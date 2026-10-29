@@ -866,6 +866,18 @@ array{'revision': string|null, 'value': mixed}
 array{'revision': string|null, 'enabled': bool}
 ```
 
+### PersonalWallboardRequest
+
+```php
+array{'displayId': string|null}
+```
+
+### PersonalWallboardsResponse
+
+```php
+array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null}
+```
+
 ### ProblemDetails
 
 ```php
@@ -882,6 +894,12 @@ array{'deviceCode'?: string|null}
 
 ```php
 array{'challenge'?: string|null, 'signature'?: string|null}
+```
+
+### SavePersonalWallboardsRequest
+
+```php
+array{'revision'?: string|null, 'wallboards': mixed}
 ```
 
 ### SearchResult
@@ -1310,6 +1328,12 @@ array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'numb
 array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
 ```
 
+### Wallboard
+
+```php
+array{'displayId'?: string|null, 'name'?: string|null, 'isPortrait'?: bool, 'pages'?: list<WallboardPage>|null}
+```
+
 ### WallboardDeviceChallenge
 
 ```php
@@ -1320,6 +1344,18 @@ array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
 
 ```php
 array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
+```
+
+### WallboardDisplayResponse
+
+```php
+array{'layout'?: Wallboard, 'revision'?: string|null}
+```
+
+### WallboardPage
+
+```php
+array{'pageId'?: string|null, 'name'?: string|null, 'displayDurationSeconds'?: int, 'widgets'?: list<WallboardWidget>|null}
 ```
 
 ### WallboardPairingInfo
@@ -1344,6 +1380,12 @@ array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|nul
 
 ```php
 array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float, 'capturedAt'?: string}
+```
+
+### WallboardWidget
+
+```php
+array{'widgetId'?: string|null, 'widgetType'?: eWidgetType, 'kid'?: string|null, 'column'?: int, 'row'?: int, 'width'?: int, 'height'?: int}
 ```
 
 ### WashDocChartDosing
@@ -1389,6 +1431,12 @@ array{'unitType'?: int|null, 'kind'?: string|null, 'groupOrder'?: list<string>|n
 ```
 
 ### eThemeMode
+
+```php
+int
+```
+
+### eWidgetType
 
 ```php
 int
