@@ -4159,6 +4159,31 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>RedeemWallboardPairing</summary>
+    public sealed class RedeemWallboardPairing
+    {
+        /// <summary>deviceCode</summary>
+        [JsonField("deviceCode")]
+        public string DeviceCode { get { return _DeviceCode; } set { _DeviceCode = value; } }
+        private string _DeviceCode;
+
+    }
+
+    /// <summary>ResumeWallboardSession</summary>
+    public sealed class ResumeWallboardSession
+    {
+        /// <summary>challenge</summary>
+        [JsonField("challenge")]
+        public string Challenge { get { return _Challenge; } set { _Challenge = value; } }
+        private string _Challenge;
+
+        /// <summary>signature</summary>
+        [JsonField("signature")]
+        public string Signature { get { return _Signature; } set { _Signature = value; } }
+        private string _Signature;
+
+    }
+
     /// <summary>Mixed-result shape; kind is an enum-derived type. Kid identifies the result; optional BankKid identifies a resident's parent bank.</summary>
     public sealed class SearchResult
     {
@@ -4506,6 +4531,21 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("transactionCount")]
         public long? TransactionCount { get { return _TransactionCount; } set { _TransactionCount = value; } }
         private long? _TransactionCount;
+
+    }
+
+    /// <summary>StartWallboardPairing</summary>
+    public sealed class StartWallboardPairing
+    {
+        /// <summary>displayId</summary>
+        [JsonField("displayId")]
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
+
+        /// <summary>publicKey</summary>
+        [JsonField("publicKey")]
+        public string PublicKey { get { return _PublicKey; } set { _PublicKey = value; } }
+        private string _PublicKey;
 
     }
 
@@ -6301,6 +6341,101 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("errors")]
         public Dictionary<string, string[]> Errors { get { return _Errors; } set { _Errors = value; } }
         private Dictionary<string, string[]> _Errors;
+
+    }
+
+    /// <summary>WallboardDeviceChallenge</summary>
+    public sealed class WallboardDeviceChallenge
+    {
+        /// <summary>challenge</summary>
+        [JsonField("challenge")]
+        public string Challenge { get { return _Challenge; } set { _Challenge = value; } }
+        private string _Challenge;
+
+        /// <summary>message</summary>
+        [JsonField("message")]
+        public string Message { get { return _Message; } set { _Message = value; } }
+        private string _Message;
+
+        /// <summary>expiresIn</summary>
+        [JsonField("expiresIn")]
+        public int? ExpiresIn { get { return _ExpiresIn; } set { _ExpiresIn = value; } }
+        private int? _ExpiresIn;
+
+    }
+
+    /// <summary>WallboardPairingInfo</summary>
+    public sealed class WallboardPairingInfo
+    {
+        /// <summary>pairingId</summary>
+        [JsonField("pairingId")]
+        public string PairingId { get { return _PairingId; } set { _PairingId = value; } }
+        private string _PairingId;
+
+        /// <summary>displayId</summary>
+        [JsonField("displayId")]
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
+
+        /// <summary>expiresAt ISO 8601 text, sent unchanged.</summary>
+        [JsonField("expiresAt")]
+        public string ExpiresAt { get { return _ExpiresAt; } set { _ExpiresAt = value; } }
+        private string _ExpiresAt;
+
+        /// <summary>approved</summary>
+        [JsonField("approved")]
+        public bool? Approved { get { return _Approved; } set { _Approved = value; } }
+        private bool? _Approved;
+
+    }
+
+    /// <summary>WallboardPairingStarted</summary>
+    public sealed class WallboardPairingStarted
+    {
+        /// <summary>pairingId</summary>
+        [JsonField("pairingId")]
+        public string PairingId { get { return _PairingId; } set { _PairingId = value; } }
+        private string _PairingId;
+
+        /// <summary>deviceCode</summary>
+        [JsonField("deviceCode")]
+        public string DeviceCode { get { return _DeviceCode; } set { _DeviceCode = value; } }
+        private string _DeviceCode;
+
+        /// <summary>displayId</summary>
+        [JsonField("displayId")]
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
+
+        /// <summary>expiresAt ISO 8601 text, sent unchanged.</summary>
+        [JsonField("expiresAt")]
+        public string ExpiresAt { get { return _ExpiresAt; } set { _ExpiresAt = value; } }
+        private string _ExpiresAt;
+
+        /// <summary>intervalSeconds</summary>
+        [JsonField("intervalSeconds")]
+        public int? IntervalSeconds { get { return _IntervalSeconds; } set { _IntervalSeconds = value; } }
+        private int? _IntervalSeconds;
+
+    }
+
+    /// <summary>WallboardPairingToken</summary>
+    public sealed class WallboardPairingToken
+    {
+        /// <summary>status</summary>
+        [JsonField("status")]
+        public string Status { get { return _Status; } set { _Status = value; } }
+        private string _Status;
+
+        /// <summary>accessToken</summary>
+        [JsonField("accessToken")]
+        public string AccessToken { get { return _AccessToken; } set { _AccessToken = value; } }
+        private string _AccessToken;
+
+        /// <summary>expiresIn</summary>
+        [JsonField("expiresIn")]
+        public long? ExpiresIn { get { return _ExpiresIn; } set { _ExpiresIn = value; } }
+        private long? _ExpiresIn;
 
     }
 

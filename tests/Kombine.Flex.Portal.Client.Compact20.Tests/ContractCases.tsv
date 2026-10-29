@@ -146,6 +146,13 @@ GetUserReceipts	GET	/api/v1/users/{userKid}/receipts	200	{}
 SearchUsers	GET	/api/v1/search/users	200	{}
 SearchUserSms	GET	/api/v1/search/user-sms	200	{}
 SearchUserActivation	GET	/api/v1/search/user-activation	200	{}
+StartWallboardPairing	POST	/api/v1/wallboard/pairings	200	{}
+GetWallboardPairing	GET	/api/v1/wallboard/pairings/{pairingId}	200	{}
+ApproveWallboardPairing	POST	/api/v1/wallboard/pairings/{pairingId}/approve	204	
+RedeemWallboardPairing	POST	/api/v1/wallboard/pairings/{pairingId}/token	200	{}
+ChallengeWallboardDevice	POST	/api/v1/wallboard/devices/{deviceId}/challenge	200	{}
+ResumeWallboardSession	POST	/api/v1/wallboard/devices/{deviceId}/session	200	{}
+RevokeWallboardDevice	DELETE	/api/v1/wallboard/devices/{deviceId}	204	
 GetPortalAppDownloadPage	GET	/download	200	{}
 DownloadPortalWindowsAppInstaller	GET	/download/windows/{architecture}/portal.appinstaller	200	{}
 DownloadPortalWindowsPackage	GET	/download/windows/{architecture}/{fileName}	200	{}

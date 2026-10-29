@@ -385,6 +385,8 @@ class BaseClient:
                 raise PortalProtocolError('JSON response exceeds configured limit.')
             if status not in spec['statuses']:
                 raise PortalApiError(status, payload.decode('utf-8', errors='replace'), response_headers)
+            if spec['response'] is None and status == 204:
+                return None
             try:
                 result = _parse(payload.decode('utf-8-sig', errors='strict'))
             except UnicodeError:

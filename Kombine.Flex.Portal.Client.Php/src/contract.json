@@ -3897,6 +3897,30 @@
       },
       "additionalProperties": {}
     },
+    "RedeemWallboardPairing": {
+      "type": "object",
+      "properties": {
+        "deviceCode": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResumeWallboardSession": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string",
+          "nullable": true
+        },
+        "signature": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "SearchResult": {
       "type": "object",
       "properties": {
@@ -4236,6 +4260,20 @@
         "transactionCount": {
           "type": "integer",
           "format": "int64",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "StartWallboardPairing": {
+      "type": "object",
+      "properties": {
+        "displayId": {
+          "type": "string",
+          "nullable": true
+        },
+        "publicKey": {
+          "type": "string",
           "nullable": true
         }
       },
@@ -5869,6 +5907,90 @@
         }
       },
       "additionalProperties": {}
+    },
+    "WallboardDeviceChallenge": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string",
+          "nullable": true
+        },
+        "message": {
+          "type": "string",
+          "nullable": true
+        },
+        "expiresIn": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardPairingInfo": {
+      "type": "object",
+      "properties": {
+        "pairingId": {
+          "type": "string",
+          "nullable": true
+        },
+        "displayId": {
+          "type": "string",
+          "nullable": true
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "approved": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardPairingStarted": {
+      "type": "object",
+      "properties": {
+        "pairingId": {
+          "type": "string",
+          "nullable": true
+        },
+        "deviceCode": {
+          "type": "string",
+          "nullable": true
+        },
+        "displayId": {
+          "type": "string",
+          "nullable": true
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "intervalSeconds": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardPairingToken": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "nullable": true
+        },
+        "accessToken": {
+          "type": "string",
+          "nullable": true
+        },
+        "expiresIn": {
+          "type": "integer",
+          "format": "int64",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
     },
     "WashDocChartDosing": {
       "type": "object",
@@ -12494,6 +12616,167 @@
       "response": {
         "$ref": "#/components/schemas/SearchResults"
       },
+      "binary": false
+    },
+    "StartWallboardPairing": {
+      "method": "POST",
+      "path": "api/v1/wallboard/pairings",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [],
+      "body": {
+        "$ref": "#/components/schemas/StartWallboardPairing"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardPairingStarted"
+      },
+      "binary": false
+    },
+    "GetWallboardPairing": {
+      "method": "GET",
+      "path": "api/v1/wallboard/pairings/{pairingId}",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "pairingId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardPairingInfo"
+      },
+      "binary": false
+    },
+    "ApproveWallboardPairing": {
+      "method": "POST",
+      "path": "api/v1/wallboard/pairings/{pairingId}/approve",
+      "statuses": [
+        204
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "pairingId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": null,
+      "binary": false
+    },
+    "RedeemWallboardPairing": {
+      "method": "POST",
+      "path": "api/v1/wallboard/pairings/{pairingId}/token",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "pairingId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "$ref": "#/components/schemas/RedeemWallboardPairing"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardPairingToken"
+      },
+      "binary": false
+    },
+    "ChallengeWallboardDevice": {
+      "method": "POST",
+      "path": "api/v1/wallboard/devices/{deviceId}/challenge",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "deviceId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardDeviceChallenge"
+      },
+      "binary": false
+    },
+    "ResumeWallboardSession": {
+      "method": "POST",
+      "path": "api/v1/wallboard/devices/{deviceId}/session",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [
+        {
+          "name": "deviceId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "$ref": "#/components/schemas/ResumeWallboardSession"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardPairingToken"
+      },
+      "binary": false
+    },
+    "RevokeWallboardDevice": {
+      "method": "DELETE",
+      "path": "api/v1/wallboard/devices/{deviceId}",
+      "statuses": [
+        204
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "deviceId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": null,
       "binary": false
     },
     "GetPortalAppDownloadPage": {

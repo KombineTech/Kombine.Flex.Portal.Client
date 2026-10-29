@@ -149,6 +149,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PersonalProfileRequest array{'revision': string|null, 'value': mixed}
  * @phpstan-type PersonalTabRequest array{'revision': string|null, 'enabled': bool}
  * @phpstan-type ProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
+ * @phpstan-type RedeemWallboardPairing array{'deviceCode'?: string|null}
+ * @phpstan-type ResumeWallboardSession array{'challenge'?: string|null, 'signature'?: string|null}
  * @phpstan-type SearchResult array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type SearchResults array{'items'?: list<SearchResult>|null, 'hasMore'?: bool}
  * @phpstan-type ServiceApiKeyRequest array{'expectedRevision': string|null}
@@ -163,6 +165,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type SettlementGroupResponse array{'group'?: string|null, 'currency'?: string|null, 'entries'?: int, 'amountMinor'?: int}
  * @phpstan-type SettlementHistoryResponse array{'kid'?: string|null, 'nextSettlement'?: string|null, 'periods'?: list<SettlementPeriodResponse>|null, 'nextBeforePeriod'?: int|null}
  * @phpstan-type SettlementPeriodResponse array{'period'?: int, 'settlementDate'?: string|null, 'settlementRun'?: string|null, 'firstTransaction'?: string|null, 'lastTransaction'?: string|null, 'amountMinor'?: int|null, 'transactionCount'?: int|null}
+ * @phpstan-type StartWallboardPairing array{'displayId'?: string|null, 'publicKey'?: string|null}
  * @phpstan-type TenantStatusItem array{'kind'?: string|null, 'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'computerName'?: string|null, 'bankType'?: string|null, 'unitType'?: int|null, 'errorId'?: int|null, 'timestampUtc'?: string, 'iconKid'?: string|null, 'bankIconKid'?: string|null, 'locationIconKid'?: string|null}
  * @phpstan-type TenantStatusPageResponse array{'status'?: TenantStatusResponse, 'offset'?: int, 'totalCount'?: int, 'previousCursor'?: string|null, 'nextCursor'?: string|null}
  * @phpstan-type TenantStatusResponse array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'sources'?: list<TenantStatusSourceResult>|null, 'items'?: list<TenantStatusItem>|null}
@@ -215,6 +218,10 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserTagResponse array{'kid'?: string|null, 'state'?: string|null}
  * @phpstan-type UserWorkspaceResponse array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'number'?: string|null, 'deletedAtUtc'?: string|null, 'deleteAtUtc'?: string|null, 'locations'?: list<UserScopeState>|null, 'tags'?: list<UserScopeState>|null, 'attributes'?: list<UserAttributeInput>|null, 'canWrite'?: bool, 'canCreate'?: bool, 'synchronization'?: string|null, 'canDelete'?: bool, 'canRenameExternalId'?: bool, 'canRename'?: bool, 'iconKid'?: string|null, 'availableIcons'?: list<string>|null, 'canEditIcon'?: bool}
  * @phpstan-type ValidationProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
+ * @phpstan-type WallboardDeviceChallenge array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
+ * @phpstan-type WallboardPairingInfo array{'pairingId'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'approved'?: bool}
+ * @phpstan-type WallboardPairingStarted array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'intervalSeconds'?: int}
+ * @phpstan-type WallboardPairingToken array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null}
  * @phpstan-type WashDocChartDosing array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
  * @phpstan-type WashDocChartEvent array{'ms2000'?: int, 'kind'?: string|null, 'name'?: string|null, 'value'?: int|float|null, 'label'?: string|null, 'localization'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type WashDocChartPoint array{'ms2000'?: int, 'value'?: int|float|null, 'isCalculated'?: bool, 'isEdge'?: bool, 'unit'?: string|null}
@@ -1815,6 +1822,78 @@ final class PortalClient extends BaseClient
     public function searchUserActivation(array $options = []): mixed
     {
         return $this->request('SearchUserActivation', [] + $options, null);
+    }
+
+    /**
+     * Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code.
+     * @param StartWallboardPairing $body
+     * @return WallboardPairingStarted
+     */
+    public function startWallboardPairing(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('StartWallboardPairing', [], $body);
+    }
+
+    /**
+     * Read the screen ID and expiry before explicitly approving its QR code.
+     * @param string $pairingId
+     * @return WallboardPairingInfo
+     */
+    public function getWallboardPairing(mixed $pairingId): mixed
+    {
+        return $this->request('GetWallboardPairing', ['pairingId' => $pairingId], null);
+    }
+
+    /**
+     * Approve one screen using your current manager bearer session, including sessions created with kid and apiKey.
+     * @param string $pairingId
+     * @return null
+     */
+    public function approveWallboardPairing(mixed $pairingId): mixed
+    {
+        return $this->request('ApproveWallboardPairing', ['pairingId' => $pairingId], null);
+    }
+
+    /**
+     * Poll with the private deviceCode. Successful redemption consumes the pairing atomically.
+     * @param string $pairingId
+     * @param RedeemWallboardPairing $body
+     * @return WallboardPairingToken
+     */
+    public function redeemWallboardPairing(mixed $pairingId, #[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('RedeemWallboardPairing', ['pairingId' => $pairingId], $body);
+    }
+
+    /**
+     * Request a two-minute signing challenge for a permanently approved screen.
+     * @param string $deviceId
+     * @return WallboardDeviceChallenge
+     */
+    public function challengeWallboardDevice(mixed $deviceId): mixed
+    {
+        return $this->request('ChallengeWallboardDevice', ['deviceId' => $deviceId], null);
+    }
+
+    /**
+     * Resume a permanently approved screen after proving possession of its private signing key.
+     * @param string $deviceId
+     * @param ResumeWallboardSession $body
+     * @return WallboardPairingToken
+     */
+    public function resumeWallboardSession(mixed $deviceId, #[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('ResumeWallboardSession', ['deviceId' => $deviceId], $body);
+    }
+
+    /**
+     * Revoke a screen you approved. Its existing bearer sessions also lose access.
+     * @param string $deviceId
+     * @return null
+     */
+    public function revokeWallboardDevice(mixed $deviceId): mixed
+    {
+        return $this->request('RevokeWallboardDevice', ['deviceId' => $deviceId], null);
     }
 
     /**

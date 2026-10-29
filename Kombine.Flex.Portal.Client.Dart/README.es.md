@@ -1,3 +1,5 @@
+La versión 0.7.0 añade siete operaciones para vincular y gestionar pantallas Wallboard (198 en total). Un administrador activo aprueba cada pantalla una vez; la aprobación del dispositivo no caduca automáticamente. Mantenga la clave privada ECDSA P-256 no exportable en la pantalla, firme desafíos de un solo uso para reconectar y no incluya credenciales ni tokens bearer en URL o almacenamiento del navegador. Se conservan la revocación y las comprobaciones de la cuenta y credenciales del administrador. La sesión de diez días no limita la aprobación. UserBalance mantiene la compatibilidad. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog) y la [guía Wallboard](https://api.team.kombine.technology/docs#wallboard-pairing).
+
 La versión 0.6.0 añade la lista de liquidaciones de solo lectura, el historial y reconocimiento de errores, la consulta y restauración de máquinas fuera de servicio y el acceso autorizado a eVaskeri del residente. La búsqueda de residentes incluye bankKid. Todas las operaciones mantienen la autorización del administrador, tenant y recurso. Los enlaces de eVaskeri son credenciales sensibles: ábralos inmediatamente sin opener/referrer y nunca los registre ni almacene. No repita automáticamente solicitudes de modificación tras una respuesta incierta. UserBalance conserva la compatibilidad. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
 
 La versión 0.5.0 utiliza GetPublicCycleWidget y GetCycleChartPresentation. Sustituya las rutas retiradas de widgets/presentación WashDoc por /api/v1/public/widgets/cycle y /api/v1/public/cycle-chart/presentation. Los parámetros de ruta y los campos de tablas/gráficos/widgets usan cycleKid; el campo de visualización del widget es cycleKidText. Se mantienen los valores KID y los ID de las operaciones de documentos. Recompile los clientes y actualice las referencias a campos. UserBalance conserva la compatibilidad. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
@@ -8,7 +10,7 @@ La versión 0.3.0 mueve ConvertToolTime e InspectToolKid a /api/v1/tenant/tools/
 
 # Cliente Dart de Kombine Flex Portal
 
-La versiÃ³n **0.6.0** incluye **182 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicaciÃ³n, aÃ±ada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicaciÃ³n proporciona las credenciales del ejemplo.
+La versiÃ³n **0.7.0** incluye **182 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicaciÃ³n, aÃ±ada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicaciÃ³n proporciona las credenciales del ejemplo.
 
 ```yaml
 dependencies:

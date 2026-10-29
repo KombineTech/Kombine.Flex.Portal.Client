@@ -866,6 +866,18 @@ array{'revision': string|null, 'enabled': bool}
 array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
 ```
 
+### RedeemWallboardPairing
+
+```php
+array{'deviceCode'?: string|null}
+```
+
+### ResumeWallboardSession
+
+```php
+array{'challenge'?: string|null, 'signature'?: string|null}
+```
+
 ### SearchResult
 
 ```php
@@ -948,6 +960,12 @@ array{'kid'?: string|null, 'nextSettlement'?: string|null, 'periods'?: list<Sett
 
 ```php
 array{'period'?: int, 'settlementDate'?: string|null, 'settlementRun'?: string|null, 'firstTransaction'?: string|null, 'lastTransaction'?: string|null, 'amountMinor'?: int|null, 'transactionCount'?: int|null}
+```
+
+### StartWallboardPairing
+
+```php
+array{'displayId'?: string|null, 'publicKey'?: string|null}
 ```
 
 ### TenantStatusItem
@@ -1260,6 +1278,30 @@ array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'numb
 
 ```php
 array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
+```
+
+### WallboardDeviceChallenge
+
+```php
+array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
+```
+
+### WallboardPairingInfo
+
+```php
+array{'pairingId'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'approved'?: bool}
+```
+
+### WallboardPairingStarted
+
+```php
+array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'intervalSeconds'?: int}
+```
+
+### WallboardPairingToken
+
+```php
+array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null}
 ```
 
 ### WashDocChartDosing

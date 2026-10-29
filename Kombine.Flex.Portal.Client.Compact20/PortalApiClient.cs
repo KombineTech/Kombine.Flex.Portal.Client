@@ -134,6 +134,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
             {
                 string json = ReadJson(response);
                 if (response.Status != expectedStatus) throw new PortalApiException(response.Status, json, response.Headers);
+                if (expectedStatus == 204 && type == typeof(object)) return null;
                 try
                 {
                     object result = PortalJson.Deserialize(json, type);

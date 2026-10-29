@@ -1949,6 +1949,20 @@ export interface ProblemDetails {
   "instance"?: string | null;
 }
 
+/** RedeemWallboardPairing */
+export interface RedeemWallboardPairing {
+  /** deviceCode */
+  "deviceCode"?: string | null;
+}
+
+/** ResumeWallboardSession */
+export interface ResumeWallboardSession {
+  /** challenge */
+  "challenge"?: string | null;
+  /** signature */
+  "signature"?: string | null;
+}
+
 /** Mixed-result shape; kind is an enum-derived type. Kid identifies the result; optional BankKid identifies a resident's parent bank. */
 export interface SearchResult {
   /** kid */
@@ -2115,6 +2129,14 @@ export interface SettlementPeriodResponse {
   "amountMinor"?: bigint | null;
   /** Stored transaction count. */
   "transactionCount"?: bigint | null;
+}
+
+/** StartWallboardPairing */
+export interface StartWallboardPairing {
+  /** displayId */
+  "displayId"?: string | null;
+  /** publicKey */
+  "publicKey"?: string | null;
 }
 
 /** One alert with canonical object KIDs and a UTC last-contact or out-of-order timestamp. */
@@ -2937,6 +2959,52 @@ export interface ValidationProblemDetails {
   "instance"?: string | null;
   /** errors */
   "errors"?: Record<string, (string)[]> | null;
+}
+
+/** WallboardDeviceChallenge */
+export interface WallboardDeviceChallenge {
+  /** challenge */
+  "challenge"?: string | null;
+  /** message */
+  "message"?: string | null;
+  /** expiresIn */
+  "expiresIn"?: number;
+}
+
+/** WallboardPairingInfo */
+export interface WallboardPairingInfo {
+  /** pairingId */
+  "pairingId"?: string | null;
+  /** displayId */
+  "displayId"?: string | null;
+  /** expiresAt */
+  "expiresAt"?: string;
+  /** approved */
+  "approved"?: boolean;
+}
+
+/** WallboardPairingStarted */
+export interface WallboardPairingStarted {
+  /** pairingId */
+  "pairingId"?: string | null;
+  /** deviceCode */
+  "deviceCode"?: string | null;
+  /** displayId */
+  "displayId"?: string | null;
+  /** expiresAt */
+  "expiresAt"?: string;
+  /** intervalSeconds */
+  "intervalSeconds"?: number;
+}
+
+/** WallboardPairingToken */
+export interface WallboardPairingToken {
+  /** status */
+  "status"?: string | null;
+  /** accessToken */
+  "accessToken"?: string | null;
+  /** expiresIn */
+  "expiresIn"?: bigint | null;
 }
 
 /** Actual SoapInfo event. Missing duration/amounts remain null; quantity is never inferred from duration. */

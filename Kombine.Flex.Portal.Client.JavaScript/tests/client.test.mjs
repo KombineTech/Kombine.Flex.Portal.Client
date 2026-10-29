@@ -9,6 +9,7 @@ import { parseJson, stringifyJson } from '../dist/json.js';
 const cases = JSON.parse(await readFile(new URL('contract-cases.json', import.meta.url)));
 const json = (value, status = 200, headers = {}) => new Response(stringifyJson(value), { status, headers });
 function sample(spec) {
+  if (spec === null) return undefined;
   if (spec.$ref) return sample(contract.schemas[spec.$ref.split('/').at(-1)]);
   switch (spec.type) {
     case 'integer': return spec.format === 'int64' ? 9223372036854775807n : 17;
@@ -21,7 +22,7 @@ function sample(spec) {
   }
 }
 
-assert.equal(cases.length, 191);
+assert.equal(cases.length, 198);
 test('background upload accepts 202 and confirmation preserves unknown progress', async () => {
   const client = new PortalClient('https://api.example.test/', { fetch: async (url) => {
     const request = new URL(url);
@@ -45,7 +46,7 @@ for (const spec of cases) {
     const client = new PortalClient('https://api.example.test/sub/', { fetch: async (url, init) => {
       count++;
       observed = { url: new URL(url), init };
-      return spec.binary ? new Response(responseBody, { status: spec.status }) : json(responseBody, spec.status);
+      return spec.binary ? new Response(responseBody, { status: spec.status }) : spec.response ? json(responseBody, spec.status) : new Response(null, { status: spec.status });
     }});
     client.accessToken = 'fixture-token';
     let path = '/sub/' + spec.path;
@@ -102,7 +103,8 @@ for (const spec of cases) {
       const chunks = [];
       for await (const chunk of result.chunks()) chunks.push(...chunk);
       assert.deepEqual(chunks, [...responseBody]);
-    } else assert.equal(stringifyJson(result), stringifyJson(responseBody));
+    } else if (spec.response) assert.equal(stringifyJson(result), stringifyJson(responseBody));
+    else assert.equal(result, undefined);
   });
 }
 

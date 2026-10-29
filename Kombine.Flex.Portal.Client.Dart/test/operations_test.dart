@@ -2944,6 +2944,135 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire StartWallboardPairing", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/pairings");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+      expect(request.body, encodeApiJson(<String, Object?>{"displayId": null, "publicKey": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"pairingId": null, "deviceCode": null, "displayId": null, "expiresAt": "2026-10-20T10:00:00Z", "intervalSeconds": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.startWallboardPairing(body: <String, Object?>{"displayId": null, "publicKey": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"pairingId": null, "deviceCode": null, "displayId": null, "expiresAt": "2026-10-20T10:00:00Z", "intervalSeconds": 7}));
+    expect(sends, 1);
+  });
+
+  test("wire GetWallboardPairing", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/pairings/fixture%20%2F%C3%A6%3F%26");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"pairingId": null, "displayId": null, "expiresAt": "2026-10-20T10:00:00Z", "approved": false}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getWallboardPairing(pairingId: "fixture /\u00e6?&");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"pairingId": null, "displayId": null, "expiresAt": "2026-10-20T10:00:00Z", "approved": false}));
+    expect(sends, 1);
+  });
+
+  test("wire ApproveWallboardPairing", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/pairings/fixture%20%2F%C3%A6%3F%26/approve");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response("", 204);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    await client.approveWallboardPairing(pairingId: "fixture /\u00e6?&");
+    
+    expect(sends, 1);
+  });
+
+  test("wire RedeemWallboardPairing", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/pairings/fixture%20%2F%C3%A6%3F%26/token");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+      expect(request.body, encodeApiJson(<String, Object?>{"deviceCode": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.redeemWallboardPairing(pairingId: "fixture /\u00e6?&", body: <String, Object?>{"deviceCode": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null}));
+    expect(sends, 1);
+  });
+
+  test("wire ChallengeWallboardDevice", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/devices/fixture%20%2F%C3%A6%3F%26/challenge");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+
+      return http.Response(encodeApiJson(<String, Object?>{"challenge": null, "message": null, "expiresIn": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.challengeWallboardDevice(deviceId: "fixture /\u00e6?&");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"challenge": null, "message": null, "expiresIn": 7}));
+    expect(sends, 1);
+  });
+
+  test("wire ResumeWallboardSession", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/devices/fixture%20%2F%C3%A6%3F%26/session");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+      expect(request.body, encodeApiJson(<String, Object?>{"challenge": null, "signature": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.resumeWallboardSession(deviceId: "fixture /\u00e6?&", body: <String, Object?>{"challenge": null, "signature": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"status": null, "accessToken": null, "expiresIn": null}));
+    expect(sends, 1);
+  });
+
+  test("wire RevokeWallboardDevice", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "DELETE");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/wallboard/devices/fixture%20%2F%C3%A6%3F%26");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response("", 204);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    await client.revokeWallboardDevice(deviceId: "fixture /\u00e6?&");
+    
+    expect(sends, 1);
+  });
+
   test("wire GetPortalAppDownloadPage", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {

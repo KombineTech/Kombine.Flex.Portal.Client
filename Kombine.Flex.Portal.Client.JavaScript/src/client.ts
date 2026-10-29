@@ -743,6 +743,41 @@ export class PortalClient extends BaseClient {
     return this.send("SearchUserActivation", {"q": options.q}, undefined, request) as Promise<Models.SearchResults>;
   }
 
+  /** Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code. */
+  startWallboardPairing(body: Models.StartWallboardPairing, request: RequestOptions = {}): Promise<Models.WallboardPairingStarted> {
+    return this.send("StartWallboardPairing", {}, body, request) as Promise<Models.WallboardPairingStarted>;
+  }
+
+  /** Read the screen ID and expiry before explicitly approving its QR code. */
+  getWallboardPairing(pairingId: string, request: RequestOptions = {}): Promise<Models.WallboardPairingInfo> {
+    return this.send("GetWallboardPairing", {"pairingId": pairingId}, undefined, request) as Promise<Models.WallboardPairingInfo>;
+  }
+
+  /** Approve one screen using your current manager bearer session, including sessions created with kid and apiKey. */
+  approveWallboardPairing(pairingId: string, request: RequestOptions = {}): Promise<void> {
+    return this.send("ApproveWallboardPairing", {"pairingId": pairingId}, undefined, request) as Promise<void>;
+  }
+
+  /** Poll with the private deviceCode. Successful redemption consumes the pairing atomically. */
+  redeemWallboardPairing(pairingId: string, body: Models.RedeemWallboardPairing, request: RequestOptions = {}): Promise<Models.WallboardPairingToken> {
+    return this.send("RedeemWallboardPairing", {"pairingId": pairingId}, body, request) as Promise<Models.WallboardPairingToken>;
+  }
+
+  /** Request a two-minute signing challenge for a permanently approved screen. */
+  challengeWallboardDevice(deviceId: string, request: RequestOptions = {}): Promise<Models.WallboardDeviceChallenge> {
+    return this.send("ChallengeWallboardDevice", {"deviceId": deviceId}, undefined, request) as Promise<Models.WallboardDeviceChallenge>;
+  }
+
+  /** Resume a permanently approved screen after proving possession of its private signing key. */
+  resumeWallboardSession(deviceId: string, body: Models.ResumeWallboardSession, request: RequestOptions = {}): Promise<Models.WallboardPairingToken> {
+    return this.send("ResumeWallboardSession", {"deviceId": deviceId}, body, request) as Promise<Models.WallboardPairingToken>;
+  }
+
+  /** Revoke a screen you approved. Its existing bearer sessions also lose access. */
+  revokeWallboardDevice(deviceId: string, request: RequestOptions = {}): Promise<void> {
+    return this.send("RevokeWallboardDevice", {"deviceId": deviceId}, undefined, request) as Promise<void>;
+  }
+
   /** Displays Windows downloads for this tenant, or an explicit unavailable state. */
   getPortalAppDownloadPage(request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("GetPortalAppDownloadPage", {}, undefined, request) as Promise<PortalDownload>;
