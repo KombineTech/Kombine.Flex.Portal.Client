@@ -1919,12 +1919,12 @@ void main() {
       expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards");
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
-      expect(request.body, encodeApiJson(<String, Object?>{"displayId": null}));
+      expect(request.body, encodeApiJson(<String, Object?>{"displayId": null, "targetDisplayId": null}));
       expect(request.headers['content-type'], contains('application/json'));
       return http.Response(encodeApiJson(<String, Object?>{"code": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.addMyManagerWallboard(body: <String, Object?>{"displayId": null});
+    final result = await client.addMyManagerWallboard(body: <String, Object?>{"displayId": null, "targetDisplayId": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"code": null}));
     expect(sends, 1);
   });
@@ -1939,11 +1939,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
 
-      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getMyManagerWallboards();
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7}));
     expect(sends, 1);
   });
 
@@ -1956,13 +1956,13 @@ void main() {
       expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards");
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
-      expect(request.body, encodeApiJson(<String, Object?>{"revision": null, "wallboards": null}));
+      expect(request.body, encodeApiJson(<String, Object?>{"revision": null, "wallboards": null, "portalWallboard": null}));
       expect(request.headers['content-type'], contains('application/json'));
-      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.saveMyManagerWallboards(body: <String, Object?>{"revision": null, "wallboards": null});
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}));
+    final result = await client.saveMyManagerWallboards(body: <String, Object?>{"revision": null, "wallboards": null, "portalWallboard": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7}));
     expect(sends, 1);
   });
 
@@ -1977,11 +1977,11 @@ void main() {
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
       expect(request.url.queryParametersAll["after"], <Object?>["fixture"]);
-      return http.Response(encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "p": 7, "c": null, "s": null}, "revision": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getMyManagerWallboardDisplay(displayId: "fixture /\u00e6?&", portrait: false, after: "fixture");
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "p": 7, "c": null, "s": null}, "revision": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null}));
     expect(sends, 1);
   });
 

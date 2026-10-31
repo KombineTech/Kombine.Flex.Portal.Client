@@ -1951,6 +1951,8 @@ export interface PersonalTabRequest {
 export interface PersonalWallboardRequest {
   /** displayId */
   "displayId": string | null;
+  /** targetDisplayId */
+  "targetDisplayId"?: string | null;
 }
 
 /** Own layout collection and opaque optimistic concurrency revision. */
@@ -1963,6 +1965,12 @@ export interface PersonalWallboardsResponse {
   "storageUsedCharacters"?: number;
   /** storageLimitCharacters */
   "storageLimitCharacters"?: number;
+  /** portalWallboard */
+  "portalWallboard"?: Wallboard;
+  /** portalStorageUsedCharacters */
+  "portalStorageUsedCharacters"?: number;
+  /** portalStorageLimitCharacters */
+  "portalStorageLimitCharacters"?: number;
 }
 
 /** ProblemDetails */
@@ -1999,6 +2007,8 @@ export interface SavePersonalWallboardsRequest {
   "revision"?: string | null;
   /** wallboards */
   "wallboards": unknown;
+  /** portalWallboard */
+  "portalWallboard"?: unknown;
 }
 
 /** Mixed-result shape; kind is an enum-derived type. Kid identifies the result; optional BankKid identifies a resident's parent bank. */
@@ -3080,11 +3090,11 @@ export interface ValidationProblemDetails {
 /** Wallboard */
 export interface Wallboard {
   /** i */
-  "i"?: string | null;
+  "i"?: (string)[] | null;
   /** n */
   "n"?: string | null;
-  /** p */
-  "p"?: number;
+  /** a */
+  "a"?: number;
   /** c */
   "c"?: (EColor)[] | null;
   /** s */
@@ -3187,14 +3197,8 @@ export interface WallboardWidget {
   "t"?: EWidgetType;
   /** k */
   "k"?: string | null;
-  /** x */
-  "x"?: number;
-  /** y */
-  "y"?: number;
-  /** w */
-  "w"?: number;
-  /** h */
-  "h"?: number;
+  /** r */
+  "r"?: (number)[] | null;
 }
 
 /** Actual SoapInfo event. Missing duration/amounts remain null; quantity is never inferred from duration. */
@@ -3333,7 +3337,7 @@ export type EColor = number;
 /** Wire values: [0, 1, 2]. */
 export type EThemeMode = number;
 
-/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]. */
+/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]. */
 export type EWidgetType = number;
 
 /** Public tenant-wide count; does not expose or grant access to any individual account. */

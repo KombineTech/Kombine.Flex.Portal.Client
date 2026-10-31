@@ -1122,6 +1122,7 @@ PersonalTabRequest = TypedDict('PersonalTabRequest', {
 
 PersonalWallboardRequest = TypedDict('PersonalWallboardRequest', {
     'displayId': Required['str | None'],
+    'targetDisplayId': 'str | None',
 }, total=False)
 
 PersonalWallboardsResponse = TypedDict('PersonalWallboardsResponse', {
@@ -1129,6 +1130,9 @@ PersonalWallboardsResponse = TypedDict('PersonalWallboardsResponse', {
     'revision': 'str | None',
     'storageUsedCharacters': 'int',
     'storageLimitCharacters': 'int',
+    'portalWallboard': 'Wallboard',
+    'portalStorageUsedCharacters': 'int',
+    'portalStorageLimitCharacters': 'int',
 }, total=False)
 
 ProblemDetails = TypedDict('ProblemDetails', {
@@ -1151,6 +1155,7 @@ ResumeWallboardSession = TypedDict('ResumeWallboardSession', {
 SavePersonalWallboardsRequest = TypedDict('SavePersonalWallboardsRequest', {
     'revision': 'str | None',
     'wallboards': Required['Any'],
+    'portalWallboard': 'Any',
 }, total=False)
 
 SearchResult = TypedDict('SearchResult', {
@@ -1763,9 +1768,9 @@ ValidationProblemDetails = TypedDict('ValidationProblemDetails', {
 }, total=False)
 
 Wallboard = TypedDict('Wallboard', {
-    'i': 'str | None',
+    'i': 'list[str] | None',
     'n': 'str | None',
-    'p': 'int',
+    'a': 'float',
     'c': 'list[EColor] | None',
     's': 'list[WallboardPage] | None',
 }, total=False)
@@ -1826,10 +1831,7 @@ WallboardScanLocation = TypedDict('WallboardScanLocation', {
 WallboardWidget = TypedDict('WallboardWidget', {
     't': 'EWidgetType',
     'k': 'str | None',
-    'x': 'int',
-    'y': 'int',
-    'w': 'int',
-    'h': 'int',
+    'r': 'list[int] | None',
 }, total=False)
 
 WashDocChartDosing = TypedDict('WashDocChartDosing', {

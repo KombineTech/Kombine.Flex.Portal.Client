@@ -1560,7 +1560,7 @@ namespace Kombine.Flex.Portal.Client.Net20
             return (PersonalWallboardsResponse)SendJson("GET", path, null, headers, 200, typeof(PersonalWallboardsResponse));
         }
 
-        /// <summary>Save your own complete Wallboard1 layout collection.</summary>
+        /// <summary>Save your own Wallboard1 layouts and optional portal overview layout.</summary>
         public PersonalWallboardsResponse SaveMyManagerWallboards(SavePersonalWallboardsRequest body)
         {
             string path = "api/v1/session/me/wallboards";
