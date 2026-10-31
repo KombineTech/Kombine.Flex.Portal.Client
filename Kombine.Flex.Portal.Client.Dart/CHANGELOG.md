@@ -1,3 +1,7 @@
+## 0.12.0
+
+Synchronizes the reviewed main API contract. New Wallboard registrations reject reserved routes and root asset names; existing stored display identities and approvals remain valid. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
 ## 0.11.0
 
 Synchronizes the October 31 Portal API contract, including compact Wallboard layouts and manager presentation preferences.

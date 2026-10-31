@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-206 operations. OpenAPI SHA-256: `b65a4773c87b5f9b37f93cc15d34571226ab4122b59976f41964f12881ec8ffc`.
+206 operations. OpenAPI SHA-256: `57838e30afe27c5d5d6317df290195428b31f4048eee07025a4511e22e576396`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |

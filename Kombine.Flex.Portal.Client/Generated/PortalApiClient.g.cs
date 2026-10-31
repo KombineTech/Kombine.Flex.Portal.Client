@@ -3581,6 +3581,7 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Provide an ECDSA P-256 public key as base64 SPKI; keep the non-exportable private key on the screen.
         /// <br/>            No manager credential is required. Poll every five seconds. A display ID grants no access.
+        /// <br/>            New display IDs must not match standalone Wallboard routes or root static filenames, including .gz/.br variants (case-insensitive); reserved names return 400.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -27011,6 +27012,7 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Provide an ECDSA P-256 public key as base64 SPKI; keep the non-exportable private key on the screen.
         /// <br/>            No manager credential is required. Poll every five seconds. A display ID grants no access.
+        /// <br/>            New display IDs must not match standalone Wallboard routes or root static filenames, including .gz/.br variants (case-insensitive); reserved names return 400.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
