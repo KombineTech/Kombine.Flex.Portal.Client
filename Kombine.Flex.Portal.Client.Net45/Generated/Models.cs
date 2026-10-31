@@ -3357,6 +3357,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         public double? LineSpacing { get { return _LineSpacing; } set { _LineSpacing = value; } }
         private double? _LineSpacing;
 
+        /// <summary>Maximum workspace banks; null means unlimited. This display preference grants no access.</summary>
+        [JsonField("portalMaxOpenBanks")]
+        public int? PortalMaxOpenBanks { get { return _PortalMaxOpenBanks; } set { _PortalMaxOpenBanks = value; } }
+        private int? _PortalMaxOpenBanks;
+
         /// <summary>Names and IDs from the shared eTab enum, limited to the manager's recognized grants.</summary>
         [JsonField("tabDetails")]
         public ManagerTabResponse[] TabDetails { get { return _TabDetails; } set { _TabDetails = value; } }
@@ -4042,6 +4047,11 @@ namespace Kombine.Flex.Portal.Client.Net45
         public double? LineSpacing { get { return _LineSpacing; } set { _LineSpacing = value; } }
         private double? _LineSpacing;
 
+        /// <summary>portalMaxOpenBanks</summary>
+        [JsonField("portalMaxOpenBanks")]
+        public int? PortalMaxOpenBanks { get { return _PortalMaxOpenBanks; } set { _PortalMaxOpenBanks = value; } }
+        private int? _PortalMaxOpenBanks;
+
     }
 
     /// <summary>A stable numeric tab identity and its enum-derived name.</summary>
@@ -4166,6 +4176,16 @@ namespace Kombine.Flex.Portal.Client.Net45
         [JsonField("revision")]
         public string Revision { get { return _Revision; } set { _Revision = value; } }
         private string _Revision;
+
+        /// <summary>storageUsedCharacters</summary>
+        [JsonField("storageUsedCharacters")]
+        public int? StorageUsedCharacters { get { return _StorageUsedCharacters; } set { _StorageUsedCharacters = value; } }
+        private int? _StorageUsedCharacters;
+
+        /// <summary>storageLimitCharacters</summary>
+        [JsonField("storageLimitCharacters")]
+        public int? StorageLimitCharacters { get { return _StorageLimitCharacters; } set { _StorageLimitCharacters = value; } }
+        private int? _StorageLimitCharacters;
 
     }
 
@@ -6577,25 +6597,30 @@ namespace Kombine.Flex.Portal.Client.Net45
     /// <summary>Wallboard</summary>
     public sealed class Wallboard
     {
-        /// <summary>displayId</summary>
-        [JsonField("displayId")]
-        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
-        private string _DisplayId;
+        /// <summary>i</summary>
+        [JsonField("i")]
+        public string I { get { return _I; } set { _I = value; } }
+        private string _I;
 
-        /// <summary>name</summary>
-        [JsonField("name")]
-        public string Name { get { return _Name; } set { _Name = value; } }
-        private string _Name;
+        /// <summary>n</summary>
+        [JsonField("n")]
+        public string N { get { return _N; } set { _N = value; } }
+        private string _N;
 
-        /// <summary>isPortrait</summary>
-        [JsonField("isPortrait")]
-        public bool? IsPortrait { get { return _IsPortrait; } set { _IsPortrait = value; } }
-        private bool? _IsPortrait;
+        /// <summary>p</summary>
+        [JsonField("p")]
+        public int? P { get { return _P; } set { _P = value; } }
+        private int? _P;
 
-        /// <summary>pages</summary>
-        [JsonField("pages")]
-        public WallboardPage[] Pages { get { return _Pages; } set { _Pages = value; } }
-        private WallboardPage[] _Pages;
+        /// <summary>c</summary>
+        [JsonField("c")]
+        public int[] C { get { return _C; } set { _C = value; } }
+        private int[] _C;
+
+        /// <summary>s</summary>
+        [JsonField("s")]
+        public WallboardPage[] S { get { return _S; } set { _S = value; } }
+        private WallboardPage[] _S;
 
     }
 
@@ -6662,25 +6687,20 @@ namespace Kombine.Flex.Portal.Client.Net45
     /// <summary>WallboardPage</summary>
     public sealed class WallboardPage
     {
-        /// <summary>pageId</summary>
-        [JsonField("pageId")]
-        public string PageId { get { return _PageId; } set { _PageId = value; } }
-        private string _PageId;
+        /// <summary>n</summary>
+        [JsonField("n")]
+        public string N { get { return _N; } set { _N = value; } }
+        private string _N;
 
-        /// <summary>name</summary>
-        [JsonField("name")]
-        public string Name { get { return _Name; } set { _Name = value; } }
-        private string _Name;
+        /// <summary>d</summary>
+        [JsonField("d")]
+        public int? D { get { return _D; } set { _D = value; } }
+        private int? _D;
 
-        /// <summary>displayDurationSeconds</summary>
-        [JsonField("displayDurationSeconds")]
-        public int? DisplayDurationSeconds { get { return _DisplayDurationSeconds; } set { _DisplayDurationSeconds = value; } }
-        private int? _DisplayDurationSeconds;
-
-        /// <summary>widgets</summary>
-        [JsonField("widgets")]
-        public WallboardWidget[] Widgets { get { return _Widgets; } set { _Widgets = value; } }
-        private WallboardWidget[] _Widgets;
+        /// <summary>s</summary>
+        [JsonField("s")]
+        public WallboardWidget[] S { get { return _S; } set { _S = value; } }
+        private WallboardWidget[] _S;
 
     }
 
@@ -6792,40 +6812,35 @@ namespace Kombine.Flex.Portal.Client.Net45
     /// <summary>WallboardWidget</summary>
     public sealed class WallboardWidget
     {
-        /// <summary>widgetId</summary>
-        [JsonField("widgetId")]
-        public string WidgetId { get { return _WidgetId; } set { _WidgetId = value; } }
-        private string _WidgetId;
+        /// <summary>t</summary>
+        [JsonField("t")]
+        public int? T { get { return _T; } set { _T = value; } }
+        private int? _T;
 
-        /// <summary>widgetType</summary>
-        [JsonField("widgetType")]
-        public int? WidgetType { get { return _WidgetType; } set { _WidgetType = value; } }
-        private int? _WidgetType;
+        /// <summary>k</summary>
+        [JsonField("k")]
+        public string K { get { return _K; } set { _K = value; } }
+        private string _K;
 
-        /// <summary>kid</summary>
-        [JsonField("kid")]
-        public string Kid { get { return _Kid; } set { _Kid = value; } }
-        private string _Kid;
+        /// <summary>x</summary>
+        [JsonField("x")]
+        public int? X { get { return _X; } set { _X = value; } }
+        private int? _X;
 
-        /// <summary>column</summary>
-        [JsonField("column")]
-        public int? Column { get { return _Column; } set { _Column = value; } }
-        private int? _Column;
+        /// <summary>y</summary>
+        [JsonField("y")]
+        public int? Y { get { return _Y; } set { _Y = value; } }
+        private int? _Y;
 
-        /// <summary>row</summary>
-        [JsonField("row")]
-        public int? Row { get { return _Row; } set { _Row = value; } }
-        private int? _Row;
+        /// <summary>w</summary>
+        [JsonField("w")]
+        public int? W { get { return _W; } set { _W = value; } }
+        private int? _W;
 
-        /// <summary>width</summary>
-        [JsonField("width")]
-        public int? Width { get { return _Width; } set { _Width = value; } }
-        private int? _Width;
-
-        /// <summary>height</summary>
-        [JsonField("height")]
-        public int? Height { get { return _Height; } set { _Height = value; } }
-        private int? _Height;
+        /// <summary>h</summary>
+        [JsonField("h")]
+        public int? H { get { return _H; } set { _H = value; } }
+        private int? _H;
 
     }
 
@@ -7457,6 +7472,21 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string GoogleMapsBrowserKey { get { return _GoogleMapsBrowserKey; } set { _GoogleMapsBrowserKey = value; } }
         private string _GoogleMapsBrowserKey;
 
+        /// <summary>Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable.</summary>
+        [JsonField("brandIconUrl")]
+        public string BrandIconUrl { get { return _BrandIconUrl; } set { _BrandIconUrl = value; } }
+        private string _BrandIconUrl;
+
+        /// <summary>Public validated CSS custom properties for this tenant's light presentation.</summary>
+        [JsonField("brandLightTokens")]
+        public Dictionary<string, string> BrandLightTokens { get { return _BrandLightTokens; } set { _BrandLightTokens = value; } }
+        private Dictionary<string, string> _BrandLightTokens;
+
+        /// <summary>Public validated CSS custom properties for this tenant's dark presentation.</summary>
+        [JsonField("brandDarkTokens")]
+        public Dictionary<string, string> BrandDarkTokens { get { return _BrandDarkTokens; } set { _BrandDarkTokens = value; } }
+        private Dictionary<string, string> _BrandDarkTokens;
+
     }
 
     /// <summary>Purchase count and total for one currency; no currency conversion is performed.</summary>
@@ -7662,6 +7692,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
         private string _LocationKid;
 
+        /// <summary>Repeated canonical location KIDs (at most 1000).</summary>
+        public string[] LocationKids { get { return _LocationKids; } set { _LocationKids = value; } }
+        private string[] _LocationKids;
+
         /// <summary>Optional canonical unit KID in this bank.</summary>
         public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
         private string _UnitKid;
@@ -7718,6 +7752,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>Optional canonical location KID in this bank.</summary>
         public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
         private string _LocationKid;
+
+        /// <summary>Repeated canonical location KIDs (at most 1000).</summary>
+        public string[] LocationKids { get { return _LocationKids; } set { _LocationKids = value; } }
+        private string[] _LocationKids;
 
         /// <summary>Optional canonical unit KID in this bank.</summary>
         public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
@@ -7826,6 +7864,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
         private string _LocationKid;
 
+        /// <summary>Repeated canonical location KIDs in this bank, maximum 1000; omitted selects all visible locations.</summary>
+        public string[] LocationKids { get { return _LocationKids; } set { _LocationKids = value; } }
+        private string[] _LocationKids;
+
         /// <summary>UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</summary>
         public string Date { get { return _Date; } set { _Date = value; } }
         private string _Date;
@@ -7874,6 +7916,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>Canonical location KID in this bank.</summary>
         public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
         private string _LocationKid;
+
+        /// <summary>Repeated canonical location KIDs in this bank, maximum 1000; omitted selects all visible locations.</summary>
+        public string[] LocationKids { get { return _LocationKids; } set { _LocationKids = value; } }
+        private string[] _LocationKids;
 
         /// <summary>UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</summary>
         public string Date { get { return _Date; } set { _Date = value; } }
@@ -8057,6 +8103,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string Deleted { get { return _Deleted; } set { _Deleted = value; } }
         private string _Deleted;
 
+        /// <summary>locationKids</summary>
+        public string[] LocationKids { get { return _LocationKids; } set { _LocationKids = value; } }
+        private string[] _LocationKids;
+
     }
 
     /// <summary>Optional query/header parameters for GetBankUsers. Null values use API defaults.</summary>
@@ -8093,6 +8143,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>deleted</summary>
         public string Deleted { get { return _Deleted; } set { _Deleted = value; } }
         private string _Deleted;
+
+        /// <summary>locationKids</summary>
+        public string[] LocationKids { get { return _LocationKids; } set { _LocationKids = value; } }
+        private string[] _LocationKids;
 
     }
 
@@ -8134,6 +8188,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>limit</summary>
         public int? Limit { get { return _Limit; } set { _Limit = value; } }
         private int? _Limit;
+
+        /// <summary>locationKids</summary>
+        public string[] LocationKids { get { return _LocationKids; } set { _LocationKids = value; } }
+        private string[] _LocationKids;
 
     }
 
@@ -8251,6 +8309,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
         private string _LocationKid;
 
+        /// <summary>Repeated canonical location KIDs (at most 1000).</summary>
+        public string[] LocationKids { get { return _LocationKids; } set { _LocationKids = value; } }
+        private string[] _LocationKids;
+
         /// <summary>Optional canonical unit KID in this bank.</summary>
         public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
         private string _UnitKid;
@@ -8311,6 +8373,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>direction</summary>
         public string Direction { get { return _Direction; } set { _Direction = value; } }
         private string _Direction;
+
+        /// <summary>locationKids</summary>
+        public string[] LocationKids { get { return _LocationKids; } set { _LocationKids = value; } }
+        private string[] _LocationKids;
 
     }
 
@@ -8752,6 +8818,15 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>Optional IPv4/IPv6 address observed by a server-side portal for its browser client. Logged only as caller-reported metadata on failed logins, alongside the API-observed IP. Invalid/multiple values are ignored. Never changes authentication, tenant scope, local-login checks or rate limits.</summary>
         public string XPortalLoginClientIP { get { return _XPortalLoginClientIP; } set { _XPortalLoginClientIP = value; } }
         private string _XPortalLoginClientIP;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetCurrentManager. Null values use API defaults.</summary>
+    public sealed class GetCurrentManagerOptions
+    {
+        /// <summary>refresh</summary>
+        public bool? Refresh { get { return _Refresh; } set { _Refresh = value; } }
+        private bool? _Refresh;
 
     }
 
@@ -9371,6 +9446,10 @@ namespace Kombine.Flex.Portal.Client.Net45
         /// <summary>color</summary>
         public int? Color { get { return _Color; } set { _Color = value; } }
         private int? _Color;
+
+        /// <summary>useCalendarText</summary>
+        public bool? UseCalendarText { get { return _UseCalendarText; } set { _UseCalendarText = value; } }
+        private bool? _UseCalendarText;
 
     }
 

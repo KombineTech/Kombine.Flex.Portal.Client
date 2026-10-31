@@ -58,6 +58,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>### Filters and paging
         /// <br/>
+        /// <br/>- Repeat `locationKids` for up to 1000 authorized locations; the same selection applies to totals, revision and export.
         /// <br/>- Defaults to **today** in `Europe/Copenhagen`. Both dates are inclusive; the maximum interval is **367 days**.
         /// <br/>- An explicit `period` replaces the date filter.
         /// <br/>- Sorted newest first, then by location and unit.
@@ -111,6 +112,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs (at most 1000).</param>
         /// <param name="unitKid">Optional canonical unit KID in this bank.</param>
         /// <param name="userKid">Optional canonical resident KID in this bank.</param>
         /// <param name="kind">all, debit (negative) or credit (positive).</param>
@@ -121,7 +123,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size 1..200, default 50.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AccountResponse> GetBankAccountAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<AccountResponse> GetBankAccountAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -145,6 +147,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs (at most 1000).</param>
         /// <param name="unitKid">Optional canonical unit KID in this bank.</param>
         /// <param name="userKid">Optional canonical resident KID in this bank.</param>
         /// <param name="kind">all, debit (negative) or credit (positive).</param>
@@ -155,7 +158,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size 1..200, default 50.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AccountRevisionResponse> GetBankAccountRevisionAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<AccountRevisionResponse> GetBankAccountRevisionAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -285,7 +288,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>With live diagnostics enabled, the current question text is recorded once in the authorized
         /// <br/>process-local buffer after session revalidation, before model use. Questions are not sent to Logz.io.
         /// <br/>History, answers and bearer credentials are not included in this log event.
-        /// <br/>Requires server-side configuration. The current manager session is revalidated before model use;
+        /// <br/>Requires server-side configuration and Agent1 (86) in the current manager's tabs. Missing Agent1
+        /// <br/>returns 403 missing-agent-tab before question logging, MCP discovery or model use.
+        /// <br/>The current manager session is revalidated before model use;
         /// <br/>each business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.
         /// <br/>question: 1–2000 characters. history: at most 12 user/assistant messages, 8000 characters each,
         /// <br/>20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects
@@ -368,6 +373,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Location-only grants and RetentionDays restrict both results and filter choices before paging. KIDs must be canonical and site-bound.
         /// <br/>### Filters and ordering
         /// <br/>Optional locationKid and unitKid must belong to the requested bank; unitKid also selects its location.
+        /// <br/>Repeat locationKids to select multiple canonical locations in the same bank (maximum 1000).
         /// <br/>Repeat unitKids to select multiple canonical units (maximum 255); choices are intersected before paging/counting.
         /// <br/>date=yyyy-MM-dd selects the whole UTC date and all earlier history since 2000; do not combine it with from/through.
         /// <br/>search matches an exact numeric Doc ID or canonical document KID within the selected scope.
@@ -383,6 +389,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Twelve-second storage deadline; no response cache. Filter choices include only currently visible units with Log24 metadata.
         /// </remarks>
         /// <param name="locationKid">Canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs in this bank, maximum 1000; omitted selects all visible locations.</param>
         /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
         /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
         /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
@@ -395,16 +402,17 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size, 1–100; defaults to 25.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BankDocumentPage> GetBankDocumentsAsync(string bankKid, string? locationKid = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BankDocumentPage> GetBankDocumentsAsync(string bankKid, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Count WashDocs across the authorized bank scope, without loading document pages or measurements.
         /// </summary>
         /// <remarks>
-        /// Same access, date/search/locationKid/unitKids filters and visibility checks as GetBankDocuments. Counts distinct location/unit/document identities. Storage deadline twelve seconds; 422 for oversized scope, 503 for unavailable storage.
+        /// Same access, date/search/locationKid/locationKids/unitKids filters and visibility checks as GetBankDocuments. Counts distinct location/unit/document identities. Storage deadline twelve seconds; 422 for oversized scope, 503 for unavailable storage.
         /// </remarks>
         /// <param name="locationKid">Canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs in this bank, maximum 1000; omitted selects all visible locations.</param>
         /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
         /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
         /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
@@ -417,7 +425,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size, 1–100; defaults to 25.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UnitDocumentCount> GetBankDocumentsCountAsync(string bankKid, string? locationKid = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<UnitDocumentCount> GetBankDocumentsCountAsync(string bankKid, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -582,7 +590,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetBankUserExportCountAsync(string bankKid, string? filter = null, string? sort = null, string? direction = null, string? locationKid = null, string? deleted = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<DirectoryExportCountResponse> GetBankUserExportCountAsync(string bankKid, string? filter = null, string? sort = null, string? direction = null, string? locationKid = null, string? deleted = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -623,6 +631,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Location and deletion filters
         /// <br/>
         /// <br/>- `locationKid` filters an authorized location in the same bank, including Access and NoAccess associations.
+        /// <br/>- Repeat `locationKids` for up to 1000 authorized locations; residents matching any selected association are included.
         /// <br/>- `deleted`: `all` (default), `active`, `deleted` or `no-access`.
         /// <br/>- `no-access` means no recorded Access in any manager-visible location. Empty lists and NoAccess-only lists match; hidden locations do not affect the result.
         /// <br/>- Existing visibility and deletion retention still apply. `locationKid` remains an additional association filter.
@@ -635,7 +644,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BankUsersResponse> GetBankUsersAsync(string bankKid, int? pageSize = null, string? cursor = null, string? sort = null, string? direction = null, string? filter = null, string? userKid = null, string? locationKid = null, string? deleted = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BankUsersResponse> GetBankUsersAsync(string bankKid, int? pageSize = null, string? cursor = null, string? sort = null, string? direction = null, string? filter = null, string? userKid = null, string? locationKid = null, string? deleted = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -677,13 +686,14 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>### Search and paging
         /// <br/>
+        /// <br/>- Repeat `locationKids` for up to 1000 authorized locations; selected units must belong to them.
         /// <br/>- Search matches stored resident name/number. Only authorized location/unit filter labels are returned.
         /// <br/>- `limit`: **1–200**, default **50**. `offset`: **0–100,000**.
         /// <br/>- Stable start/location/unit/user order. No total-count query or cache.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BookingsResponse> GetBankBookingsAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? status = null, string? search = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BookingsResponse> GetBankBookingsAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? status = null, string? search = null, int? offset = null, int? limit = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -873,6 +883,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs (at most 1000).</param>
         /// <param name="unitKid">Optional canonical unit KID in this bank.</param>
         /// <param name="userKid">Optional canonical resident KID in this bank.</param>
         /// <param name="kind">all, debit (negative) or credit (positive).</param>
@@ -883,7 +894,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size 1..200, default 50.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> ExportBankAccountAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, string? format = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> ExportBankAccountAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, string? format = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -906,7 +917,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> ExportBankUsersAsync(string bankKid, string? filter = null, string? locationKid = null, string? deleted = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<FileResponse> ExportBankUsersAsync(string bankKid, string? filter = null, string? locationKid = null, string? deleted = null, string? sort = null, string? direction = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2124,6 +2135,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Caching and database indicator
         /// <br/>
         /// <br/>- Rights and account state are cached for at most **60 seconds** per API instance. Requests do not extend this; do not poll continuously.
+        /// <br/>- After a confirmed settings change, use `?refresh=true` to refresh your own account snapshot on the responding instance before validation. This also works when the write reached another instance. It does not renew the bearer or change business-data caches.
         /// <br/>- `databaseAccess` is an informational Log7 read/append check shared for **10 minutes**, or **1 minute** when unknown.
         /// <br/>- The indicator grants no manager rights, executes no writes and does not verify every bank, trigger or operation.
         /// <br/>
@@ -2134,7 +2146,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ManagerProfileResponse> GetCurrentManagerAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ManagerProfileResponse> GetCurrentManagerAsync(bool? refresh = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2277,11 +2289,12 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// ### Access and fields
         /// <br/>- Requires an active manager bearer session on this tenant with a current credential stamp. No Tabs, Kids or Managers Write are needed.
-        /// <br/>- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, language, dateFormat, numberFormat, lineSpacing, revision and availableIcons.
+        /// <br/>- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, language, dateFormat, numberFormat, lineSpacing, portalMaxOpenBanks, revision and availableIcons.
         /// <br/>- language is a numeric operational eLanguage identity (0 is Danish), or null for automatic browser/tenant selection. Last/None/All are rejected.
         /// <br/>- dateFormat is empty (follow language) or dd-MM-yyyy, dd.MM.yyyy, dd/MM/yyyy, MM/dd/yyyy, yyyy-MM-dd,
         /// <br/>  optionally followed by HH:mm (24-hour) or hh:mm tt (12-hour AM/PM). Date-only values keep the language's clock format.
         /// <br/>- lineSpacing is a numeric table/list spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid stored values use 1.
+        /// <br/>- portalMaxOpenBanks is a positive integer or null (unlimited); missing/invalid stored values, including NaN, and values at or below zero return null. This preference grants no access.
         /// <br/>- numberFormat is empty (follow language) or da-DK, en-GB, sv-SE, de-DE, fr-FR, ar-SA. Preferences affect presentation only.
         /// <br/>- retentionDays is the number of days deleted records remain visible within your existing access; 0 hides deleted records. Missing/invalid stored values return 0.
         /// <br/>- emailVerified is proof of this exact current email log version, not an old or manually assigned flag.
@@ -2305,7 +2318,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            This saves a personal preference only; device approval and resource permissions remain separate.
         /// <br/>            Credentials are rechecked inside the transaction. Concurrent additions are merged under the existing lock.
         /// <br/>            200 wallboard-saved; 400 invalid-wallboard; 401 stale/inactive session; 403 screen session;
-        /// <br/>            409 invalid-stored-wallboards or wallboards-limit (4096 characters); 503 unavailable/uncertain storage.
+        /// <br/>            409 invalid-stored-wallboards or wallboards-limit (4092 characters); 503 unavailable/uncertain storage.
         /// <br/>            No automatic write retries. IDs are case-sensitive, matching device registration and layout selection.
         /// </remarks>
         /// <returns>OK</returns>
@@ -2318,7 +2331,10 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
-        /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards. Unknown stored fields or malformed layouts return 409 without changing them.
+        /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
+        /// <br/>            Enums 2.0.147: layout i/n/p/s, page n/d/s, widget t/k/x/y/w/h. Orientation p is numeric 0/1; x/y are zero-based. Pages/widgets have no persistent IDs.
+        /// <br/>            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.
+        /// <br/>            Unknown stored fields or malformed layouts return 409 without changing them.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -2333,10 +2349,12 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.
         /// <br/>            Display IDs must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.
         /// <br/>            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.
-        /// <br/>            Layouts have a 12x12 grid, non-overlapping widgets, positive page durations up to 86400 seconds, and unique display/orientation, page and widget IDs.
-        /// <br/>            WidgetType uses numeric eWidgetType values 1-10; reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.
+        /// <br/>            Layouts use i/n/p/s; pages use n/d/s; widgets use t/k/x/y/w/h. Display i must be unique across orientations; p is numeric 0 or 1.
+        /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), positive width/height (1-60), no overlap and page duration d of 1-86400 seconds. Pages/widgets use array order and have no IDs.
+        /// <br/>            Stored cell coordinates and sizes are retained unchanged; older layouts are not automatically doubled or rescaled.
+        /// <br/>            Widget type uses numeric eWidgetType values 0-10; None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.
         /// <br/>            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.
-        /// <br/>            Empty lists remove layouts only. The serialized setting is limited to 4096 characters (409 wallboards-limit).
+        /// <br/>            Empty lists remove layouts only. The serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include StorageUsedCharacters and StorageLimitCharacters for the committed collection.
         /// <br/>            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.
         /// </remarks>
         /// <returns>OK</returns>
@@ -2427,11 +2445,12 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// ### Request
-        /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays, IconSet, Language, DateFormat, NumberFormat or LineSpacing. Other settings are rejected.
+        /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays, IconSet, Language, DateFormat, NumberFormat, LineSpacing or PortalMaxOpenBanks. Other settings are rejected.
         /// <br/>- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.
         /// <br/>- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.
         /// <br/>- Language requires a numeric operational eLanguage identity (0–15), or null for automatic. Last/None/All are rejected.
         /// <br/>- LineSpacing requires a JSON number: 0.75, 1, 1.25, 1.5, 1.75 or 2. Default 1 preserves the established table/list spacing.
+        /// <br/>- PortalMaxOpenBanks accepts null or any signed 32-bit JSON integer. Only positive values limit workspace banks, closing excess branches from the bottom. Zero, negative, missing or invalid stored values impose no limit and return null.
         /// <br/>- DateFormat and NumberFormat require the finite string choices documented by GetMyManagerProfile; empty strings follow the language.
         /// <br/>- IconSet requires the exact JSON string "g" or "line". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as "line"; an explicit saved "g" is preserved.
         /// <br/>- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.
@@ -3812,14 +3831,14 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Send an exact eIcon name or canonical icon KID. Optional text (up to 128 non-control characters),
         /// <br/>signed Int64 count and colour (0–16777215) replace only those fields. Other KID fields are preserved.
-        /// <br/>Calendar always uses today's day of month in Europe/Copenhagen, overriding supplied text.
+        /// <br/>Calendar uses today's day of month in Europe/Copenhagen unless useCalendarText is true and text is supplied.
         /// <br/>Use the returned iconKid unchanged in /api/v1/icon/{iconSet}/{kid}.svg. An icon-only KID is returned
         /// <br/>as its eIcon name. No login, lookup, grant or write; invalid input returns 400.
         /// <br/>Read fresh metadata when refreshing the page; the image itself retains its normal cache policy.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<IconPresentationResponse> GetIconPresentationAsync(string? iconKid = null, string? text = null, long? count = null, int? color = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<IconPresentationResponse> GetIconPresentationAsync(string? iconKid = null, string? text = null, long? count = null, int? color = null, bool? useCalendarText = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -4491,6 +4510,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>### Filters and paging
         /// <br/>
+        /// <br/>- Repeat `locationKids` for up to 1000 authorized locations; the same selection applies to totals, revision and export.
         /// <br/>- Defaults to **today** in `Europe/Copenhagen`. Both dates are inclusive; the maximum interval is **367 days**.
         /// <br/>- An explicit `period` replaces the date filter.
         /// <br/>- Sorted newest first, then by location and unit.
@@ -4544,6 +4564,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs (at most 1000).</param>
         /// <param name="unitKid">Optional canonical unit KID in this bank.</param>
         /// <param name="userKid">Optional canonical resident KID in this bank.</param>
         /// <param name="kind">all, debit (negative) or credit (positive).</param>
@@ -4554,7 +4575,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size 1..200, default 50.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AccountResponse> GetBankAccountAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<AccountResponse> GetBankAccountAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -4594,6 +4615,10 @@ namespace Kombine.Flex.Portal.Client
                     if (locationKid != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("LocationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKids != null)
+                    {
+                            foreach (var item_ in locationKids) { urlBuilder_.Append(System.Uri.EscapeDataString("LocationKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
                     }
                     if (unitKid != null)
                     {
@@ -4743,6 +4768,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs (at most 1000).</param>
         /// <param name="unitKid">Optional canonical unit KID in this bank.</param>
         /// <param name="userKid">Optional canonical resident KID in this bank.</param>
         /// <param name="kind">all, debit (negative) or credit (positive).</param>
@@ -4753,7 +4779,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size 1..200, default 50.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AccountRevisionResponse> GetBankAccountRevisionAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<AccountRevisionResponse> GetBankAccountRevisionAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -4793,6 +4819,10 @@ namespace Kombine.Flex.Portal.Client
                     if (locationKid != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("LocationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKids != null)
+                    {
+                            foreach (var item_ in locationKids) { urlBuilder_.Append(System.Uri.EscapeDataString("LocationKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
                     }
                     if (unitKid != null)
                     {
@@ -5864,7 +5894,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>With live diagnostics enabled, the current question text is recorded once in the authorized
         /// <br/>process-local buffer after session revalidation, before model use. Questions are not sent to Logz.io.
         /// <br/>History, answers and bearer credentials are not included in this log event.
-        /// <br/>Requires server-side configuration. The current manager session is revalidated before model use;
+        /// <br/>Requires server-side configuration and Agent1 (86) in the current manager's tabs. Missing Agent1
+        /// <br/>returns 403 missing-agent-tab before question logging, MCP discovery or model use.
+        /// <br/>The current manager session is revalidated before model use;
         /// <br/>each business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.
         /// <br/>question: 1–2000 characters. history: at most 12 user/assistant messages, 8000 characters each,
         /// <br/>20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects
@@ -6435,6 +6467,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Location-only grants and RetentionDays restrict both results and filter choices before paging. KIDs must be canonical and site-bound.
         /// <br/>### Filters and ordering
         /// <br/>Optional locationKid and unitKid must belong to the requested bank; unitKid also selects its location.
+        /// <br/>Repeat locationKids to select multiple canonical locations in the same bank (maximum 1000).
         /// <br/>Repeat unitKids to select multiple canonical units (maximum 255); choices are intersected before paging/counting.
         /// <br/>date=yyyy-MM-dd selects the whole UTC date and all earlier history since 2000; do not combine it with from/through.
         /// <br/>search matches an exact numeric Doc ID or canonical document KID within the selected scope.
@@ -6450,6 +6483,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Twelve-second storage deadline; no response cache. Filter choices include only currently visible units with Log24 metadata.
         /// </remarks>
         /// <param name="locationKid">Canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs in this bank, maximum 1000; omitted selects all visible locations.</param>
         /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
         /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
         /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
@@ -6462,7 +6496,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size, 1–100; defaults to 25.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BankDocumentPage> GetBankDocumentsAsync(string bankKid, string? locationKid = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BankDocumentPage> GetBankDocumentsAsync(string bankKid, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -6486,6 +6520,10 @@ namespace Kombine.Flex.Portal.Client
                     if (locationKid != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("LocationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKids != null)
+                    {
+                            foreach (var item_ in locationKids) { urlBuilder_.Append(System.Uri.EscapeDataString("LocationKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
                     }
                     if (date != null)
                     {
@@ -6646,9 +6684,10 @@ namespace Kombine.Flex.Portal.Client
         /// Count WashDocs across the authorized bank scope, without loading document pages or measurements.
         /// </summary>
         /// <remarks>
-        /// Same access, date/search/locationKid/unitKids filters and visibility checks as GetBankDocuments. Counts distinct location/unit/document identities. Storage deadline twelve seconds; 422 for oversized scope, 503 for unavailable storage.
+        /// Same access, date/search/locationKid/locationKids/unitKids filters and visibility checks as GetBankDocuments. Counts distinct location/unit/document identities. Storage deadline twelve seconds; 422 for oversized scope, 503 for unavailable storage.
         /// </remarks>
         /// <param name="locationKid">Canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs in this bank, maximum 1000; omitted selects all visible locations.</param>
         /// <param name="date">UTC date yyyy-MM-dd. When supplied, selects that complete day and earlier history since 2000; cannot combine with from/through.</param>
         /// <param name="search">Exact numeric Doc ID or canonical document KID within the selected scope.</param>
         /// <param name="unitKids">Repeated canonical unit KIDs, maximum 255; omitted selects all visible units. Applied before paging/counting.</param>
@@ -6661,7 +6700,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size, 1–100; defaults to 25.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UnitDocumentCount> GetBankDocumentsCountAsync(string bankKid, string? locationKid = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<UnitDocumentCount> GetBankDocumentsCountAsync(string bankKid, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? date = null, string? search = null, System.Collections.Generic.IEnumerable<string>? unitKids = null, string? sort = null, string? direction = null, string? unitKid = null, string? from = null, string? through = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -6685,6 +6724,10 @@ namespace Kombine.Flex.Portal.Client
                     if (locationKid != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("LocationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKids != null)
+                    {
+                            foreach (var item_ in locationKids) { urlBuilder_.Append(System.Uri.EscapeDataString("LocationKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
                     }
                     if (date != null)
                     {
@@ -7906,7 +7949,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetBankUserExportCountAsync(string bankKid, string? filter = null, string? sort = null, string? direction = null, string? locationKid = null, string? deleted = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<DirectoryExportCountResponse> GetBankUserExportCountAsync(string bankKid, string? filter = null, string? sort = null, string? direction = null, string? locationKid = null, string? deleted = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -7946,6 +7989,10 @@ namespace Kombine.Flex.Portal.Client
                     if (deleted != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("deleted")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(deleted, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKids != null)
+                    {
+                            foreach (var item_ in locationKids) { urlBuilder_.Append(System.Uri.EscapeDataString("locationKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
                     }
                     urlBuilder_.Length--;
 
@@ -8080,6 +8127,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Location and deletion filters
         /// <br/>
         /// <br/>- `locationKid` filters an authorized location in the same bank, including Access and NoAccess associations.
+        /// <br/>- Repeat `locationKids` for up to 1000 authorized locations; residents matching any selected association are included.
         /// <br/>- `deleted`: `all` (default), `active`, `deleted` or `no-access`.
         /// <br/>- `no-access` means no recorded Access in any manager-visible location. Empty lists and NoAccess-only lists match; hidden locations do not affect the result.
         /// <br/>- Existing visibility and deletion retention still apply. `locationKid` remains an additional association filter.
@@ -8092,7 +8140,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BankUsersResponse> GetBankUsersAsync(string bankKid, int? pageSize = null, string? cursor = null, string? sort = null, string? direction = null, string? filter = null, string? userKid = null, string? locationKid = null, string? deleted = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BankUsersResponse> GetBankUsersAsync(string bankKid, int? pageSize = null, string? cursor = null, string? sort = null, string? direction = null, string? filter = null, string? userKid = null, string? locationKid = null, string? deleted = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -8144,6 +8192,10 @@ namespace Kombine.Flex.Portal.Client
                     if (deleted != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("deleted")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(deleted, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKids != null)
+                    {
+                            foreach (var item_ in locationKids) { urlBuilder_.Append(System.Uri.EscapeDataString("locationKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
                     }
                     urlBuilder_.Length--;
 
@@ -8354,13 +8406,14 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>
         /// <br/>### Search and paging
         /// <br/>
+        /// <br/>- Repeat `locationKids` for up to 1000 authorized locations; selected units must belong to them.
         /// <br/>- Search matches stored resident name/number. Only authorized location/unit filter labels are returned.
         /// <br/>- `limit`: **1–200**, default **50**. `offset`: **0–100,000**.
         /// <br/>- Stable start/location/unit/user order. No total-count query or cache.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BookingsResponse> GetBankBookingsAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? status = null, string? search = null, int? offset = null, int? limit = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BookingsResponse> GetBankBookingsAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? status = null, string? search = null, int? offset = null, int? limit = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -8416,6 +8469,10 @@ namespace Kombine.Flex.Portal.Client
                     if (limit != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("limit")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKids != null)
+                    {
+                            foreach (var item_ in locationKids) { urlBuilder_.Append(System.Uri.EscapeDataString("locationKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
                     }
                     urlBuilder_.Length--;
 
@@ -10282,6 +10339,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
+        /// <param name="locationKids">Repeated canonical location KIDs (at most 1000).</param>
         /// <param name="unitKid">Optional canonical unit KID in this bank.</param>
         /// <param name="userKid">Optional canonical resident KID in this bank.</param>
         /// <param name="kind">all, debit (negative) or credit (positive).</param>
@@ -10292,7 +10350,7 @@ namespace Kombine.Flex.Portal.Client
         /// <param name="limit">Page size 1..200, default 50.</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> ExportBankAccountAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, string? format = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> ExportBankAccountAsync(string bankKid, System.DateTimeOffset? from = null, System.DateTimeOffset? through = null, string? timeZone = null, int? period = null, string? locationKid = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, string? unitKid = null, string? userKid = null, string? kind = null, bool? includeZero = null, bool? includeBookings = null, bool? includeMonthly = null, int? offset = null, int? limit = null, string? format = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -10332,6 +10390,10 @@ namespace Kombine.Flex.Portal.Client
                     if (locationKid != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("LocationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKids != null)
+                    {
+                            foreach (var item_ in locationKids) { urlBuilder_.Append(System.Uri.EscapeDataString("LocationKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
                     }
                     if (unitKid != null)
                     {
@@ -10492,7 +10554,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<FileResponse> ExportBankUsersAsync(string bankKid, string? filter = null, string? locationKid = null, string? deleted = null, string? sort = null, string? direction = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<FileResponse> ExportBankUsersAsync(string bankKid, string? filter = null, string? locationKid = null, string? deleted = null, string? sort = null, string? direction = null, System.Collections.Generic.IEnumerable<string>? locationKids = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (bankKid == null)
                 throw new System.ArgumentNullException("bankKid");
@@ -10532,6 +10594,10 @@ namespace Kombine.Flex.Portal.Client
                     if (direction != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("direction")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(direction, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (locationKids != null)
+                    {
+                            foreach (var item_ in locationKids) { urlBuilder_.Append(System.Uri.EscapeDataString("locationKids")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
                     }
                     urlBuilder_.Length--;
 
@@ -17535,6 +17601,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Caching and database indicator
         /// <br/>
         /// <br/>- Rights and account state are cached for at most **60 seconds** per API instance. Requests do not extend this; do not poll continuously.
+        /// <br/>- After a confirmed settings change, use `?refresh=true` to refresh your own account snapshot on the responding instance before validation. This also works when the write reached another instance. It does not renew the bearer or change business-data caches.
         /// <br/>- `databaseAccess` is an informational Log7 read/append check shared for **10 minutes**, or **1 minute** when unknown.
         /// <br/>- The indicator grants no manager rights, executes no writes and does not verify every bank, trigger or operation.
         /// <br/>
@@ -17545,7 +17612,7 @@ namespace Kombine.Flex.Portal.Client
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ManagerProfileResponse> GetCurrentManagerAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<ManagerProfileResponse> GetCurrentManagerAsync(bool? refresh = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -17560,6 +17627,12 @@ namespace Kombine.Flex.Portal.Client
 
                     // Operation Path: "api/v1/session/me"
                     urlBuilder_.Append("api/v1/session/me");
+                    urlBuilder_.Append('?');
+                    if (refresh != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("refresh")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(refresh, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -18505,11 +18578,12 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// ### Access and fields
         /// <br/>- Requires an active manager bearer session on this tenant with a current credential stamp. No Tabs, Kids or Managers Write are needed.
-        /// <br/>- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, language, dateFormat, numberFormat, lineSpacing, revision and availableIcons.
+        /// <br/>- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, language, dateFormat, numberFormat, lineSpacing, portalMaxOpenBanks, revision and availableIcons.
         /// <br/>- language is a numeric operational eLanguage identity (0 is Danish), or null for automatic browser/tenant selection. Last/None/All are rejected.
         /// <br/>- dateFormat is empty (follow language) or dd-MM-yyyy, dd.MM.yyyy, dd/MM/yyyy, MM/dd/yyyy, yyyy-MM-dd,
         /// <br/>  optionally followed by HH:mm (24-hour) or hh:mm tt (12-hour AM/PM). Date-only values keep the language's clock format.
         /// <br/>- lineSpacing is a numeric table/list spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid stored values use 1.
+        /// <br/>- portalMaxOpenBanks is a positive integer or null (unlimited); missing/invalid stored values, including NaN, and values at or below zero return null. This preference grants no access.
         /// <br/>- numberFormat is empty (follow language) or da-DK, en-GB, sv-SE, de-DE, fr-FR, ar-SA. Preferences affect presentation only.
         /// <br/>- retentionDays is the number of days deleted records remain visible within your existing access; 0 hides deleted records. Missing/invalid stored values return 0.
         /// <br/>- emailVerified is proof of this exact current email log version, not an old or manually assigned flag.
@@ -18615,7 +18689,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            This saves a personal preference only; device approval and resource permissions remain separate.
         /// <br/>            Credentials are rechecked inside the transaction. Concurrent additions are merged under the existing lock.
         /// <br/>            200 wallboard-saved; 400 invalid-wallboard; 401 stale/inactive session; 403 screen session;
-        /// <br/>            409 invalid-stored-wallboards or wallboards-limit (4096 characters); 503 unavailable/uncertain storage.
+        /// <br/>            409 invalid-stored-wallboards or wallboards-limit (4092 characters); 503 unavailable/uncertain storage.
         /// <br/>            No automatic write retries. IDs are case-sensitive, matching device registration and layout selection.
         /// </remarks>
         /// <returns>OK</returns>
@@ -18744,7 +18818,10 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
-        /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards. Unknown stored fields or malformed layouts return 409 without changing them.
+        /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
+        /// <br/>            Enums 2.0.147: layout i/n/p/s, page n/d/s, widget t/k/x/y/w/h. Orientation p is numeric 0/1; x/y are zero-based. Pages/widgets have no persistent IDs.
+        /// <br/>            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.
+        /// <br/>            Unknown stored fields or malformed layouts return 409 without changing them.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -18861,10 +18938,12 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.
         /// <br/>            Display IDs must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.
         /// <br/>            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.
-        /// <br/>            Layouts have a 12x12 grid, non-overlapping widgets, positive page durations up to 86400 seconds, and unique display/orientation, page and widget IDs.
-        /// <br/>            WidgetType uses numeric eWidgetType values 1-10; reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.
+        /// <br/>            Layouts use i/n/p/s; pages use n/d/s; widgets use t/k/x/y/w/h. Display i must be unique across orientations; p is numeric 0 or 1.
+        /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), positive width/height (1-60), no overlap and page duration d of 1-86400 seconds. Pages/widgets use array order and have no IDs.
+        /// <br/>            Stored cell coordinates and sizes are retained unchanged; older layouts are not automatically doubled or rescaled.
+        /// <br/>            Widget type uses numeric eWidgetType values 0-10; None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.
         /// <br/>            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.
-        /// <br/>            Empty lists remove layouts only. The serialized setting is limited to 4096 characters (409 wallboards-limit).
+        /// <br/>            Empty lists remove layouts only. The serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include StorageUsedCharacters and StorageLimitCharacters for the committed collection.
         /// <br/>            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.
         /// </remarks>
         /// <returns>OK</returns>
@@ -19597,11 +19676,12 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// ### Request
-        /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays, IconSet, Language, DateFormat, NumberFormat or LineSpacing. Other settings are rejected.
+        /// <br/>- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays, IconSet, Language, DateFormat, NumberFormat, LineSpacing or PortalMaxOpenBanks. Other settings are rejected.
         /// <br/>- Send value (string for display fields, integer 0–2 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.
         /// <br/>- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.
         /// <br/>- Language requires a numeric operational eLanguage identity (0–15), or null for automatic. Last/None/All are rejected.
         /// <br/>- LineSpacing requires a JSON number: 0.75, 1, 1.25, 1.5, 1.75 or 2. Default 1 preserves the established table/list spacing.
+        /// <br/>- PortalMaxOpenBanks accepts null or any signed 32-bit JSON integer. Only positive values limit workspace banks, closing excess branches from the bottom. Zero, negative, missing or invalid stored values impose no limit and return null.
         /// <br/>- DateFormat and NumberFormat require the finite string choices documented by GetMyManagerProfile; empty strings follow the language.
         /// <br/>- IconSet requires the exact JSON string "g" or "line". It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as "line"; an explicit saved "g" is preserved.
         /// <br/>- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.
@@ -29112,14 +29192,14 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Send an exact eIcon name or canonical icon KID. Optional text (up to 128 non-control characters),
         /// <br/>signed Int64 count and colour (0–16777215) replace only those fields. Other KID fields are preserved.
-        /// <br/>Calendar always uses today's day of month in Europe/Copenhagen, overriding supplied text.
+        /// <br/>Calendar uses today's day of month in Europe/Copenhagen unless useCalendarText is true and text is supplied.
         /// <br/>Use the returned iconKid unchanged in /api/v1/icon/{iconSet}/{kid}.svg. An icon-only KID is returned
         /// <br/>as its eIcon name. No login, lookup, grant or write; invalid input returns 400.
         /// <br/>Read fresh metadata when refreshing the page; the image itself retains its normal cache policy.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<IconPresentationResponse> GetIconPresentationAsync(string? iconKid = null, string? text = null, long? count = null, int? color = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<IconPresentationResponse> GetIconPresentationAsync(string? iconKid = null, string? text = null, long? count = null, int? color = null, bool? useCalendarText = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -29150,6 +29230,10 @@ namespace Kombine.Flex.Portal.Client
                     if (color != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("color")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(color, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (useCalendarText != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("useCalendarText")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(useCalendarText, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -35999,6 +36083,12 @@ namespace Kombine.Flex.Portal.Client
         public double? LineSpacing { get; set; } = default!;
 
         /// <summary>
+        /// Maximum workspace banks; null means unlimited. This display preference grants no access.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("portalMaxOpenBanks")]
+        public int? PortalMaxOpenBanks { get; set; } = default!;
+
+        /// <summary>
         /// Names and IDs from the shared eTab enum, limited to the manager's recognized grants.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("tabDetails")]
@@ -36662,6 +36752,9 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("lineSpacing")]
         public double? LineSpacing { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("portalMaxOpenBanks")]
+        public int? PortalMaxOpenBanks { get; set; } = default!;
+
     }
 
     /// <summary>
@@ -36778,6 +36871,12 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("revision")]
         public string? Revision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("storageUsedCharacters")]
+        public int? StorageUsedCharacters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("storageLimitCharacters")]
+        public int? StorageLimitCharacters { get; set; } = default!;
 
     }
 
@@ -38904,17 +39003,20 @@ namespace Kombine.Flex.Portal.Client
     public partial class Wallboard
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("displayId")]
-        public string? DisplayId { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("i")]
+        public string? I { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string? Name { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("n")]
+        public string? N { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("isPortrait")]
-        public bool? IsPortrait { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("p")]
+        public int? P { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("pages")]
-        public System.Collections.Generic.ICollection<WallboardPage>? Pages { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("c")]
+        public System.Collections.Generic.ICollection<EColor>? C { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("s")]
+        public System.Collections.Generic.ICollection<WallboardPage>? S { get; set; } = default!;
 
     }
 
@@ -38970,17 +39072,14 @@ namespace Kombine.Flex.Portal.Client
     public partial class WallboardPage
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("pageId")]
-        public string? PageId { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("n")]
+        public string? N { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string? Name { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("d")]
+        public int? D { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("displayDurationSeconds")]
-        public int? DisplayDurationSeconds { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("widgets")]
-        public System.Collections.Generic.ICollection<WallboardWidget>? Widgets { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("s")]
+        public System.Collections.Generic.ICollection<WallboardWidget>? S { get; set; } = default!;
 
     }
 
@@ -39063,26 +39162,23 @@ namespace Kombine.Flex.Portal.Client
     public partial class WallboardWidget
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("widgetId")]
-        public string? WidgetId { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("t")]
+        public EWidgetType? T { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("widgetType")]
-        public EWidgetType? WidgetType { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("k")]
+        public string? K { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("kid")]
-        public string? Kid { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("x")]
+        public int? X { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("column")]
-        public int? Column { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("y")]
+        public int? Y { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("row")]
-        public int? Row { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("w")]
+        public int? W { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("width")]
-        public int? Width { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("height")]
-        public int? Height { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("h")]
+        public int? H { get; set; } = default!;
 
     }
 
@@ -39302,6 +39398,136 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("groupOrder")]
         public System.Collections.Generic.ICollection<string>? GroupOrder { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum EColor : long
+    {
+
+        _0 = 0,
+
+        _16777216 = 16777216,
+
+        _19803451 = 19803451,
+
+        _49342943 = 49342943,
+
+        _66515692 = 66515692,
+
+        _83886079 = 83886079,
+
+        _301717822 = 301717822,
+
+        _586316818 = 586316818,
+
+        _872109863 = 872109863,
+
+        _1148802545 = 1148802545,
+
+        _1430742526 = 1430742526,
+
+        _1717269026 = 1717269026,
+
+        _1735697169 = 1735697169,
+
+        _2246665236 = 2246665236,
+
+        _2573393397 = 2573393397,
+
+        _2663948613 = 2663948613,
+
+        _2699079935 = 2699079935,
+
+        _2714280648 = 2714280648,
+
+        _2733703167 = 2733703167,
+
+        _2749942179 = 2749942179,
+
+        _2751462864 = 2751462864,
+
+        _2768224459 = 2768224459,
+
+        _2769641661 = 2769641661,
+
+        _2787281698 = 2787281698,
+
+        _2818346668 = 2818346668,
+
+        _2830712137 = 2830712137,
+
+        _2834349618 = 2834349618,
+
+        _2844424541 = 2844424541,
+
+        _2866338008 = 2866338008,
+
+        _2917435280 = 2917435280,
+
+        _2995767495 = 2995767495,
+
+        _3079273262 = 3079273262,
+
+        _3161949195 = 3161949195,
+
+        _3251336146 = 3251336146,
+
+        _3336873398 = 3336873398,
+
+        _3414481233 = 3414481233,
+
+        _3504172543 = 3504172543,
+
+        _3519070400 = 3519070400,
+
+        _3556759296 = 3556759296,
+
+        _3570237234 = 3570237234,
+
+        _3584940262 = 3584940262,
+
+        _3585341471 = 3585341471,
+
+        _3602906880 = 3602906880,
+
+        _3665568446 = 3665568446,
+
+        _3743790278 = 3743790278,
+
+        _3839692917 = 3839692917,
+
+        _4009820159 = 4009820159,
+
+        _4059490203 = 4059490203,
+
+        _4076199087 = 4076199087,
+
+        _4093564881 = 4093564881,
+
+        _4107256821 = 4107256821,
+
+        _4123120887 = 4123120887,
+
+        _4140555679 = 4140555679,
+
+        _4160732928 = 4160732928,
+
+        _4164306255 = 4164306255,
+
+        _4194303984 = 4194303984,
+
+        _4198924980 = 4198924980,
+
+        _4215333072 = 4215333072,
+
+        _4235231376 = 4235231376,
+
+        _4260754908 = 4260754908,
+
+        _4274834687 = 4274834687,
+
+        _4282924082 = 4282924082,
 
     }
 
@@ -39722,6 +39948,24 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("googleMapsBrowserKey")]
         public string? GoogleMapsBrowserKey { get; set; } = default!;
+
+        /// <summary>
+        /// Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("brandIconUrl")]
+        public string? BrandIconUrl { get; set; } = default!;
+
+        /// <summary>
+        /// Public validated CSS custom properties for this tenant's light presentation.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("brandLightTokens")]
+        public System.Collections.Generic.IDictionary<string, string>? BrandLightTokens { get; set; } = default!;
+
+        /// <summary>
+        /// Public validated CSS custom properties for this tenant's dark presentation.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("brandDarkTokens")]
+        public System.Collections.Generic.IDictionary<string, string>? BrandDarkTokens { get; set; } = default!;
 
     }
 

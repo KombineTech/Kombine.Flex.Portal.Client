@@ -90,6 +90,17 @@
         }
       },
       {
+        "name": "LocationKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "UnitKid",
         "where": "query",
         "required": false,
@@ -226,6 +237,17 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "LocationKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -708,6 +730,17 @@
         }
       },
       {
+        "name": "LocationKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "Date",
         "where": "query",
         "required": false,
@@ -826,6 +859,17 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "LocationKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -1352,6 +1396,17 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     ],
     "body": null,
@@ -1461,6 +1516,17 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     ],
@@ -1595,6 +1661,17 @@
         "schema": {
           "type": "integer",
           "format": "int32"
+        }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     ],
@@ -2092,6 +2169,17 @@
         }
       },
       {
+        "name": "LocationKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "UnitKid",
         "where": "query",
         "required": false,
@@ -2232,6 +2320,17 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     ],
@@ -5762,7 +5861,16 @@
     "statuses": [
       200
     ],
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "refresh",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
     "body": null,
     "bodyRequired": false,
     "multipart": null,
@@ -9171,6 +9279,14 @@
         "schema": {
           "type": "integer",
           "format": "int32"
+        }
+      },
+      {
+        "name": "useCalendarText",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
         }
       }
     ],

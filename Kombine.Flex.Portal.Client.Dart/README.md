@@ -1,6 +1,6 @@
-Version 0.10.0 adds personal Wallboard layouts, scanned display registration and revision-aware display reads. Save only existing scanned display IDs with the latest revision. Preserve drafts on conflicts and never retry uncertain writes automatically. Screen sessions may read only their approved display. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+Version 0.11.0 adds personal Wallboard layouts, scanned display registration and revision-aware display reads. Save only existing scanned display IDs with the latest revision. Preserve drafts on conflicts and never retry uncertain writes automatically. Screen sessions may read only their approved display. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
 
-Version 0.10.0 covers 206 operations, including GetUnitTimeline and GetUnitTimelineFields. Wallboard responses identify the exact approved display; screen sessions expose minimal identity without ordinary manager permissions. Use a normal manager login for Portal operations. Permanent device approval and UserBalance remain compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+Version 0.11.0 covers 206 operations, including GetUnitTimeline and GetUnitTimelineFields. Wallboard responses identify the exact approved display; screen sessions expose minimal identity without ordinary manager permissions. Use a normal manager login for Portal operations. Permanent device approval and UserBalance remain compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
 
 Version 0.8.0 adds FindWallboardPairings and GetWallboardDevice (200 operations total), plus optional location metadata when approving a screen. Central Wallboard setup uses one QR scan; private location is available only to the approving manager through the device endpoint. Device approval has no automatic expiry and still checks revocation, manager credentials and tenant/environment binding. Existing UserBalance clients remain compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog) and [Wallboard guide](https://api.team.kombine.technology/docs#wallboard-pairing).
 
@@ -38,7 +38,7 @@ try {
 ```
 ## Contract and runtime
 
-Version **0.10.0** contains **182 named operations**. See [OPERATIONS.md](OPERATIONS.md) and the bundled `OpenApi` snapshot for the exact contract; this package does not discover new server operations at runtime. Object models are wire-map typedefs (`Map<String, Object?>`), not field-typed classes. Keep JSON field names and KIDs unchanged. Server authorization, tenant binding and resource permissions always apply.
+Version **0.11.0** contains **182 named operations**. See [OPERATIONS.md](OPERATIONS.md) and the bundled `OpenApi` snapshot for the exact contract; this package does not discover new server operations at runtime. Object models are wire-map typedefs (`Map<String, Object?>`), not field-typed classes. Keep JSON field names and KIDs unchanged. Server authorization, tenant binding and resource permissions always apply.
 
 Dart SDK >=3.6.0 <4.0.0 is required. Tests cover Dart 3.6.2 and 3.13.6, including JavaScript compilation and 64-bit precision; Flutter device execution has not been tested. Runtime dependencies are `http` and `http_parser`. No private Kombine runtime dependency is required.
 

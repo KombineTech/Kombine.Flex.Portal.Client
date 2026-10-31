@@ -1561,6 +1561,8 @@ export interface ManagerProfileResponse {
   "numberFormat"?: string | null;
   /** Personal table/list vertical spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid values use 1. */
   "lineSpacing"?: number;
+  /** Maximum workspace banks; null means unlimited. This display preference grants no access. */
+  "portalMaxOpenBanks"?: number | null;
   /** Names and IDs from the shared eTab enum, limited to the manager's recognized grants. */
   "tabDetails"?: (ManagerTabResponse)[] | null;
   /** Decoded bank/location scopes belonging only to this site. Empty means no bank/location access. */
@@ -1891,6 +1893,8 @@ export interface PersonalManagerProfile {
   "numberFormat"?: string | null;
   /** lineSpacing */
   "lineSpacing"?: number;
+  /** portalMaxOpenBanks */
+  "portalMaxOpenBanks"?: number | null;
 }
 
 /** A stable numeric tab identity and its enum-derived name. */
@@ -1955,6 +1959,10 @@ export interface PersonalWallboardsResponse {
   "wallboards"?: (Wallboard)[] | null;
   /** revision */
   "revision"?: string | null;
+  /** storageUsedCharacters */
+  "storageUsedCharacters"?: number;
+  /** storageLimitCharacters */
+  "storageLimitCharacters"?: number;
 }
 
 /** ProblemDetails */
@@ -3071,14 +3079,16 @@ export interface ValidationProblemDetails {
 
 /** Wallboard */
 export interface Wallboard {
-  /** displayId */
-  "displayId"?: string | null;
-  /** name */
-  "name"?: string | null;
-  /** isPortrait */
-  "isPortrait"?: boolean;
-  /** pages */
-  "pages"?: (WallboardPage)[] | null;
+  /** i */
+  "i"?: string | null;
+  /** n */
+  "n"?: string | null;
+  /** p */
+  "p"?: number;
+  /** c */
+  "c"?: (EColor)[] | null;
+  /** s */
+  "s"?: (WallboardPage)[] | null;
 }
 
 /** WallboardDeviceChallenge */
@@ -3113,14 +3123,12 @@ export interface WallboardDisplayResponse {
 
 /** WallboardPage */
 export interface WallboardPage {
-  /** pageId */
-  "pageId"?: string | null;
-  /** name */
-  "name"?: string | null;
-  /** displayDurationSeconds */
-  "displayDurationSeconds"?: number;
-  /** widgets */
-  "widgets"?: (WallboardWidget)[] | null;
+  /** n */
+  "n"?: string | null;
+  /** d */
+  "d"?: number;
+  /** s */
+  "s"?: (WallboardWidget)[] | null;
 }
 
 /** WallboardPairingInfo */
@@ -3175,20 +3183,18 @@ export interface WallboardScanLocation {
 
 /** WallboardWidget */
 export interface WallboardWidget {
-  /** widgetId */
-  "widgetId"?: string | null;
-  /** widgetType */
-  "widgetType"?: EWidgetType;
-  /** kid */
-  "kid"?: string | null;
-  /** column */
-  "column"?: number;
-  /** row */
-  "row"?: number;
-  /** width */
-  "width"?: number;
-  /** height */
-  "height"?: number;
+  /** t */
+  "t"?: EWidgetType;
+  /** k */
+  "k"?: string | null;
+  /** x */
+  "x"?: number;
+  /** y */
+  "y"?: number;
+  /** w */
+  "w"?: number;
+  /** h */
+  "h"?: number;
 }
 
 /** Actual SoapInfo event. Missing duration/amounts remain null; quantity is never inferred from duration. */
@@ -3320,6 +3326,9 @@ export interface WashDocPresentation {
   /** groupOrder */
   "groupOrder"?: (string)[] | null;
 }
+
+/** Wire values: [0, 16777216, 19803451, 49342943, 66515692, 83886079, 301717822, 586316818, 872109863, 1148802545, 1430742526, 1717269026, 1735697169, 2246665236, 2573393397, 2663948613, 2699079935, 2714280648, 2733703167, 2749942179, 2751462864, 2768224459, 2769641661, 2787281698, 2818346668, 2830712137, 2834349618, 2844424541, 2866338008, 2917435280, 2995767495, 3079273262, 3161949195, 3251336146, 3336873398, 3414481233, 3504172543, 3519070400, 3556759296, 3570237234, 3584940262, 3585341471, 3602906880, 3665568446, 3743790278, 3839692917, 4009820159, 4059490203, 4076199087, 4093564881, 4107256821, 4123120887, 4140555679, 4160732928, 4164306255, 4194303984, 4198924980, 4215333072, 4235231376, 4260754908, 4274834687, 4282924082]. */
+export type EColor = number;
 
 /** Wire values: [0, 1, 2]. */
 export type EThemeMode = number;
@@ -3485,6 +3494,12 @@ export interface PublicWidgetPresentationResponse {
   "labels"?: Record<string, string> | null;
   /** Public browser Maps key, restricted by HTTP referrer at Google; never a server credential. Null when maps are not configured. */
   "googleMapsBrowserKey"?: string | null;
+  /** Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable. */
+  "brandIconUrl"?: string | null;
+  /** Public validated CSS custom properties for this tenant's light presentation. */
+  "brandLightTokens"?: Record<string, string> | null;
+  /** Public validated CSS custom properties for this tenant's dark presentation. */
+  "brandDarkTokens"?: Record<string, string> | null;
 }
 
 /** Purchase count and total for one currency; no currency conversion is performed. */
@@ -3579,6 +3594,7 @@ export interface GetBankAccountOptions {
   timeZone?: string;
   period?: number;
   locationKid?: string;
+  locationKids?: (string)[];
   unitKid?: string;
   userKid?: string;
   kind?: string;
@@ -3595,6 +3611,7 @@ export interface GetBankAccountRevisionOptions {
   timeZone?: string;
   period?: number;
   locationKid?: string;
+  locationKids?: (string)[];
   unitKid?: string;
   userKid?: string;
   kind?: string;
@@ -3627,6 +3644,7 @@ export interface GetBanksOptions {
 
 export interface GetBankDocumentsOptions {
   locationKid?: string;
+  locationKids?: (string)[];
   date?: string;
   search?: string;
   unitKids?: (string)[];
@@ -3641,6 +3659,7 @@ export interface GetBankDocumentsOptions {
 
 export interface GetBankDocumentsCountOptions {
   locationKid?: string;
+  locationKids?: (string)[];
   date?: string;
   search?: string;
   unitKids?: (string)[];
@@ -3697,6 +3716,7 @@ export interface GetBankUserExportCountOptions {
   direction?: string;
   locationKid?: string;
   deleted?: string;
+  locationKids?: (string)[];
 }
 
 export interface GetBankUsersOptions {
@@ -3708,6 +3728,7 @@ export interface GetBankUsersOptions {
   userKid?: string;
   locationKid?: string;
   deleted?: string;
+  locationKids?: (string)[];
 }
 
 export interface GetBankBookingsOptions {
@@ -3720,6 +3741,7 @@ export interface GetBankBookingsOptions {
   search?: string;
   offset?: number;
   limit?: number;
+  locationKids?: (string)[];
 }
 
 export interface GetCameraNearestLocationOptions {
@@ -3763,6 +3785,7 @@ export interface ExportBankAccountOptions {
   timeZone?: string;
   period?: number;
   locationKid?: string;
+  locationKids?: (string)[];
   unitKid?: string;
   userKid?: string;
   kind?: string;
@@ -3780,6 +3803,7 @@ export interface ExportBankUsersOptions {
   deleted?: string;
   sort?: string;
   direction?: string;
+  locationKids?: (string)[];
 }
 
 export interface DownloadBankSettlementOptions {
@@ -3941,6 +3965,10 @@ export interface GetManagerExportCountOptions {
 
 export interface LoginManagerOptions {
   xPortalLoginClientIp?: string;
+}
+
+export interface GetCurrentManagerOptions {
+  refresh?: boolean;
 }
 
 export interface GetNearestLocationsOptions {
@@ -4150,6 +4178,7 @@ export interface GetIconPresentationOptions {
   text?: string;
   count?: bigint;
   color?: number;
+  useCalendarText?: boolean;
 }
 
 export interface GetPublicMachineErrorsOptions {

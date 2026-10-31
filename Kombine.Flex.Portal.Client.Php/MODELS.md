@@ -665,7 +665,7 @@ array{'field': string|null, 'name': string|null, 'organisation': string|null, 'e
 ### ManagerProfileResponse
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'wallboardDisplayId'?: string|null, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
+array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'wallboardDisplayId'?: string|null, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'portalMaxOpenBanks'?: int|null, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
 ```
 
 ### ManagerResetPasswordRequest
@@ -833,7 +833,7 @@ array{'hasApiKey'?: bool, 'revision'?: string|null}
 ### PersonalManagerProfile
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'organisation'?: string|null, 'iconKid'?: string|null, 'email'?: string|null, 'emailVerified'?: bool, 'themeMode'?: eThemeMode, 'revision'?: string|null, 'availableIcons'?: list<string>|null, 'retentionDays'?: int, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float}
+array{'kid'?: string|null, 'name'?: string|null, 'organisation'?: string|null, 'iconKid'?: string|null, 'email'?: string|null, 'emailVerified'?: bool, 'themeMode'?: eThemeMode, 'revision'?: string|null, 'availableIcons'?: list<string>|null, 'retentionDays'?: int, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'portalMaxOpenBanks'?: int|null}
 ```
 
 ### PersonalManagerTab
@@ -875,7 +875,7 @@ array{'displayId': string|null}
 ### PersonalWallboardsResponse
 
 ```php
-array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null}
+array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int}
 ```
 
 ### ProblemDetails
@@ -1331,7 +1331,7 @@ array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'
 ### Wallboard
 
 ```php
-array{'displayId'?: string|null, 'name'?: string|null, 'isPortrait'?: bool, 'pages'?: list<WallboardPage>|null}
+array{'i'?: string|null, 'n'?: string|null, 'p'?: int, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
 ```
 
 ### WallboardDeviceChallenge
@@ -1355,7 +1355,7 @@ array{'layout'?: Wallboard, 'revision'?: string|null}
 ### WallboardPage
 
 ```php
-array{'pageId'?: string|null, 'name'?: string|null, 'displayDurationSeconds'?: int, 'widgets'?: list<WallboardWidget>|null}
+array{'n'?: string|null, 'd'?: int, 's'?: list<WallboardWidget>|null}
 ```
 
 ### WallboardPairingInfo
@@ -1385,7 +1385,7 @@ array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|fl
 ### WallboardWidget
 
 ```php
-array{'widgetId'?: string|null, 'widgetType'?: eWidgetType, 'kid'?: string|null, 'column'?: int, 'row'?: int, 'width'?: int, 'height'?: int}
+array{'t'?: eWidgetType, 'k'?: string|null, 'x'?: int, 'y'?: int, 'w'?: int, 'h'?: int}
 ```
 
 ### WashDocChartDosing
@@ -1428,6 +1428,12 @@ array{'ms2000'?: int, 'flags'?: int|null, 'heat'?: bool|null, 'inlet'?: bool|nul
 
 ```php
 array{'unitType'?: int|null, 'kind'?: string|null, 'groupOrder'?: list<string>|null}
+```
+
+### eColor
+
+```php
+int
 ```
 
 ### eThemeMode
@@ -1511,7 +1517,7 @@ array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: s
 ### PublicWidgetPresentationResponse
 
 ```php
-array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null}
+array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
 ```
 
 ### PurchaseCurrencySnapshot

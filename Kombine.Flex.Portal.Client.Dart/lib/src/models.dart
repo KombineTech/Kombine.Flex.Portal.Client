@@ -238,6 +238,7 @@ typedef WashDocChartResponse = Map<String, Object?>;
 typedef WashDocChartSeries = Map<String, Object?>;
 typedef WashDocChartSignal = Map<String, Object?>;
 typedef WashDocPresentation = Map<String, Object?>;
+typedef eColor = int;
 typedef eThemeMode = int;
 typedef eWidgetType = int;
 typedef ActiveUsersResponse = Map<String, Object?>;

@@ -115,7 +115,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ManagerPermissionRoleResponse array{'role'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'canEditPermissions'?: bool, 'tabs'?: list<ManagerTabResponse>|null, 'tabsRevision'?: string|null, 'canEditTabs'?: bool, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool}
  * @phpstan-type ManagerProfileChangeRequest array{'value': mixed, 'expectedRevision': string|null}
  * @phpstan-type ManagerProfileChangeResponse array{'field': string|null, 'name': string|null, 'organisation': string|null, 'email': string|null, 'iconKid': string|null, 'gravatarUrl'?: string|null, 'availableIcons'?: list<string>|null, 'enabled'?: bool|null, 'deleted'?: bool, 'deletedMs2000'?: int, 'deletedAt'?: string|null, 'retentionDays'?: int, 'profileRevision': string|null, 'canEditProfile'?: bool}
- * @phpstan-type ManagerProfileResponse array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'wallboardDisplayId'?: string|null, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
+ * @phpstan-type ManagerProfileResponse array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'wallboardDisplayId'?: string|null, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'portalMaxOpenBanks'?: int|null, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
  * @phpstan-type ManagerResetPasswordRequest array{'token': string, 'password': string, 'confirmPassword': string}
  * @phpstan-type ManagerResourceGrantResponse array{'kid'?: string|null, 'scope'?: string|null}
  * @phpstan-type ManagerSessionResponse array{'accessToken'?: string|null, 'expiresIn'?: int, 'tokenType'?: string|null}
@@ -143,14 +143,14 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PersonalEmailConfirmation array{'token': string|null}
  * @phpstan-type PersonalEmailRequest array{'email': string|null, 'currentPassword': string|null, 'language'?: string|null}
  * @phpstan-type PersonalManagerApiKey array{'hasApiKey'?: bool, 'revision'?: string|null}
- * @phpstan-type PersonalManagerProfile array{'kid'?: string|null, 'name'?: string|null, 'organisation'?: string|null, 'iconKid'?: string|null, 'email'?: string|null, 'emailVerified'?: bool, 'themeMode'?: eThemeMode, 'revision'?: string|null, 'availableIcons'?: list<string>|null, 'retentionDays'?: int, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float}
+ * @phpstan-type PersonalManagerProfile array{'kid'?: string|null, 'name'?: string|null, 'organisation'?: string|null, 'iconKid'?: string|null, 'email'?: string|null, 'emailVerified'?: bool, 'themeMode'?: eThemeMode, 'revision'?: string|null, 'availableIcons'?: list<string>|null, 'retentionDays'?: int, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'portalMaxOpenBanks'?: int|null}
  * @phpstan-type PersonalManagerTab array{'id'?: int, 'name'?: string|null}
  * @phpstan-type PersonalManagerTabs array{'kid'?: string|null, 'tabs'?: list<PersonalManagerTab>|null, 'availableTabs'?: list<PersonalManagerTab>|null, 'revision'?: string|null, 'canEdit'?: bool}
  * @phpstan-type PersonalPasswordRequest array{'currentPassword': string|null, 'password': string|null, 'confirmPassword': string|null, 'language'?: string|null}
  * @phpstan-type PersonalProfileRequest array{'revision': string|null, 'value': mixed}
  * @phpstan-type PersonalTabRequest array{'revision': string|null, 'enabled': bool}
  * @phpstan-type PersonalWallboardRequest array{'displayId': string|null}
- * @phpstan-type PersonalWallboardsResponse array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null}
+ * @phpstan-type PersonalWallboardsResponse array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int}
  * @phpstan-type ProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
  * @phpstan-type RedeemWallboardPairing array{'deviceCode'?: string|null}
  * @phpstan-type ResumeWallboardSession array{'challenge'?: string|null, 'signature'?: string|null}
@@ -226,16 +226,16 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserTagResponse array{'kid'?: string|null, 'state'?: string|null}
  * @phpstan-type UserWorkspaceResponse array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'number'?: string|null, 'deletedAtUtc'?: string|null, 'deleteAtUtc'?: string|null, 'locations'?: list<UserScopeState>|null, 'tags'?: list<UserScopeState>|null, 'attributes'?: list<UserAttributeInput>|null, 'canWrite'?: bool, 'canCreate'?: bool, 'synchronization'?: string|null, 'canDelete'?: bool, 'canRenameExternalId'?: bool, 'canRename'?: bool, 'iconKid'?: string|null, 'availableIcons'?: list<string>|null, 'canEditIcon'?: bool}
  * @phpstan-type ValidationProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
- * @phpstan-type Wallboard array{'displayId'?: string|null, 'name'?: string|null, 'isPortrait'?: bool, 'pages'?: list<WallboardPage>|null}
+ * @phpstan-type Wallboard array{'i'?: string|null, 'n'?: string|null, 'p'?: int, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
  * @phpstan-type WallboardDeviceChallenge array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
  * @phpstan-type WallboardDeviceInfo array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
  * @phpstan-type WallboardDisplayResponse array{'layout'?: Wallboard, 'revision'?: string|null}
- * @phpstan-type WallboardPage array{'pageId'?: string|null, 'name'?: string|null, 'displayDurationSeconds'?: int, 'widgets'?: list<WallboardWidget>|null}
+ * @phpstan-type WallboardPage array{'n'?: string|null, 'd'?: int, 's'?: list<WallboardWidget>|null}
  * @phpstan-type WallboardPairingInfo array{'pairingId'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'approved'?: bool}
  * @phpstan-type WallboardPairingStarted array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'intervalSeconds'?: int}
  * @phpstan-type WallboardPairingToken array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null, 'displayId'?: string|null}
  * @phpstan-type WallboardScanLocation array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float, 'capturedAt'?: string}
- * @phpstan-type WallboardWidget array{'widgetId'?: string|null, 'widgetType'?: eWidgetType, 'kid'?: string|null, 'column'?: int, 'row'?: int, 'width'?: int, 'height'?: int}
+ * @phpstan-type WallboardWidget array{'t'?: eWidgetType, 'k'?: string|null, 'x'?: int, 'y'?: int, 'w'?: int, 'h'?: int}
  * @phpstan-type WashDocChartDosing array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
  * @phpstan-type WashDocChartEvent array{'ms2000'?: int, 'kind'?: string|null, 'name'?: string|null, 'value'?: int|float|null, 'label'?: string|null, 'localization'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type WashDocChartPoint array{'ms2000'?: int, 'value'?: int|float|null, 'isCalculated'?: bool, 'isEdge'?: bool, 'unit'?: string|null}
@@ -243,6 +243,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type WashDocChartSeries array{'kind'?: string|null, 'name'?: string|null, 'label'?: string|null, 'localization'?: string|null, 'group'?: string|null, 'role'?: string|null, 'unit'?: string|null, 'step'?: bool, 'points'?: list<WashDocChartPoint>|null}
  * @phpstan-type WashDocChartSignal array{'ms2000'?: int, 'flags'?: int|null, 'heat'?: bool|null, 'inlet'?: bool|null, 'outlet'?: bool|null, 'isCalculated'?: bool, 'airflow'?: bool|null}
  * @phpstan-type WashDocPresentation array{'unitType'?: int|null, 'kind'?: string|null, 'groupOrder'?: list<string>|null}
+ * @phpstan-type eColor int
  * @phpstan-type eThemeMode int
  * @phpstan-type eWidgetType int
  * @phpstan-type ActiveUsersResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackDays'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string}
@@ -256,7 +257,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PublicMachineErrorsPage array{'items'?: list<PublicMachineError>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
  * @phpstan-type PublicScopedProgressItem array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string|null, 'doneAtUtc'?: string|null, 'progress'?: UnitProgressResponse}
  * @phpstan-type PublicScopedProgressResponse array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PublicScopedProgressItem>|null, 'nextCursor'?: string|null}
- * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null}
+ * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
  * @phpstan-type PurchaseCurrencySnapshot array{'currency'?: string|null, 'count'?: int, 'amount'?: int|float}
  * @phpstan-type PurchaseHeatmapPoint array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
  * @phpstan-type PurchaseMapPoint array{'kid'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float, 'timestampUtc'?: string, 'amount'?: int|float}
@@ -292,7 +293,7 @@ final class PortalClient extends BaseClient
     /**
      * Lists Account2 postings with full-selection totals per currency.
      * @param string $bankKid
-     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'UnitKid'?: string, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int} $options
+     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'LocationKids'?: list<string>, 'UnitKid'?: string, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int} $options
      * @return AccountResponse
      */
     public function getBankAccount(mixed $bankKid, array $options = []): mixed
@@ -303,7 +304,7 @@ final class PortalClient extends BaseClient
     /**
      * Checks whether filtered Account2 postings changed, including late arrivals with old event timestamps.
      * @param string $bankKid
-     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'UnitKid'?: string, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int} $options
+     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'LocationKids'?: list<string>, 'UnitKid'?: string, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int} $options
      * @return AccountRevisionResponse
      */
     public function getBankAccountRevision(mixed $bankKid, array $options = []): mixed
@@ -418,7 +419,7 @@ final class PortalClient extends BaseClient
     /**
      * Search WashDoc document identities by location, unit and time without loading measurements.
      * @param string $bankKid
-     * @param array{'LocationKid'?: string, 'Date'?: string, 'Search'?: string, 'UnitKids'?: list<string>, 'Sort'?: string, 'Direction'?: string, 'UnitKid'?: string, 'From'?: string, 'Through'?: string, 'Offset'?: int, 'Limit'?: int} $options
+     * @param array{'LocationKid'?: string, 'LocationKids'?: list<string>, 'Date'?: string, 'Search'?: string, 'UnitKids'?: list<string>, 'Sort'?: string, 'Direction'?: string, 'UnitKid'?: string, 'From'?: string, 'Through'?: string, 'Offset'?: int, 'Limit'?: int} $options
      * @return BankDocumentPage
      */
     public function getBankDocuments(mixed $bankKid, array $options = []): mixed
@@ -429,7 +430,7 @@ final class PortalClient extends BaseClient
     /**
      * Count WashDocs across the authorized bank scope, without loading document pages or measurements.
      * @param string $bankKid
-     * @param array{'LocationKid'?: string, 'Date'?: string, 'Search'?: string, 'UnitKids'?: list<string>, 'Sort'?: string, 'Direction'?: string, 'UnitKid'?: string, 'From'?: string, 'Through'?: string, 'Offset'?: int, 'Limit'?: int} $options
+     * @param array{'LocationKid'?: string, 'LocationKids'?: list<string>, 'Date'?: string, 'Search'?: string, 'UnitKids'?: list<string>, 'Sort'?: string, 'Direction'?: string, 'UnitKid'?: string, 'From'?: string, 'Through'?: string, 'Offset'?: int, 'Limit'?: int} $options
      * @return UnitDocumentCount
      */
     public function getBankDocumentsCount(mixed $bankKid, array $options = []): mixed
@@ -512,7 +513,7 @@ final class PortalClient extends BaseClient
     /**
      * Count the complete filtered export selection using the same directory authorization and visibility.
      * @param string $bankKid
-     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'locationKid'?: string, 'deleted'?: string} $options
+     * @param array{'filter'?: string, 'sort'?: string, 'direction'?: string, 'locationKid'?: string, 'deleted'?: string, 'locationKids'?: list<string>} $options
      * @return DirectoryExportCountResponse
      */
     public function getBankUserExportCount(mixed $bankKid, array $options = []): mixed
@@ -523,7 +524,7 @@ final class PortalClient extends BaseClient
     /**
      * Read one page of users for a bank.
      * @param string $bankKid
-     * @param array{'pageSize'?: int, 'cursor'?: string, 'sort'?: string, 'direction'?: string, 'filter'?: string, 'userKid'?: string, 'locationKid'?: string, 'deleted'?: string} $options
+     * @param array{'pageSize'?: int, 'cursor'?: string, 'sort'?: string, 'direction'?: string, 'filter'?: string, 'userKid'?: string, 'locationKid'?: string, 'deleted'?: string, 'locationKids'?: list<string>} $options
      * @return BankUsersResponse
      */
     public function getBankUsers(mixed $bankKid, array $options = []): mixed
@@ -545,7 +546,7 @@ final class PortalClient extends BaseClient
     /**
      * Lists the latest nonsuperseded Log5 event for each location/unit/resident/start.
      * @param string $bankKid
-     * @param array{'from'?: string, 'through'?: string, 'locationKid'?: string, 'unitKid'?: string, 'userKid'?: string, 'status'?: string, 'search'?: string, 'offset'?: int, 'limit'?: int} $options
+     * @param array{'from'?: string, 'through'?: string, 'locationKid'?: string, 'unitKid'?: string, 'userKid'?: string, 'status'?: string, 'search'?: string, 'offset'?: int, 'limit'?: int, 'locationKids'?: list<string>} $options
      * @return BookingsResponse
      */
     public function getBankBookings(mixed $bankKid, array $options = []): mixed
@@ -683,7 +684,7 @@ final class PortalClient extends BaseClient
      * Downloads the complete filtered selection as CSV or a genuine Excel workbook.
      * @param string $bankKid
      * @param resource $destination Writable stream; may contain partial data on failure.
-     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'UnitKid'?: string, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int, 'format'?: string} $options
+     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'LocationKids'?: list<string>, 'UnitKid'?: string, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int, 'format'?: string} $options
      * @return DownloadResponse
      */
     public function exportBankAccount(mixed $bankKid, mixed $destination, array $options = []): mixed
@@ -695,7 +696,7 @@ final class PortalClient extends BaseClient
      * Download filtered residents as UTF-8 CSV, at most 10,000 residents and 4 MiB text.
      * @param string $bankKid
      * @param resource $destination Writable stream; may contain partial data on failure.
-     * @param array{'filter'?: string, 'locationKid'?: string, 'deleted'?: string, 'sort'?: string, 'direction'?: string} $options
+     * @param array{'filter'?: string, 'locationKid'?: string, 'deleted'?: string, 'sort'?: string, 'direction'?: string, 'locationKids'?: list<string>} $options
      * @return DownloadResponse
      */
     public function exportBankUsers(mixed $bankKid, mixed $destination, array $options = []): mixed
@@ -1197,11 +1198,12 @@ final class PortalClient extends BaseClient
 
     /**
      * Get your profile, permitted tabs, bank/location access, and operation permissions.
+     * @param array{'refresh'?: bool} $options
      * @return ManagerProfileResponse
      */
-    public function getCurrentManager(): mixed
+    public function getCurrentManager(array $options = []): mixed
     {
-        return $this->request('GetCurrentManager', [], null);
+        return $this->request('GetCurrentManager', [] + $options, null);
     }
 
     /**
@@ -2130,7 +2132,7 @@ final class PortalClient extends BaseClient
 
     /**
      * Resolve an IconKid, optionally changing its text, count or RGB colour.
-     * @param array{'iconKid'?: string, 'text'?: string, 'count'?: int, 'color'?: int} $options
+     * @param array{'iconKid'?: string, 'text'?: string, 'count'?: int, 'color'?: int, 'useCalendarText'?: bool} $options
      * @return IconPresentationResponse
      */
     public function getIconPresentation(array $options = []): mixed

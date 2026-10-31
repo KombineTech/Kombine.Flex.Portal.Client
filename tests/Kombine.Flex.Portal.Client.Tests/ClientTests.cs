@@ -127,7 +127,7 @@ public sealed class ClientTests
         using var http = Transport(new Handler(async (_, cancellation) => { await Task.Delay(Timeout.Infinite, cancellation); return Json("{}"); }));
         using var client = new PortalApiClient(http);
         using var cancellation = new CancellationTokenSource();
-        var pending = client.GetCurrentManagerAsync(cancellation.Token);
+        var pending = client.GetCurrentManagerAsync(cancellationToken: cancellation.Token);
         cancellation.Cancel();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending);
     }
@@ -368,7 +368,7 @@ public sealed class ClientTests
             using var client = new PortalApiClient(endpoint) { AccessToken = "fixture-token" };
             try
             {
-                var manager = await client.GetCurrentManagerAsync(deadline.Token);
+                var manager = await client.GetCurrentManagerAsync(cancellationToken: deadline.Token);
                 Assert.Equal("Æøå fixture", manager.Name);
             }
             finally

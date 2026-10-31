@@ -10,12 +10,12 @@ export class PortalClient extends BaseClient {
 
   /** Lists Account2 postings with full-selection totals per currency. */
   getBankAccount(bankKid: string, options: Models.GetBankAccountOptions = {}, request: RequestOptions = {}): Promise<Models.AccountResponse> {
-    return this.send("GetBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountResponse>;
+    return this.send("GetBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountResponse>;
   }
 
   /** Checks whether filtered Account2 postings changed, including late arrivals with old event timestamps. */
   getBankAccountRevision(bankKid: string, options: Models.GetBankAccountRevisionOptions = {}, request: RequestOptions = {}): Promise<Models.AccountRevisionResponse> {
-    return this.send("GetBankAccountRevision", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountRevisionResponse>;
+    return this.send("GetBankAccountRevision", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountRevisionResponse>;
   }
 
   /** Reverses one eligible resident consumption posting by appending a linked compensation. */
@@ -70,12 +70,12 @@ export class PortalClient extends BaseClient {
 
   /** Search WashDoc document identities by location, unit and time without loading measurements. */
   getBankDocuments(bankKid: string, options: Models.GetBankDocumentsOptions = {}, request: RequestOptions = {}): Promise<Models.BankDocumentPage> {
-    return this.send("GetBankDocuments", {"bankKid": bankKid, "LocationKid": options.locationKid, "Date": options.date, "Search": options.search, "UnitKids": options.unitKids, "Sort": options.sort, "Direction": options.direction, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.BankDocumentPage>;
+    return this.send("GetBankDocuments", {"bankKid": bankKid, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "Date": options.date, "Search": options.search, "UnitKids": options.unitKids, "Sort": options.sort, "Direction": options.direction, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.BankDocumentPage>;
   }
 
   /** Count WashDocs across the authorized bank scope, without loading document pages or measurements. */
   getBankDocumentsCount(bankKid: string, options: Models.GetBankDocumentsCountOptions = {}, request: RequestOptions = {}): Promise<Models.UnitDocumentCount> {
-    return this.send("GetBankDocumentsCount", {"bankKid": bankKid, "LocationKid": options.locationKid, "Date": options.date, "Search": options.search, "UnitKids": options.unitKids, "Sort": options.sort, "Direction": options.direction, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.UnitDocumentCount>;
+    return this.send("GetBankDocumentsCount", {"bankKid": bankKid, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "Date": options.date, "Search": options.search, "UnitKids": options.unitKids, "Sort": options.sort, "Direction": options.direction, "UnitKid": options.unitKid, "From": options.from, "Through": options.through, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.UnitDocumentCount>;
   }
 
   /** List WashDocs for one authorized location, optionally selecting one or several units. */
@@ -115,12 +115,12 @@ export class PortalClient extends BaseClient {
 
   /** Count the complete filtered export selection using the same directory authorization and visibility. */
   getBankUserExportCount(bankKid: string, options: Models.GetBankUserExportCountOptions = {}, request: RequestOptions = {}): Promise<Models.DirectoryExportCountResponse> {
-    return this.send("GetBankUserExportCount", {"bankKid": bankKid, "filter": options.filter, "sort": options.sort, "direction": options.direction, "locationKid": options.locationKid, "deleted": options.deleted}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
+    return this.send("GetBankUserExportCount", {"bankKid": bankKid, "filter": options.filter, "sort": options.sort, "direction": options.direction, "locationKid": options.locationKid, "deleted": options.deleted, "locationKids": options.locationKids}, undefined, request) as Promise<Models.DirectoryExportCountResponse>;
   }
 
   /** Read one page of users for a bank. */
   getBankUsers(bankKid: string, options: Models.GetBankUsersOptions = {}, request: RequestOptions = {}): Promise<Models.BankUsersResponse> {
-    return this.send("GetBankUsers", {"bankKid": bankKid, "pageSize": options.pageSize, "cursor": options.cursor, "sort": options.sort, "direction": options.direction, "filter": options.filter, "userKid": options.userKid, "locationKid": options.locationKid, "deleted": options.deleted}, undefined, request) as Promise<Models.BankUsersResponse>;
+    return this.send("GetBankUsers", {"bankKid": bankKid, "pageSize": options.pageSize, "cursor": options.cursor, "sort": options.sort, "direction": options.direction, "filter": options.filter, "userKid": options.userKid, "locationKid": options.locationKid, "deleted": options.deleted, "locationKids": options.locationKids}, undefined, request) as Promise<Models.BankUsersResponse>;
   }
 
   /** Create a resident. Requires bank-wide Users2/User Create. Action must be create. No hardware access is assigned automatically. */
@@ -130,7 +130,7 @@ export class PortalClient extends BaseClient {
 
   /** Lists the latest nonsuperseded Log5 event for each location/unit/resident/start. */
   getBankBookings(bankKid: string, options: Models.GetBankBookingsOptions = {}, request: RequestOptions = {}): Promise<Models.BookingsResponse> {
-    return this.send("GetBankBookings", {"bankKid": bankKid, "from": options.from, "through": options.through, "locationKid": options.locationKid, "unitKid": options.unitKid, "userKid": options.userKid, "status": options.status, "search": options.search, "offset": options.offset, "limit": options.limit}, undefined, request) as Promise<Models.BookingsResponse>;
+    return this.send("GetBankBookings", {"bankKid": bankKid, "from": options.from, "through": options.through, "locationKid": options.locationKid, "unitKid": options.unitKid, "userKid": options.userKid, "status": options.status, "search": options.search, "offset": options.offset, "limit": options.limit, "locationKids": options.locationKids}, undefined, request) as Promise<Models.BookingsResponse>;
   }
 
   /** Appends a cancellation or restoration, preserving history and requesting backend synchronization. */
@@ -195,12 +195,12 @@ export class PortalClient extends BaseClient {
 
   /** Downloads the complete filtered selection as CSV or a genuine Excel workbook. */
   exportBankAccount(bankKid: string, options: Models.ExportBankAccountOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("ExportBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit, "format": options.format}, undefined, request) as Promise<PortalDownload>;
+    return this.send("ExportBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit, "format": options.format}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Download filtered residents as UTF-8 CSV, at most 10,000 residents and 4 MiB text. */
   exportBankUsers(bankKid: string, options: Models.ExportBankUsersOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("ExportBankUsers", {"bankKid": bankKid, "filter": options.filter, "locationKid": options.locationKid, "deleted": options.deleted, "sort": options.sort, "direction": options.direction}, undefined, request) as Promise<PortalDownload>;
+    return this.send("ExportBankUsers", {"bankKid": bankKid, "filter": options.filter, "locationKid": options.locationKid, "deleted": options.deleted, "sort": options.sort, "direction": options.direction, "locationKids": options.locationKids}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Downloads a ZIP with one settlement file per group and currency, plus a reconciliation manifest. */
@@ -434,8 +434,8 @@ export class PortalClient extends BaseClient {
   }
 
   /** Get your profile, permitted tabs, bank/location access, and operation permissions. */
-  getCurrentManager(request: RequestOptions = {}): Promise<Models.ManagerProfileResponse> {
-    return this.send("GetCurrentManager", {}, undefined, request) as Promise<Models.ManagerProfileResponse>;
+  getCurrentManager(options: Models.GetCurrentManagerOptions = {}, request: RequestOptions = {}): Promise<Models.ManagerProfileResponse> {
+    return this.send("GetCurrentManager", {"refresh": options.refresh}, undefined, request) as Promise<Models.ManagerProfileResponse>;
   }
 
   /** Create a pending manager with a password and queue a manager-bound verification email. */
@@ -875,7 +875,7 @@ export class PortalClient extends BaseClient {
 
   /** Resolve an IconKid, optionally changing its text, count or RGB colour. */
   getIconPresentation(options: Models.GetIconPresentationOptions = {}, request: RequestOptions = {}): Promise<Models.IconPresentationResponse> {
-    return this.send("GetIconPresentation", {"iconKid": options.iconKid, "text": options.text, "count": options.count, "color": options.color}, undefined, request) as Promise<Models.IconPresentationResponse>;
+    return this.send("GetIconPresentation", {"iconKid": options.iconKid, "text": options.text, "count": options.count, "color": options.color, "useCalendarText": options.useCalendarText}, undefined, request) as Promise<Models.IconPresentationResponse>;
   }
 
   /** Lists canonical icon names with an asset in the requested local set. */
