@@ -109,7 +109,7 @@ public sealed class SessionTests
             return Task.FromResult(new HttpResponseMessage((HttpStatusCode)status) { Content = new StringContent("{}") });
         });
         var session = Session(http);
-        await Assert.ThrowsAnyAsync<PortalApiException>(() => session.ExecuteReadAsync((api, ct) => api.GetCurrentManagerAsync(ct)));
+        await Assert.ThrowsAnyAsync<PortalApiException>(() => session.ExecuteReadAsync((api, ct) => api.GetCurrentManagerAsync(cancellationToken: ct)));
         Assert.Equal(expectedReads, reads);
         Assert.Equal(expectedReads, logins);
     }
@@ -140,7 +140,7 @@ public sealed class SessionTests
             : Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{}") }));
         var session = Session(http, () => now);
         session.Restore("old-token", now.AddHours(1));
-        var read = session.ExecuteReadAsync((api, ct) => api.GetCurrentManagerAsync(ct));
+        var read = session.ExecuteReadAsync((api, ct) => api.GetCurrentManagerAsync(cancellationToken: ct));
         await session.RenewAsync();
         oldRead.SetResult(new HttpResponseMessage(HttpStatusCode.Unauthorized) { Content = new StringContent("{}") });
         await read;

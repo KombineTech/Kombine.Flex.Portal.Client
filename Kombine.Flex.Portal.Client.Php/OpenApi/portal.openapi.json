@@ -139,7 +139,7 @@
           "Accounts"
         ],
         "summary": "Lists Account2 postings with full-selection totals per currency.",
-        "description": "### Access\r\n            \r\n- Requires **Account2** and **Bank, Location, Unit and User Read**.\r\n- Location grants limit the rows, totals and available filter choices.\r\n- No business data is read when access is denied.\r\n            \r\n### Filters and paging\r\n            \r\n- Defaults to **today** in \u0060Europe/Copenhagen\u0060. Both dates are inclusive; the maximum interval is **367 days**.\r\n- An explicit \u0060period\u0060 replaces the date filter.\r\n- Sorted newest first, then by location and unit.\r\n- \u0060offset\u0060: **0\u2013100,000**. \u0060limit\u0060: **1\u2013200**, default **50**. Responses are not cached.\r\n            \r\n### Settlement periods\r\n            \r\n- The latest **100 closed period IDs** come from bank-level **LogA**.\r\n- With location-limited access, each offered period must also contain an authorized **Log1** posting.\r\n- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.\r\n            \r\n### Amounts and timestamps\r\n            \r\n- \u0060amountMinor\u0060 preserves the signed Log1 amount. Totals describe **filtered movements**, not an account balance.\r\n- \u0060MS2000\u0060 / \u0060recordedAtUtc\u0060 is the event time, not an insertion watermark. Older postings may arrive days later.\r\n            \r\n### Receipts and retention\r\n            \r\n- \u0060documents\u0060 groups this page only; merge further pages by \u0060documentKey\u0060. \u0060items\u0060, offsets and limits remain posting-based.\r\n- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.\r\n- \u0060description\u0060 uses decoded \u0060Kombine.Flex.FlexDto.KrumbValue.TransactionLine.ToString()\u0060 text, with numeric localization placeholders resolved by the API.\r\n- Safely displayable text-only legacy descriptions remain supported; absent DTO text uses a safe fallback. Raw JSON and payment identifiers are never exposed.\r\n- \u0060LawAccountingYears\u0060 and \u0060LawSurveillanceDays\u0060 come from tenant Log24 with positive manager Log7 overrides.\r\n- Expired identities become the GDPR user KID with empty names/numbers, safe description and \u0060isAnonymized=true\u0060.\r\n- An explicit \u0060userKid\u0060 excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.\r\n- \u0060paymentKind\u0060 is Credit, ReserveRefund or Managed, or empty. Payment identifiers are never returned.\r\n- Payment-managed and expired entries cannot use ordinary reversal. No external payment workflow is invoked.\r\n            \r\n### Revisions and refresh\r\n            \r\n- \u0060revision\u0060 fingerprints the complete filtered posting set: identities, periods and monetary totals. It is independent of \u0060offset\u0060 and \u0060limit\u0060.\r\n- **Compare revisions across pages.** If they differ, discard the accumulated pages and reload them.\r\n- Use \u0060GetBankAccountRevision\u0060 for lightweight polling.\r\n- A revision is not a cursor, authorization token or frozen snapshot. Display labels may change independently.\r\n            \r\n### Errors\r\n            \r\n**HTTP 403** keeps code \u0060forbidden\u0060. After tab/resource authorization, the optional \u0060reason\u0060 identifies a missing Read permission:\r\n\u0060missing-bank-read\u0060, \u0060missing-location-read\u0060, \u0060missing-unit-read\u0060 or \u0060missing-user-read\u0060.\r\n            \r\n**HTTP 503** uses these codes:\r\n            \r\n- \u0060periods-timeout\u0060: period SQL exceeded its **10-second** limit.\r\n- \u0060storage-timeout\u0060: another SQL command timed out.\r\n- \u0060storage-text-comparison\u0060: a collation error occurred.\r\n            \r\nAvoid automatic retry loops.",
+        "description": "### Access\r\n            \r\n- Requires **Account2** and **Bank, Location, Unit and User Read**.\r\n- Location grants limit the rows, totals and available filter choices.\r\n- No business data is read when access is denied.\r\n            \r\n### Filters and paging\r\n            \r\n- Repeat \u0060locationKids\u0060 for up to 1000 authorized locations; the same selection applies to totals, revision and export.\r\n- Defaults to **today** in \u0060Europe/Copenhagen\u0060. Both dates are inclusive; the maximum interval is **367 days**.\r\n- An explicit \u0060period\u0060 replaces the date filter.\r\n- Sorted newest first, then by location and unit.\r\n- \u0060offset\u0060: **0\u2013100,000**. \u0060limit\u0060: **1\u2013200**, default **50**. Responses are not cached.\r\n            \r\n### Settlement periods\r\n            \r\n- The latest **100 closed period IDs** come from bank-level **LogA**.\r\n- With location-limited access, each offered period must also contain an authorized **Log1** posting.\r\n- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.\r\n            \r\n### Amounts and timestamps\r\n            \r\n- \u0060amountMinor\u0060 preserves the signed Log1 amount. Totals describe **filtered movements**, not an account balance.\r\n- \u0060MS2000\u0060 / \u0060recordedAtUtc\u0060 is the event time, not an insertion watermark. Older postings may arrive days later.\r\n            \r\n### Receipts and retention\r\n            \r\n- \u0060documents\u0060 groups this page only; merge further pages by \u0060documentKey\u0060. \u0060items\u0060, offsets and limits remain posting-based.\r\n- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.\r\n- \u0060description\u0060 uses decoded \u0060Kombine.Flex.FlexDto.KrumbValue.TransactionLine.ToString()\u0060 text, with numeric localization placeholders resolved by the API.\r\n- Safely displayable text-only legacy descriptions remain supported; absent DTO text uses a safe fallback. Raw JSON and payment identifiers are never exposed.\r\n- \u0060LawAccountingYears\u0060 and \u0060LawSurveillanceDays\u0060 come from tenant Log24 with positive manager Log7 overrides.\r\n- Expired identities become the GDPR user KID with empty names/numbers, safe description and \u0060isAnonymized=true\u0060.\r\n- An explicit \u0060userKid\u0060 excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.\r\n- \u0060paymentKind\u0060 is Credit, ReserveRefund or Managed, or empty. Payment identifiers are never returned.\r\n- Payment-managed and expired entries cannot use ordinary reversal. No external payment workflow is invoked.\r\n            \r\n### Revisions and refresh\r\n            \r\n- \u0060revision\u0060 fingerprints the complete filtered posting set: identities, periods and monetary totals. It is independent of \u0060offset\u0060 and \u0060limit\u0060.\r\n- **Compare revisions across pages.** If they differ, discard the accumulated pages and reload them.\r\n- Use \u0060GetBankAccountRevision\u0060 for lightweight polling.\r\n- A revision is not a cursor, authorization token or frozen snapshot. Display labels may change independently.\r\n            \r\n### Errors\r\n            \r\n**HTTP 403** keeps code \u0060forbidden\u0060. After tab/resource authorization, the optional \u0060reason\u0060 identifies a missing Read permission:\r\n\u0060missing-bank-read\u0060, \u0060missing-location-read\u0060, \u0060missing-unit-read\u0060 or \u0060missing-user-read\u0060.\r\n            \r\n**HTTP 503** uses these codes:\r\n            \r\n- \u0060periods-timeout\u0060: period SQL exceeded its **10-second** limit.\r\n- \u0060storage-timeout\u0060: another SQL command timed out.\r\n- \u0060storage-text-comparison\u0060: a collation error occurred.\r\n            \r\nAvoid automatic retry loops.",
         "operationId": "GetBankAccount",
         "parameters": [
           {
@@ -191,6 +191,17 @@
             "description": "Optional canonical location KID in this bank.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "LocationKids",
+            "in": "query",
+            "description": "Repeated canonical location KIDs (at most 1000).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -427,6 +438,17 @@
             "description": "Optional canonical location KID in this bank.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "LocationKids",
+            "in": "query",
+            "description": "Repeated canonical location KIDs (at most 1000).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -1718,7 +1740,7 @@
           "Assistant"
         ],
         "summary": "Ask the portal assistant to discover and combine approved read operations.",
-        "description": "Sends the question, supplied visible history and relevant authorized API results to OpenAI.\r\nWith live diagnostics enabled, the current question text is recorded once in the authorized\r\nprocess-local buffer after session revalidation, before model use. Questions are not sent to Logz.io.\r\nHistory, answers and bearer credentials are not included in this log event.\r\nRequires server-side configuration. The current manager session is revalidated before model use;\r\neach business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.\r\nquestion: 1\u20132000 characters. history: at most 12 user/assistant messages, 8000 characters each,\r\n20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects\r\nthe default answer language. Response answer is plain text. operations lists attempted business reads;\r\nlinks contains up to 20 bank/location links derived from successful authorized results.\r\nEach link includes kid/path, optional name, canonical parent bankKid and ready-to-render iconKid.\r\nThe portal uses this metadata to add the clicked object to the local workspace; access is rechecked on navigation.\r\nAt most 8 reads, pages capped at 50, 48000 bytes per result and 120 seconds per question.\r\nAvailable reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,\r\nGetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not\r\nbe interpreted as empty/healthy data. Generated answers can be wrong; verify the underlying records.\r\nBusiness tools are discovered and called through the tenant API\u0027s MCP interface, using the current\r\nmanager bearer session. The host exposes only the eight approved read-only MCP tools and forwards\r\ntheir JSON input schemas to the model; credentials stay in server-side HTTP headers. Activation-code\r\nand Visma service-key fields are withheld from chat, including when the manager could view them in the portal.\r\nReviewed AGENTS.md instructions and three named skills are packaged with the API. Skill loading uses\r\nthe same model-turn budget and grants no extra permissions. The balance skill explains that balance\r\nand account-transaction reads are not currently in the approved chat catalogue.\r\n400 invalid input; 401 invalid/revoked session; 403 session denied; 429 six questions/minute per manager\r\nor global capacity exhausted; 503 assistant-not-configured/provider unavailable/deadline. Assistant\r\nfailures have a code extension; middleware authentication, validation and throttling retain their normal\r\nerror format. No automatic retries. Responses application-state storage is disabled with store=false.",
+        "description": "Sends the question, supplied visible history and relevant authorized API results to OpenAI.\r\nWith live diagnostics enabled, the current question text is recorded once in the authorized\r\nprocess-local buffer after session revalidation, before model use. Questions are not sent to Logz.io.\r\nHistory, answers and bearer credentials are not included in this log event.\r\nRequires server-side configuration and Agent1 (86) in the current manager\u0027s tabs. Missing Agent1\r\nreturns 403 missing-agent-tab before question logging, MCP discovery or model use.\r\nThe current manager session is revalidated before model use;\r\neach business read independently enforces its existing Tab/KID/Read permissions. No special agent rights.\r\nquestion: 1\u20132000 characters. history: at most 12 user/assistant messages, 8000 characters each,\r\n20000 total. History is untrusted context; no server-side conversation is retained. Accept-Language selects\r\nthe default answer language. Response answer is plain text. operations lists attempted business reads;\r\nlinks contains up to 20 bank/location links derived from successful authorized results.\r\nEach link includes kid/path, optional name, canonical parent bankKid and ready-to-render iconKid.\r\nThe portal uses this metadata to add the clicked object to the local workspace; access is rechecked on navigation.\r\nAt most 8 reads, pages capped at 50, 48000 bytes per result and 120 seconds per question.\r\nAvailable reads: SearchBanks, SearchLocations, SearchUsers, GetSearchBank, GetBankLocations,\r\nGetLocations, GetLocationUnits, GetTenantStatus. Missing access, partial sources and truncation must not\r\nbe interpreted as empty/healthy data. Generated answers can be wrong; verify the underlying records.\r\nBusiness tools are discovered and called through the tenant API\u0027s MCP interface, using the current\r\nmanager bearer session. The host exposes only the eight approved read-only MCP tools and forwards\r\ntheir JSON input schemas to the model; credentials stay in server-side HTTP headers. Activation-code\r\nand Visma service-key fields are withheld from chat, including when the manager could view them in the portal.\r\nReviewed AGENTS.md instructions and three named skills are packaged with the API. Skill loading uses\r\nthe same model-turn budget and grants no extra permissions. The balance skill explains that balance\r\nand account-transaction reads are not currently in the approved chat catalogue.\r\n400 invalid input; 401 invalid/revoked session; 403 session denied; 429 six questions/minute per manager\r\nor global capacity exhausted; 503 assistant-not-configured/provider unavailable/deadline. Assistant\r\nfailures have a code extension; middleware authentication, validation and throttling retain their normal\r\nerror format. No automatic retries. Responses application-state storage is disabled with store=false.",
         "operationId": "AskPortalAssistant",
         "requestBody": {
           "content": {
@@ -2315,7 +2337,7 @@
           "BankDocuments"
         ],
         "summary": "Search WashDoc document identities by location, unit and time without loading measurements.",
-        "description": "### Access\r\nActive manager bearer, at least one of WashDoc1/2/3, Location Read and Unit Read, and a matching resource grant.\r\nLocation-only grants and RetentionDays restrict both results and filter choices before paging. KIDs must be canonical and site-bound.\r\n### Filters and ordering\r\nOptional locationKid and unitKid must belong to the requested bank; unitKid also selects its location.\r\nRepeat unitKids to select multiple canonical units (maximum 255); choices are intersected before paging/counting.\r\ndate=yyyy-MM-dd selects the whole UTC date and all earlier history since 2000; do not combine it with from/through.\r\nsearch matches an exact numeric Doc ID or canonical document KID within the selected scope.\r\nsort=activity or documentId, direction=asc or desc. Defaults remain activity descending.\r\nfrom/through are inclusive ISO 8601 timestamps with an explicit UTC offset (default: last 24 hours, maximum: 31 days).\r\nA document matches when a tagged Cycle setting occurs inside that interval. lastActivityUtc is its latest matching Cycle timestamp,\r\nnot necessarily the document\u0027s start or end. Open its table for the complete interval and completion status.\r\nNewest matching activity first, then location/unit/document identity. limit 1\u2013100 (default 25), offset 0\u2013100000, hasMore indicates another page.\r\nNo total count or measurement queries. Use GetBankDocumentsCount separately. Live changes can shift offset pages; reset offset to refresh the list.\r\n### Limits and errors\r\nAt most 1000 visible locations, 5000 visible/discoverable units and 35000 unit-setting rows per search; narrow by location on 422.\r\n400 invalid filters, 401 inactive session, 403 missing access, 404 hidden/missing filter object, 422 oversized scope, 503 storage unavailable/busy.\r\nTwelve-second storage deadline; no response cache. Filter choices include only currently visible units with Log24 metadata.",
+        "description": "### Access\r\nActive manager bearer, at least one of WashDoc1/2/3, Location Read and Unit Read, and a matching resource grant.\r\nLocation-only grants and RetentionDays restrict both results and filter choices before paging. KIDs must be canonical and site-bound.\r\n### Filters and ordering\r\nOptional locationKid and unitKid must belong to the requested bank; unitKid also selects its location.\r\nRepeat locationKids to select multiple canonical locations in the same bank (maximum 1000).\r\nRepeat unitKids to select multiple canonical units (maximum 255); choices are intersected before paging/counting.\r\ndate=yyyy-MM-dd selects the whole UTC date and all earlier history since 2000; do not combine it with from/through.\r\nsearch matches an exact numeric Doc ID or canonical document KID within the selected scope.\r\nsort=activity or documentId, direction=asc or desc. Defaults remain activity descending.\r\nfrom/through are inclusive ISO 8601 timestamps with an explicit UTC offset (default: last 24 hours, maximum: 31 days).\r\nA document matches when a tagged Cycle setting occurs inside that interval. lastActivityUtc is its latest matching Cycle timestamp,\r\nnot necessarily the document\u0027s start or end. Open its table for the complete interval and completion status.\r\nNewest matching activity first, then location/unit/document identity. limit 1\u2013100 (default 25), offset 0\u2013100000, hasMore indicates another page.\r\nNo total count or measurement queries. Use GetBankDocumentsCount separately. Live changes can shift offset pages; reset offset to refresh the list.\r\n### Limits and errors\r\nAt most 1000 visible locations, 5000 visible/discoverable units and 35000 unit-setting rows per search; narrow by location on 422.\r\n400 invalid filters, 401 inactive session, 403 missing access, 404 hidden/missing filter object, 422 oversized scope, 503 storage unavailable/busy.\r\nTwelve-second storage deadline; no response cache. Filter choices include only currently visible units with Log24 metadata.",
         "operationId": "GetBankDocuments",
         "parameters": [
           {
@@ -2332,6 +2354,17 @@
             "description": "Canonical location KID in this bank.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "LocationKids",
+            "in": "query",
+            "description": "Repeated canonical location KIDs in this bank, maximum 1000; omitted selects all visible locations.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -2575,7 +2608,7 @@
           "BankDocuments"
         ],
         "summary": "Count WashDocs across the authorized bank scope, without loading document pages or measurements.",
-        "description": "Same access, date/search/locationKid/unitKids filters and visibility checks as GetBankDocuments. Counts distinct location/unit/document identities. Storage deadline twelve seconds; 422 for oversized scope, 503 for unavailable storage.",
+        "description": "Same access, date/search/locationKid/locationKids/unitKids filters and visibility checks as GetBankDocuments. Counts distinct location/unit/document identities. Storage deadline twelve seconds; 422 for oversized scope, 503 for unavailable storage.",
         "operationId": "GetBankDocumentsCount",
         "parameters": [
           {
@@ -2592,6 +2625,17 @@
             "description": "Canonical location KID in this bank.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "LocationKids",
+            "in": "query",
+            "description": "Repeated canonical location KIDs in this bank, maximum 1000; omitted selects all visible locations.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -4031,6 +4075,16 @@
               "type": "string",
               "default": "all"
             }
+          },
+          {
+            "name": "locationKids",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
@@ -4148,7 +4202,7 @@
           "BankUsers"
         ],
         "summary": "Read one page of users for a bank.",
-        "description": "### Access and visibility\r\n            \r\n- Requires **Users2 (53)**, **User Read** and a matching tenant/bank/location grant.\r\n- An exact **userKid** lookup also accepts **UserFinder1 (77)** instead of Users2; bulk lists still require Users2.\r\n- Location-only grants include **Access** and **NoAccess** associations; other locations are removed from the response.\r\n- Ordinary users only, including \u0060eUserId.UsersLast\u0060. Deleted users follow **RetentionDays**.\r\n- \u0060email\u0060 is the current Log7 \u0060eSetting.Email\u0060 (2800), decoded from JSON or legacy plain text.\r\n- \u0060sms\u0060 is the current Log7 \u0060eSetting.SMS\u0060 number, decoded without changing its format. Missing email/SMS values are empty.\r\n            \r\n### Paging\r\n            \r\n- \u0060pageSize\u0060: **1\u2013250**, default **25**. Copy \u0060previousCursor\u0060 or \u0060nextCursor\u0060 unchanged into \u0060cursor\u0060.\r\n- Cursors are shareable positions, not credentials.\r\n- Keep filters, sort and direction unchanged while using a cursor. Restart **without a cursor** when changing them.\r\n            \r\n### Ordering\r\n            \r\n- \u0060sort\u0060: \u0060identity\u0060 (legacy default, ascending only), \u0060number\u0060, \u0060name\u0060, \u0060location\u0060 or \u0060deleted\u0060.\r\n- \u0060direction\u0060: \u0060asc\u0060 or \u0060desc\u0060. User identity breaks ties.\r\n- Number orders numeric values before text. Text comparison is ordinal and case-insensitive.\r\n- Location uses the lowest permitted Access/NoAccess location. Missing values and not-deleted users sort first in ascending order.\r\n- Sorted mode uses a **four-setting index cached for one minute** and reads details only for the selected page.\r\n            \r\n### Text and identity filters\r\n            \r\n- \u0060filter\u0060: optional case-insensitive substring in **Number OR Name**, at most **200 characters**, with surrounding whitespace trimmed.\r\n- Wildcards: \u0060*\u0060 matches zero or more characters; \u0060?\u0060 matches one. Other symbols are literal.\r\n- Filtering precedes paging and uses the shared sorting index.\r\n- \u0060userKid\u0060 selects exactly one ordinary bank user and cannot be combined with \u0060filter\u0060 or \u0060cursor\u0060.\r\n- The same Tab, scope, operation and retention checks apply. Missing or inaccessible users return empty items.\r\n            \r\n### Location and deletion filters\r\n            \r\n- \u0060locationKid\u0060 filters an authorized location in the same bank, including Access and NoAccess associations.\r\n- \u0060deleted\u0060: \u0060all\u0060 (default), \u0060active\u0060, \u0060deleted\u0060 or \u0060no-access\u0060.\r\n- \u0060no-access\u0060 means no recorded Access in any manager-visible location. Empty lists and NoAccess-only lists match; hidden locations do not affect the result.\r\n- Existing visibility and deletion retention still apply. \u0060locationKid\u0060 remains an additional association filter.\r\n            \r\n### Cache and scan limits\r\n            \r\n- Every request rechecks access. Data may be cached for **60 seconds**. No total count is queried.\r\n- Legacy identity mode examines at most **1,000 candidates**. \u0060scanLimitReached\u0060 may accompany an empty or short page; follow \u0060nextCursor\u0060 to continue.\r\n- Concurrent changes are not a transactionally frozen snapshot.",
+        "description": "### Access and visibility\r\n            \r\n- Requires **Users2 (53)**, **User Read** and a matching tenant/bank/location grant.\r\n- An exact **userKid** lookup also accepts **UserFinder1 (77)** instead of Users2; bulk lists still require Users2.\r\n- Location-only grants include **Access** and **NoAccess** associations; other locations are removed from the response.\r\n- Ordinary users only, including \u0060eUserId.UsersLast\u0060. Deleted users follow **RetentionDays**.\r\n- \u0060email\u0060 is the current Log7 \u0060eSetting.Email\u0060 (2800), decoded from JSON or legacy plain text.\r\n- \u0060sms\u0060 is the current Log7 \u0060eSetting.SMS\u0060 number, decoded without changing its format. Missing email/SMS values are empty.\r\n            \r\n### Paging\r\n            \r\n- \u0060pageSize\u0060: **1\u2013250**, default **25**. Copy \u0060previousCursor\u0060 or \u0060nextCursor\u0060 unchanged into \u0060cursor\u0060.\r\n- Cursors are shareable positions, not credentials.\r\n- Keep filters, sort and direction unchanged while using a cursor. Restart **without a cursor** when changing them.\r\n            \r\n### Ordering\r\n            \r\n- \u0060sort\u0060: \u0060identity\u0060 (legacy default, ascending only), \u0060number\u0060, \u0060name\u0060, \u0060location\u0060 or \u0060deleted\u0060.\r\n- \u0060direction\u0060: \u0060asc\u0060 or \u0060desc\u0060. User identity breaks ties.\r\n- Number orders numeric values before text. Text comparison is ordinal and case-insensitive.\r\n- Location uses the lowest permitted Access/NoAccess location. Missing values and not-deleted users sort first in ascending order.\r\n- Sorted mode uses a **four-setting index cached for one minute** and reads details only for the selected page.\r\n            \r\n### Text and identity filters\r\n            \r\n- \u0060filter\u0060: optional case-insensitive substring in **Number OR Name**, at most **200 characters**, with surrounding whitespace trimmed.\r\n- Wildcards: \u0060*\u0060 matches zero or more characters; \u0060?\u0060 matches one. Other symbols are literal.\r\n- Filtering precedes paging and uses the shared sorting index.\r\n- \u0060userKid\u0060 selects exactly one ordinary bank user and cannot be combined with \u0060filter\u0060 or \u0060cursor\u0060.\r\n- The same Tab, scope, operation and retention checks apply. Missing or inaccessible users return empty items.\r\n            \r\n### Location and deletion filters\r\n            \r\n- \u0060locationKid\u0060 filters an authorized location in the same bank, including Access and NoAccess associations.\r\n- Repeat \u0060locationKids\u0060 for up to 1000 authorized locations; residents matching any selected association are included.\r\n- \u0060deleted\u0060: \u0060all\u0060 (default), \u0060active\u0060, \u0060deleted\u0060 or \u0060no-access\u0060.\r\n- \u0060no-access\u0060 means no recorded Access in any manager-visible location. Empty lists and NoAccess-only lists match; hidden locations do not affect the result.\r\n- Existing visibility and deletion retention still apply. \u0060locationKid\u0060 remains an additional association filter.\r\n            \r\n### Cache and scan limits\r\n            \r\n- Every request rechecks access. Data may be cached for **60 seconds**. No total count is queried.\r\n- Legacy identity mode examines at most **1,000 candidates**. \u0060scanLimitReached\u0060 may accompany an empty or short page; follow \u0060nextCursor\u0060 to continue.\r\n- Concurrent changes are not a transactionally frozen snapshot.",
         "operationId": "GetBankUsers",
         "parameters": [
           {
@@ -4218,6 +4272,16 @@
             "schema": {
               "type": "string",
               "default": "all"
+            }
+          },
+          {
+            "name": "locationKids",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ],
@@ -4418,7 +4482,7 @@
           "Bookings"
         ],
         "summary": "Lists the latest nonsuperseded Log5 event for each location/unit/resident/start.",
-        "description": "### Access\r\n            \r\n- Requires **Bookings1**, **Location/Unit/User Read** and matching bank or location grants.\r\n- Denial reads no booking data. **HTTP 403** keeps code \u0060forbidden\u0060; after tab/resource authorization, optional \u0060reason\u0060 identifies \u0060missing-location-read\u0060, \u0060missing-unit-read\u0060 or \u0060missing-user-read\u0060.\r\n            \r\n### Dates and events\r\n            \r\n- Inclusive local date range, defaulting to UTC today minus **7 days** through plus **90 days**; maximum **367 dates**.\r\n- Weekly positions (**0\u201310,079**) are returned separately, never converted to UTC. \u0060recordedAtUtc\u0060 is the event time.\r\n- AUT/isy events are excluded as in Bookings1. Filters and pagination run after selecting the latest event.\r\n            \r\n### Search and paging\r\n            \r\n- Search matches stored resident name/number. Only authorized location/unit filter labels are returned.\r\n- \u0060limit\u0060: **1\u2013200**, default **50**. \u0060offset\u0060: **0\u2013100,000**.\r\n- Stable start/location/unit/user order. No total-count query or cache.",
+        "description": "### Access\r\n            \r\n- Requires **Bookings1**, **Location/Unit/User Read** and matching bank or location grants.\r\n- Denial reads no booking data. **HTTP 403** keeps code \u0060forbidden\u0060; after tab/resource authorization, optional \u0060reason\u0060 identifies \u0060missing-location-read\u0060, \u0060missing-unit-read\u0060 or \u0060missing-user-read\u0060.\r\n            \r\n### Dates and events\r\n            \r\n- Inclusive local date range, defaulting to UTC today minus **7 days** through plus **90 days**; maximum **367 dates**.\r\n- Weekly positions (**0\u201310,079**) are returned separately, never converted to UTC. \u0060recordedAtUtc\u0060 is the event time.\r\n- AUT/isy events are excluded as in Bookings1. Filters and pagination run after selecting the latest event.\r\n            \r\n### Search and paging\r\n            \r\n- Repeat \u0060locationKids\u0060 for up to 1000 authorized locations; selected units must belong to them.\r\n- Search matches stored resident name/number. Only authorized location/unit filter labels are returned.\r\n- \u0060limit\u0060: **1\u2013200**, default **50**. \u0060offset\u0060: **0\u2013100,000**.\r\n- Stable start/location/unit/user order. No total-count query or cache.",
         "operationId": "GetBankBookings",
         "parameters": [
           {
@@ -4498,6 +4562,16 @@
               "type": "integer",
               "format": "int32",
               "default": 50
+            }
+          },
+          {
+            "name": "locationKids",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ],
@@ -6730,6 +6804,17 @@
             }
           },
           {
+            "name": "LocationKids",
+            "in": "query",
+            "description": "Repeated canonical location KIDs (at most 1000).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
             "name": "UnitKid",
             "in": "query",
             "description": "Optional canonical unit KID in this bank.",
@@ -6989,6 +7074,16 @@
             "schema": {
               "type": "string",
               "default": "asc"
+            }
+          },
+          {
+            "name": "locationKids",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ],
@@ -15687,8 +15782,18 @@
           "ManagerSession"
         ],
         "summary": "Get your profile, permitted tabs, bank/location access, and operation permissions.",
-        "description": "### Profile and navigation\r\n            \r\n- Returns the manager information used by the portal\u0027s overview cards in **one request**. Reuse it for all cards and navigation on the current view.\r\n- Optional \u0060gravatarUrl\u0060 is the preferred profile picture. Use \u0060iconKid\u0060 when null or the image fails (including 404); it is a display hint, never an access grant.\r\n- Empty \u0060tabs\u0060 means no permitted pages. \u0060hasBankAccess=false\u0060 means no banks or locations on this site.\r\n- \u0060Banks2\u0060 (tab 5) is included when granted, like other recognized tabs.\r\n- \u0060tabs\u0060 and \u0060tabDetails\u0060 follow \u0060AttributeMetaSortOrder\u0060 on \u0060eTab\u0060, then numeric tab ID. Missing sort metadata has order zero.\r\n            \r\n### Permissions\r\n            \r\n- Missing permission settings default to **Read**. An invalid nonempty value yields \u0060level=null\u0060 and all rights false.\r\n- Operation permissions and tab ordering never expand \u0060resourceGrants\u0060 or grant additional pages.\r\n- No manager ID or tenant override is accepted.\r\n- Restricted screen sessions include only the manager KID and \u0060wallboardDisplayId\u0060 resolved from their registered device, with empty permission/navigation arrays, hasBankAccess=false and empty/default personal fields. Ordinary manager sessions return null for wallboardDisplayId and retain their authorized profile. Never infer screen approval from the requested URL.\r\n- This is the only API operation allowed for Wallboard bearers. All other API reads and writes return 403; a device approval does not grant normal Portal access.\r\n- \u0060operationPermissions\u0060 also includes **Service**, from \u0060PermissionService2\u0060 (3017). Its flags are independent and do not grant login or permissions in other categories.\r\n- \u0060operationPermissions\u0060 includes **Installer**, from \u0060PermissionInstaller2\u0060, alongside Managers, Bank, Location, Unit and User. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; these flags grant no other category\u0027s permissions.\r\n            \r\n### Caching and database indicator\r\n            \r\n- Rights and account state are cached for at most **60 seconds** per API instance. Requests do not extend this; do not poll continuously.\r\n- \u0060databaseAccess\u0060 is an informational Log7 read/append check shared for **10 minutes**, or **1 minute** when unknown.\r\n- The indicator grants no manager rights, executes no writes and does not verify every bank, trigger or operation.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 401:** expired/revoked token or inactive account.\r\n- **HTTP 503:** permission data is unavailable.",
+        "description": "### Profile and navigation\r\n            \r\n- Returns the manager information used by the portal\u0027s overview cards in **one request**. Reuse it for all cards and navigation on the current view.\r\n- Optional \u0060gravatarUrl\u0060 is the preferred profile picture. Use \u0060iconKid\u0060 when null or the image fails (including 404); it is a display hint, never an access grant.\r\n- Empty \u0060tabs\u0060 means no permitted pages. \u0060hasBankAccess=false\u0060 means no banks or locations on this site.\r\n- \u0060Banks2\u0060 (tab 5) is included when granted, like other recognized tabs.\r\n- \u0060tabs\u0060 and \u0060tabDetails\u0060 follow \u0060AttributeMetaSortOrder\u0060 on \u0060eTab\u0060, then numeric tab ID. Missing sort metadata has order zero.\r\n            \r\n### Permissions\r\n            \r\n- Missing permission settings default to **Read**. An invalid nonempty value yields \u0060level=null\u0060 and all rights false.\r\n- Operation permissions and tab ordering never expand \u0060resourceGrants\u0060 or grant additional pages.\r\n- No manager ID or tenant override is accepted.\r\n- Restricted screen sessions include only the manager KID and \u0060wallboardDisplayId\u0060 resolved from their registered device, with empty permission/navigation arrays, hasBankAccess=false and empty/default personal fields. Ordinary manager sessions return null for wallboardDisplayId and retain their authorized profile. Never infer screen approval from the requested URL.\r\n- This is the only API operation allowed for Wallboard bearers. All other API reads and writes return 403; a device approval does not grant normal Portal access.\r\n- \u0060operationPermissions\u0060 also includes **Service**, from \u0060PermissionService2\u0060 (3017). Its flags are independent and do not grant login or permissions in other categories.\r\n- \u0060operationPermissions\u0060 includes **Installer**, from \u0060PermissionInstaller2\u0060, alongside Managers, Bank, Location, Unit and User. GetInstallers requires Installer Read, Installers1 and tenant-wide access; GetInstaller uses the same read access and SetInstallerIcon additionally requires Installer Write; these flags grant no other category\u0027s permissions.\r\n            \r\n### Caching and database indicator\r\n            \r\n- Rights and account state are cached for at most **60 seconds** per API instance. Requests do not extend this; do not poll continuously.\r\n- After a confirmed settings change, use \u0060?refresh=true\u0060 to refresh your own account snapshot on the responding instance before validation. This also works when the write reached another instance. It does not renew the bearer or change business-data caches.\r\n- \u0060databaseAccess\u0060 is an informational Log7 read/append check shared for **10 minutes**, or **1 minute** when unknown.\r\n- The indicator grants no manager rights, executes no writes and does not verify every bank, trigger or operation.\r\n            \r\n### Errors\r\n            \r\n- **HTTP 401:** expired/revoked token or inactive account.\r\n- **HTTP 503:** permission data is unavailable.",
         "operationId": "GetCurrentManager",
+        "parameters": [
+          {
+            "name": "refresh",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -16708,7 +16813,7 @@
           "PersonalManager"
         ],
         "summary": "Read your own personal settings and available person icons.",
-        "description": "### Access and fields\r\n- Requires an active manager bearer session on this tenant with a current credential stamp. No Tabs, Kids or Managers Write are needed.\r\n- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, language, dateFormat, numberFormat, lineSpacing, revision and availableIcons.\r\n- language is a numeric operational eLanguage identity (0 is Danish), or null for automatic browser/tenant selection. Last/None/All are rejected.\r\n- dateFormat is empty (follow language) or dd-MM-yyyy, dd.MM.yyyy, dd/MM/yyyy, MM/dd/yyyy, yyyy-MM-dd,\r\n  optionally followed by HH:mm (24-hour) or hh:mm tt (12-hour AM/PM). Date-only values keep the language\u0027s clock format.\r\n- lineSpacing is a numeric table/list spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid stored values use 1.\r\n- numberFormat is empty (follow language) or da-DK, en-GB, sv-SE, de-DE, fr-FR, ar-SA. Preferences affect presentation only.\r\n- retentionDays is the number of days deleted records remain visible within your existing access; 0 hides deleted records. Missing/invalid stored values return 0.\r\n- emailVerified is proof of this exact current email log version, not an old or manually assigned flag.\r\n- No target manager or tenant selector is accepted. Passwords and internal verification data are never returned.\r\n- Reads use the site\u0027s read connection only; no configured write connection or MySQL write privilege is required.\r\n### Errors\r\n- 401 stale/inactive session; 503 unavailable storage. Responses are not cacheable.",
+        "description": "### Access and fields\r\n- Requires an active manager bearer session on this tenant with a current credential stamp. No Tabs, Kids or Managers Write are needed.\r\n- Returns name, organisation, icon, email, emailVerified, numeric themeMode (System=0, Light=1, Dark=2), iconSet (g or line; default g), retentionDays, language, dateFormat, numberFormat, lineSpacing, portalMaxOpenBanks, revision and availableIcons.\r\n- language is a numeric operational eLanguage identity (0 is Danish), or null for automatic browser/tenant selection. Last/None/All are rejected.\r\n- dateFormat is empty (follow language) or dd-MM-yyyy, dd.MM.yyyy, dd/MM/yyyy, MM/dd/yyyy, yyyy-MM-dd,\r\n  optionally followed by HH:mm (24-hour) or hh:mm tt (12-hour AM/PM). Date-only values keep the language\u0027s clock format.\r\n- lineSpacing is a numeric table/list spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid stored values use 1.\r\n- portalMaxOpenBanks is a positive integer or null (unlimited); missing/invalid stored values, including NaN, and values at or below zero return null. This preference grants no access.\r\n- numberFormat is empty (follow language) or da-DK, en-GB, sv-SE, de-DE, fr-FR, ar-SA. Preferences affect presentation only.\r\n- retentionDays is the number of days deleted records remain visible within your existing access; 0 hides deleted records. Missing/invalid stored values return 0.\r\n- emailVerified is proof of this exact current email log version, not an old or manually assigned flag.\r\n- No target manager or tenant selector is accepted. Passwords and internal verification data are never returned.\r\n- Reads use the site\u0027s read connection only; no configured write connection or MySQL write privilege is required.\r\n### Errors\r\n- 401 stale/inactive session; 503 unavailable storage. Responses are not cacheable.",
         "operationId": "GetMyManagerProfile",
         "responses": {
           "200": {
@@ -16768,7 +16873,7 @@
           "PersonalManager"
         ],
         "summary": "Add a scanned display to your own WallBoards layout setting.",
-        "description": "Requires an active tenant-bound manager session; screen sessions are forbidden.\r\n            Accepts displayId only. Appends an empty landscape layout to eSetting.WallBoards in bank-zero Log7.\r\n            Existing layouts, pages, widgets and orientations are preserved. Repeated exact IDs add no duplicate or history.\r\n            This saves a personal preference only; device approval and resource permissions remain separate.\r\n            Credentials are rechecked inside the transaction. Concurrent additions are merged under the existing lock.\r\n            200 wallboard-saved; 400 invalid-wallboard; 401 stale/inactive session; 403 screen session;\r\n            409 invalid-stored-wallboards or wallboards-limit (4096 characters); 503 unavailable/uncertain storage.\r\n            No automatic write retries. IDs are case-sensitive, matching device registration and layout selection.",
+        "description": "Requires an active tenant-bound manager session; screen sessions are forbidden.\r\n            Accepts displayId only. Appends an empty landscape layout to eSetting.WallBoards in bank-zero Log7.\r\n            Existing layouts, pages, widgets and orientations are preserved. Repeated exact IDs add no duplicate or history.\r\n            This saves a personal preference only; device approval and resource permissions remain separate.\r\n            Credentials are rechecked inside the transaction. Concurrent additions are merged under the existing lock.\r\n            200 wallboard-saved; 400 invalid-wallboard; 401 stale/inactive session; 403 screen session;\r\n            409 invalid-stored-wallboards or wallboards-limit (4092 characters); 503 unavailable/uncertain storage.\r\n            No automatic write retries. IDs are case-sensitive, matching device registration and layout selection.",
         "operationId": "AddMyManagerWallboard",
         "requestBody": {
           "content": {
@@ -16905,7 +17010,7 @@
           "PersonalManager"
         ],
         "summary": "Read your own Wallboard1 editor layouts and concurrency revision.",
-        "description": "Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.\r\n            Reads only the authenticated manager\u0027s bank-zero Log7 WallBoards. Unknown stored fields or malformed layouts return 409 without changing them.",
+        "description": "Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.\r\n            Reads only the authenticated manager\u0027s bank-zero Log7 WallBoards. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.\r\n            Enums 2.0.147: layout i/n/p/s, page n/d/s, widget t/k/x/y/w/h. Orientation p is numeric 0/1; x/y are zero-based. Pages/widgets have no persistent IDs.\r\n            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.\r\n            Unknown stored fields or malformed layouts return 409 without changing them.",
         "operationId": "GetMyManagerWallboards",
         "responses": {
           "200": {
@@ -17003,7 +17108,7 @@
           "PersonalManager"
         ],
         "summary": "Save your own complete Wallboard1 layout collection.",
-        "description": "Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.\r\n            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.\r\n            Display IDs must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.\r\n            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.\r\n            Layouts have a 12x12 grid, non-overlapping widgets, positive page durations up to 86400 seconds, and unique display/orientation, page and widget IDs.\r\n            WidgetType uses numeric eWidgetType values 1-10; reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.\r\n            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.\r\n            Empty lists remove layouts only. The serialized setting is limited to 4096 characters (409 wallboards-limit).\r\n            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.",
+        "description": "Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.\r\n            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.\r\n            Display IDs must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.\r\n            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.\r\n            Layouts use i/n/p/s; pages use n/d/s; widgets use t/k/x/y/w/h. Display i must be unique across orientations; p is numeric 0 or 1.\r\n            The 60x60 grid has zero-based x/y positions (0-59), positive width/height (1-60), no overlap and page duration d of 1-86400 seconds. Pages/widgets use array order and have no IDs.\r\n            Stored cell coordinates and sizes are retained unchanged; older layouts are not automatically doubled or rescaled.\r\n            Widget type uses numeric eWidgetType values 0-10; None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.\r\n            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.\r\n            Empty lists remove layouts only. The serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include StorageUsedCharacters and StorageLimitCharacters for the committed collection.\r\n            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.",
         "operationId": "SaveMyManagerWallboards",
         "requestBody": {
           "content": {
@@ -17693,7 +17798,7 @@
           "PersonalManager"
         ],
         "summary": "Save one personal name, organisation, person icon, theme or deleted-record visibility preference.",
-        "description": "### Request\r\n- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays, IconSet, Language, DateFormat, NumberFormat or LineSpacing. Other settings are rejected.\r\n- Send value (string for display fields, integer 0\u20132 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.\r\n- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.\r\n- Language requires a numeric operational eLanguage identity (0\u201315), or null for automatic. Last/None/All are rejected.\r\n- LineSpacing requires a JSON number: 0.75, 1, 1.25, 1.5, 1.75 or 2. Default 1 preserves the established table/list spacing.\r\n- DateFormat and NumberFormat require the finite string choices documented by GetMyManagerProfile; empty strings follow the language.\r\n- IconSet requires the exact JSON string \u0022g\u0022 or \u0022line\u0022. It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as \u0022line\u0022; an explicit saved \u0022g\u0022 is preserved.\r\n- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.\r\n- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.\r\n### Response and errors\r\n- 200 returns the acknowledged profile and new revision. Repeating an identical stored value creates no history.\r\n- 400 invalid-profile; 401 stale/inactive session; 409 profile-conflict: reload before deciding whether to overwrite; 503 unavailable/uncertain storage.\r\n- Do not automatically retry an uncertain write. Cache invalidation is immediate on this instance; other instances refresh within 60 seconds.",
+        "description": "### Request\r\n- field is the exact setting name: Name, Organisation, Icon, ThemeMode, RetentionDays, IconSet, Language, DateFormat, NumberFormat, LineSpacing or PortalMaxOpenBanks. Other settings are rejected.\r\n- Send value (string for display fields, integer 0\u20132 for ThemeMode) and revision from GetMyManagerProfile or the last successful write.\r\n- Name/Organisation allow up to 200 characters without controls. Icon must be in the person catalog; an existing legacy icon remains visible.\r\n- Language requires a numeric operational eLanguage identity (0\u201315), or null for automatic. Last/None/All are rejected.\r\n- LineSpacing requires a JSON number: 0.75, 1, 1.25, 1.5, 1.75 or 2. Default 1 preserves the established table/list spacing.\r\n- PortalMaxOpenBanks accepts null or any signed 32-bit JSON integer. Only positive values limit workspace banks, closing excess branches from the bottom. Zero, negative, missing or invalid stored values impose no limit and return null.\r\n- DateFormat and NumberFormat require the finite string choices documented by GetMyManagerProfile; empty strings follow the language.\r\n- IconSet requires the exact JSON string \u0022g\u0022 or \u0022line\u0022. It selects artwork only, not the IconKid or any permissions. Missing/invalid stored values read as \u0022line\u0022; an explicit saved \u0022g\u0022 is preserved.\r\n- RetentionDays requires a JSON integer from 0 to 2147483647. It controls visibility of otherwise authorized deleted records, not physical deletion. 0 hides deleted records; Tabs, Kids and operation permissions still apply.\r\n- Saves to your own Log7 history only. Administrative self-edit locks and grants are unchanged.\r\n### Response and errors\r\n- 200 returns the acknowledged profile and new revision. Repeating an identical stored value creates no history.\r\n- 400 invalid-profile; 401 stale/inactive session; 409 profile-conflict: reload before deciding whether to overwrite; 503 unavailable/uncertain storage.\r\n- Do not automatically retry an uncertain write. Cache invalidation is immediate on this instance; other instances refresh within 60 seconds.",
         "operationId": "SetMyManagerProfileField",
         "parameters": [
           {
@@ -26500,7 +26605,7 @@
           "Icons"
         ],
         "summary": "Resolve an IconKid, optionally changing its text, count or RGB colour.",
-        "description": "Send an exact eIcon name or canonical icon KID. Optional text (up to 128 non-control characters),\r\nsigned Int64 count and colour (0\u201316777215) replace only those fields. Other KID fields are preserved.\r\nCalendar always uses today\u0027s day of month in Europe/Copenhagen, overriding supplied text.\r\nUse the returned iconKid unchanged in /api/v1/icon/{iconSet}/{kid}.svg. An icon-only KID is returned\r\nas its eIcon name. No login, lookup, grant or write; invalid input returns 400.\r\nRead fresh metadata when refreshing the page; the image itself retains its normal cache policy.",
+        "description": "Send an exact eIcon name or canonical icon KID. Optional text (up to 128 non-control characters),\r\nsigned Int64 count and colour (0\u201316777215) replace only those fields. Other KID fields are preserved.\r\nCalendar uses today\u0027s day of month in Europe/Copenhagen unless useCalendarText is true and text is supplied.\r\nUse the returned iconKid unchanged in /api/v1/icon/{iconSet}/{kid}.svg. An icon-only KID is returned\r\nas its eIcon name. No login, lookup, grant or write; invalid input returns 400.\r\nRead fresh metadata when refreshing the page; the image itself retains its normal cache policy.",
         "operationId": "GetIconPresentation",
         "parameters": [
           {
@@ -26531,6 +26636,14 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "useCalendarText",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -32467,6 +32580,12 @@
             "description": "Personal table/list vertical spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid values use 1.",
             "format": "double"
           },
+          "portalMaxOpenBanks": {
+            "type": "integer",
+            "description": "Maximum workspace banks; null means unlimited. This display preference grants no access.",
+            "format": "int32",
+            "nullable": true
+          },
           "tabDetails": {
             "type": "array",
             "items": {
@@ -33181,6 +33300,11 @@
           "lineSpacing": {
             "type": "number",
             "format": "double"
+          },
+          "portalMaxOpenBanks": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -33322,6 +33446,14 @@
           "revision": {
             "type": "string",
             "nullable": true
+          },
+          "storageUsedCharacters": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "storageLimitCharacters": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false,
@@ -35682,18 +35814,26 @@
       "Wallboard": {
         "type": "object",
         "properties": {
-          "displayId": {
+          "i": {
             "type": "string",
             "nullable": true
           },
-          "name": {
+          "n": {
             "type": "string",
             "nullable": true
           },
-          "isPortrait": {
-            "type": "boolean"
+          "p": {
+            "type": "integer",
+            "format": "int32"
           },
-          "pages": {
+          "c": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/eColor"
+            },
+            "nullable": true
+          },
+          "s": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/WallboardPage"
@@ -35759,19 +35899,15 @@
       "WallboardPage": {
         "type": "object",
         "properties": {
-          "pageId": {
+          "n": {
             "type": "string",
             "nullable": true
           },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "displayDurationSeconds": {
+          "d": {
             "type": "integer",
             "format": "int32"
           },
-          "widgets": {
+          "s": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/WallboardWidget"
@@ -35876,30 +36012,26 @@
       "WallboardWidget": {
         "type": "object",
         "properties": {
-          "widgetId": {
-            "type": "string",
-            "nullable": true
-          },
-          "widgetType": {
+          "t": {
             "$ref": "#/components/schemas/eWidgetType"
           },
-          "kid": {
+          "k": {
             "type": "string",
             "nullable": true
           },
-          "column": {
+          "x": {
             "type": "integer",
             "format": "int32"
           },
-          "row": {
+          "y": {
             "type": "integer",
             "format": "int32"
           },
-          "width": {
+          "w": {
             "type": "integer",
             "format": "int32"
           },
-          "height": {
+          "h": {
             "type": "integer",
             "format": "int32"
           }
@@ -36179,6 +36311,74 @@
         },
         "additionalProperties": false,
         "description": "Server-selected presentation for the original, decoded UnitType. Group order is a preference, not a measurement filter."
+      },
+      "eColor": {
+        "enum": [
+          0,
+          16777216,
+          19803451,
+          49342943,
+          66515692,
+          83886079,
+          301717822,
+          586316818,
+          872109863,
+          1148802545,
+          1430742526,
+          1717269026,
+          1735697169,
+          2246665236,
+          2573393397,
+          2663948613,
+          2699079935,
+          2714280648,
+          2733703167,
+          2749942179,
+          2751462864,
+          2768224459,
+          2769641661,
+          2787281698,
+          2818346668,
+          2830712137,
+          2834349618,
+          2844424541,
+          2866338008,
+          2917435280,
+          2995767495,
+          3079273262,
+          3161949195,
+          3251336146,
+          3336873398,
+          3414481233,
+          3504172543,
+          3519070400,
+          3556759296,
+          3570237234,
+          3584940262,
+          3585341471,
+          3602906880,
+          3665568446,
+          3743790278,
+          3839692917,
+          4009820159,
+          4059490203,
+          4076199087,
+          4093564881,
+          4107256821,
+          4123120887,
+          4140555679,
+          4160732928,
+          4164306255,
+          4194303984,
+          4198924980,
+          4215333072,
+          4235231376,
+          4260754908,
+          4274834687,
+          4282924082
+        ],
+        "type": "integer",
+        "format": "int64"
       },
       "eThemeMode": {
         "enum": [
@@ -36564,6 +36764,27 @@
           "googleMapsBrowserKey": {
             "type": "string",
             "description": "Public browser Maps key, restricted by HTTP referrer at Google; never a server credential. Null when maps are not configured.",
+            "nullable": true
+          },
+          "brandIconUrl": {
+            "type": "string",
+            "description": "Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable.",
+            "nullable": true
+          },
+          "brandLightTokens": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Public validated CSS custom properties for this tenant\u0027s light presentation.",
+            "nullable": true
+          },
+          "brandDarkTokens": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Public validated CSS custom properties for this tenant\u0027s dark presentation.",
             "nullable": true
           }
         },

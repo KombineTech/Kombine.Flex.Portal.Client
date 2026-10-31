@@ -35,6 +35,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "TimeZone", options.TimeZone);
                 path = AddQuery(path, "Period", options.Period);
                 path = AddQuery(path, "LocationKid", options.LocationKid);
+                path = AddQuery(path, "LocationKids", options.LocationKids);
                 path = AddQuery(path, "UnitKid", options.UnitKid);
                 path = AddQuery(path, "UserKid", options.UserKid);
                 path = AddQuery(path, "Kind", options.Kind);
@@ -66,6 +67,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "TimeZone", options.TimeZone);
                 path = AddQuery(path, "Period", options.Period);
                 path = AddQuery(path, "LocationKid", options.LocationKid);
+                path = AddQuery(path, "LocationKids", options.LocationKids);
                 path = AddQuery(path, "UnitKid", options.UnitKid);
                 path = AddQuery(path, "UserKid", options.UserKid);
                 path = AddQuery(path, "Kind", options.Kind);
@@ -212,6 +214,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
             if (options != null)
             {
                 path = AddQuery(path, "LocationKid", options.LocationKid);
+                path = AddQuery(path, "LocationKids", options.LocationKids);
                 path = AddQuery(path, "Date", options.Date);
                 path = AddQuery(path, "Search", options.Search);
                 path = AddQuery(path, "UnitKids", options.UnitKids);
@@ -241,6 +244,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
             if (options != null)
             {
                 path = AddQuery(path, "LocationKid", options.LocationKid);
+                path = AddQuery(path, "LocationKids", options.LocationKids);
                 path = AddQuery(path, "Date", options.Date);
                 path = AddQuery(path, "Search", options.Search);
                 path = AddQuery(path, "UnitKids", options.UnitKids);
@@ -402,6 +406,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "direction", options.Direction);
                 path = AddQuery(path, "locationKid", options.LocationKid);
                 path = AddQuery(path, "deleted", options.Deleted);
+                path = AddQuery(path, "locationKids", options.LocationKids);
             }
             return (DirectoryExportCountResponse)SendJson("GET", path, null, headers, 200, typeof(DirectoryExportCountResponse));
         }
@@ -428,6 +433,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "userKid", options.UserKid);
                 path = AddQuery(path, "locationKid", options.LocationKid);
                 path = AddQuery(path, "deleted", options.Deleted);
+                path = AddQuery(path, "locationKids", options.LocationKids);
             }
             return (BankUsersResponse)SendJson("GET", path, null, headers, 200, typeof(BankUsersResponse));
         }
@@ -464,6 +470,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "search", options.Search);
                 path = AddQuery(path, "offset", options.Offset);
                 path = AddQuery(path, "limit", options.Limit);
+                path = AddQuery(path, "locationKids", options.LocationKids);
             }
             return (BookingsResponse)SendJson("GET", path, null, headers, 200, typeof(BookingsResponse));
         }
@@ -665,6 +672,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "TimeZone", options.TimeZone);
                 path = AddQuery(path, "Period", options.Period);
                 path = AddQuery(path, "LocationKid", options.LocationKid);
+                path = AddQuery(path, "LocationKids", options.LocationKids);
                 path = AddQuery(path, "UnitKid", options.UnitKid);
                 path = AddQuery(path, "UserKid", options.UserKid);
                 path = AddQuery(path, "Kind", options.Kind);
@@ -697,6 +705,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "deleted", options.Deleted);
                 path = AddQuery(path, "sort", options.Sort);
                 path = AddQuery(path, "direction", options.Direction);
+                path = AddQuery(path, "locationKids", options.LocationKids);
             }
             return SendDownload("GET", path, null, headers, 200);
         }
@@ -1443,8 +1452,18 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>Get your profile, permitted tabs, bank/location access, and operation permissions.</summary>
         public ManagerProfileResponse GetCurrentManager()
         {
+            return GetCurrentManager(null);
+        }
+
+        /// <summary>Get your profile, permitted tabs, bank/location access, and operation permissions.</summary>
+        public ManagerProfileResponse GetCurrentManager(GetCurrentManagerOptions options)
+        {
             string path = "api/v1/session/me";
             Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "refresh", options.Refresh);
+            }
             return (ManagerProfileResponse)SendJson("GET", path, null, headers, 200, typeof(ManagerProfileResponse));
         }
 
@@ -2614,6 +2633,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "text", options.Text);
                 path = AddQuery(path, "count", options.Count);
                 path = AddQuery(path, "color", options.Color);
+                path = AddQuery(path, "useCalendarText", options.UseCalendarText);
             }
             return (IconPresentationResponse)SendJson("GET", path, null, headers, 200, typeof(IconPresentationResponse));
         }

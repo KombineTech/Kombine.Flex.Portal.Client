@@ -1,3 +1,7 @@
+## 0.11.0
+
+Synchronizes the October 31 Portal API contract, including compact Wallboard layouts and manager presentation preferences.
+
 ## 0.10.0
 
 Version 0.10.0 adds personal Wallboard layouts, scanned display registration and revision-aware display reads. Save only existing scanned display IDs with the latest revision. Preserve drafts on conflicts and never retry uncertain writes automatically. Screen sessions may read only their approved display. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).

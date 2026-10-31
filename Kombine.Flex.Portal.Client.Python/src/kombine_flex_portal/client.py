@@ -11,13 +11,13 @@ class PortalClient(BaseClient):
         'Resolve the Forbrug icon text from the most frequent authorized Log1 currency.'
         return self._request('GetBankAccountIcon', {'bankKid': bank_kid}, None)
 
-    def get_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None) -> AccountResponse:
+    def get_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None) -> AccountResponse:
         'Lists Account2 postings with full-selection totals per currency.'
-        return self._request('GetBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit}, None)
+        return self._request('GetBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit}, None)
 
-    def get_bank_account_revision(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None) -> AccountRevisionResponse:
+    def get_bank_account_revision(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None) -> AccountRevisionResponse:
         'Checks whether filtered Account2 postings changed, including late arrivals with old event timestamps.'
-        return self._request('GetBankAccountRevision', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit}, None)
+        return self._request('GetBankAccountRevision', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit}, None)
 
     def reverse_bank_account_entry(self, bank_kid: str, transaction_kid: str) -> AccountEntryResponse:
         'Reverses one eligible resident consumption posting by appending a linked compensation.'
@@ -59,13 +59,13 @@ class PortalClient(BaseClient):
         'Count accessible active banks for the Banks2 navigation icon.'
         return self._request('GetActiveBankCount', {}, None)
 
-    def get_bank_documents(self, bank_kid: str, *, location_kid: str | None = None, date: str | None = None, search: str | None = None, unit_kids: list[str] | None = None, sort: str | None = None, direction: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> BankDocumentPage:
+    def get_bank_documents(self, bank_kid: str, *, location_kid: str | None = None, location_kids: list[str] | None = None, date: str | None = None, search: str | None = None, unit_kids: list[str] | None = None, sort: str | None = None, direction: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> BankDocumentPage:
         'Search WashDoc document identities by location, unit and time without loading measurements.'
-        return self._request('GetBankDocuments', {'bankKid': bank_kid, 'LocationKid': location_kid, 'Date': date, 'Search': search, 'UnitKids': unit_kids, 'Sort': sort, 'Direction': direction, 'UnitKid': unit_kid, 'From': from_, 'Through': through, 'Offset': offset, 'Limit': limit}, None)
+        return self._request('GetBankDocuments', {'bankKid': bank_kid, 'LocationKid': location_kid, 'LocationKids': location_kids, 'Date': date, 'Search': search, 'UnitKids': unit_kids, 'Sort': sort, 'Direction': direction, 'UnitKid': unit_kid, 'From': from_, 'Through': through, 'Offset': offset, 'Limit': limit}, None)
 
-    def get_bank_documents_count(self, bank_kid: str, *, location_kid: str | None = None, date: str | None = None, search: str | None = None, unit_kids: list[str] | None = None, sort: str | None = None, direction: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> UnitDocumentCount:
+    def get_bank_documents_count(self, bank_kid: str, *, location_kid: str | None = None, location_kids: list[str] | None = None, date: str | None = None, search: str | None = None, unit_kids: list[str] | None = None, sort: str | None = None, direction: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> UnitDocumentCount:
         'Count WashDocs across the authorized bank scope, without loading document pages or measurements.'
-        return self._request('GetBankDocumentsCount', {'bankKid': bank_kid, 'LocationKid': location_kid, 'Date': date, 'Search': search, 'UnitKids': unit_kids, 'Sort': sort, 'Direction': direction, 'UnitKid': unit_kid, 'From': from_, 'Through': through, 'Offset': offset, 'Limit': limit}, None)
+        return self._request('GetBankDocumentsCount', {'bankKid': bank_kid, 'LocationKid': location_kid, 'LocationKids': location_kids, 'Date': date, 'Search': search, 'UnitKids': unit_kids, 'Sort': sort, 'Direction': direction, 'UnitKid': unit_kid, 'From': from_, 'Through': through, 'Offset': offset, 'Limit': limit}, None)
 
     def get_location_documents(self, location_kid: str, *, date: str | None = None, search: str | None = None, unit_kids: list[str] | None = None, sort: str | None = None, direction: str | None = None, unit_kid: str | None = None, from_: str | None = None, through: str | None = None, offset: int | None = None, limit: int | None = None) -> BankDocumentPage:
         'List WashDocs for one authorized location, optionally selecting one or several units.'
@@ -95,21 +95,21 @@ class PortalClient(BaseClient):
         'Resolve a search result before opening its bank overview, including tenant-wide managers.'
         return self._request('GetSearchBank', {'bankKid': bank_kid}, None)
 
-    def get_bank_user_export_count(self, bank_kid: str, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, location_kid: str | None = None, deleted: str | None = None) -> DirectoryExportCountResponse:
+    def get_bank_user_export_count(self, bank_kid: str, *, filter: str | None = None, sort: str | None = None, direction: str | None = None, location_kid: str | None = None, deleted: str | None = None, location_kids: list[str] | None = None) -> DirectoryExportCountResponse:
         'Count the complete filtered export selection using the same directory authorization and visibility.'
-        return self._request('GetBankUserExportCount', {'bankKid': bank_kid, 'filter': filter, 'sort': sort, 'direction': direction, 'locationKid': location_kid, 'deleted': deleted}, None)
+        return self._request('GetBankUserExportCount', {'bankKid': bank_kid, 'filter': filter, 'sort': sort, 'direction': direction, 'locationKid': location_kid, 'deleted': deleted, 'locationKids': location_kids}, None)
 
-    def get_bank_users(self, bank_kid: str, *, page_size: int | None = None, cursor: str | None = None, sort: str | None = None, direction: str | None = None, filter: str | None = None, user_kid: str | None = None, location_kid: str | None = None, deleted: str | None = None) -> BankUsersResponse:
+    def get_bank_users(self, bank_kid: str, *, page_size: int | None = None, cursor: str | None = None, sort: str | None = None, direction: str | None = None, filter: str | None = None, user_kid: str | None = None, location_kid: str | None = None, deleted: str | None = None, location_kids: list[str] | None = None) -> BankUsersResponse:
         'Read one page of users for a bank.'
-        return self._request('GetBankUsers', {'bankKid': bank_kid, 'pageSize': page_size, 'cursor': cursor, 'sort': sort, 'direction': direction, 'filter': filter, 'userKid': user_kid, 'locationKid': location_kid, 'deleted': deleted}, None)
+        return self._request('GetBankUsers', {'bankKid': bank_kid, 'pageSize': page_size, 'cursor': cursor, 'sort': sort, 'direction': direction, 'filter': filter, 'userKid': user_kid, 'locationKid': location_kid, 'deleted': deleted, 'locationKids': location_kids}, None)
 
     def create_bank_user(self, bank_kid: str, body: UserCommandRequest) -> UserWorkspaceResponse:
         'Create a resident. Requires bank-wide Users2/User Create. Action must be create. No hardware access is assigned automatically.'
         return self._request('CreateBankUser', {'bankKid': bank_kid}, body)
 
-    def get_bank_bookings(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, location_kid: str | None = None, unit_kid: str | None = None, user_kid: str | None = None, status: str | None = None, search: str | None = None, offset: int | None = None, limit: int | None = None) -> BookingsResponse:
+    def get_bank_bookings(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, location_kid: str | None = None, unit_kid: str | None = None, user_kid: str | None = None, status: str | None = None, search: str | None = None, offset: int | None = None, limit: int | None = None, location_kids: list[str] | None = None) -> BookingsResponse:
         'Lists the latest nonsuperseded Log5 event for each location/unit/resident/start.'
-        return self._request('GetBankBookings', {'bankKid': bank_kid, 'from': from_, 'through': through, 'locationKid': location_kid, 'unitKid': unit_kid, 'userKid': user_kid, 'status': status, 'search': search, 'offset': offset, 'limit': limit}, None)
+        return self._request('GetBankBookings', {'bankKid': bank_kid, 'from': from_, 'through': through, 'locationKid': location_kid, 'unitKid': unit_kid, 'userKid': user_kid, 'status': status, 'search': search, 'offset': offset, 'limit': limit, 'locationKids': location_kids}, None)
 
     def execute_bank_booking_command(self, bank_kid: str, booking_kid: str, body: BookingCommand) -> BookingResponse:
         'Appends a cancellation or restoration, preserving history and requesting backend synchronization.'
@@ -159,13 +159,13 @@ class PortalClient(BaseClient):
         'Read one current checklist period, including its hidden/completed status.'
         return self._request('GetChecklistPeriod', {'periodKid': period_kid}, None)
 
-    def export_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None, format: str | None = None) -> PortalDownload:
+    def export_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None, format: str | None = None) -> PortalDownload:
         'Downloads the complete filtered selection as CSV or a genuine Excel workbook.'
-        return self._request('ExportBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit, 'format': format}, None)
+        return self._request('ExportBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit, 'format': format}, None)
 
-    def export_bank_users(self, bank_kid: str, *, filter: str | None = None, location_kid: str | None = None, deleted: str | None = None, sort: str | None = None, direction: str | None = None) -> PortalDownload:
+    def export_bank_users(self, bank_kid: str, *, filter: str | None = None, location_kid: str | None = None, deleted: str | None = None, sort: str | None = None, direction: str | None = None, location_kids: list[str] | None = None) -> PortalDownload:
         'Download filtered residents as UTF-8 CSV, at most 10,000 residents and 4 MiB text.'
-        return self._request('ExportBankUsers', {'bankKid': bank_kid, 'filter': filter, 'locationKid': location_kid, 'deleted': deleted, 'sort': sort, 'direction': direction}, None)
+        return self._request('ExportBankUsers', {'bankKid': bank_kid, 'filter': filter, 'locationKid': location_kid, 'deleted': deleted, 'sort': sort, 'direction': direction, 'locationKids': location_kids}, None)
 
     def download_bank_settlement(self, bank_kid: str, period: int, *, format: str | None = None) -> PortalDownload:
         'Downloads a ZIP with one settlement file per group and currency, plus a reconciliation manifest.'
@@ -351,9 +351,9 @@ class PortalClient(BaseClient):
         'Renew an unexpired manager session for ten days.'
         return self._request('RenewManagerSession', {}, None)
 
-    def get_current_manager(self) -> ManagerProfileResponse:
+    def get_current_manager(self, *, refresh: bool | None = None) -> ManagerProfileResponse:
         'Get your profile, permitted tabs, bank/location access, and operation permissions.'
-        return self._request('GetCurrentManager', {}, None)
+        return self._request('GetCurrentManager', {'refresh': refresh}, None)
 
     def request_manager_sign_up(self, body: ManagerSignUpRequest) -> PersonalAccountResult:
         'Create a pending manager with a password and queue a manager-bound verification email.'
@@ -703,9 +703,9 @@ class PortalClient(BaseClient):
         'Renders a linear gradient at a selected width and height.'
         return self._request('GetLinearGradientSized', {'colors': colors, 'angle': angle, 'width': width, 'height': height}, None)
 
-    def get_icon_presentation(self, *, icon_kid: str | None = None, text: str | None = None, count: int | None = None, color: int | None = None) -> IconPresentationResponse:
+    def get_icon_presentation(self, *, icon_kid: str | None = None, text: str | None = None, count: int | None = None, color: int | None = None, use_calendar_text: bool | None = None) -> IconPresentationResponse:
         'Resolve an IconKid, optionally changing its text, count or RGB colour.'
-        return self._request('GetIconPresentation', {'iconKid': icon_kid, 'text': text, 'count': count, 'color': color}, None)
+        return self._request('GetIconPresentation', {'iconKid': icon_kid, 'text': text, 'count': count, 'color': color, 'useCalendarText': use_calendar_text}, None)
 
     def get_icon_asset_catalog(self, icon_set: str) -> list[str]:
         'Lists canonical icon names with an asset in the requested local set.'

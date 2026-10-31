@@ -3122,6 +3122,11 @@
           "type": "number",
           "format": "double"
         },
+        "portalMaxOpenBanks": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
         "tabDetails": {
           "type": "array",
           "items": {
@@ -3775,6 +3780,11 @@
         "lineSpacing": {
           "type": "number",
           "format": "double"
+        },
+        "portalMaxOpenBanks": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -3909,6 +3919,14 @@
         "revision": {
           "type": "string",
           "nullable": true
+        },
+        "storageUsedCharacters": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "storageLimitCharacters": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "additionalProperties": false
@@ -6124,18 +6142,26 @@
     "Wallboard": {
       "type": "object",
       "properties": {
-        "displayId": {
+        "i": {
           "type": "string",
           "nullable": true
         },
-        "name": {
+        "n": {
           "type": "string",
           "nullable": true
         },
-        "isPortrait": {
-          "type": "boolean"
+        "p": {
+          "type": "integer",
+          "format": "int32"
         },
-        "pages": {
+        "c": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/eColor"
+          },
+          "nullable": true
+        },
+        "s": {
           "type": "array",
           "items": {
             "$ref": "#/components/schemas/WallboardPage"
@@ -6200,19 +6226,15 @@
     "WallboardPage": {
       "type": "object",
       "properties": {
-        "pageId": {
+        "n": {
           "type": "string",
           "nullable": true
         },
-        "name": {
-          "type": "string",
-          "nullable": true
-        },
-        "displayDurationSeconds": {
+        "d": {
           "type": "integer",
           "format": "int32"
         },
-        "widgets": {
+        "s": {
           "type": "array",
           "items": {
             "$ref": "#/components/schemas/WallboardWidget"
@@ -6317,30 +6339,26 @@
     "WallboardWidget": {
       "type": "object",
       "properties": {
-        "widgetId": {
-          "type": "string",
-          "nullable": true
-        },
-        "widgetType": {
+        "t": {
           "$ref": "#/components/schemas/eWidgetType"
         },
-        "kid": {
+        "k": {
           "type": "string",
           "nullable": true
         },
-        "column": {
+        "x": {
           "type": "integer",
           "format": "int32"
         },
-        "row": {
+        "y": {
           "type": "integer",
           "format": "int32"
         },
-        "width": {
+        "w": {
           "type": "integer",
           "format": "int32"
         },
-        "height": {
+        "h": {
           "type": "integer",
           "format": "int32"
         }
@@ -6612,6 +6630,10 @@
         }
       },
       "additionalProperties": false
+    },
+    "eColor": {
+      "type": "integer",
+      "format": "int64"
     },
     "eThemeMode": {
       "type": "integer",
@@ -6931,6 +6953,24 @@
         "googleMapsBrowserKey": {
           "type": "string",
           "nullable": true
+        },
+        "brandIconUrl": {
+          "type": "string",
+          "nullable": true
+        },
+        "brandLightTokens": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "nullable": true
+        },
+        "brandDarkTokens": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -7188,6 +7228,17 @@
           }
         },
         {
+          "name": "LocationKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
           "name": "UnitKid",
           "where": "query",
           "required": false,
@@ -7318,6 +7369,17 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "LocationKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         {
@@ -7756,6 +7818,17 @@
           }
         },
         {
+          "name": "LocationKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
           "name": "Date",
           "where": "query",
           "required": false,
@@ -7870,6 +7943,17 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "LocationKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         {
@@ -8364,6 +8448,17 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "name": "locationKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       ],
       "body": null,
@@ -8452,6 +8547,17 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "locationKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       ],
@@ -8578,6 +8684,17 @@
           "schema": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        {
+          "name": "locationKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       ],
@@ -9026,6 +9143,17 @@
           }
         },
         {
+          "name": "LocationKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
           "name": "UnitKid",
           "where": "query",
           "required": false,
@@ -9162,6 +9290,17 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "locationKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       ],
@@ -10838,7 +10977,16 @@
         200
       ],
       "auth": true,
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "refresh",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
       "body": null,
       "multipart": null,
       "response": {
@@ -13818,6 +13966,14 @@
           "schema": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        {
+          "name": "useCalendarText",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
           }
         }
       ],

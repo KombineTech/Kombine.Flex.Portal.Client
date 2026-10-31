@@ -99,6 +99,18 @@
         }
       },
       {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "UnitKid",
         "where": "query",
         "py": "unit_kid",
@@ -248,6 +260,18 @@
         "js": "locationKid",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -774,6 +798,18 @@
         }
       },
       {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "Date",
         "where": "query",
         "py": "date",
@@ -905,6 +941,18 @@
         "js": "locationKid",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -1482,6 +1530,18 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     ],
     "body": null,
@@ -1584,6 +1644,18 @@
         "js": "deleted",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     ],
@@ -1748,6 +1820,18 @@
         "schema": {
           "type": "integer",
           "format": "int32"
+        }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     ],
@@ -2286,6 +2370,18 @@
         }
       },
       {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "UnitKid",
         "where": "query",
         "py": "unit_kid",
@@ -2442,6 +2538,18 @@
         "js": "direction",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     ],
@@ -6021,7 +6129,17 @@
       200
     ],
     "auth": true,
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "refresh",
+        "where": "query",
+        "py": "refresh",
+        "js": "refresh",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
     "body": null,
     "multipart": null,
     "response": {
@@ -9813,6 +9931,15 @@
         "schema": {
           "type": "integer",
           "format": "int32"
+        }
+      },
+      {
+        "name": "useCalendarText",
+        "where": "query",
+        "py": "use_calendar_text",
+        "js": "useCalendarText",
+        "schema": {
+          "type": "boolean"
         }
       }
     ],
