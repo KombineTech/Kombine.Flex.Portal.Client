@@ -2332,7 +2332,8 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
         /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
-        /// <br/>            Enums 2.0.147: layout i/n/p/s, page n/d/s, widget t/k/x/y/w/h. Orientation p is numeric 0/1; x/y are zero-based. Pages/widgets have no persistent IDs.
+        /// <br/>            Enums 2.0.151: layout i/n/a/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.
         /// <br/>            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.
         /// <br/>            Unknown stored fields or malformed layouts return 409 without changing them.
         /// </remarks>
@@ -2342,19 +2343,22 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Save your own complete Wallboard1 layout collection.
+        /// Save your own Wallboard1 layouts and optional portal overview layout.
         /// </summary>
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.
         /// <br/>            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.
-        /// <br/>            Display IDs must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.
+        /// <br/>            Every display ID in every i array must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.
+        /// <br/>            The response also contains one portalWallboard and its separate storage usage/limit. When absent from storage it is an in-memory default and is not written on GET. It is not a display or QR registration.
+        /// <br/>            A supplied portalWallboard must be a non-null object with the same i array as the current singleton; it cannot be deleted. Its update and the display collection are committed in one transaction using the combined editor revision.
+        /// <br/>            A legacy request omitting portalWallboard leaves that setting untouched and accepts either the physical collection revision or the combined editor revision. Display reads retain their physical collection revision.
         /// <br/>            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.
-        /// <br/>            Layouts use i/n/p/s; pages use n/d/s; widgets use t/k/x/y/w/h. Display i must be unique across orientations; p is numeric 0 or 1.
-        /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), positive width/height (1-60), no overlap and page duration d of 1-86400 seconds. Pages/widgets use array order and have no IDs.
-        /// <br/>            Stored cell coordinates and sizes are retained unchanged; older layouts are not automatically doubled or rescaled.
+        /// <br/>            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].
+        /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.
+        /// <br/>            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.
         /// <br/>            Widget type uses numeric eWidgetType values 0-10; None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.
         /// <br/>            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.
-        /// <br/>            Empty lists remove layouts only. The serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include StorageUsedCharacters and StorageLimitCharacters for the committed collection.
+        /// <br/>            Empty lists remove display layouts only. Each serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include separate used/limit values for the collection and portal singleton.
         /// <br/>            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.
         /// </remarks>
         /// <returns>OK</returns>
@@ -2368,7 +2372,7 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Active manager with Wallboard1, or an approved read-only screen bound to this exact display.
         /// <br/>            Rechecks current credentials, tab and scoped-widget grants; device sessions additionally pass durable approval validation.
-        /// <br/>            Falls back to the other orientation. A missing layout returns 200 with layout=null. Does not reveal other display IDs or layouts.
+        /// <br/>            Finds the requested ID in the layout's i array and falls back to the other orientation. A missing layout returns 200 with layout=null. An approved screen receives only its own ID in i; a manager receives the full array.
         /// <br/>            Optional after is the last 64-hex revision: waits up to eight seconds if unchanged. A committed save on this API instance wakes the request immediately.
         /// <br/>            Returns the same response shape, including on timeout. Reconnect with the returned revision; credentials, grants and device approval are checked again before returning.
         /// <br/>            Other replicas or external writers are discovered at timeout. Cancel when hidden. 400 invalid-wallboard-revision; 429 wallboard-watch-limit requires backoff.
@@ -18820,7 +18824,8 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
         /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
-        /// <br/>            Enums 2.0.147: layout i/n/p/s, page n/d/s, widget t/k/x/y/w/h. Orientation p is numeric 0/1; x/y are zero-based. Pages/widgets have no persistent IDs.
+        /// <br/>            Enums 2.0.151: layout i/n/a/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.
         /// <br/>            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.
         /// <br/>            Unknown stored fields or malformed layouts return 409 without changing them.
         /// </remarks>
@@ -18932,19 +18937,22 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Save your own complete Wallboard1 layout collection.
+        /// Save your own Wallboard1 layouts and optional portal overview layout.
         /// </summary>
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.
         /// <br/>            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.
-        /// <br/>            Display IDs must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.
+        /// <br/>            Every display ID in every i array must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.
+        /// <br/>            The response also contains one portalWallboard and its separate storage usage/limit. When absent from storage it is an in-memory default and is not written on GET. It is not a display or QR registration.
+        /// <br/>            A supplied portalWallboard must be a non-null object with the same i array as the current singleton; it cannot be deleted. Its update and the display collection are committed in one transaction using the combined editor revision.
+        /// <br/>            A legacy request omitting portalWallboard leaves that setting untouched and accepts either the physical collection revision or the combined editor revision. Display reads retain their physical collection revision.
         /// <br/>            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.
-        /// <br/>            Layouts use i/n/p/s; pages use n/d/s; widgets use t/k/x/y/w/h. Display i must be unique across orientations; p is numeric 0 or 1.
-        /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), positive width/height (1-60), no overlap and page duration d of 1-86400 seconds. Pages/widgets use array order and have no IDs.
-        /// <br/>            Stored cell coordinates and sizes are retained unchanged; older layouts are not automatically doubled or rescaled.
+        /// <br/>            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].
+        /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.
+        /// <br/>            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.
         /// <br/>            Widget type uses numeric eWidgetType values 0-10; None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.
         /// <br/>            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.
-        /// <br/>            Empty lists remove layouts only. The serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include StorageUsedCharacters and StorageLimitCharacters for the committed collection.
+        /// <br/>            Empty lists remove display layouts only. Each serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include separate used/limit values for the collection and portal singleton.
         /// <br/>            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.
         /// </remarks>
         /// <returns>OK</returns>
@@ -19074,7 +19082,7 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Active manager with Wallboard1, or an approved read-only screen bound to this exact display.
         /// <br/>            Rechecks current credentials, tab and scoped-widget grants; device sessions additionally pass durable approval validation.
-        /// <br/>            Falls back to the other orientation. A missing layout returns 200 with layout=null. Does not reveal other display IDs or layouts.
+        /// <br/>            Finds the requested ID in the layout's i array and falls back to the other orientation. A missing layout returns 200 with layout=null. An approved screen receives only its own ID in i; a manager receives the full array.
         /// <br/>            Optional after is the last 64-hex revision: waits up to eight seconds if unchanged. A committed save on this API instance wakes the request immediately.
         /// <br/>            Returns the same response shape, including on timeout. Reconnect with the returned revision; credentials, grants and device approval are checked again before returning.
         /// <br/>            Other replicas or external writers are discovered at timeout. Cancel when hidden. 400 invalid-wallboard-revision; 429 wallboard-watch-limit requires backoff.
@@ -36859,6 +36867,9 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("displayId")]
         public string? DisplayId { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("targetDisplayId")]
+        public string? TargetDisplayId { get; set; } = default!;
+
     }
 
     /// <summary>
@@ -36879,6 +36890,15 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("storageLimitCharacters")]
         public int? StorageLimitCharacters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("portalWallboard")]
+        public Wallboard? PortalWallboard { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("portalStorageUsedCharacters")]
+        public int? PortalStorageUsedCharacters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("portalStorageLimitCharacters")]
+        public int? PortalStorageLimitCharacters { get; set; } = default!;
 
     }
 
@@ -36945,6 +36965,9 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("wallboards")]
         public object Wallboards { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("portalWallboard")]
+        public object? PortalWallboard { get; set; } = default!;
 
     }
 
@@ -39006,13 +39029,13 @@ namespace Kombine.Flex.Portal.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("i")]
-        public string? I { get; set; } = default!;
+        public System.Collections.Generic.ICollection<string>? I { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("n")]
         public string? N { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("p")]
-        public int? P { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("a")]
+        public float? A { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("c")]
         public System.Collections.Generic.ICollection<EColor>? C { get; set; } = default!;
@@ -39170,17 +39193,8 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("k")]
         public string? K { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("x")]
-        public int? X { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("y")]
-        public int? Y { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("w")]
-        public int? W { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("h")]
-        public int? H { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("r")]
+        public System.Collections.Generic.ICollection<int>? R { get; set; } = default!;
 
     }
 
@@ -39590,6 +39604,42 @@ namespace Kombine.Flex.Portal.Client
         _19 = 19,
 
         _20 = 20,
+
+        _21 = 21,
+
+        _22 = 22,
+
+        _23 = 23,
+
+        _24 = 24,
+
+        _25 = 25,
+
+        _26 = 26,
+
+        _27 = 27,
+
+        _28 = 28,
+
+        _29 = 29,
+
+        _30 = 30,
+
+        _31 = 31,
+
+        _32 = 32,
+
+        _33 = 33,
+
+        _34 = 34,
+
+        _35 = 35,
+
+        _36 = 36,
+
+        _37 = 37,
+
+        _38 = 38,
 
     }
 

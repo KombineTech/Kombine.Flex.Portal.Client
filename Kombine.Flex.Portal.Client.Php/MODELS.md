@@ -869,13 +869,13 @@ array{'revision': string|null, 'enabled': bool}
 ### PersonalWallboardRequest
 
 ```php
-array{'displayId': string|null}
+array{'displayId': string|null, 'targetDisplayId'?: string|null}
 ```
 
 ### PersonalWallboardsResponse
 
 ```php
-array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int}
+array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int, 'portalWallboard'?: Wallboard, 'portalStorageUsedCharacters'?: int, 'portalStorageLimitCharacters'?: int}
 ```
 
 ### ProblemDetails
@@ -899,7 +899,7 @@ array{'challenge'?: string|null, 'signature'?: string|null}
 ### SavePersonalWallboardsRequest
 
 ```php
-array{'revision'?: string|null, 'wallboards': mixed}
+array{'revision'?: string|null, 'wallboards': mixed, 'portalWallboard'?: mixed}
 ```
 
 ### SearchResult
@@ -1331,7 +1331,7 @@ array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'
 ### Wallboard
 
 ```php
-array{'i'?: string|null, 'n'?: string|null, 'p'?: int, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
+array{'i'?: list<string>|null, 'n'?: string|null, 'a'?: int|float, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
 ```
 
 ### WallboardDeviceChallenge
@@ -1385,7 +1385,7 @@ array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|fl
 ### WallboardWidget
 
 ```php
-array{'t'?: eWidgetType, 'k'?: string|null, 'x'?: int, 'y'?: int, 'w'?: int, 'h'?: int}
+array{'t'?: eWidgetType, 'k'?: string|null, 'r'?: list<int>|null}
 ```
 
 ### WashDocChartDosing

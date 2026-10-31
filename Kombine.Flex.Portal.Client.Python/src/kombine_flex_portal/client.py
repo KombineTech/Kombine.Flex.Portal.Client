@@ -396,7 +396,7 @@ class PortalClient(BaseClient):
         return self._request('GetMyManagerWallboards', {}, None)
 
     def save_my_manager_wallboards(self, body: SavePersonalWallboardsRequest) -> PersonalWallboardsResponse:
-        'Save your own complete Wallboard1 layout collection.'
+        'Save your own Wallboard1 layouts and optional portal overview layout.'
         return self._request('SaveMyManagerWallboards', {}, body)
 
     def get_my_manager_wallboard_display(self, display_id: str, *, portrait: bool | None = None, after: str | None = None) -> WallboardDisplayResponse:

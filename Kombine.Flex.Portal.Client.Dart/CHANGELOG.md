@@ -1,3 +1,7 @@
+## 0.13.0
+
+Synchronizes the beta API contract with Enums 2.0.151: wallboard display-ID arrays, rectangle arrays, editor aspect ratios, minimum size of 3 by 3 for new or changed widgets, and the personal Portal wallboard. Stored smaller widgets remain unchanged when retained. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
 ## 0.12.0
 
 Synchronizes the reviewed main API contract. New Wallboard registrations reject reserved routes and root asset names; existing stored display identities and approvals remain valid. See the [API changelog](https://api.team.kombine.technology/docs#changelog).

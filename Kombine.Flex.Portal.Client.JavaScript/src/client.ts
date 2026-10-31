@@ -488,7 +488,7 @@ export class PortalClient extends BaseClient {
     return this.send("GetMyManagerWallboards", {}, undefined, request) as Promise<Models.PersonalWallboardsResponse>;
   }
 
-  /** Save your own complete Wallboard1 layout collection. */
+  /** Save your own Wallboard1 layouts and optional portal overview layout. */
   saveMyManagerWallboards(body: Models.SavePersonalWallboardsRequest, request: RequestOptions = {}): Promise<Models.PersonalWallboardsResponse> {
     return this.send("SaveMyManagerWallboards", {}, body, request) as Promise<Models.PersonalWallboardsResponse>;
   }

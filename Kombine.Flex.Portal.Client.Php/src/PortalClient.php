@@ -149,12 +149,12 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PersonalPasswordRequest array{'currentPassword': string|null, 'password': string|null, 'confirmPassword': string|null, 'language'?: string|null}
  * @phpstan-type PersonalProfileRequest array{'revision': string|null, 'value': mixed}
  * @phpstan-type PersonalTabRequest array{'revision': string|null, 'enabled': bool}
- * @phpstan-type PersonalWallboardRequest array{'displayId': string|null}
- * @phpstan-type PersonalWallboardsResponse array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int}
+ * @phpstan-type PersonalWallboardRequest array{'displayId': string|null, 'targetDisplayId'?: string|null}
+ * @phpstan-type PersonalWallboardsResponse array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int, 'portalWallboard'?: Wallboard, 'portalStorageUsedCharacters'?: int, 'portalStorageLimitCharacters'?: int}
  * @phpstan-type ProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
  * @phpstan-type RedeemWallboardPairing array{'deviceCode'?: string|null}
  * @phpstan-type ResumeWallboardSession array{'challenge'?: string|null, 'signature'?: string|null}
- * @phpstan-type SavePersonalWallboardsRequest array{'revision'?: string|null, 'wallboards': mixed}
+ * @phpstan-type SavePersonalWallboardsRequest array{'revision'?: string|null, 'wallboards': mixed, 'portalWallboard'?: mixed}
  * @phpstan-type SearchResult array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type SearchResults array{'items'?: list<SearchResult>|null, 'hasMore'?: bool}
  * @phpstan-type ServiceApiKeyRequest array{'expectedRevision': string|null}
@@ -226,7 +226,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserTagResponse array{'kid'?: string|null, 'state'?: string|null}
  * @phpstan-type UserWorkspaceResponse array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'number'?: string|null, 'deletedAtUtc'?: string|null, 'deleteAtUtc'?: string|null, 'locations'?: list<UserScopeState>|null, 'tags'?: list<UserScopeState>|null, 'attributes'?: list<UserAttributeInput>|null, 'canWrite'?: bool, 'canCreate'?: bool, 'synchronization'?: string|null, 'canDelete'?: bool, 'canRenameExternalId'?: bool, 'canRename'?: bool, 'iconKid'?: string|null, 'availableIcons'?: list<string>|null, 'canEditIcon'?: bool}
  * @phpstan-type ValidationProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
- * @phpstan-type Wallboard array{'i'?: string|null, 'n'?: string|null, 'p'?: int, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
+ * @phpstan-type Wallboard array{'i'?: list<string>|null, 'n'?: string|null, 'a'?: int|float, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
  * @phpstan-type WallboardDeviceChallenge array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
  * @phpstan-type WallboardDeviceInfo array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
  * @phpstan-type WallboardDisplayResponse array{'layout'?: Wallboard, 'revision'?: string|null}
@@ -235,7 +235,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type WallboardPairingStarted array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'intervalSeconds'?: int}
  * @phpstan-type WallboardPairingToken array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null, 'displayId'?: string|null}
  * @phpstan-type WallboardScanLocation array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float, 'capturedAt'?: string}
- * @phpstan-type WallboardWidget array{'t'?: eWidgetType, 'k'?: string|null, 'x'?: int, 'y'?: int, 'w'?: int, 'h'?: int}
+ * @phpstan-type WallboardWidget array{'t'?: eWidgetType, 'k'?: string|null, 'r'?: list<int>|null}
  * @phpstan-type WashDocChartDosing array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
  * @phpstan-type WashDocChartEvent array{'ms2000'?: int, 'kind'?: string|null, 'name'?: string|null, 'value'?: int|float|null, 'label'?: string|null, 'localization'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type WashDocChartPoint array{'ms2000'?: int, 'value'?: int|float|null, 'isCalculated'?: bool, 'isEdge'?: bool, 'unit'?: string|null}
@@ -1305,7 +1305,7 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * Save your own complete Wallboard1 layout collection.
+     * Save your own Wallboard1 layouts and optional portal overview layout.
      * @param SavePersonalWallboardsRequest $body
      * @return PersonalWallboardsResponse
      */

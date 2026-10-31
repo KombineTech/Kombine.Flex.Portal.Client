@@ -4162,6 +4162,11 @@ namespace Kombine.Flex.Portal.Client.Net20
         public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
         private string _DisplayId;
 
+        /// <summary>targetDisplayId</summary>
+        [JsonField("targetDisplayId")]
+        public string TargetDisplayId { get { return _TargetDisplayId; } set { _TargetDisplayId = value; } }
+        private string _TargetDisplayId;
+
     }
 
     /// <summary>Own layout collection and opaque optimistic concurrency revision.</summary>
@@ -4186,6 +4191,21 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("storageLimitCharacters")]
         public int? StorageLimitCharacters { get { return _StorageLimitCharacters; } set { _StorageLimitCharacters = value; } }
         private int? _StorageLimitCharacters;
+
+        /// <summary>portalWallboard</summary>
+        [JsonField("portalWallboard")]
+        public Wallboard PortalWallboard { get { return _PortalWallboard; } set { _PortalWallboard = value; } }
+        private Wallboard _PortalWallboard;
+
+        /// <summary>portalStorageUsedCharacters</summary>
+        [JsonField("portalStorageUsedCharacters")]
+        public int? PortalStorageUsedCharacters { get { return _PortalStorageUsedCharacters; } set { _PortalStorageUsedCharacters = value; } }
+        private int? _PortalStorageUsedCharacters;
+
+        /// <summary>portalStorageLimitCharacters</summary>
+        [JsonField("portalStorageLimitCharacters")]
+        public int? PortalStorageLimitCharacters { get { return _PortalStorageLimitCharacters; } set { _PortalStorageLimitCharacters = value; } }
+        private int? _PortalStorageLimitCharacters;
 
     }
 
@@ -4256,6 +4276,11 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("wallboards")]
         public object Wallboards { get { return _Wallboards; } set { _Wallboards = value; } }
         private object _Wallboards;
+
+        /// <summary>portalWallboard</summary>
+        [JsonField("portalWallboard")]
+        public object PortalWallboard { get { return _PortalWallboard; } set { _PortalWallboard = value; } }
+        private object _PortalWallboard;
 
     }
 
@@ -6599,18 +6624,18 @@ namespace Kombine.Flex.Portal.Client.Net20
     {
         /// <summary>i</summary>
         [JsonField("i")]
-        public string I { get { return _I; } set { _I = value; } }
-        private string _I;
+        public string[] I { get { return _I; } set { _I = value; } }
+        private string[] _I;
 
         /// <summary>n</summary>
         [JsonField("n")]
         public string N { get { return _N; } set { _N = value; } }
         private string _N;
 
-        /// <summary>p</summary>
-        [JsonField("p")]
-        public int? P { get { return _P; } set { _P = value; } }
-        private int? _P;
+        /// <summary>a</summary>
+        [JsonField("a")]
+        public double? A { get { return _A; } set { _A = value; } }
+        private double? _A;
 
         /// <summary>c</summary>
         [JsonField("c")]
@@ -6822,25 +6847,10 @@ namespace Kombine.Flex.Portal.Client.Net20
         public string K { get { return _K; } set { _K = value; } }
         private string _K;
 
-        /// <summary>x</summary>
-        [JsonField("x")]
-        public int? X { get { return _X; } set { _X = value; } }
-        private int? _X;
-
-        /// <summary>y</summary>
-        [JsonField("y")]
-        public int? Y { get { return _Y; } set { _Y = value; } }
-        private int? _Y;
-
-        /// <summary>w</summary>
-        [JsonField("w")]
-        public int? W { get { return _W; } set { _W = value; } }
-        private int? _W;
-
-        /// <summary>h</summary>
-        [JsonField("h")]
-        public int? H { get { return _H; } set { _H = value; } }
-        private int? _H;
+        /// <summary>r</summary>
+        [JsonField("r")]
+        public int[] R { get { return _R; } set { _R = value; } }
+        private int[] _R;
 
     }
 

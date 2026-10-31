@@ -3902,6 +3902,10 @@
         "displayId": {
           "type": "string",
           "nullable": true
+        },
+        "targetDisplayId": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -3925,6 +3929,17 @@
           "format": "int32"
         },
         "storageLimitCharacters": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "portalWallboard": {
+          "$ref": "#/components/schemas/Wallboard"
+        },
+        "portalStorageUsedCharacters": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "portalStorageLimitCharacters": {
           "type": "integer",
           "format": "int32"
         }
@@ -3992,7 +4007,8 @@
           "type": "string",
           "nullable": true
         },
-        "wallboards": {}
+        "wallboards": {},
+        "portalWallboard": {}
       },
       "additionalProperties": false
     },
@@ -6143,16 +6159,19 @@
       "type": "object",
       "properties": {
         "i": {
-          "type": "string",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
           "nullable": true
         },
         "n": {
           "type": "string",
           "nullable": true
         },
-        "p": {
-          "type": "integer",
-          "format": "int32"
+        "a": {
+          "type": "number",
+          "format": "float"
         },
         "c": {
           "type": "array",
@@ -6346,21 +6365,13 @@
           "type": "string",
           "nullable": true
         },
-        "x": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "y": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "w": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "h": {
-          "type": "integer",
-          "format": "int32"
+        "r": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nullable": true
         }
       },
       "additionalProperties": false
