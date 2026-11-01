@@ -73,7 +73,7 @@ RELEASE_DOCUMENTATION = {'en': 'Version 0.24.0 synchronizes 217 API operations w
 
 def generate(root, project, api, count, write):
     lower = api.lower()
-    version = '0.25.0' if api == 'Portal' else '0.1.0'
+    version = '0.26.0' if api == 'Portal' else '0.1.0'
     archive = f'kombine-flex-{lower}-client-php-{version}.zip'
     domain = 'technology' if api == 'Portal' else 'equipment'
     login = '$email, $password' if api == 'Portal' else '$serviceKid, $apiKey'
@@ -116,9 +116,9 @@ def generate(root, project, api, count, write):
         if api == 'Portal':
             template = {'da': 'Version 0.4.3: GetLocations kræver nu fields=vismaCustNo,bankActivationCode,locationActivationCode for at bevare de tidligere valgfrie værdier; accepter null for fravalgte felter. Behold samme fields under sideskift, og start gamle cursors forfra. Nye forslag til beboernumre er skrivebeskyttede og reserverer ikke et nummer. Aktiveringssvar indeholder qrCodeDataV1 og qrCodeDataV2 (fem værdier med 30-bit støj/kontrolsum); behandl begge som legitimationsoplysninger. Se /docs#changelog for migrering og /docs for rettigheder og fejlhåndtering.', 'es': 'Versión 0.4.3: GetLocations requiere ahora fields=vismaCustNo,bankActivationCode,locationActivationCode para conservar los valores opcionales anteriores; acepte null para campos no seleccionados. Mantenga fields al paginar y reinicie los cursores anteriores. Las nuevas sugerencias de números de residentes son de solo lectura y no reservan un número. Las respuestas de activación incluyen qrCodeDataV1 y qrCodeDataV2 (cinco valores con ruido y suma de comprobación de 30 bits); trate ambos como credenciales. Consulte /docs#changelog para la migración y /docs para permisos y errores.', 'en': 'Version 0.4.3: GetLocations now requires fields=vismaCustNo,bankActivationCode,locationActivationCode to retain the previous optional values; accept null for unselected fields. Keep fields unchanged while paging and restart old cursors. New resident-number suggestions are read-only and do not reserve a number. Activation responses include qrCodeDataV1 and qrCodeDataV2 (five values with 30-bit noise/checksum); treat both as credentials. See /docs#changelog for migration and /docs for permissions and error handling.'}[language] + '\n\n' + template
         migration = {
-            'en': 'Version 0.25.0 updates the Wallboard contract: c contains separate light and dark color palettes. Migrate flat c arrays before saving. The API preserves existing layouts on read. The client covers 220 operations. See the API changelog.',
-            'da': 'Version 0.25.0 opdaterer Wallboard-kontrakten: c indeholder separate lyse og mørke farvepaletter. Konvertér flade c-arrays før gemning. API’et bevarer eksisterende layouts ved læsning. Klienten omfatter 220 operationer. Se API-changelog.',
-            'es': 'La versión 0.25.0 actualiza el contrato Wallboard: c contiene paletas claras y oscuras separadas. Migre los arrays c planos antes de guardar. La API conserva los diseños existentes al leer. El cliente cubre 220 operaciones. Consulte el registro de cambios de la API.'
+            'en': 'Version 0.26.0 updates the Wallboard contract: c contains separate light and dark color palettes. Migrate flat c arrays before saving. The API preserves existing layouts on read. The client covers 221 operations. See the API changelog.',
+            'da': 'Version 0.26.0 opdaterer Wallboard-kontrakten: c indeholder separate lyse og mørke farvepaletter. Konvertér flade c-arrays før gemning. API’et bevarer eksisterende layouts ved læsning. Klienten omfatter 221 operationer. Se API-changelog.',
+            'es': 'La versión 0.26.0 actualiza el contrato Wallboard: c contiene paletas claras y oscuras separadas. Migre los arrays c planos antes de guardar. La API conserva los diseños existentes al leer. El cliente cubre 221 operaciones. Consulte el registro de cambios de la API.'
         }
         write(project / f'README{suffix}.md', (migration[language] + '\n\n' + RELEASE_DOCUMENTATION[language] + '\n\n' + CALENDAR_DOCUMENTATION[language] + WEATHER_DOCUMENTATION[language] if api == 'Portal' else '') + template)
         code = re.search(r'```php\n(.*?)\n```', template, re.S)[1]

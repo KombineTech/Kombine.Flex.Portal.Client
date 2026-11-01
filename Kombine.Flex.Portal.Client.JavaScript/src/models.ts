@@ -3484,7 +3484,7 @@ export interface WashDocPresentation {
 /** Wire values: [0, 1, 2]. */
 export type EThemeMode = number;
 
-/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46]. */
+/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]. */
 export type EWidgetType = number;
 
 /** Public tenant-wide count; does not expose or grant access to any individual account. */
@@ -3740,6 +3740,18 @@ export interface ReservationsStatisticsResponse {
   /** Qualifying reservations; zero only for a successful empty count. */
   "count"?: bigint;
   /** UTC instant used for the strict reservation-end comparison. */
+  "measuredAtUtc"?: string;
+  /** Recommended polling interval, 60 seconds. */
+  "refreshAfterSeconds"?: number;
+}
+
+/** Public count of machines with an ongoing dated reservation. */
+export interface ReservedMachinesStatisticsResponse {
+  /** Configured site's canonical tenant KID. */
+  "tenantKid"?: string | null;
+  /** Distinct qualifying machines; zero only for a successful empty count. */
+  "count"?: bigint;
+  /** UTC instant used for the location-local start/end comparison. */
   "measuredAtUtc"?: string;
   /** Recommended polling interval, 60 seconds. */
   "refreshAfterSeconds"?: number;

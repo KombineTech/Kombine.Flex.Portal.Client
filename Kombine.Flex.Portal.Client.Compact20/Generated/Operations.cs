@@ -3156,6 +3156,14 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (ReservationsStatisticsResponse)SendJson("GET", path, null, headers, 200, typeof(ReservationsStatisticsResponse));
         }
 
+        /// <summary>Counts distinct machines with a dated reservation that is currently in progress.</summary>
+        public ReservedMachinesStatisticsResponse GetPublicReservedMachines()
+        {
+            string path = "api/v1/public/statistics/reserved-machines";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ReservedMachinesStatisticsResponse)SendJson("GET", path, null, headers, 200, typeof(ReservedMachinesStatisticsResponse));
+        }
+
         /// <summary>Counts machines whose current Started is before now and Done is after now.</summary>
         public RunningMachinesResponse GetPublicRunningMachines()
         {

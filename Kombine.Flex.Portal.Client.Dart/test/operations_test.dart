@@ -4236,6 +4236,24 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetPublicReservedMachines", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/public/statistics/reserved-machines");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+
+      return http.Response(encodeApiJson(<String, Object?>{"tenantKid": null, "count": BigInt.parse('9007199254740993'), "measuredAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getPublicReservedMachines();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"tenantKid": null, "count": BigInt.parse('9007199254740993'), "measuredAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7}));
+    expect(sends, 1);
+  });
+
   test("wire GetPublicRunningMachines", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {

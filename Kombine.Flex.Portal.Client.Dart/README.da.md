@@ -1,4 +1,4 @@
-Version 0.15.0 bruger separate lyse og mørke c-paletter i Wallboard-layouts; konvertér flade c-arrays før gemning. Klienten omfatter 220 operationer. Se API-changelog.
+Version 0.16.0 bruger separate lyse og mørke c-paletter i Wallboard-layouts; konvertér flade c-arrays før gemning. Klienten omfatter 221 operationer. Se API-changelog.
 
 Version 0.14.0 synkroniserer 217 API-operationer med Wallboards 60 gange 60-model: ordnede skærm-id’er og rektangel-arrays erstatter de tidligere enkelt-id’er og koordinatfelter. Personlige og offentlige Portal-wallboards gemmes separat med rettigheds- og revisionskontrol. Nye operationer giver adgang til offentlige layouts og de beskyttede lager-, belastnings-, kort- og reservationsvisninger. Bevar gemt geometri, og genindlæs efter konflikter før et nyt forsøg. UserBalance er fortsat kompatibel.
 

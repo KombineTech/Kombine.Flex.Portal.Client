@@ -220,5 +220,6 @@
 | `GetPublicActiveUsers` | `get_public_active_users` | `getPublicActiveUsers` | GET | `/api/v1/public/statistics/active-users` |
 | `GetPublicWidgetPresentation` | `get_public_widget_presentation` | `getPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
 | `GetPublicReservations` | `get_public_reservations` | `getPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
+| `GetPublicReservedMachines` | `get_public_reserved_machines` | `getPublicReservedMachines` | GET | `/api/v1/public/statistics/reserved-machines` |
 | `GetPublicRunningMachines` | `get_public_running_machines` | `getPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPortalStatus` | `get_portal_status` | `getPortalStatus` | GET | `/api/v1/status` |

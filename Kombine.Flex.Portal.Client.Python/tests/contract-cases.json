@@ -11502,6 +11502,26 @@
     "example": {}
   },
   {
+    "operation": "GetPublicReservedMachines",
+    "python": "get_public_reserved_machines",
+    "javascript": "getPublicReservedMachines",
+    "method": "GET",
+    "path": "api/v1/public/statistics/reserved-machines",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ReservedMachinesStatisticsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetPublicRunningMachines",
     "python": "get_public_running_machines",
     "javascript": "getPublicRunningMachines",

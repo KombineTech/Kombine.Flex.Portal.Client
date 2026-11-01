@@ -8009,6 +8009,31 @@ namespace Kombine.Flex.Portal.Client.Net45
 
     }
 
+    /// <summary>Public count of machines with an ongoing dated reservation.</summary>
+    public sealed class ReservedMachinesStatisticsResponse
+    {
+        /// <summary>Configured site's canonical tenant KID.</summary>
+        [JsonField("tenantKid")]
+        public string TenantKid { get { return _TenantKid; } set { _TenantKid = value; } }
+        private string _TenantKid;
+
+        /// <summary>Distinct qualifying machines; zero only for a successful empty count.</summary>
+        [JsonField("count")]
+        public long? Count { get { return _Count; } set { _Count = value; } }
+        private long? _Count;
+
+        /// <summary>UTC instant used for the location-local start/end comparison. ISO 8601 text, sent unchanged.</summary>
+        [JsonField("measuredAtUtc")]
+        public string MeasuredAtUtc { get { return _MeasuredAtUtc; } set { _MeasuredAtUtc = value; } }
+        private string _MeasuredAtUtc;
+
+        /// <summary>Recommended polling interval, 60 seconds.</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+    }
+
     /// <summary>Public count of currently running machines.</summary>
     public sealed class RunningMachinesResponse
     {

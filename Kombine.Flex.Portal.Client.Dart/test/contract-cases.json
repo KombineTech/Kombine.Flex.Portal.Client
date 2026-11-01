@@ -10740,6 +10740,25 @@
     "binary": false
   },
   {
+    "operation": "GetPublicReservedMachines",
+    "dartMethod": "getPublicReservedMachines",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/public/statistics/reserved-machines",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ReservedMachinesStatisticsResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetPublicRunningMachines",
     "dartMethod": "getPublicRunningMachines",
     "example": null,

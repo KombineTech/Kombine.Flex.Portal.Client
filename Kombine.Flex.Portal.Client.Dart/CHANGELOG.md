@@ -1,3 +1,7 @@
+## 0.16.0
+
+- Add the public reserved-machines statistic and update the Wallboard widget enum.
+
 ## 0.15.0
 
 - Update the Portal contract with separate light and dark Wallboard color palettes and the new authorized widget operations.

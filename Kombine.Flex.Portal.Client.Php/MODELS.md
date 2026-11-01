@@ -1628,6 +1628,12 @@ array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc
 array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
 ```
 
+### ReservedMachinesStatisticsResponse
+
+```php
+array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
+```
+
 ### RunningMachinesResponse
 
 ```php
