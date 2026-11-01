@@ -73,7 +73,7 @@ RELEASE_DOCUMENTATION = {'en': 'Version 0.24.0 synchronizes 217 API operations w
 
 def generate(root, project, api, count, write):
     lower = api.lower()
-    version = '0.27.0' if api == 'Portal' else '0.1.0'
+    version = '0.28.0' if api == 'Portal' else '0.1.0'
     archive = f'kombine-flex-{lower}-client-php-{version}.zip'
     domain = 'technology' if api == 'Portal' else 'equipment'
     login = '$email, $password' if api == 'Portal' else '$serviceKid, $apiKey'
@@ -121,9 +121,9 @@ def generate(root, project, api, count, write):
             'es': 'La versión 0.25.0 actualiza el contrato Wallboard: c contiene paletas claras y oscuras separadas. Migre los arrays c planos antes de guardar. La API conserva los diseños existentes al leer. El cliente cubre 220 operaciones. Consulte el registro de cambios de la API.'
         }
         current = {
-            'en': 'Version 0.27.0 adds GetPublicReservedMachines and includes 221 operations. The enum includes values 47–51; only implemented widget types are enabled by the server.',
-            'da': 'Version 0.27.0 tilføjer GetPublicReservedMachines og omfatter 221 operationer. Enum indeholder værdierne 47–51; serveren aktiverer kun implementerede widgettyper.',
-            'es': 'La versión 0.27.0 añade GetPublicReservedMachines e incluye 221 operaciones. El enum contiene los valores 47–51; el servidor solo habilita los tipos de widget implementados.',
+            'en': 'Version 0.28.0 updates the widget type contract with Plex (52); server availability is controlled separately.',
+            'da': 'Version 0.28.0 opdaterer widgettypen med Plex (52); serveren bestemmer separat, hvilke typer der er tilgængelige.',
+            'es': 'La versión 0.28.0 actualiza el tipo de widget con Plex (52); el servidor controla por separado los tipos disponibles.',
         }
         write(project / f'README{suffix}.md', (current[language] + '\n\n' + migration[language] + '\n\n' + RELEASE_DOCUMENTATION[language] + '\n\n' + CALENDAR_DOCUMENTATION[language] + WEATHER_DOCUMENTATION[language] if api == 'Portal' else '') + template)
         code = re.search(r'```php\n(.*?)\n```', template, re.S)[1]

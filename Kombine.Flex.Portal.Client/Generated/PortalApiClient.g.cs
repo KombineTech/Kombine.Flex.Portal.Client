@@ -2354,7 +2354,7 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
         /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards and PortalWallboard. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
-        /// <br/>            Enums 2.0.159: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Enums 2.0.160: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
         /// <br/>            Legacy stored single palettes are converted in memory to identical light and dark palettes without writes or revision changes.
         /// <br/>            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.
         /// <br/>            Legacy Video (26) widgets in both collections are returned as YouTube (39), preserving KID, rectangle and order without database writes or revision changes.
@@ -19295,7 +19295,7 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
         /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards and PortalWallboard. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
-        /// <br/>            Enums 2.0.159: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Enums 2.0.160: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
         /// <br/>            Legacy stored single palettes are converted in memory to identical light and dark palettes without writes or revision changes.
         /// <br/>            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.
         /// <br/>            Legacy Video (26) widgets in both collections are returned as YouTube (39), preserving KID, rectangle and order without database writes or revision changes.
@@ -41925,6 +41925,8 @@ namespace Kombine.Flex.Portal.Client
         _50 = 50,
 
         _51 = 51,
+
+        _52 = 52,
 
     }
 
