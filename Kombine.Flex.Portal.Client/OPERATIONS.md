@@ -119,6 +119,10 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetMyManagerTabsAsync` | GET | `/api/v1/session/me/tabs` |
 | `GetMyManagerWallboardDisplayAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerWallboardsAsync` | GET | `/api/v1/session/me/wallboards` |
+| `GetMyWallboardBankStorageAsync` | GET | `/api/v1/session/me/wallboards/bank-storage` |
+| `GetMyWallboardDatabaseLoadHistoryAsync` | GET | `/api/v1/session/me/wallboards/database-load-history` |
+| `GetMyWallboardLocationMapAsync` | GET | `/api/v1/session/me/wallboards/location-map` |
+| `GetMyWallboardReservationCalendarAsync` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetNearestLocationsAsync` | GET | `/api/v1/locations/nearest` |
 | `GetObjectAddressAsync` | GET | `/api/v1/addresses/{kid}` |
 | `GetOutOfOrderUnitsAsync` | GET | `/api/v1/units/out-of-service` |
@@ -136,6 +140,8 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetPublicReservationsAsync` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachinesAsync` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPublicScopedUnitProgressAsync` | GET | `/api/v1/public/widgets/progress/{kid}` |
+| `GetPublicWallboardAsync` | GET | `/api/v1/public/wallboard` |
+| `GetPublicWallboardEditorAsync` | GET | `/api/v1/session/me/wallboards/public` |
 | `GetPublicWidgetPresentationAsync` | GET | `/api/v1/public/widgets` |
 | `GetRecentCameraPhotoMetadataAsync` | GET | `/api/v1/camera/recent/{id}/metadata` |
 | `GetSearchBankAsync` | GET | `/api/v1/search/banks/{bankKid}` |
@@ -170,6 +176,10 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetUserReceiptsAsync` | GET | `/api/v1/users/{userKid}/receipts` |
 | `GetUsersAsync` | GET | `/api/v1/users` |
 | `GetWallboardDeviceAsync` | GET | `/api/v1/wallboard/devices/{deviceId}` |
+| `GetWallboardDisplayBankStorageAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
+| `GetWallboardDisplayDatabaseLoadHistoryAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` |
+| `GetWallboardDisplayLocationMapAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
+| `GetWallboardDisplayReservationCalendarAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
 | `GetWallboardPairingAsync` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
 | `InspectToolKidAsync` | POST | `/api/v1/tenant/tools/kid` |
 | `InviteManagerAsync` | POST | `/api/v1/managers/{managerKid}/invitation` |
@@ -188,6 +198,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `RevokeWallboardDeviceAsync` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
 | `SaveCameraCaptureAsync` | POST | `/api/v1/camera` |
 | `SaveMyManagerWallboardsAsync` | PUT | `/api/v1/session/me/wallboards` |
+| `SavePublicWallboardEditorAsync` | PUT | `/api/v1/session/me/wallboards/public` |
 | `SearchBankActivationAsync` | GET | `/api/v1/search/bank-activation` |
 | `SearchBanksAsync` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivationAsync` | GET | `/api/v1/search/location-activation` |

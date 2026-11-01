@@ -1379,6 +1379,51 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Bounded 24-hour MySQL load and CPU histories, without provider identifiers or labels.</summary>
+    public sealed class DatabaseLoadHistoryResponse
+    {
+        /// <summary>fromUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("fromUtc")]
+        public string FromUtc { get { return _FromUtc; } set { _FromUtc = value; } }
+        private string _FromUtc;
+
+        /// <summary>toUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("toUtc")]
+        public string ToUtc { get { return _ToUtc; } set { _ToUtc = value; } }
+        private string _ToUtc;
+
+        /// <summary>fetchedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("fetchedAtUtc")]
+        public string FetchedAtUtc { get { return _FetchedAtUtc; } set { _FetchedAtUtc = value; } }
+        private string _FetchedAtUtc;
+
+        /// <summary>refreshAfterSeconds</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+        /// <summary>series</summary>
+        [JsonField("series")]
+        public DatabaseLoadHistorySeries[] Series { get { return _Series; } set { _Series = value; } }
+        private DatabaseLoadHistorySeries[] _Series;
+
+        /// <summary>cpuSeries</summary>
+        [JsonField("cpuSeries")]
+        public DatabaseLoadHistorySeries[] CpuSeries { get { return _CpuSeries; } set { _CpuSeries = value; } }
+        private DatabaseLoadHistorySeries[] _CpuSeries;
+
+    }
+
+    /// <summary>One anonymous load series; null values represent missing samples.</summary>
+    public sealed class DatabaseLoadHistorySeries
+    {
+        /// <summary>points</summary>
+        [JsonField("points")]
+        public HostingPoint[] Points { get { return _Points; } set { _Points = value; } }
+        private HostingPoint[] _Points;
+
+    }
+
     /// <summary>The complete number of rows matching the authorized export selection.</summary>
     public sealed class DirectoryExportCountResponse
     {
@@ -4162,6 +4207,11 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
         private string _DisplayId;
 
+        /// <summary>targetDisplayId</summary>
+        [JsonField("targetDisplayId")]
+        public string TargetDisplayId { get { return _TargetDisplayId; } set { _TargetDisplayId = value; } }
+        private string _TargetDisplayId;
+
     }
 
     /// <summary>Own layout collection and opaque optimistic concurrency revision.</summary>
@@ -4186,6 +4236,26 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("storageLimitCharacters")]
         public int? StorageLimitCharacters { get { return _StorageLimitCharacters; } set { _StorageLimitCharacters = value; } }
         private int? _StorageLimitCharacters;
+
+        /// <summary>portalWallboard</summary>
+        [JsonField("portalWallboard")]
+        public Wallboard PortalWallboard { get { return _PortalWallboard; } set { _PortalWallboard = value; } }
+        private Wallboard _PortalWallboard;
+
+        /// <summary>portalStorageUsedCharacters</summary>
+        [JsonField("portalStorageUsedCharacters")]
+        public int? PortalStorageUsedCharacters { get { return _PortalStorageUsedCharacters; } set { _PortalStorageUsedCharacters = value; } }
+        private int? _PortalStorageUsedCharacters;
+
+        /// <summary>portalStorageLimitCharacters</summary>
+        [JsonField("portalStorageLimitCharacters")]
+        public int? PortalStorageLimitCharacters { get { return _PortalStorageLimitCharacters; } set { _PortalStorageLimitCharacters = value; } }
+        private int? _PortalStorageLimitCharacters;
+
+        /// <summary>dateFormat</summary>
+        [JsonField("dateFormat")]
+        public string DateFormat { get { return _DateFormat; } set { _DateFormat = value; } }
+        private string _DateFormat;
 
     }
 
@@ -4216,6 +4286,31 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("instance")]
         public string Instance { get { return _Instance; } set { _Instance = value; } }
         private string _Instance;
+
+    }
+
+    /// <summary>The separately revisioned tenant-wide wallboard stored for user zero.</summary>
+    public sealed class PublicWallboardEditorResponse
+    {
+        /// <summary>wallboard</summary>
+        [JsonField("wallboard")]
+        public Wallboard Wallboard { get { return _Wallboard; } set { _Wallboard = value; } }
+        private Wallboard _Wallboard;
+
+        /// <summary>Opaque revision.</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+        /// <summary>Stored characters.</summary>
+        [JsonField("storageUsedCharacters")]
+        public int? StorageUsedCharacters { get { return _StorageUsedCharacters; } set { _StorageUsedCharacters = value; } }
+        private int? _StorageUsedCharacters;
+
+        /// <summary>Maximum characters.</summary>
+        [JsonField("storageLimitCharacters")]
+        public int? StorageLimitCharacters { get { return _StorageLimitCharacters; } set { _StorageLimitCharacters = value; } }
+        private int? _StorageLimitCharacters;
 
     }
 
@@ -4256,6 +4351,26 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("wallboards")]
         public object Wallboards { get { return _Wallboards; } set { _Wallboards = value; } }
         private object _Wallboards;
+
+        /// <summary>portalWallboard</summary>
+        [JsonField("portalWallboard")]
+        public object PortalWallboard { get { return _PortalWallboard; } set { _PortalWallboard = value; } }
+        private object _PortalWallboard;
+
+    }
+
+    /// <summary>A revision-checked replacement of the public wallboard.</summary>
+    public sealed class SavePublicWallboardRequest
+    {
+        /// <summary>The revision from the editor read.</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+        /// <summary>The compact wallboard layout.</summary>
+        [JsonField("wallboard")]
+        public object Wallboard { get { return _Wallboard; } set { _Wallboard = value; } }
+        private object _Wallboard;
 
     }
 
@@ -6599,18 +6714,18 @@ namespace Kombine.Flex.Portal.Client.Compact20
     {
         /// <summary>i</summary>
         [JsonField("i")]
-        public string I { get { return _I; } set { _I = value; } }
-        private string _I;
+        public string[] I { get { return _I; } set { _I = value; } }
+        private string[] _I;
 
         /// <summary>n</summary>
         [JsonField("n")]
         public string N { get { return _N; } set { _N = value; } }
         private string _N;
 
-        /// <summary>p</summary>
-        [JsonField("p")]
-        public int? P { get { return _P; } set { _P = value; } }
-        private int? _P;
+        /// <summary>a</summary>
+        [JsonField("a")]
+        public double? A { get { return _A; } set { _A = value; } }
+        private double? _A;
 
         /// <summary>c</summary>
         [JsonField("c")]
@@ -6621,6 +6736,91 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("s")]
         public WallboardPage[] S { get { return _S; } set { _S = value; } }
         private WallboardPage[] _S;
+
+    }
+
+    /// <summary>One reservation without resident or payment details, in local minutes since 2000-01-01.</summary>
+    public sealed class WallboardAnonymousReservation
+    {
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>startMinute</summary>
+        [JsonField("startMinute")]
+        public int? StartMinute { get { return _StartMinute; } set { _StartMinute = value; } }
+        private int? _StartMinute;
+
+        /// <summary>durationMinutes</summary>
+        [JsonField("durationMinutes")]
+        public int? DurationMinutes { get { return _DurationMinutes; } set { _DurationMinutes = value; } }
+        private int? _DurationMinutes;
+
+    }
+
+    /// <summary>Saved byte measurements and their individual registration times; null means unknown.</summary>
+    public sealed class WallboardBankStorageItem
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>dataBytes</summary>
+        [JsonField("dataBytes")]
+        public string DataBytes { get { return _DataBytes; } set { _DataBytes = value; } }
+        private string _DataBytes;
+
+        /// <summary>indexBytes</summary>
+        [JsonField("indexBytes")]
+        public string IndexBytes { get { return _IndexBytes; } set { _IndexBytes = value; } }
+        private string _IndexBytes;
+
+        /// <summary>freeBytes</summary>
+        [JsonField("freeBytes")]
+        public string FreeBytes { get { return _FreeBytes; } set { _FreeBytes = value; } }
+        private string _FreeBytes;
+
+        /// <summary>dataRecordedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("dataRecordedAtUtc")]
+        public string DataRecordedAtUtc { get { return _DataRecordedAtUtc; } set { _DataRecordedAtUtc = value; } }
+        private string _DataRecordedAtUtc;
+
+        /// <summary>indexRecordedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("indexRecordedAtUtc")]
+        public string IndexRecordedAtUtc { get { return _IndexRecordedAtUtc; } set { _IndexRecordedAtUtc = value; } }
+        private string _IndexRecordedAtUtc;
+
+        /// <summary>freeRecordedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("freeRecordedAtUtc")]
+        public string FreeRecordedAtUtc { get { return _FreeRecordedAtUtc; } set { _FreeRecordedAtUtc = value; } }
+        private string _FreeRecordedAtUtc;
+
+    }
+
+    /// <summary>Bank storage values visible to this authorized Wallboard session.</summary>
+    public sealed class WallboardBankStorageResponse
+    {
+        /// <summary>fetchedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("fetchedAtUtc")]
+        public string FetchedAtUtc { get { return _FetchedAtUtc; } set { _FetchedAtUtc = value; } }
+        private string _FetchedAtUtc;
+
+        /// <summary>refreshAfterSeconds</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public WallboardBankStorageItem[] Items { get { return _Items; } set { _Items = value; } }
+        private WallboardBankStorageItem[] _Items;
 
     }
 
@@ -6681,6 +6881,56 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("revision")]
         public string Revision { get { return _Revision; } set { _Revision = value; } }
         private string _Revision;
+
+        /// <summary>dateFormat</summary>
+        [JsonField("dateFormat")]
+        public string DateFormat { get { return _DateFormat; } set { _DateFormat = value; } }
+        private string _DateFormat;
+
+    }
+
+    /// <summary>A location's canonical identity, name and WGS84 coordinates in decimal degrees.</summary>
+    public sealed class WallboardLocationMapItem
+    {
+        /// <summary>kid</summary>
+        [JsonField("kid")]
+        public string Kid { get { return _Kid; } set { _Kid = value; } }
+        private string _Kid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>latitude</summary>
+        [JsonField("latitude")]
+        public double? Latitude { get { return _Latitude; } set { _Latitude = value; } }
+        private double? _Latitude;
+
+        /// <summary>longitude</summary>
+        [JsonField("longitude")]
+        public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
+        private double? _Longitude;
+
+    }
+
+    /// <summary>Authorized visible locations with valid coordinates, never a partial catalogue.</summary>
+    public sealed class WallboardLocationMapResponse
+    {
+        /// <summary>fetchedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("fetchedAtUtc")]
+        public string FetchedAtUtc { get { return _FetchedAtUtc; } set { _FetchedAtUtc = value; } }
+        private string _FetchedAtUtc;
+
+        /// <summary>refreshAfterSeconds</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public WallboardLocationMapItem[] Items { get { return _Items; } set { _Items = value; } }
+        private WallboardLocationMapItem[] _Items;
 
     }
 
@@ -6784,6 +7034,41 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Configured dated calendars and anonymous current reservations in location-local time.</summary>
+    public sealed class WallboardReservationCalendarResponse
+    {
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>groups</summary>
+        [JsonField("groups")]
+        public LocationBookingCalendarGroup[] Groups { get { return _Groups; } set { _Groups = value; } }
+        private LocationBookingCalendarGroup[] _Groups;
+
+        /// <summary>timeZone</summary>
+        [JsonField("timeZone")]
+        public string TimeZone { get { return _TimeZone; } set { _TimeZone = value; } }
+        private string _TimeZone;
+
+        /// <summary>from ISO 8601 text, sent unchanged.</summary>
+        [JsonField("from")]
+        public string From { get { return _From; } set { _From = value; } }
+        private string _From;
+
+        /// <summary>days</summary>
+        [JsonField("days")]
+        public int? Days { get { return _Days; } set { _Days = value; } }
+        private int? _Days;
+
+        /// <summary>reservations</summary>
+        [JsonField("reservations")]
+        public WallboardAnonymousReservation[] Reservations { get { return _Reservations; } set { _Reservations = value; } }
+        private WallboardAnonymousReservation[] _Reservations;
+
+    }
+
     /// <summary>WallboardScanLocation</summary>
     public sealed class WallboardScanLocation
     {
@@ -6822,25 +7107,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string K { get { return _K; } set { _K = value; } }
         private string _K;
 
-        /// <summary>x</summary>
-        [JsonField("x")]
-        public int? X { get { return _X; } set { _X = value; } }
-        private int? _X;
-
-        /// <summary>y</summary>
-        [JsonField("y")]
-        public int? Y { get { return _Y; } set { _Y = value; } }
-        private int? _Y;
-
-        /// <summary>w</summary>
-        [JsonField("w")]
-        public int? W { get { return _W; } set { _W = value; } }
-        private int? _W;
-
-        /// <summary>h</summary>
-        [JsonField("h")]
-        public int? H { get { return _H; } set { _H = value; } }
-        private int? _H;
+        /// <summary>r</summary>
+        [JsonField("r")]
+        public int[] R { get { return _R; } set { _R = value; } }
+        private int[] _R;
 
     }
 
@@ -7476,6 +7746,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("brandIconUrl")]
         public string BrandIconUrl { get { return _BrandIconUrl; } set { _BrandIconUrl = value; } }
         private string _BrandIconUrl;
+
+        /// <summary>Display name from the trusted tenant's branding profile.</summary>
+        [JsonField("brandName")]
+        public string BrandName { get { return _BrandName; } set { _BrandName = value; } }
+        private string _BrandName;
+
+        /// <summary>Light-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable.</summary>
+        [JsonField("brandLogoUrl")]
+        public string BrandLogoUrl { get { return _BrandLogoUrl; } set { _BrandLogoUrl = value; } }
+        private string _BrandLogoUrl;
+
+        /// <summary>Dark-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable.</summary>
+        [JsonField("brandDarkLogoUrl")]
+        public string BrandDarkLogoUrl { get { return _BrandDarkLogoUrl; } set { _BrandDarkLogoUrl = value; } }
+        private string _BrandDarkLogoUrl;
 
         /// <summary>Public validated CSS custom properties for this tenant's light presentation.</summary>
         [JsonField("brandLightTokens")]
@@ -8283,6 +8568,15 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>cursor</summary>
         public string Cursor { get { return _Cursor; } set { _Cursor = value; } }
         private string _Cursor;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetWallboardDisplayDatabaseLoadHistory. Null values use API defaults.</summary>
+    public sealed class GetWallboardDisplayDatabaseLoadHistoryOptions
+    {
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
 
     }
 
@@ -9419,12 +9713,52 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Optional query/header parameters for GetWallboardDisplayBankStorage. Null values use API defaults.</summary>
+    public sealed class GetWallboardDisplayBankStorageOptions
+    {
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetWallboardDisplayLocationMap. Null values use API defaults.</summary>
+    public sealed class GetWallboardDisplayLocationMapOptions
+    {
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
+
+    }
+
     /// <summary>Optional query/header parameters for FindWallboardPairings. Null values use API defaults.</summary>
     public sealed class FindWallboardPairingsOptions
     {
         /// <summary>displayId</summary>
         public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
         private string _DisplayId;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetMyWallboardReservationCalendar. Null values use API defaults.</summary>
+    public sealed class GetMyWallboardReservationCalendarOptions
+    {
+        /// <summary>locationKid</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetWallboardDisplayReservationCalendar. Null values use API defaults.</summary>
+    public sealed class GetWallboardDisplayReservationCalendarOptions
+    {
+        /// <summary>locationKid</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
 
     }
 

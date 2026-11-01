@@ -2301,6 +2301,65 @@
     "example": {}
   },
   {
+    "operation": "GetMyWallboardDatabaseLoadHistory",
+    "python": "get_my_wallboard_database_load_history",
+    "javascript": "getMyWallboardDatabaseLoadHistory",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/database-load-history",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayDatabaseLoadHistory",
+    "python": "get_wallboard_display_database_load_history",
+    "javascript": "getWallboardDisplayDatabaseLoadHistory",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/database-load-history",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "ExportBankAccount",
     "python": "export_bank_account",
     "javascript": "exportBankAccount",
@@ -6551,6 +6610,48 @@
     "example": {}
   },
   {
+    "operation": "GetPublicWallboardEditor",
+    "python": "get_public_wallboard_editor",
+    "javascript": "getPublicWallboardEditor",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/public",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "SavePublicWallboardEditor",
+    "python": "save_public_wallboard_editor",
+    "javascript": "savePublicWallboardEditor",
+    "method": "PUT",
+    "path": "api/v1/session/me/wallboards/public",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/SavePublicWallboardRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetMyManagerWallboardDisplay",
     "python": "get_my_manager_wallboard_display",
     "javascript": "getMyManagerWallboardDisplay",
@@ -6787,6 +6888,26 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicWallboard",
+    "python": "get_public_wallboard",
+    "javascript": "getPublicWallboard",
+    "method": "GET",
+    "path": "api/v1/public/wallboard",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDisplayResponse"
     },
     "binary": false,
     "example": {}
@@ -9138,6 +9259,124 @@
     "example": {}
   },
   {
+    "operation": "GetMyWallboardBankStorage",
+    "python": "get_my_wallboard_bank_storage",
+    "javascript": "getMyWallboardBankStorage",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/bank-storage",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardBankStorageResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayBankStorage",
+    "python": "get_wallboard_display_bank_storage",
+    "javascript": "getWallboardDisplayBankStorage",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/bank-storage",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardBankStorageResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardLocationMap",
+    "python": "get_my_wallboard_location_map",
+    "javascript": "getMyWallboardLocationMap",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/location-map",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationMapResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayLocationMap",
+    "python": "get_wallboard_display_location_map",
+    "javascript": "getWallboardDisplayLocationMap",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/location-map",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationMapResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "StartWallboardPairing",
     "python": "start_wallboard_pairing",
     "javascript": "startWallboardPairing",
@@ -9403,6 +9642,84 @@
     "response": null,
     "binary": false,
     "example": null
+  },
+  {
+    "operation": "GetMyWallboardReservationCalendar",
+    "python": "get_my_wallboard_reservation_calendar",
+    "javascript": "getMyWallboardReservationCalendar",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/reservation-calendar",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayReservationCalendar",
+    "python": "get_wallboard_display_reservation_calendar",
+    "javascript": "getWallboardDisplayReservationCalendar",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/reservation-calendar",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+    },
+    "binary": false,
+    "example": {}
   },
   {
     "operation": "GetPortalAppDownloadPage",

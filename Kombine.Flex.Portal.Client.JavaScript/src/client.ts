@@ -193,6 +193,16 @@ export class PortalClient extends BaseClient {
     return this.send("GetChecklistPeriod", {"periodKid": periodKid}, undefined, request) as Promise<Models.ChecklistItem>;
   }
 
+  /** Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview. */
+  getMyWallboardDatabaseLoadHistory(request: RequestOptions = {}): Promise<Models.DatabaseLoadHistoryResponse> {
+    return this.send("GetMyWallboardDatabaseLoadHistory", {}, undefined, request) as Promise<Models.DatabaseLoadHistoryResponse>;
+  }
+
+  /** Read the Team MySQL cluster's load and CPU history for a display that contains the widget. */
+  getWallboardDisplayDatabaseLoadHistory(displayId: string, options: Models.GetWallboardDisplayDatabaseLoadHistoryOptions = {}, request: RequestOptions = {}): Promise<Models.DatabaseLoadHistoryResponse> {
+    return this.send("GetWallboardDisplayDatabaseLoadHistory", {"displayId": displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.DatabaseLoadHistoryResponse>;
+  }
+
   /** Downloads the complete filtered selection as CSV or a genuine Excel workbook. */
   exportBankAccount(bankKid: string, options: Models.ExportBankAccountOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
     return this.send("ExportBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit, "format": options.format}, undefined, request) as Promise<PortalDownload>;
@@ -493,6 +503,16 @@ export class PortalClient extends BaseClient {
     return this.send("SaveMyManagerWallboards", {}, body, request) as Promise<Models.PersonalWallboardsResponse>;
   }
 
+  /** Read the tenant-wide public wallboard for editing. */
+  getPublicWallboardEditor(request: RequestOptions = {}): Promise<Models.PublicWallboardEditorResponse> {
+    return this.send("GetPublicWallboardEditor", {}, undefined, request) as Promise<Models.PublicWallboardEditorResponse>;
+  }
+
+  /** Save the tenant-wide public wallboard with a revision check. */
+  savePublicWallboardEditor(body: Models.SavePublicWallboardRequest, request: RequestOptions = {}): Promise<Models.PublicWallboardEditorResponse> {
+    return this.send("SavePublicWallboardEditor", {}, body, request) as Promise<Models.PublicWallboardEditorResponse>;
+  }
+
   /** Read the selected orientation for one of your Wallboards. */
   getMyManagerWallboardDisplay(displayId: string, options: Models.GetMyManagerWallboardDisplayOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardDisplayResponse> {
     return this.send("GetMyManagerWallboardDisplay", {"displayId": displayId, "portrait": options.portrait, "after": options.after}, undefined, request) as Promise<Models.WallboardDisplayResponse>;
@@ -536,6 +556,11 @@ export class PortalClient extends BaseClient {
   /** Change your password after reauthentication and repeated new-password entry. */
   changeMyManagerPassword(body: Models.PersonalPasswordRequest, request: RequestOptions = {}): Promise<Models.PersonalAccountResult> {
     return this.send("ChangeMyManagerPassword", {}, body, request) as Promise<Models.PersonalAccountResult>;
+  }
+
+  /** Read the trusted tenant's public wallboard without manager data. */
+  getPublicWallboard(request: RequestOptions = {}): Promise<Models.WallboardDisplayResponse> {
+    return this.send("GetPublicWallboard", {}, undefined, request) as Promise<Models.WallboardDisplayResponse>;
   }
 
   /** Count the complete filtered export selection using the same directory authorization and visibility. */
@@ -773,6 +798,26 @@ export class PortalClient extends BaseClient {
     return this.send("SearchUserActivation", {"q": options.q}, undefined, request) as Promise<Models.SearchResults>;
   }
 
+  /** Read visible banks' saved storage measurements for a manager preview. */
+  getMyWallboardBankStorage(request: RequestOptions = {}): Promise<Models.WallboardBankStorageResponse> {
+    return this.send("GetMyWallboardBankStorage", {}, undefined, request) as Promise<Models.WallboardBankStorageResponse>;
+  }
+
+  /** Read saved bank storage measurements for an approved display containing the widget. */
+  getWallboardDisplayBankStorage(displayId: string, options: Models.GetWallboardDisplayBankStorageOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardBankStorageResponse> {
+    return this.send("GetWallboardDisplayBankStorage", {"displayId": displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.WallboardBankStorageResponse>;
+  }
+
+  /** Read all visible locations with valid coordinates for a manager preview. */
+  getMyWallboardLocationMap(request: RequestOptions = {}): Promise<Models.WallboardLocationMapResponse> {
+    return this.send("GetMyWallboardLocationMap", {}, undefined, request) as Promise<Models.WallboardLocationMapResponse>;
+  }
+
+  /** Read visible coordinates for an approved screen whose selected layout contains LocationMap. */
+  getWallboardDisplayLocationMap(displayId: string, options: Models.GetWallboardDisplayLocationMapOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardLocationMapResponse> {
+    return this.send("GetWallboardDisplayLocationMap", {"displayId": displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.WallboardLocationMapResponse>;
+  }
+
   /** Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code. */
   startWallboardPairing(body: Models.StartWallboardPairing, request: RequestOptions = {}): Promise<Models.WallboardPairingStarted> {
     return this.send("StartWallboardPairing", {}, body, request) as Promise<Models.WallboardPairingStarted>;
@@ -816,6 +861,16 @@ export class PortalClient extends BaseClient {
   /** Revoke a screen you approved. Its existing bearer sessions also lose access. */
   revokeWallboardDevice(deviceId: string, request: RequestOptions = {}): Promise<void> {
     return this.send("RevokeWallboardDevice", {"deviceId": deviceId}, undefined, request) as Promise<void>;
+  }
+
+  /** Read two local days of a location's reservation schedule and anonymous occupancy for a preview. */
+  getMyWallboardReservationCalendar(options: Models.GetMyWallboardReservationCalendarOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardReservationCalendarResponse> {
+    return this.send("GetMyWallboardReservationCalendar", {"locationKid": options.locationKid}, undefined, request) as Promise<Models.WallboardReservationCalendarResponse>;
+  }
+
+  /** Read one location's schedule and anonymous occupancy for its approved screen. */
+  getWallboardDisplayReservationCalendar(displayId: string, options: Models.GetWallboardDisplayReservationCalendarOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardReservationCalendarResponse> {
+    return this.send("GetWallboardDisplayReservationCalendar", {"displayId": displayId, "locationKid": options.locationKid, "portrait": options.portrait}, undefined, request) as Promise<Models.WallboardReservationCalendarResponse>;
   }
 
   /** Displays Windows downloads for this tenant, or an explicit unavailable state. */

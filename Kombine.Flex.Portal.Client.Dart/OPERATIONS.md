@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-206 operations. OpenAPI SHA-256: `2155b8dab4f4c3cc81799e8594679bb4049aa7ab7f29d4ec7c2bbb9020281402`.
+217 operations. OpenAPI SHA-256: `adb5a85c18ae5f40726c034e64bea11e84311a56b201bb5bb5aa5a08375334b2`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -42,6 +42,8 @@
 | `GetRecentCameraPhotoMetadata` | `getRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` |
 | `GetChecklist` | `getChecklist` | GET | `/api/v1/settlement-checklist` |
 | `GetChecklistPeriod` | `getChecklistPeriod` | GET | `/api/v1/settlement-checklist/{periodKid}` |
+| `GetMyWallboardDatabaseLoadHistory` | `getMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` |
+| `GetWallboardDisplayDatabaseLoadHistory` | `getWallboardDisplayDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` |
 | `ExportBankAccount` | `exportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsers` | `exportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` |
 | `DownloadBankSettlement` | `downloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
@@ -102,6 +104,8 @@
 | `AddMyManagerWallboard` | `addMyManagerWallboard` | POST | `/api/v1/session/me/wallboards` |
 | `GetMyManagerWallboards` | `getMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` |
 | `SaveMyManagerWallboards` | `saveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` |
+| `GetPublicWallboardEditor` | `getPublicWallboardEditor` | GET | `/api/v1/session/me/wallboards/public` |
+| `SavePublicWallboardEditor` | `savePublicWallboardEditor` | PUT | `/api/v1/session/me/wallboards/public` |
 | `GetMyManagerWallboardDisplay` | `getMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerApiKey` | `getMyManagerApiKey` | GET | `/api/v1/session/me/api-key` |
 | `GenerateMyManagerApiKey` | `generateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` |
@@ -111,6 +115,7 @@
 | `RequestMyManagerEmailVerification` | `requestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` |
 | `ConfirmMyManagerEmail` | `confirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` |
 | `ChangeMyManagerPassword` | `changeMyManagerPassword` | POST | `/api/v1/session/me/password` |
+| `GetPublicWallboard` | `getPublicWallboard` | GET | `/api/v1/public/wallboard` |
 | `GetServiceExportCount` | `getServiceExportCount` | GET | `/api/v1/services/export-count` |
 | `GetServices` | `getServices` | GET | `/api/v1/services` |
 | `GetServiceCount` | `getServiceCount` | GET | `/api/v1/services/count` |
@@ -158,6 +163,10 @@
 | `SearchUsers` | `searchUsers` | GET | `/api/v1/search/users` |
 | `SearchUserSms` | `searchUserSms` | GET | `/api/v1/search/user-sms` |
 | `SearchUserActivation` | `searchUserActivation` | GET | `/api/v1/search/user-activation` |
+| `GetMyWallboardBankStorage` | `getMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` |
+| `GetWallboardDisplayBankStorage` | `getWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
+| `GetMyWallboardLocationMap` | `getMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` |
+| `GetWallboardDisplayLocationMap` | `getWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
 | `StartWallboardPairing` | `startWallboardPairing` | POST | `/api/v1/wallboard/pairings` |
 | `FindWallboardPairings` | `findWallboardPairings` | GET | `/api/v1/wallboard/pairings` |
 | `GetWallboardPairing` | `getWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
@@ -167,6 +176,8 @@
 | `ResumeWallboardSession` | `resumeWallboardSession` | POST | `/api/v1/wallboard/devices/{deviceId}/session` |
 | `GetWallboardDevice` | `getWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` |
 | `RevokeWallboardDevice` | `revokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
+| `GetMyWallboardReservationCalendar` | `getMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
+| `GetWallboardDisplayReservationCalendar` | `getWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
 | `GetPortalAppDownloadPage` | `getPortalAppDownloadPage` | GET | `/download` |
 | `DownloadPortalWindowsAppInstaller` | `downloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackage` | `downloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` |

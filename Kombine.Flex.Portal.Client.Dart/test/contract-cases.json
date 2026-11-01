@@ -2107,6 +2107,61 @@
     "binary": false
   },
   {
+    "operation": "GetMyWallboardDatabaseLoadHistory",
+    "dartMethod": "getMyWallboardDatabaseLoadHistory",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/database-load-history",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetWallboardDisplayDatabaseLoadHistory",
+    "dartMethod": "getWallboardDisplayDatabaseLoadHistory",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/database-load-history",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "ExportBankAccount",
     "dartMethod": "exportBankAccount",
     "example": null,
@@ -6159,6 +6214,46 @@
     "binary": false
   },
   {
+    "operation": "GetPublicWallboardEditor",
+    "dartMethod": "getPublicWallboardEditor",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/public",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "SavePublicWallboardEditor",
+    "dartMethod": "savePublicWallboardEditor",
+    "example": null,
+    "method": "PUT",
+    "path": "api/v1/session/me/wallboards/public",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/SavePublicWallboardRequest"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetMyManagerWallboardDisplay",
     "dartMethod": "getMyManagerWallboardDisplay",
     "example": null,
@@ -6382,6 +6477,25 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetPublicWallboard",
+    "dartMethod": "getPublicWallboard",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/public/wallboard",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDisplayResponse"
     },
     "binary": false
   },
@@ -8544,6 +8658,116 @@
     "binary": false
   },
   {
+    "operation": "GetMyWallboardBankStorage",
+    "dartMethod": "getMyWallboardBankStorage",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/bank-storage",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardBankStorageResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetWallboardDisplayBankStorage",
+    "dartMethod": "getWallboardDisplayBankStorage",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/bank-storage",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardBankStorageResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetMyWallboardLocationMap",
+    "dartMethod": "getMyWallboardLocationMap",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/location-map",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationMapResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetWallboardDisplayLocationMap",
+    "dartMethod": "getWallboardDisplayLocationMap",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/location-map",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationMapResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "StartWallboardPairing",
     "dartMethod": "startWallboardPairing",
     "example": null,
@@ -8791,6 +9015,78 @@
     "bodyRequired": false,
     "multipart": null,
     "response": null,
+    "binary": false
+  },
+  {
+    "operation": "GetMyWallboardReservationCalendar",
+    "dartMethod": "getMyWallboardReservationCalendar",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/reservation-calendar",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetWallboardDisplayReservationCalendar",
+    "dartMethod": "getWallboardDisplayReservationCalendar",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/reservation-calendar",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+    },
     "binary": false
   },
   {

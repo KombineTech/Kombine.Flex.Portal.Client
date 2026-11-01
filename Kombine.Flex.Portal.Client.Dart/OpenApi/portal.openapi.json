@@ -6743,6 +6743,284 @@
         ]
       }
     },
+    "/api/v1/session/me/wallboards/database-load-history": {
+      "get": {
+        "tags": [
+          "DatabaseLoadHistory"
+        ],
+        "summary": "Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview.",
+        "description": "Requires active Team manager, Wallboard1, Hosting1, Managers Read and a whole-tenant grant. Hosting permissions use the existing manager snapshot, which is at most 60 seconds old. Series contains load1; CpuSeries contains actual CPU percentage from 0 to 100. Each source may independently return an empty array; both failing returns 503. Uses fixed server configuration; no provider IDs or credentials are returned. Invalid stored wallboards return 409 invalid-stored-wallboards.",
+        "operationId": "GetMyWallboardDatabaseLoadHistory",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/display/{displayId}/database-load-history": {
+      "get": {
+        "tags": [
+          "DatabaseLoadHistory"
+        ],
+        "summary": "Read the Team MySQL cluster's load and CPU history for a display that contains the widget.",
+        "description": "Approved screen sessions are bound to their own display and recheck the approving manager's Wallboard1, Hosting1, Managers Read and whole-tenant access on each request. Hosting permissions use the existing manager snapshot, which is at most 60 seconds old. Invalid stored wallboards return 409 invalid-stored-wallboards.",
+        "operationId": "GetWallboardDisplayDatabaseLoadHistory",
+        "parameters": [
+          {
+            "name": "displayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "portrait",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/banks/{bankKid}/account/export": {
       "get": {
         "tags": [
@@ -17010,7 +17288,7 @@
           "PersonalManager"
         ],
         "summary": "Read your own Wallboard1 editor layouts and concurrency revision.",
-        "description": "Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.\r\n            Reads only the authenticated manager's bank-zero Log7 WallBoards. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.\r\n            Enums 2.0.151: layout i/n/a/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.\r\n            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.\r\n            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.\r\n            Unknown stored fields or malformed layouts return 409 without changing them.",
+        "description": "Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.\r\n            Reads only the authenticated manager's bank-zero Log7 WallBoards and PortalWallboard. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.\r\n            Enums 2.0.153: layout i/n/a/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.\r\n            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.\r\n            Legacy Video (26) widgets in both collections are returned as YouTube (39), preserving KID, rectangle and order without database writes or revision changes.\r\n            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.\r\n            The response includes the owner's validated dateFormat for Clock widgets. Empty uses the browser language; explicit date-only or 12/24-hour formats affect presentation, not layout data or revision.\r\n            Unknown stored fields or malformed layouts return 409 without changing them.",
         "operationId": "GetMyManagerWallboards",
         "responses": {
           "200": {
@@ -17108,7 +17386,7 @@
           "PersonalManager"
         ],
         "summary": "Save your own Wallboard1 layouts and optional portal overview layout.",
-        "description": "Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.\r\n            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.\r\n            Every display ID in every i array must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.\r\n            The response also contains one portalWallboard and its separate storage usage/limit. When absent from storage it is an in-memory default and is not written on GET. It is not a display or QR registration.\r\n            A supplied portalWallboard must be a non-null object with the same i array as the current singleton; it cannot be deleted. Its update and the display collection are committed in one transaction using the combined editor revision.\r\n            A legacy request omitting portalWallboard leaves that setting untouched and accepts either the physical collection revision or the combined editor revision. Display reads retain their physical collection revision.\r\n            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.\r\n            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].\r\n            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.\r\n            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.\r\n            Widget type uses numeric eWidgetType values 0-10; None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. Only LiveMachines and WashDoc accept a canonical same-site KID with a current resource grant; other widgets use public tenant scope.\r\n            Only existing public widget APIs render content. No business permissions, device approvals or grants are changed.\r\n            Empty lists remove display layouts only. Each serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include separate used/limit values for the collection and portal singleton.\r\n            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.",
+        "description": "Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.\r\n            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.\r\n            Every display ID in every i array must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.\r\n            The response also contains one portalWallboard and its separate storage usage/limit. When absent from storage it is an in-memory default and is not written on GET. It is not a display or QR registration.\r\n            A supplied portalWallboard must be a non-null object with the same i array as the current singleton; it cannot be deleted. Its update and the display collection are committed in one transaction using the combined editor revision.\r\n            A legacy request omitting portalWallboard leaves that setting untouched and accepts either the physical collection revision or the combined editor revision. Display reads retain their physical collection revision.\r\n            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.\r\n            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].\r\n            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.\r\n            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.\r\n            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40) and Wistia (41) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar requires a location KID; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured; other widgets accept only the default scope and optional light/dark style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.\r\n            Vimeo (40) accepts only Kid.Text containing a positive 1–20-digit decimal ID without leading zero and optional / followed by a 10-character lowercase hexadecimal privacy hash. Wistia (41) accepts only a 10-character lowercase ASCII letter/digit media ID. Both allow optional Style 0/1/2 and empty/style-only unconfigured KIDs. URLs, HTML, other KID fields and noncanonical references return 400 invalid-wallboard-widget; no provider content or credentials are fetched by this API.\r\n            Legacy input t=26 is normalized to YouTube (39) before widget validation and unchanged-small-widget matching; a successful authorized, revision-checked save writes t=39. KID and rectangle values are preserved. Video (26) is not a separate implemented type. LiveLocation (42), displayed as Location status, composes the existing public Machine status widgets for a canonical same-tenant location with optional Style.\r\n            Weather uses the public standalone Wallboard API with the exact screen ID and saved scan position before client-IP fallback. Clock uses the device's local time and the owner's dateFormat. No business permissions, device approvals or grants are changed.\r\n            Empty lists remove display layouts only. Each serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include separate used/limit values for the collection and portal singleton.\r\n            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.",
         "operationId": "SaveMyManagerWallboards",
         "requestBody": {
           "content": {
@@ -17241,13 +17519,244 @@
         ]
       }
     },
+    "/api/v1/session/me/wallboards/public": {
+      "get": {
+        "tags": [
+          "PersonalManager"
+        ],
+        "summary": "Read the tenant-wide public wallboard for editing.",
+        "description": "Requires Wallboard1 and an explicit whole-tenant grant. Reads only eSetting.PortalWallboard for user 0 and unit 0 in the trusted tenant. Missing data is an in-memory default. No anonymous access is granted by this operation.",
+        "operationId": "GetPublicWallboardEditor",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "PersonalManager"
+        ],
+        "summary": "Save the tenant-wide public wallboard with a revision check.",
+        "description": "Requires Wallboard1 and an explicit whole-tenant grant, rechecked against the locked manager account. Writes only user 0 and unit 0's PortalWallboard setting. Conflicts and invalid layouts leave stored data unchanged.",
+        "operationId": "SavePublicWallboardEditor",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePublicWallboardRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePublicWallboardRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePublicWallboardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/session/me/wallboards/display/{displayId}": {
       "get": {
         "tags": [
           "PersonalManager"
         ],
         "summary": "Read the selected orientation for one of your Wallboards.",
-        "description": "Active manager with Wallboard1, or an approved read-only screen bound to this exact display.\r\n            Rechecks current credentials, tab and scoped-widget grants; device sessions additionally pass durable approval validation.\r\n            Finds the requested ID in the layout's i array and falls back to the other orientation. A missing layout returns 200 with layout=null. An approved screen receives only its own ID in i; a manager receives the full array.\r\n            Optional after is the last 64-hex revision: waits up to eight seconds if unchanged. A committed save on this API instance wakes the request immediately.\r\n            Returns the same response shape, including on timeout. Reconnect with the returned revision; credentials, grants and device approval are checked again before returning.\r\n            Other replicas or external writers are discovered at timeout. Cancel when hidden. 400 invalid-wallboard-revision; 429 wallboard-watch-limit requires backoff.",
+        "description": "Active manager with Wallboard1, or an approved read-only screen bound to this exact display.\r\n            Rechecks current credentials, tab and scoped-widget grants; device sessions additionally pass durable approval validation.\r\n            Finds the requested ID in the layout's i array and falls back to the other orientation. A missing layout returns 200 with layout=null. An approved screen receives only its own ID in i; a manager receives the full array.\r\n            Optional after is the last 64-hex revision: waits up to eight seconds if unchanged. A committed save on this API instance wakes the request immediately.\r\n            Returns the same response shape, including on timeout. Reconnect with the returned revision; credentials, grants and device approval are checked again before returning.\r\n            Both immediate and revision-wait responses return legacy stored Video (26) widgets as YouTube (39), preserving KID and rectangle without writes or revision changes.\r\n            dateFormat is the authorized owner's validated presentation preference, not part of the layout revision. Apply it even when the revision is unchanged; empty uses the browser language and the device's time zone is retained.\r\n            Other replicas or external writers are discovered at timeout. Cancel when hidden. 400 invalid-wallboard-revision; 429 wallboard-watch-limit requires backoff.",
         "operationId": "GetMyManagerWallboardDisplay",
         "parameters": [
           {
@@ -18251,6 +18760,41 @@
             "ManagerBearer": []
           }
         ]
+      }
+    },
+    "/api/v1/public/wallboard": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Read the trusted tenant's public wallboard without manager data.",
+        "description": "Reads only user 0, unit 0's PortalWallboard setting. Protected widget types are returned as empty widgets. LiveLocation (42), displayed as Location status, uses the existing public machine-progress source; malformed or cross-tenant location KIDs are also returned as empty widgets without changing their geometry. A missing setting returns the default empty layout; this operation never creates or writes it.",
+        "operationId": "GetPublicWallboard",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardDisplayResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardDisplayResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardDisplayResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
       }
     },
     "/api/v1/services/export-count": {
@@ -25048,6 +25592,482 @@
         ]
       }
     },
+    "/api/v1/session/me/wallboards/bank-storage": {
+      "get": {
+        "tags": [
+          "WallboardBankStorage"
+        ],
+        "summary": "Read visible banks' saved storage measurements for a manager preview.",
+        "description": "Requires active manager, Wallboard1, Bank Read and whole-bank or whole-tenant resource grants. Location-only grants do not expose bank totals. Permission snapshots are at most 60 seconds old. Values are nonnegative decimal byte strings or null; each timestamp is its recorded state time. More than 10000 visible banks returns 503 without partial results. Invalid stored wallboards return 409.",
+        "operationId": "GetMyWallboardBankStorage",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardBankStorageResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardBankStorageResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardBankStorageResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/display/{displayId}/bank-storage": {
+      "get": {
+        "tags": [
+          "WallboardBankStorage"
+        ],
+        "summary": "Read saved bank storage measurements for an approved display containing the widget.",
+        "description": "Screen sessions may read only their bound display and only while its selected layout contains DatabaseBankStorage. The approving manager must retain Wallboard1, Bank Read and whole-bank or whole-tenant grants; device approval is checked again after the read. Permission snapshots are at most 60 seconds old.",
+        "operationId": "GetWallboardDisplayBankStorage",
+        "parameters": [
+          {
+            "name": "displayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "portrait",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardBankStorageResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardBankStorageResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardBankStorageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/location-map": {
+      "get": {
+        "tags": [
+          "WallboardLocationMap"
+        ],
+        "summary": "Read all visible locations with valid coordinates for a manager preview.",
+        "description": "Requires Wallboard1, Bank Read, Location Read and a tenant, bank or location grant. The existing location directory visibility and retention apply. The request fails with 503 rather than returning a partial map if over 10000 catalogue rows or 4 MiB. Permission snapshots are at most 60 seconds old.",
+        "operationId": "GetMyWallboardLocationMap",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardLocationMapResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardLocationMapResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardLocationMapResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/display/{displayId}/location-map": {
+      "get": {
+        "tags": [
+          "WallboardLocationMap"
+        ],
+        "summary": "Read visible coordinates for an approved screen whose selected layout contains LocationMap.",
+        "description": "The screen may read only its bound display; its approving manager must retain Wallboard1, Bank Read, Location Read and matching resource grants. Device approval is rechecked after the read.",
+        "operationId": "GetWallboardDisplayLocationMap",
+        "parameters": [
+          {
+            "name": "displayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "portrait",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardLocationMapResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardLocationMapResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardLocationMapResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/wallboard/pairings": {
       "post": {
         "tags": [
@@ -25825,6 +26845,320 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/reservation-calendar": {
+      "get": {
+        "tags": [
+          "WallboardReservationCalendar"
+        ],
+        "summary": "Read two local days of a location's reservation schedule and anonymous occupancy for a preview.",
+        "description": "Requires Wallboard1, Bookings1, Location, Unit and User Read, and matching location grant/retention visibility. The location KID must be canonical and belong to this site. No resident identifiers, names, numbers or payments are read or returned. Unknown schedules are not free. Active weekly reservations or malformed start times return 503 because their occupancy cannot be safely projected. No writes; 503 means unavailable, not free.",
+        "operationId": "GetMyWallboardReservationCalendar",
+        "parameters": [
+          {
+            "name": "locationKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar": {
+      "get": {
+        "tags": [
+          "WallboardReservationCalendar"
+        ],
+        "summary": "Read one location's schedule and anonymous occupancy for its approved screen.",
+        "description": "The exact location must be present on a ReservationCalendar widget in the selected screen layout. Device, layout and manager access are rechecked after the read.",
+        "operationId": "GetWallboardDisplayReservationCalendar",
+        "parameters": [
+          {
+            "name": "displayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locationKid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "portrait",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
             "content": {
               "text/plain": {
                 "schema": {
@@ -29008,7 +30342,7 @@
           "Public"
         ],
         "summary": "Get localized labels and the site's palette for the shared JavaScript widgets.",
-        "description": "No login. Tenant comes exclusively from trusted site configuration. Accept-Language selects a supported language, with Danish fallback for missing translations. Washco uses English. This operation reads no database. Load /docs/widgets.mjs and call mountWidgets; see /docs/widgets for live examples. Business data comes from the existing public statistics operations and retains their bounds, caches, error responses and anonymous read-only CORS policy.",
+        "description": "No login. Tenant comes exclusively from trusted site configuration. BrandName and light/dark logo URLs come from that tenant's validated branding profile; local logo paths are resolved against the configured HTTPS Portal Web origin, or null when that origin is unavailable. Accept-Language selects a supported language, with Danish fallback for missing translations. Washco uses English. This operation reads no database. Load /docs/widgets.mjs and call mountWidgets; see /docs/widgets for live examples. Business data comes from the existing public statistics operations and retains their bounds, caches, error responses and anonymous read-only CORS policy.",
         "operationId": "GetPublicWidgetPresentation",
         "responses": {
           "200": {
@@ -30499,6 +31833,57 @@
         },
         "additionalProperties": false,
         "description": "Site database access indicator, never a manager permission or a guarantee for a business operation."
+      },
+      "DatabaseLoadHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "fromUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "toUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fetchedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+            },
+            "nullable": true
+          },
+          "cpuSeries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Bounded 24-hour MySQL load and CPU histories, without provider identifiers or labels."
+      },
+      "DatabaseLoadHistorySeries": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HostingPoint"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One anonymous load series; null values represent missing samples."
       },
       "DirectoryExportCountResponse": {
         "type": "object",
@@ -33469,6 +34854,10 @@
           "portalStorageLimitCharacters": {
             "type": "integer",
             "format": "int32"
+          },
+          "dateFormat": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -33500,6 +34889,31 @@
           }
         },
         "additionalProperties": {}
+      },
+      "PublicWallboardEditorResponse": {
+        "type": "object",
+        "properties": {
+          "wallboard": {
+            "$ref": "#/components/schemas/Wallboard"
+          },
+          "revision": {
+            "type": "string",
+            "description": "Opaque revision.",
+            "nullable": true
+          },
+          "storageUsedCharacters": {
+            "type": "integer",
+            "description": "Stored characters.",
+            "format": "int32"
+          },
+          "storageLimitCharacters": {
+            "type": "integer",
+            "description": "Maximum characters.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The separately revisioned tenant-wide wallboard stored for user zero."
       },
       "RedeemWallboardPairing": {
         "type": "object",
@@ -33540,6 +34954,24 @@
         },
         "additionalProperties": false,
         "description": "Replaces own layouts only when the current revision matches; no automatic retries."
+      },
+      "SavePublicWallboardRequest": {
+        "required": [
+          "wallboard"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "string",
+            "description": "The revision from the editor read.",
+            "nullable": true
+          },
+          "wallboard": {
+            "description": "The compact wallboard layout."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A revision-checked replacement of the public wallboard."
       },
       "SearchResult": {
         "type": "object",
@@ -35862,6 +37294,89 @@
         },
         "additionalProperties": false
       },
+      "WallboardAnonymousReservation": {
+        "type": "object",
+        "properties": {
+          "unitKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "startMinute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One reservation without resident or payment details, in local minutes since 2000-01-01."
+      },
+      "WallboardBankStorageItem": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataBytes": {
+            "type": "string",
+            "nullable": true
+          },
+          "indexBytes": {
+            "type": "string",
+            "nullable": true
+          },
+          "freeBytes": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataRecordedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "indexRecordedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "freeRecordedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Saved byte measurements and their individual registration times; null means unknown."
+      },
+      "WallboardBankStorageResponse": {
+        "type": "object",
+        "properties": {
+          "fetchedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WallboardBankStorageItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Bank storage values visible to this authorized Wallboard session."
+      },
       "WallboardDeviceChallenge": {
         "type": "object",
         "properties": {
@@ -35910,10 +37425,59 @@
           "revision": {
             "type": "string",
             "nullable": true
+          },
+          "dateFormat": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "One display's selected orientation; null means no configured layout."
+      },
+      "WallboardLocationMapItem": {
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A location's canonical identity, name and WGS84 coordinates in decimal degrees."
+      },
+      "WallboardLocationMapResponse": {
+        "type": "object",
+        "properties": {
+          "fetchedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WallboardLocationMapItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Authorized visible locations with valid coordinates, never a partial catalogue."
       },
       "WallboardPage": {
         "type": "object",
@@ -36005,6 +37569,43 @@
           }
         },
         "additionalProperties": false
+      },
+      "WallboardReservationCalendarResponse": {
+        "type": "object",
+        "properties": {
+          "locationKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationBookingCalendarGroup"
+            },
+            "nullable": true
+          },
+          "timeZone": {
+            "type": "string",
+            "nullable": true
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "days": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WallboardAnonymousReservation"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Configured dated calendars and anonymous current reservations in location-local time."
       },
       "WallboardScanLocation": {
         "type": "object",
@@ -36440,7 +38041,11 @@
           35,
           36,
           37,
-          38
+          38,
+          39,
+          40,
+          41,
+          42
         ],
         "type": "integer",
         "format": "int32"
@@ -36800,6 +38405,21 @@
             "description": "Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable.",
             "nullable": true
           },
+          "brandName": {
+            "type": "string",
+            "description": "Display name from the trusted tenant's branding profile.",
+            "nullable": true
+          },
+          "brandLogoUrl": {
+            "type": "string",
+            "description": "Light-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable.",
+            "nullable": true
+          },
+          "brandDarkLogoUrl": {
+            "type": "string",
+            "description": "Dark-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable.",
+            "nullable": true
+          },
           "brandLightTokens": {
             "type": "object",
             "additionalProperties": {
@@ -37062,6 +38682,9 @@
       "name": "Checklist"
     },
     {
+      "name": "DatabaseLoadHistory"
+    },
+    {
       "name": "Downloads"
     },
     {
@@ -37140,6 +38763,9 @@
       "name": "PersonalManager"
     },
     {
+      "name": "Public"
+    },
+    {
       "name": "Services"
     },
     {
@@ -37188,7 +38814,16 @@
       "name": "UserSearch"
     },
     {
+      "name": "WallboardBankStorage"
+    },
+    {
+      "name": "WallboardLocationMap"
+    },
+    {
       "name": "WallboardPairing"
+    },
+    {
+      "name": "WallboardReservationCalendar"
     }
   ],
   "x-source-documents": [

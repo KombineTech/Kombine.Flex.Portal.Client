@@ -51,6 +51,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ChecklistProcessing array{'invoice'?: ChecklistStatus, 'soapInvoice'?: ChecklistStatus, 'soapCredit'?: ChecklistStatus, 'easyPay'?: ChecklistStatus}
  * @phpstan-type ChecklistStatus array{'code'?: int|null, 'state'?: string|null}
  * @phpstan-type DatabaseAccessResponse array{'canWrite'?: bool|null, 'checkedAtUtc'?: string}
+ * @phpstan-type DatabaseLoadHistoryResponse array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'series'?: list<DatabaseLoadHistorySeries>|null, 'cpuSeries'?: list<DatabaseLoadHistorySeries>|null}
+ * @phpstan-type DatabaseLoadHistorySeries array{'points'?: list<HostingPoint>|null}
  * @phpstan-type DirectoryExportCountResponse array{'count'?: int}
  * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type DocumentColumn array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
@@ -150,11 +152,13 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PersonalProfileRequest array{'revision': string|null, 'value': mixed}
  * @phpstan-type PersonalTabRequest array{'revision': string|null, 'enabled': bool}
  * @phpstan-type PersonalWallboardRequest array{'displayId': string|null, 'targetDisplayId'?: string|null}
- * @phpstan-type PersonalWallboardsResponse array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int, 'portalWallboard'?: Wallboard, 'portalStorageUsedCharacters'?: int, 'portalStorageLimitCharacters'?: int}
+ * @phpstan-type PersonalWallboardsResponse array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int, 'portalWallboard'?: Wallboard, 'portalStorageUsedCharacters'?: int, 'portalStorageLimitCharacters'?: int, 'dateFormat'?: string|null}
  * @phpstan-type ProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
+ * @phpstan-type PublicWallboardEditorResponse array{'wallboard'?: Wallboard, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int}
  * @phpstan-type RedeemWallboardPairing array{'deviceCode'?: string|null}
  * @phpstan-type ResumeWallboardSession array{'challenge'?: string|null, 'signature'?: string|null}
  * @phpstan-type SavePersonalWallboardsRequest array{'revision'?: string|null, 'wallboards': mixed, 'portalWallboard'?: mixed}
+ * @phpstan-type SavePublicWallboardRequest array{'revision'?: string|null, 'wallboard': mixed}
  * @phpstan-type SearchResult array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type SearchResults array{'items'?: list<SearchResult>|null, 'hasMore'?: bool}
  * @phpstan-type ServiceApiKeyRequest array{'expectedRevision': string|null}
@@ -227,13 +231,19 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserWorkspaceResponse array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'number'?: string|null, 'deletedAtUtc'?: string|null, 'deleteAtUtc'?: string|null, 'locations'?: list<UserScopeState>|null, 'tags'?: list<UserScopeState>|null, 'attributes'?: list<UserAttributeInput>|null, 'canWrite'?: bool, 'canCreate'?: bool, 'synchronization'?: string|null, 'canDelete'?: bool, 'canRenameExternalId'?: bool, 'canRename'?: bool, 'iconKid'?: string|null, 'availableIcons'?: list<string>|null, 'canEditIcon'?: bool}
  * @phpstan-type ValidationProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
  * @phpstan-type Wallboard array{'i'?: list<string>|null, 'n'?: string|null, 'a'?: int|float, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
+ * @phpstan-type WallboardAnonymousReservation array{'unitKid'?: string|null, 'startMinute'?: int, 'durationMinutes'?: int}
+ * @phpstan-type WallboardBankStorageItem array{'kid'?: string|null, 'name'?: string|null, 'dataBytes'?: string|null, 'indexBytes'?: string|null, 'freeBytes'?: string|null, 'dataRecordedAtUtc'?: string|null, 'indexRecordedAtUtc'?: string|null, 'freeRecordedAtUtc'?: string|null}
+ * @phpstan-type WallboardBankStorageResponse array{'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<WallboardBankStorageItem>|null}
  * @phpstan-type WallboardDeviceChallenge array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
  * @phpstan-type WallboardDeviceInfo array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
- * @phpstan-type WallboardDisplayResponse array{'layout'?: Wallboard, 'revision'?: string|null}
+ * @phpstan-type WallboardDisplayResponse array{'layout'?: Wallboard, 'revision'?: string|null, 'dateFormat'?: string|null}
+ * @phpstan-type WallboardLocationMapItem array{'kid'?: string|null, 'name'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float}
+ * @phpstan-type WallboardLocationMapResponse array{'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<WallboardLocationMapItem>|null}
  * @phpstan-type WallboardPage array{'n'?: string|null, 'd'?: int, 's'?: list<WallboardWidget>|null}
  * @phpstan-type WallboardPairingInfo array{'pairingId'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'approved'?: bool}
  * @phpstan-type WallboardPairingStarted array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'intervalSeconds'?: int}
  * @phpstan-type WallboardPairingToken array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null, 'displayId'?: string|null}
+ * @phpstan-type WallboardReservationCalendarResponse array{'locationKid'?: string|null, 'groups'?: list<LocationBookingCalendarGroup>|null, 'timeZone'?: string|null, 'from'?: string, 'days'?: int, 'reservations'?: list<WallboardAnonymousReservation>|null}
  * @phpstan-type WallboardScanLocation array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float, 'capturedAt'?: string}
  * @phpstan-type WallboardWidget array{'t'?: eWidgetType, 'k'?: string|null, 'r'?: list<int>|null}
  * @phpstan-type WashDocChartDosing array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
@@ -257,7 +267,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PublicMachineErrorsPage array{'items'?: list<PublicMachineError>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
  * @phpstan-type PublicScopedProgressItem array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string|null, 'doneAtUtc'?: string|null, 'progress'?: UnitProgressResponse}
  * @phpstan-type PublicScopedProgressResponse array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PublicScopedProgressItem>|null, 'nextCursor'?: string|null}
- * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
+ * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandName'?: string|null, 'brandLogoUrl'?: string|null, 'brandDarkLogoUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
  * @phpstan-type PurchaseCurrencySnapshot array{'currency'?: string|null, 'count'?: int, 'amount'?: int|float}
  * @phpstan-type PurchaseHeatmapPoint array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
  * @phpstan-type PurchaseMapPoint array{'kid'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float, 'timestampUtc'?: string, 'amount'?: int|float}
@@ -678,6 +688,26 @@ final class PortalClient extends BaseClient
     public function getChecklistPeriod(mixed $periodKid): mixed
     {
         return $this->request('GetChecklistPeriod', ['periodKid' => $periodKid], null);
+    }
+
+    /**
+     * Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview.
+     * @return DatabaseLoadHistoryResponse
+     */
+    public function getMyWallboardDatabaseLoadHistory(): mixed
+    {
+        return $this->request('GetMyWallboardDatabaseLoadHistory', [], null);
+    }
+
+    /**
+     * Read the Team MySQL cluster's load and CPU history for a display that contains the widget.
+     * @param string $displayId
+     * @param array{'portrait'?: bool} $options
+     * @return DatabaseLoadHistoryResponse
+     */
+    public function getWallboardDisplayDatabaseLoadHistory(mixed $displayId, array $options = []): mixed
+    {
+        return $this->request('GetWallboardDisplayDatabaseLoadHistory', ['displayId' => $displayId] + $options, null);
     }
 
     /**
@@ -1315,6 +1345,25 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Read the tenant-wide public wallboard for editing.
+     * @return PublicWallboardEditorResponse
+     */
+    public function getPublicWallboardEditor(): mixed
+    {
+        return $this->request('GetPublicWallboardEditor', [], null);
+    }
+
+    /**
+     * Save the tenant-wide public wallboard with a revision check.
+     * @param SavePublicWallboardRequest $body
+     * @return PublicWallboardEditorResponse
+     */
+    public function savePublicWallboardEditor(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('SavePublicWallboardEditor', [], $body);
+    }
+
+    /**
      * Read the selected orientation for one of your Wallboards.
      * @param string $displayId
      * @param array{'portrait'?: bool, 'after'?: string} $options
@@ -1403,6 +1452,15 @@ final class PortalClient extends BaseClient
     public function changeMyManagerPassword(#[\SensitiveParameter] array $body): mixed
     {
         return $this->request('ChangeMyManagerPassword', [], $body);
+    }
+
+    /**
+     * Read the trusted tenant's public wallboard without manager data.
+     * @return WallboardDisplayResponse
+     */
+    public function getPublicWallboard(): mixed
+    {
+        return $this->request('GetPublicWallboard', [], null);
     }
 
     /**
@@ -1903,6 +1961,46 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Read visible banks' saved storage measurements for a manager preview.
+     * @return WallboardBankStorageResponse
+     */
+    public function getMyWallboardBankStorage(): mixed
+    {
+        return $this->request('GetMyWallboardBankStorage', [], null);
+    }
+
+    /**
+     * Read saved bank storage measurements for an approved display containing the widget.
+     * @param string $displayId
+     * @param array{'portrait'?: bool} $options
+     * @return WallboardBankStorageResponse
+     */
+    public function getWallboardDisplayBankStorage(mixed $displayId, array $options = []): mixed
+    {
+        return $this->request('GetWallboardDisplayBankStorage', ['displayId' => $displayId] + $options, null);
+    }
+
+    /**
+     * Read all visible locations with valid coordinates for a manager preview.
+     * @return WallboardLocationMapResponse
+     */
+    public function getMyWallboardLocationMap(): mixed
+    {
+        return $this->request('GetMyWallboardLocationMap', [], null);
+    }
+
+    /**
+     * Read visible coordinates for an approved screen whose selected layout contains LocationMap.
+     * @param string $displayId
+     * @param array{'portrait'?: bool} $options
+     * @return WallboardLocationMapResponse
+     */
+    public function getWallboardDisplayLocationMap(mixed $displayId, array $options = []): mixed
+    {
+        return $this->request('GetWallboardDisplayLocationMap', ['displayId' => $displayId] + $options, null);
+    }
+
+    /**
      * Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code.
      * @param StartWallboardPairing $body
      * @return WallboardPairingStarted
@@ -1993,6 +2091,27 @@ final class PortalClient extends BaseClient
     public function revokeWallboardDevice(mixed $deviceId): mixed
     {
         return $this->request('RevokeWallboardDevice', ['deviceId' => $deviceId], null);
+    }
+
+    /**
+     * Read two local days of a location's reservation schedule and anonymous occupancy for a preview.
+     * @param array{'locationKid'?: string} $options
+     * @return WallboardReservationCalendarResponse
+     */
+    public function getMyWallboardReservationCalendar(array $options = []): mixed
+    {
+        return $this->request('GetMyWallboardReservationCalendar', [] + $options, null);
+    }
+
+    /**
+     * Read one location's schedule and anonymous occupancy for its approved screen.
+     * @param string $displayId
+     * @param array{'locationKid'?: string, 'portrait'?: bool} $options
+     * @return WallboardReservationCalendarResponse
+     */
+    public function getWallboardDisplayReservationCalendar(mixed $displayId, array $options = []): mixed
+    {
+        return $this->request('GetWallboardDisplayReservationCalendar', ['displayId' => $displayId] + $options, null);
     }
 
     /**

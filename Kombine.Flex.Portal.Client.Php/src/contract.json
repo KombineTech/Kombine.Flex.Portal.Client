@@ -1257,6 +1257,55 @@
       },
       "additionalProperties": false
     },
+    "DatabaseLoadHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "fromUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "toUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fetchedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "series": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+          },
+          "nullable": true
+        },
+        "cpuSeries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "DatabaseLoadHistorySeries": {
+      "type": "object",
+      "properties": {
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/HostingPoint"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "DirectoryExportCountResponse": {
       "type": "object",
       "properties": {
@@ -3942,6 +3991,10 @@
         "portalStorageLimitCharacters": {
           "type": "integer",
           "format": "int32"
+        },
+        "dateFormat": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -3972,6 +4025,27 @@
         }
       },
       "additionalProperties": {}
+    },
+    "PublicWallboardEditorResponse": {
+      "type": "object",
+      "properties": {
+        "wallboard": {
+          "$ref": "#/components/schemas/Wallboard"
+        },
+        "revision": {
+          "type": "string",
+          "nullable": true
+        },
+        "storageUsedCharacters": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "storageLimitCharacters": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
     },
     "RedeemWallboardPairing": {
       "type": "object",
@@ -4009,6 +4083,20 @@
         },
         "wallboards": {},
         "portalWallboard": {}
+      },
+      "additionalProperties": false
+    },
+    "SavePublicWallboardRequest": {
+      "required": [
+        "wallboard"
+      ],
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "string",
+          "nullable": true
+        },
+        "wallboard": {}
       },
       "additionalProperties": false
     },
@@ -6190,6 +6278,86 @@
       },
       "additionalProperties": false
     },
+    "WallboardAnonymousReservation": {
+      "type": "object",
+      "properties": {
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "startMinute": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "durationMinutes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardBankStorageItem": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "dataBytes": {
+          "type": "string",
+          "nullable": true
+        },
+        "indexBytes": {
+          "type": "string",
+          "nullable": true
+        },
+        "freeBytes": {
+          "type": "string",
+          "nullable": true
+        },
+        "dataRecordedAtUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "indexRecordedAtUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "freeRecordedAtUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardBankStorageResponse": {
+      "type": "object",
+      "properties": {
+        "fetchedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WallboardBankStorageItem"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "WallboardDeviceChallenge": {
       "type": "object",
       "properties": {
@@ -6237,6 +6405,53 @@
         },
         "revision": {
           "type": "string",
+          "nullable": true
+        },
+        "dateFormat": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardLocationMapItem": {
+      "type": "object",
+      "properties": {
+        "kid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardLocationMapResponse": {
+      "type": "object",
+      "properties": {
+        "fetchedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WallboardLocationMapItem"
+          },
           "nullable": true
         }
       },
@@ -6328,6 +6543,42 @@
         },
         "displayId": {
           "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardReservationCalendarResponse": {
+      "type": "object",
+      "properties": {
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/LocationBookingCalendarGroup"
+          },
+          "nullable": true
+        },
+        "timeZone": {
+          "type": "string",
+          "nullable": true
+        },
+        "from": {
+          "type": "string",
+          "format": "date"
+        },
+        "days": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "reservations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WallboardAnonymousReservation"
+          },
           "nullable": true
         }
       },
@@ -6966,6 +7217,18 @@
           "nullable": true
         },
         "brandIconUrl": {
+          "type": "string",
+          "nullable": true
+        },
+        "brandName": {
+          "type": "string",
+          "nullable": true
+        },
+        "brandLogoUrl": {
+          "type": "string",
+          "nullable": true
+        },
+        "brandDarkLogoUrl": {
           "type": "string",
           "nullable": true
         },
@@ -9091,6 +9354,53 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ChecklistItem"
+      },
+      "binary": false
+    },
+    "GetMyWallboardDatabaseLoadHistory": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/database-load-history",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+      },
+      "binary": false
+    },
+    "GetWallboardDisplayDatabaseLoadHistory": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/display/{displayId}/database-load-history",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "displayId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
       },
       "binary": false
     },
@@ -11222,6 +11532,38 @@
       },
       "binary": false
     },
+    "GetPublicWallboardEditor": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/public",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+      },
+      "binary": false
+    },
+    "SavePublicWallboardEditor": {
+      "method": "PUT",
+      "path": "api/v1/session/me/wallboards/public",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": {
+        "$ref": "#/components/schemas/SavePublicWallboardRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+      },
+      "binary": false
+    },
     "GetMyManagerWallboardDisplay": {
       "method": "GET",
       "path": "api/v1/session/me/wallboards/display/{displayId}",
@@ -11410,6 +11752,21 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PersonalAccountResult"
+      },
+      "binary": false
+    },
+    "GetPublicWallboard": {
+      "method": "GET",
+      "path": "api/v1/public/wallboard",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardDisplayResponse"
       },
       "binary": false
     },
@@ -13324,6 +13681,100 @@
       },
       "binary": false
     },
+    "GetMyWallboardBankStorage": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/bank-storage",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardBankStorageResponse"
+      },
+      "binary": false
+    },
+    "GetWallboardDisplayBankStorage": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/display/{displayId}/bank-storage",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "displayId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardBankStorageResponse"
+      },
+      "binary": false
+    },
+    "GetMyWallboardLocationMap": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/location-map",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardLocationMapResponse"
+      },
+      "binary": false
+    },
+    "GetWallboardDisplayLocationMap": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/display/{displayId}/location-map",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "displayId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardLocationMapResponse"
+      },
+      "binary": false
+    },
     "StartWallboardPairing": {
       "method": "POST",
       "path": "api/v1/wallboard/pairings",
@@ -13536,6 +13987,70 @@
       "body": null,
       "multipart": null,
       "response": null,
+      "binary": false
+    },
+    "GetMyWallboardReservationCalendar": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/reservation-calendar",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "locationKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+      },
+      "binary": false
+    },
+    "GetWallboardDisplayReservationCalendar": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/display/{displayId}/reservation-calendar",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "displayId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "locationKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+      },
       "binary": false
     },
     "GetPortalAppDownloadPage": {
