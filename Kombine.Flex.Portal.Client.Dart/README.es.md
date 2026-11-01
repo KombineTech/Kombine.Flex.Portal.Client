@@ -1,4 +1,4 @@
-La versión 0.17.0 añade GetPublicReservedMachines e incluye 221 operaciones. El enum contiene los valores 47–51; el servidor solo habilita los tipos de widget implementados.
+La versión 0.18.0 incluye GetPublicReservedMachines e incluye 221 operaciones. El enum contiene los valores 47–51; el servidor solo habilita los tipos de widget implementados.
 
 La versión 0.15.0 usa paletas c claras y oscuras separadas en diseños Wallboard; migre los arrays c planos antes de guardar. El cliente cubre 220 operaciones. Consulte el registro de cambios de la API.
 

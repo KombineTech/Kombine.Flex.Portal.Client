@@ -1,6 +1,10 @@
+## 0.18.0
+
+- Correct the release history documentation.
+
 ## 0.17.0
 
-- Add the public reserved-machines statistic and update the Wallboard widget enum.
+- Correct release notes and versioning while retaining the reserved-machines endpoint and updated widget enum from 0.16.0.
 
 ## 0.16.0
 
