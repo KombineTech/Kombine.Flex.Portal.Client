@@ -1,3 +1,8 @@
+## 0.22.0
+
+- Add revision-checked public/private wallboard page transfers and wallboard change polling.
+- Refresh nullable account date filters and widget type definitions.
+
 ## 0.21.0
 
 - Add protected activity and application load widget operations.

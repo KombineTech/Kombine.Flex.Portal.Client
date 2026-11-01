@@ -399,9 +399,9 @@ class PortalClient(BaseClient):
         'Add a scanned display to your own WallBoards layout setting.'
         return self._request('AddMyManagerWallboard', {}, body)
 
-    def get_my_manager_wallboards(self) -> PersonalWallboardsResponse:
+    def get_my_manager_wallboards(self, *, after: str | None = None) -> PersonalWallboardsResponse:
         'Read your own Wallboard1 editor layouts and concurrency revision.'
-        return self._request('GetMyManagerWallboards', {}, None)
+        return self._request('GetMyManagerWallboards', {'after': after}, None)
 
     def save_my_manager_wallboards(self, body: SavePersonalWallboardsRequest) -> PersonalWallboardsResponse:
         'Save your own Wallboard1 layouts and optional portal overview layout.'
@@ -414,6 +414,10 @@ class PortalClient(BaseClient):
     def save_public_wallboard_editor(self, body: SavePublicWallboardRequest) -> PublicWallboardEditorResponse:
         'Save the tenant-wide public wallboard with a revision check.'
         return self._request('SavePublicWallboardEditor', {}, body)
+
+    def move_public_wallboard_page(self, body: MovePublicWallboardPageRequest) -> MovePublicWallboardPageResponse:
+        'Move one page between the public wallboard and your private Portal or an existing approved display layout.'
+        return self._request('MovePublicWallboardPage', {}, body)
 
     def get_my_manager_wallboard_display(self, display_id: str, *, portrait: bool | None = None, after: str | None = None) -> WallboardDisplayResponse:
         'Read the selected orientation for one of your Wallboards.'
@@ -451,9 +455,9 @@ class PortalClient(BaseClient):
         'Change your password after reauthentication and repeated new-password entry.'
         return self._request('ChangeMyManagerPassword', {}, body)
 
-    def get_public_wallboard(self) -> WallboardDisplayResponse:
+    def get_public_wallboard(self, *, after: str | None = None) -> WallboardDisplayResponse:
         "Read the trusted tenant's public wallboard without manager data."
-        return self._request('GetPublicWallboard', {}, None)
+        return self._request('GetPublicWallboard', {'after': after}, None)
 
     def get_service_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None) -> DirectoryExportCountResponse:
         'Count the complete filtered export selection using the same directory authorization and visibility.'

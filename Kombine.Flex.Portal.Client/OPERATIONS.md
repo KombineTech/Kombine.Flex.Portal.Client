@@ -193,6 +193,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `InviteManagerAsync` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `LoginManagerAsync` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinatesAsync` | POST | `/api/v1/addresses/{kid}/lookup` |
+| `MovePublicWallboardPageAsync` | POST | `/api/v1/session/me/wallboards/public/move-page` |
 | `PrepareCameraCaptureAsync` | POST | `/api/v1/camera/prepare` |
 | `ReadMyWallboardPlexStreamAsync` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` |
 | `RedeemWallboardPairingAsync` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` |

@@ -3664,6 +3664,66 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Moves one committed page between public and private layouts. Indexes are zero-based and bound to both revisions. ToPublic selects publication; SourceDisplayId then selects the private source instead of TargetDisplayId.</summary>
+    public sealed class MovePublicWallboardPageRequest
+    {
+        /// <summary>revision</summary>
+        [JsonField("revision")]
+        public string Revision { get { return _Revision; } set { _Revision = value; } }
+        private string _Revision;
+
+        /// <summary>publicRevision</summary>
+        [JsonField("publicRevision")]
+        public string PublicRevision { get { return _PublicRevision; } set { _PublicRevision = value; } }
+        private string _PublicRevision;
+
+        /// <summary>pageIndex</summary>
+        [JsonField("pageIndex")]
+        public int? PageIndex { get { return _PageIndex; } set { _PageIndex = value; } }
+        private int? _PageIndex;
+
+        /// <summary>targetPageIndex</summary>
+        [JsonField("targetPageIndex")]
+        public int? TargetPageIndex { get { return _TargetPageIndex; } set { _TargetPageIndex = value; } }
+        private int? _TargetPageIndex;
+
+        /// <summary>targetDisplayId</summary>
+        [JsonField("targetDisplayId")]
+        public string TargetDisplayId { get { return _TargetDisplayId; } set { _TargetDisplayId = value; } }
+        private string _TargetDisplayId;
+
+        /// <summary>portrait</summary>
+        [JsonField("portrait")]
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
+
+        /// <summary>toPublic</summary>
+        [JsonField("toPublic")]
+        public bool? ToPublic { get { return _ToPublic; } set { _ToPublic = value; } }
+        private bool? _ToPublic;
+
+        /// <summary>sourceDisplayId</summary>
+        [JsonField("sourceDisplayId")]
+        public string SourceDisplayId { get { return _SourceDisplayId; } set { _SourceDisplayId = value; } }
+        private string _SourceDisplayId;
+
+    }
+
+    /// <summary>Both committed settings after an atomic page move across the public/private boundary.</summary>
+    public sealed class MovePublicWallboardPageResponse
+    {
+        /// <summary>personal</summary>
+        [JsonField("personal")]
+        public PersonalWallboardsResponse Personal { get { return _Personal; } set { _Personal = value; } }
+        private PersonalWallboardsResponse _Personal;
+
+        /// <summary>public</summary>
+        [JsonField("public")]
+        public PublicWallboardEditorResponse Public { get { return _Public; } set { _Public = value; } }
+        private PublicWallboardEditorResponse _Public;
+
+    }
+
     /// <summary>Authorized display identity and great-circle distance in metres, without the caller's position.</summary>
     public sealed class NearestLocationItem
     {
@@ -7912,12 +7972,12 @@ namespace Kombine.Flex.Portal.Client.Net20
         public string GoogleMapsBrowserKey { get { return _GoogleMapsBrowserKey; } set { _GoogleMapsBrowserKey = value; } }
         private string _GoogleMapsBrowserKey;
 
-        /// <summary>The trusted tenant's wallboard map renderer; other maps retain their existing renderer.</summary>
+        /// <summary>Trusted tenant's wallboard map renderer: google or maptiler. Applies to LocationMap (36), purchase-map (7) and revenue heatmap (8); other maps retain their current renderer.</summary>
         [JsonField("mapProvider")]
         public string MapProvider { get { return _MapProvider; } set { _MapProvider = value; } }
         private string _MapProvider;
 
-        /// <summary>Public MapTiler browser key, restricted to configured origins; null when disabled or missing.</summary>
+        /// <summary>Public MapTiler browser key, restricted by allowed HTTP origins at MapTiler; never a server credential. Null when disabled or not configured. An enabled provider without its key is unavailable and must not silently change providers.</summary>
         [JsonField("mapTilerBrowserKey")]
         public string MapTilerBrowserKey { get { return _MapTilerBrowserKey; } set { _MapTilerBrowserKey = value; } }
         private string _MapTilerBrowserKey;
@@ -7942,22 +8002,22 @@ namespace Kombine.Flex.Portal.Client.Net20
         public string BrandDarkLogoUrl { get { return _BrandDarkLogoUrl; } set { _BrandDarkLogoUrl = value; } }
         private string _BrandDarkLogoUrl;
 
-        /// <summary>Tenant's symbol-only light logo, or null when unavailable.</summary>
+        /// <summary>Tenant's symbol-only light logo, or null when this variant is unavailable.</summary>
         [JsonField("brandLogoMarkUrl")]
         public string BrandLogoMarkUrl { get { return _BrandLogoMarkUrl; } set { _BrandLogoMarkUrl = value; } }
         private string _BrandLogoMarkUrl;
 
-        /// <summary>Tenant's symbol-only dark logo, or null when unavailable.</summary>
+        /// <summary>Tenant's symbol-only dark logo, or null when this variant is unavailable.</summary>
         [JsonField("brandDarkLogoMarkUrl")]
         public string BrandDarkLogoMarkUrl { get { return _BrandDarkLogoMarkUrl; } set { _BrandDarkLogoMarkUrl = value; } }
         private string _BrandDarkLogoMarkUrl;
 
-        /// <summary>Tenant's text-only light logo, or null when unavailable.</summary>
+        /// <summary>Tenant's text-only light logo, or null when this variant is unavailable.</summary>
         [JsonField("brandLogoWordmarkUrl")]
         public string BrandLogoWordmarkUrl { get { return _BrandLogoWordmarkUrl; } set { _BrandLogoWordmarkUrl = value; } }
         private string _BrandLogoWordmarkUrl;
 
-        /// <summary>Tenant's text-only dark logo, or null when unavailable.</summary>
+        /// <summary>Tenant's text-only dark logo, or null when this variant is unavailable.</summary>
         [JsonField("brandDarkLogoWordmarkUrl")]
         public string BrandDarkLogoWordmarkUrl { get { return _BrandDarkLogoWordmarkUrl; } set { _BrandDarkLogoWordmarkUrl = value; } }
         private string _BrandDarkLogoWordmarkUrl;
@@ -8186,7 +8246,7 @@ namespace Kombine.Flex.Portal.Client.Net20
         public string From { get { return _From; } set { _From = value; } }
         private string _From;
 
-        /// <summary>Last inclusive date in TimeZone; defaults to today. ISO 8601 text, sent unchanged.</summary>
+        /// <summary>Optional last inclusive date in TimeZone; omitted means no upper date boundary. ISO 8601 text, sent unchanged.</summary>
         public string Through { get { return _Through; } set { _Through = value; } }
         private string _Through;
 
@@ -8247,7 +8307,7 @@ namespace Kombine.Flex.Portal.Client.Net20
         public string From { get { return _From; } set { _From = value; } }
         private string _From;
 
-        /// <summary>Last inclusive date in TimeZone; defaults to today. ISO 8601 text, sent unchanged.</summary>
+        /// <summary>Optional last inclusive date in TimeZone; omitted means no upper date boundary. ISO 8601 text, sent unchanged.</summary>
         public string Through { get { return _Through; } set { _Through = value; } }
         private string _Through;
 
@@ -8812,7 +8872,7 @@ namespace Kombine.Flex.Portal.Client.Net20
         public string From { get { return _From; } set { _From = value; } }
         private string _From;
 
-        /// <summary>Last inclusive date in TimeZone; defaults to today. ISO 8601 text, sent unchanged.</summary>
+        /// <summary>Optional last inclusive date in TimeZone; omitted means no upper date boundary. ISO 8601 text, sent unchanged.</summary>
         public string Through { get { return _Through; } set { _Through = value; } }
         private string _Through;
 
@@ -9362,6 +9422,15 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Optional query/header parameters for GetMyManagerWallboards. Null values use API defaults.</summary>
+    public sealed class GetMyManagerWallboardsOptions
+    {
+        /// <summary>after</summary>
+        public string After { get { return _After; } set { _After = value; } }
+        private string _After;
+
+    }
+
     /// <summary>Optional query/header parameters for GetMyManagerWallboardDisplay. Null values use API defaults.</summary>
     public sealed class GetMyManagerWallboardDisplayOptions
     {
@@ -9370,6 +9439,15 @@ namespace Kombine.Flex.Portal.Client.Net20
         private bool? _Portrait;
 
         /// <summary>after</summary>
+        public string After { get { return _After; } set { _After = value; } }
+        private string _After;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetPublicWallboard. Null values use API defaults.</summary>
+    public sealed class GetPublicWallboardOptions
+    {
+        /// <summary>Optional 64-character hexadecimal public revision. If unchanged, wait for a public commit or at most eight seconds, then reread and apply the anonymous projection. Invalid revisions return 400; watch capacity is bounded (429).</summary>
         public string After { get { return _After; } set { _After = value; } }
         private string _After;
 

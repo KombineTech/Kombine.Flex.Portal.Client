@@ -494,8 +494,8 @@ export class PortalClient extends BaseClient {
   }
 
   /** Read your own Wallboard1 editor layouts and concurrency revision. */
-  getMyManagerWallboards(request: RequestOptions = {}): Promise<Models.PersonalWallboardsResponse> {
-    return this.send("GetMyManagerWallboards", {}, undefined, request) as Promise<Models.PersonalWallboardsResponse>;
+  getMyManagerWallboards(options: Models.GetMyManagerWallboardsOptions = {}, request: RequestOptions = {}): Promise<Models.PersonalWallboardsResponse> {
+    return this.send("GetMyManagerWallboards", {"after": options.after}, undefined, request) as Promise<Models.PersonalWallboardsResponse>;
   }
 
   /** Save your own Wallboard1 layouts and optional portal overview layout. */
@@ -511,6 +511,11 @@ export class PortalClient extends BaseClient {
   /** Save the tenant-wide public wallboard with a revision check. */
   savePublicWallboardEditor(body: Models.SavePublicWallboardRequest, request: RequestOptions = {}): Promise<Models.PublicWallboardEditorResponse> {
     return this.send("SavePublicWallboardEditor", {}, body, request) as Promise<Models.PublicWallboardEditorResponse>;
+  }
+
+  /** Move one page between the public wallboard and your private Portal or an existing approved display layout. */
+  movePublicWallboardPage(body: Models.MovePublicWallboardPageRequest, request: RequestOptions = {}): Promise<Models.MovePublicWallboardPageResponse> {
+    return this.send("MovePublicWallboardPage", {}, body, request) as Promise<Models.MovePublicWallboardPageResponse>;
   }
 
   /** Read the selected orientation for one of your Wallboards. */
@@ -559,8 +564,8 @@ export class PortalClient extends BaseClient {
   }
 
   /** Read the trusted tenant's public wallboard without manager data. */
-  getPublicWallboard(request: RequestOptions = {}): Promise<Models.WallboardDisplayResponse> {
-    return this.send("GetPublicWallboard", {}, undefined, request) as Promise<Models.WallboardDisplayResponse>;
+  getPublicWallboard(options: Models.GetPublicWallboardOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardDisplayResponse> {
+    return this.send("GetPublicWallboard", {"after": options.after}, undefined, request) as Promise<Models.WallboardDisplayResponse>;
   }
 
   /** Count the complete filtered export selection using the same directory authorization and visibility. */

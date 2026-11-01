@@ -191,6 +191,7 @@
 | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` |
 | `LoginManager` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` |
+| `MovePublicWallboardPage` | POST | `/api/v1/session/me/wallboards/public/move-page` |
 | `PrepareCameraCapture` | POST | `/api/v1/camera/prepare` |
 | `ReadMyWallboardPlexStream` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` |
 | `RedeemWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` |

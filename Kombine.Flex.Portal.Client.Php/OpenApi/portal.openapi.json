@@ -139,7 +139,7 @@
           "Accounts"
         ],
         "summary": "Lists Account2 postings with full-selection totals per currency.",
-        "description": "### Access\r\n            \r\n- Requires **Account2** and **Bank, Location, Unit and User Read**.\r\n- Location grants limit the rows, totals and available filter choices.\r\n- No business data is read when access is denied.\r\n            \r\n### Filters and paging\r\n            \r\n- Repeat `locationKids` for up to 1000 authorized locations; the same selection applies to totals, revision and export.\r\n- Defaults to **today** in `Europe/Copenhagen`. Both dates are inclusive; the maximum interval is **367 days**.\r\n- An explicit `period` replaces the date filter.\r\n- Sorted newest first, then by location and unit.\r\n- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. Responses are not cached.\r\n            \r\n### Settlement periods\r\n            \r\n- The latest **100 closed period IDs** come from bank-level **LogA**.\r\n- With location-limited access, each offered period must also contain an authorized **Log1** posting.\r\n- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.\r\n            \r\n### Amounts and timestamps\r\n            \r\n- `amountMinor` preserves the signed Log1 amount. Totals describe **filtered movements**, not an account balance.\r\n- `MS2000` / `recordedAtUtc` is the event time, not an insertion watermark. Older postings may arrive days later.\r\n            \r\n### Receipts and retention\r\n            \r\n- `documents` groups this page only; merge further pages by `documentKey`. `items`, offsets and limits remain posting-based.\r\n- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.\r\n- `description` uses decoded `Kombine.Flex.FlexDto.KrumbValue.TransactionLine.ToString()` text, with numeric localization placeholders resolved by the API.\r\n- Safely displayable text-only legacy descriptions remain supported; absent DTO text uses a safe fallback. Raw JSON and payment identifiers are never exposed.\r\n- `LawAccountingYears` and `LawSurveillanceDays` come from tenant Log24 with positive manager Log7 overrides.\r\n- Expired identities become the GDPR user KID with empty names/numbers, safe description and `isAnonymized=true`.\r\n- An explicit `userKid` excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.\r\n- `paymentKind` is Credit, ReserveRefund or Managed, or empty. Payment identifiers are never returned.\r\n- Payment-managed and expired entries cannot use ordinary reversal. No external payment workflow is invoked.\r\n            \r\n### Revisions and refresh\r\n            \r\n- `revision` fingerprints the complete filtered posting set: identities, periods and monetary totals. It is independent of `offset` and `limit`.\r\n- **Compare revisions across pages.** If they differ, discard the accumulated pages and reload them.\r\n- Use `GetBankAccountRevision` for lightweight polling.\r\n- A revision is not a cursor, authorization token or frozen snapshot. Display labels may change independently.\r\n            \r\n### Errors\r\n            \r\n**HTTP 403** keeps code `forbidden`. After tab/resource authorization, the optional `reason` identifies a missing Read permission:\r\n`missing-bank-read`, `missing-location-read`, `missing-unit-read` or `missing-user-read`.\r\n            \r\n**HTTP 503** uses these codes:\r\n            \r\n- `periods-timeout`: period SQL exceeded its **10-second** limit.\r\n- `storage-timeout`: another SQL command timed out.\r\n- `storage-text-comparison`: a collation error occurred.\r\n            \r\nAvoid automatic retry loops.",
+        "description": "### Access\r\n            \r\n- Requires **Account2** and **Bank, Location, Unit and User Read**.\r\n- Location grants limit the rows, totals and available filter choices.\r\n- No business data is read when access is denied.\r\n            \r\n### Filters and paging\r\n            \r\n- Repeat `locationKids` for up to 1000 authorized locations; the same selection applies to totals, revision and export.\r\n- `from` defaults to **today** in `Europe/Copenhagen`, inclusively. Omitted `through` leaves the upper date boundary open and the response's `through` is null.\r\n- An explicit `through` remains inclusive and limits the interval to **367 days**. Page, export and database timeout limits also apply to open-ended selections.\r\n- An explicit `period` replaces the date filter.\r\n- Sorted oldest first by event time (MS2000), then by location and unit. Continue toward newer entries with increasing offsets.\r\n- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. Responses are not cached.\r\n            \r\n### Settlement periods\r\n            \r\n- The latest **100 closed period IDs** come from bank-level **LogA**.\r\n- With location-limited access, each offered period must also contain an authorized **Log1** posting.\r\n- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.\r\n            \r\n### Amounts and timestamps\r\n            \r\n- `amountMinor` preserves the signed Log1 amount. Totals describe **filtered movements**, not an account balance.\r\n- `MS2000` / `recordedAtUtc` is the event time, not an insertion watermark. Older postings may arrive days later.\r\n            \r\n### Receipts and retention\r\n            \r\n- `documents` groups this page only; merge further pages by `documentKey`. `items`, offsets and limits remain posting-based.\r\n- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.\r\n- `description` uses decoded `Kombine.Flex.FlexDto.KrumbValue.TransactionLine.ToString()` text, with numeric localization placeholders resolved by the API.\r\n- Safely displayable text-only legacy descriptions remain supported; absent DTO text uses a safe fallback. Raw JSON and payment identifiers are never exposed.\r\n- `LawAccountingYears` and `LawSurveillanceDays` come from tenant Log24 with positive manager Log7 overrides.\r\n- Expired identities become the GDPR user KID with empty names/numbers, safe description and `isAnonymized=true`.\r\n- An explicit `userKid` excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.\r\n- `paymentKind` is Credit, ReserveRefund or Managed, or empty. Payment identifiers are never returned.\r\n- Payment-managed and expired entries cannot use ordinary reversal. No external payment workflow is invoked.\r\n            \r\n### Revisions and refresh\r\n            \r\n- `revision` fingerprints the complete filtered posting set: identities, periods and monetary totals. It is independent of `offset` and `limit`.\r\n- **Compare revisions across pages.** If they differ, discard the accumulated pages and reload them.\r\n- Use `GetBankAccountRevision` for lightweight polling.\r\n- A revision is not a cursor, authorization token or frozen snapshot. Display labels may change independently.\r\n            \r\n### Errors\r\n            \r\n**HTTP 403** keeps code `forbidden`. After tab/resource authorization, the optional `reason` identifies a missing Read permission:\r\n`missing-bank-read`, `missing-location-read`, `missing-unit-read` or `missing-user-read`.\r\n            \r\n**HTTP 503** uses these codes:\r\n            \r\n- `periods-timeout`: period SQL exceeded its **10-second** limit.\r\n- `storage-timeout`: another SQL command timed out.\r\n- `storage-text-comparison`: a collation error occurred.\r\n            \r\nAvoid automatic retry loops.",
         "operationId": "GetBankAccount",
         "parameters": [
           {
@@ -162,7 +162,7 @@
           {
             "name": "Through",
             "in": "query",
-            "description": "Last inclusive date in TimeZone; defaults to today.",
+            "description": "Optional last inclusive date in TimeZone; omitted means no upper date boundary.",
             "schema": {
               "type": "string",
               "format": "date"
@@ -409,7 +409,7 @@
           {
             "name": "Through",
             "in": "query",
-            "description": "Last inclusive date in TimeZone; defaults to today.",
+            "description": "Optional last inclusive date in TimeZone; omitted means no upper date boundary.",
             "schema": {
               "type": "string",
               "format": "date"
@@ -7050,7 +7050,7 @@
           {
             "name": "Through",
             "in": "query",
-            "description": "Last inclusive date in TimeZone; defaults to today.",
+            "description": "Optional last inclusive date in TimeZone; omitted means no upper date boundary.",
             "schema": {
               "type": "string",
               "format": "date"
@@ -17288,8 +17288,17 @@
           "PersonalManager"
         ],
         "summary": "Read your own Wallboard1 editor layouts and concurrency revision.",
-        "description": "Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.\r\n            Reads only the authenticated manager's bank-zero Log7 WallBoards and PortalWallboard. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.\r\n            Enums 2.0.160: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.\r\n            Legacy stored single palettes are converted in memory to identical light and dark palettes without writes or revision changes.\r\n            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.\r\n            Legacy Video (26) widgets in both collections are returned as YouTube (39), preserving KID, rectangle and order without database writes or revision changes.\r\n            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.\r\n            The response includes the owner's validated dateFormat for Clock widgets. Empty uses the browser language; explicit date-only or 12/24-hour formats affect presentation, not layout data or revision.\r\n            Unknown stored fields or malformed layouts return 409 without changing them.",
+        "description": "Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.\r\n            Reads only the authenticated manager's bank-zero Log7 WallBoards and PortalWallboard. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.\r\n            Enums 2.0.160: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.\r\n            Legacy stored single palettes are converted in memory to identical light and dark palettes without writes or revision changes.\r\n            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.\r\n            Legacy Video (26) widgets in both collections are returned as YouTube (39), preserving KID, rectangle and order without database writes or revision changes.\r\n            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.\r\n            The response includes the owner's validated dateFormat for Clock widgets. Empty uses the browser language; explicit date-only or 12/24-hour formats affect presentation, not layout data or revision.\r\n            Unknown stored fields or malformed layouts return 409 without changing them.\r\n            Optional after is a 64-character hexadecimal editor revision covering both personal settings. If unchanged, the read waits up to eight seconds for a committed change, then rereads with fresh authorization. Cancellation releases the wait; invalid revisions return 400 and exhausted watch capacity returns 429.",
         "operationId": "GetMyManagerWallboards",
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -17307,6 +17316,26 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PersonalWallboardsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -17353,6 +17382,26 @@
           },
           "409": {
             "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
             "content": {
               "text/plain": {
                 "schema": {
@@ -17741,6 +17790,145 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/public/move-page": {
+      "post": {
+        "tags": [
+          "PersonalManager"
+        ],
+        "summary": "Move one page between the public wallboard and your private Portal or an existing approved display layout.",
+        "description": "Requires an active manager with Wallboard1 and an explicit whole-tenant grant. Both revisions and authority are checked inside the same Log7 transaction. Page indexes are zero-based; targetDisplayId omitted selects the private Portal, otherwise portrait selects the existing display orientation. TargetPageIndex is the insertion position. Preserves page/widget contents and rectangles. Set toPublic=true to publish from the private Portal, or also supply sourceDisplayId and portrait for an existing physical source; targetDisplayId must then be omitted. The public widget allowlist and KID validation remain mandatory (400 non-public-wallboard-widget for protected types). No new display, account selector or partial commit. 409 wallboards-conflict or wallboards-limit leaves both settings unchanged; never retry an uncertain write automatically.",
+        "operationId": "MovePublicWallboardPage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovePublicWallboardPageRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovePublicWallboardPageRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovePublicWallboardPageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MovePublicWallboardPageResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MovePublicWallboardPageResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MovePublicWallboardPageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
           }
         },
         "security": [
@@ -18768,8 +18956,18 @@
           "Public"
         ],
         "summary": "Read the trusted tenant's public wallboard without manager data.",
-        "description": "Reads only user 0, unit 0's PortalWallboard setting. Protected widget types are returned as empty widgets. LiveLocation (42), displayed as Location status, uses the existing public machine-progress source; malformed or cross-tenant location KIDs are also returned as empty widgets without changing their geometry. A missing setting returns the default empty layout; this operation never creates or writes it.",
+        "description": "Reads only user 0, unit 0's PortalWallboard setting. Protected widget types and non-public or malformed KIDs are returned as empty widgets without changing their geometry. LiveLocation (42), displayed as Location status, uses the existing public machine-progress source; only canonical same-tenant location KIDs are public. A missing setting returns the default empty layout; this operation never creates or writes it.",
         "operationId": "GetPublicWallboard",
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Optional 64-character hexadecimal public revision. If unchanged, wait for a public commit or at most eight seconds, then reread and apply the anonymous projection. Invalid revisions return 400; watch capacity is bounded (429).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -18787,6 +18985,46 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/WallboardDisplayResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -31615,7 +31853,8 @@
           },
           "through": {
             "type": "string",
-            "format": "date"
+            "format": "date",
+            "nullable": true
           },
           "timeZone": {
             "type": "string",
@@ -35224,6 +35463,60 @@
         },
         "additionalProperties": false,
         "description": "The manager's successfully stored appearance preference."
+      },
+      "MovePublicWallboardPageRequest": {
+        "required": [
+          "pageIndex",
+          "targetPageIndex"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "string",
+            "nullable": true
+          },
+          "publicRevision": {
+            "type": "string",
+            "nullable": true
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetPageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetDisplayId": {
+            "type": "string",
+            "nullable": true
+          },
+          "portrait": {
+            "type": "boolean"
+          },
+          "toPublic": {
+            "type": "boolean"
+          },
+          "sourceDisplayId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Moves one committed page between public and private layouts. Indexes are zero-based and bound to both revisions. ToPublic selects publication; SourceDisplayId then selects the private source instead of TargetDisplayId."
+      },
+      "MovePublicWallboardPageResponse": {
+        "type": "object",
+        "properties": {
+          "personal": {
+            "$ref": "#/components/schemas/PersonalWallboardsResponse"
+          },
+          "public": {
+            "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Both committed settings after an atomic page move across the public/private boundary."
       },
       "NearestLocationItem": {
         "type": "object",
@@ -39130,7 +39423,8 @@
           49,
           50,
           51,
-          52
+          52,
+          53
         ],
         "type": "integer",
         "format": "int32"
@@ -39487,12 +39781,12 @@
           },
           "mapProvider": {
             "type": "string",
-            "description": "The trusted tenant's wallboard map renderer; other maps retain their existing renderer.",
+            "description": "Trusted tenant's wallboard map renderer: google or maptiler. Applies to LocationMap (36), purchase-map (7) and revenue heatmap (8); other maps retain their current renderer.",
             "nullable": true
           },
           "mapTilerBrowserKey": {
             "type": "string",
-            "description": "Public MapTiler browser key, restricted to configured origins; null when disabled or missing.",
+            "description": "Public MapTiler browser key, restricted by allowed HTTP origins at MapTiler; never a server credential. Null when disabled or not configured. An enabled provider without its key is unavailable and must not silently change providers.",
             "nullable": true
           },
           "brandIconUrl": {
@@ -39517,22 +39811,22 @@
           },
           "brandLogoMarkUrl": {
             "type": "string",
-            "description": "Tenant's symbol-only light logo, or null when unavailable.",
+            "description": "Tenant's symbol-only light logo, or null when this variant is unavailable.",
             "nullable": true
           },
           "brandDarkLogoMarkUrl": {
             "type": "string",
-            "description": "Tenant's symbol-only dark logo, or null when unavailable.",
+            "description": "Tenant's symbol-only dark logo, or null when this variant is unavailable.",
             "nullable": true
           },
           "brandLogoWordmarkUrl": {
             "type": "string",
-            "description": "Tenant's text-only light logo, or null when unavailable.",
+            "description": "Tenant's text-only light logo, or null when this variant is unavailable.",
             "nullable": true
           },
           "brandDarkLogoWordmarkUrl": {
             "type": "string",
-            "description": "Tenant's text-only dark logo, or null when unavailable.",
+            "description": "Tenant's text-only dark logo, or null when this variant is unavailable.",
             "nullable": true
           },
           "brandLightTokens": {

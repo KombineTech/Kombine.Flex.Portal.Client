@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `7f926c62a0067ad109413c3c41f7b00b9ffa4aab485106b3f9f8aae4c31f16bc`).
-230 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `62c482fb1a6826fae1e01c6690f7fdc56e21616e88c84cec86a741cd14476461`).
+231 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -194,6 +194,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `7f926c62a0067ad1094
 | `inviteManager` | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` | Bearer |
 | `loginManager` | `LoginManager` | POST | `/api/v1/session/login` | Anonymous |
 | `lookupObjectCoordinates` | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` | Bearer |
+| `movePublicWallboardPage` | `MovePublicWallboardPage` | POST | `/api/v1/session/me/wallboards/public/move-page` | Bearer |
 | `prepareCameraCapture` | `PrepareCameraCapture` | POST | `/api/v1/camera/prepare` | Bearer |
 | `readMyWallboardPlexStream` | `ReadMyWallboardPlexStream` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` | Bearer |
 | `redeemWallboardPairing` | `RedeemWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` | Anonymous |

@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-230 operations. OpenAPI SHA-256: `7f926c62a0067ad109413c3c41f7b00b9ffa4aab485106b3f9f8aae4c31f16bc`.
+231 operations. OpenAPI SHA-256: `62c482fb1a6826fae1e01c6690f7fdc56e21616e88c84cec86a741cd14476461`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -106,6 +106,7 @@
 | `SaveMyManagerWallboards` | `saveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` |
 | `GetPublicWallboardEditor` | `getPublicWallboardEditor` | GET | `/api/v1/session/me/wallboards/public` |
 | `SavePublicWallboardEditor` | `savePublicWallboardEditor` | PUT | `/api/v1/session/me/wallboards/public` |
+| `MovePublicWallboardPage` | `movePublicWallboardPage` | POST | `/api/v1/session/me/wallboards/public/move-page` |
 | `GetMyManagerWallboardDisplay` | `getMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerApiKey` | `getMyManagerApiKey` | GET | `/api/v1/session/me/api-key` |
 | `GenerateMyManagerApiKey` | `generateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` |

@@ -59,9 +59,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Filters and paging
         /// <br/>
         /// <br/>- Repeat `locationKids` for up to 1000 authorized locations; the same selection applies to totals, revision and export.
-        /// <br/>- Defaults to **today** in `Europe/Copenhagen`. Both dates are inclusive; the maximum interval is **367 days**.
+        /// <br/>- `from` defaults to **today** in `Europe/Copenhagen`, inclusively. Omitted `through` leaves the upper date boundary open and the response's `through` is null.
+        /// <br/>- An explicit `through` remains inclusive and limits the interval to **367 days**. Page, export and database timeout limits also apply to open-ended selections.
         /// <br/>- An explicit `period` replaces the date filter.
-        /// <br/>- Sorted newest first, then by location and unit.
+        /// <br/>- Sorted oldest first by event time (MS2000), then by location and unit. Continue toward newer entries with increasing offsets.
         /// <br/>- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. Responses are not cached.
         /// <br/>
         /// <br/>### Settlement periods
@@ -108,7 +109,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Avoid automatic retry loops.
         /// </remarks>
         /// <param name="from">First inclusive date in TimeZone; defaults to today.</param>
-        /// <param name="through">Last inclusive date in TimeZone; defaults to today.</param>
+        /// <param name="through">Optional last inclusive date in TimeZone; omitted means no upper date boundary.</param>
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
@@ -143,7 +144,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Labels and reversal flags can change independently; this is not a frozen snapshot.
         /// </remarks>
         /// <param name="from">First inclusive date in TimeZone; defaults to today.</param>
-        /// <param name="through">Last inclusive date in TimeZone; defaults to today.</param>
+        /// <param name="through">Optional last inclusive date in TimeZone; omitted means no upper date boundary.</param>
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
@@ -901,7 +902,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Headers and identifiers are stable and language-independent.
         /// </remarks>
         /// <param name="from">First inclusive date in TimeZone; defaults to today.</param>
-        /// <param name="through">Last inclusive date in TimeZone; defaults to today.</param>
+        /// <param name="through">Optional last inclusive date in TimeZone; omitted means no upper date boundary.</param>
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
@@ -2361,10 +2362,11 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.
         /// <br/>            The response includes the owner's validated dateFormat for Clock widgets. Empty uses the browser language; explicit date-only or 12/24-hour formats affect presentation, not layout data or revision.
         /// <br/>            Unknown stored fields or malformed layouts return 409 without changing them.
+        /// <br/>            Optional after is a 64-character hexadecimal editor revision covering both personal settings. If unchanged, the read waits up to eight seconds for a committed change, then rereads with fresh authorization. Cancellation releases the wait; invalid revisions return 400 and exhausted watch capacity returns 429.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PersonalWallboardsResponse> GetMyManagerWallboardsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PersonalWallboardsResponse> GetMyManagerWallboardsAsync(string? after = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2415,6 +2417,17 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PublicWallboardEditorResponse> SavePublicWallboardEditorAsync(SavePublicWallboardRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Move one page between the public wallboard and your private Portal or an existing approved display layout.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager with Wallboard1 and an explicit whole-tenant grant. Both revisions and authority are checked inside the same Log7 transaction. Page indexes are zero-based; targetDisplayId omitted selects the private Portal, otherwise portrait selects the existing display orientation. TargetPageIndex is the insertion position. Preserves page/widget contents and rectangles. Set toPublic=true to publish from the private Portal, or also supply sourceDisplayId and portrait for an existing physical source; targetDisplayId must then be omitted. The public widget allowlist and KID validation remain mandatory (400 non-public-wallboard-widget for protected types). No new display, account selector or partial commit. 409 wallboards-conflict or wallboards-limit leaves both settings unchanged; never retry an uncertain write automatically.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<MovePublicWallboardPageResponse> MovePublicWallboardPageAsync(MovePublicWallboardPageRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -2582,11 +2595,12 @@ namespace Kombine.Flex.Portal.Client
         /// Read the trusted tenant's public wallboard without manager data.
         /// </summary>
         /// <remarks>
-        /// Reads only user 0, unit 0's PortalWallboard setting. Protected widget types are returned as empty widgets. LiveLocation (42), displayed as Location status, uses the existing public machine-progress source; malformed or cross-tenant location KIDs are also returned as empty widgets without changing their geometry. A missing setting returns the default empty layout; this operation never creates or writes it.
+        /// Reads only user 0, unit 0's PortalWallboard setting. Protected widget types and non-public or malformed KIDs are returned as empty widgets without changing their geometry. LiveLocation (42), displayed as Location status, uses the existing public machine-progress source; only canonical same-tenant location KIDs are public. A missing setting returns the default empty layout; this operation never creates or writes it.
         /// </remarks>
+        /// <param name="after">Optional 64-character hexadecimal public revision. If unchanged, wait for a public commit or at most eight seconds, then reread and apply the anonymous projection. Invalid revisions return 400; watch capacity is bounded (429).</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<WallboardDisplayResponse> GetPublicWallboardAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<WallboardDisplayResponse> GetPublicWallboardAsync(string? after = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -4795,9 +4809,10 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Filters and paging
         /// <br/>
         /// <br/>- Repeat `locationKids` for up to 1000 authorized locations; the same selection applies to totals, revision and export.
-        /// <br/>- Defaults to **today** in `Europe/Copenhagen`. Both dates are inclusive; the maximum interval is **367 days**.
+        /// <br/>- `from` defaults to **today** in `Europe/Copenhagen`, inclusively. Omitted `through` leaves the upper date boundary open and the response's `through` is null.
+        /// <br/>- An explicit `through` remains inclusive and limits the interval to **367 days**. Page, export and database timeout limits also apply to open-ended selections.
         /// <br/>- An explicit `period` replaces the date filter.
-        /// <br/>- Sorted newest first, then by location and unit.
+        /// <br/>- Sorted oldest first by event time (MS2000), then by location and unit. Continue toward newer entries with increasing offsets.
         /// <br/>- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. Responses are not cached.
         /// <br/>
         /// <br/>### Settlement periods
@@ -4844,7 +4859,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>Avoid automatic retry loops.
         /// </remarks>
         /// <param name="from">First inclusive date in TimeZone; defaults to today.</param>
-        /// <param name="through">Last inclusive date in TimeZone; defaults to today.</param>
+        /// <param name="through">Optional last inclusive date in TimeZone; omitted means no upper date boundary.</param>
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
@@ -5048,7 +5063,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Labels and reversal flags can change independently; this is not a frozen snapshot.
         /// </remarks>
         /// <param name="from">First inclusive date in TimeZone; defaults to today.</param>
-        /// <param name="through">Last inclusive date in TimeZone; defaults to today.</param>
+        /// <param name="through">Optional last inclusive date in TimeZone; omitted means no upper date boundary.</param>
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
@@ -10886,7 +10901,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Headers and identifiers are stable and language-independent.
         /// </remarks>
         /// <param name="from">First inclusive date in TimeZone; defaults to today.</param>
-        /// <param name="through">Last inclusive date in TimeZone; defaults to today.</param>
+        /// <param name="through">Optional last inclusive date in TimeZone; omitted means no upper date boundary.</param>
         /// <param name="timeZone">IANA/OS time zone for date filters; defaults to Europe/Copenhagen.</param>
         /// <param name="period">Settlement period; zero is current. When supplied, replaces the date interval.</param>
         /// <param name="locationKid">Optional canonical location KID in this bank.</param>
@@ -19377,10 +19392,11 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.
         /// <br/>            The response includes the owner's validated dateFormat for Clock widgets. Empty uses the browser language; explicit date-only or 12/24-hour formats affect presentation, not layout data or revision.
         /// <br/>            Unknown stored fields or malformed layouts return 409 without changing them.
+        /// <br/>            Optional after is a 64-character hexadecimal editor revision covering both personal settings. If unchanged, the read waits up to eight seconds for a committed change, then rereads with fresh authorization. Cancellation releases the wait; invalid revisions return 400 and exhausted watch capacity returns 429.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PersonalWallboardsResponse> GetMyManagerWallboardsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PersonalWallboardsResponse> GetMyManagerWallboardsAsync(string? after = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -19395,6 +19411,12 @@ namespace Kombine.Flex.Portal.Client
 
                     // Operation Path: "api/v1/session/me/wallboards"
                     urlBuilder_.Append("api/v1/session/me/wallboards");
+                    urlBuilder_.Append('?');
+                    if (after != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("after")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(after, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -19429,6 +19451,16 @@ namespace Kombine.Flex.Portal.Client
                             return objectResponse_.Object;
                         }
                         else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 401)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -19457,6 +19489,16 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -19835,6 +19877,133 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Move one page between the public wallboard and your private Portal or an existing approved display layout.
+        /// </summary>
+        /// <remarks>
+        /// Requires an active manager with Wallboard1 and an explicit whole-tenant grant. Both revisions and authority are checked inside the same Log7 transaction. Page indexes are zero-based; targetDisplayId omitted selects the private Portal, otherwise portrait selects the existing display orientation. TargetPageIndex is the insertion position. Preserves page/widget contents and rectangles. Set toPublic=true to publish from the private Portal, or also supply sourceDisplayId and portrait for an existing physical source; targetDisplayId must then be omitted. The public widget allowlist and KID validation remain mandatory (400 non-public-wallboard-widget for protected types). No new display, account selector or partial commit. 409 wallboards-conflict or wallboards-limit leaves both settings unchanged; never retry an uncertain write automatically.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<MovePublicWallboardPageResponse> MovePublicWallboardPageAsync(MovePublicWallboardPageRequest? body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/wallboards/public/move-page"
+                    urlBuilder_.Append("api/v1/session/me/wallboards/public/move-page");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<MovePublicWallboardPageResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -20966,11 +21135,12 @@ namespace Kombine.Flex.Portal.Client
         /// Read the trusted tenant's public wallboard without manager data.
         /// </summary>
         /// <remarks>
-        /// Reads only user 0, unit 0's PortalWallboard setting. Protected widget types are returned as empty widgets. LiveLocation (42), displayed as Location status, uses the existing public machine-progress source; malformed or cross-tenant location KIDs are also returned as empty widgets without changing their geometry. A missing setting returns the default empty layout; this operation never creates or writes it.
+        /// Reads only user 0, unit 0's PortalWallboard setting. Protected widget types and non-public or malformed KIDs are returned as empty widgets without changing their geometry. LiveLocation (42), displayed as Location status, uses the existing public machine-progress source; only canonical same-tenant location KIDs are public. A missing setting returns the default empty layout; this operation never creates or writes it.
         /// </remarks>
+        /// <param name="after">Optional 64-character hexadecimal public revision. If unchanged, wait for a public commit or at most eight seconds, then reread and apply the anonymous projection. Invalid revisions return 400; watch capacity is bounded (429).</param>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<WallboardDisplayResponse> GetPublicWallboardAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<WallboardDisplayResponse> GetPublicWallboardAsync(string? after = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -20985,6 +21155,12 @@ namespace Kombine.Flex.Portal.Client
 
                     // Operation Path: "api/v1/public/wallboard"
                     urlBuilder_.Append("api/v1/public/wallboard");
+                    urlBuilder_.Append('?');
+                    if (after != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("after")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(after, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -21017,6 +21193,26 @@ namespace Kombine.Flex.Portal.Client
                                 throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -39367,6 +39563,54 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// Moves one committed page between public and private layouts. Indexes are zero-based and bound to both revisions. ToPublic selects publication; SourceDisplayId then selects the private source instead of TargetDisplayId.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MovePublicWallboardPageRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public string? Revision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("publicRevision")]
+        public string? PublicRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("pageIndex")]
+        public int PageIndex { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetPageIndex")]
+        public int TargetPageIndex { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetDisplayId")]
+        public string? TargetDisplayId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("portrait")]
+        public bool? Portrait { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("toPublic")]
+        public bool? ToPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceDisplayId")]
+        public string? SourceDisplayId { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Both committed settings after an atomic page move across the public/private boundary.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MovePublicWallboardPageResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("personal")]
+        public PersonalWallboardsResponse? Personal { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("public")]
+        public PublicWallboardEditorResponse? Public { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Authorized display identity and great-circle distance in metres, without the caller's position.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -42872,6 +43116,8 @@ namespace Kombine.Flex.Portal.Client
 
         _52 = 52,
 
+        _53 = 53,
+
     }
 
     /// <summary>
@@ -43233,13 +43479,13 @@ namespace Kombine.Flex.Portal.Client
         public string? GoogleMapsBrowserKey { get; set; } = default!;
 
         /// <summary>
-        /// The trusted tenant's wallboard map renderer; other maps retain their existing renderer.
+        /// Trusted tenant's wallboard map renderer: google or maptiler. Applies to LocationMap (36), purchase-map (7) and revenue heatmap (8); other maps retain their current renderer.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("mapProvider")]
         public string? MapProvider { get; set; } = default!;
 
         /// <summary>
-        /// Public MapTiler browser key, restricted to configured origins; null when disabled or missing.
+        /// Public MapTiler browser key, restricted by allowed HTTP origins at MapTiler; never a server credential. Null when disabled or not configured. An enabled provider without its key is unavailable and must not silently change providers.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("mapTilerBrowserKey")]
         public string? MapTilerBrowserKey { get; set; } = default!;
@@ -43269,25 +43515,25 @@ namespace Kombine.Flex.Portal.Client
         public string? BrandDarkLogoUrl { get; set; } = default!;
 
         /// <summary>
-        /// Tenant's symbol-only light logo, or null when unavailable.
+        /// Tenant's symbol-only light logo, or null when this variant is unavailable.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("brandLogoMarkUrl")]
         public string? BrandLogoMarkUrl { get; set; } = default!;
 
         /// <summary>
-        /// Tenant's symbol-only dark logo, or null when unavailable.
+        /// Tenant's symbol-only dark logo, or null when this variant is unavailable.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("brandDarkLogoMarkUrl")]
         public string? BrandDarkLogoMarkUrl { get; set; } = default!;
 
         /// <summary>
-        /// Tenant's text-only light logo, or null when unavailable.
+        /// Tenant's text-only light logo, or null when this variant is unavailable.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("brandLogoWordmarkUrl")]
         public string? BrandLogoWordmarkUrl { get; set; } = default!;
 
         /// <summary>
-        /// Tenant's text-only dark logo, or null when unavailable.
+        /// Tenant's text-only dark logo, or null when this variant is unavailable.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("brandDarkLogoWordmarkUrl")]
         public string? BrandDarkLogoWordmarkUrl { get; set; } = default!;

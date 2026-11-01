@@ -45,7 +45,7 @@ AccountResponse = TypedDict('AccountResponse', {
     'periods': 'list[int] | None',
     'totals': 'list[AccountTotal] | None',
     'from': 'str',
-    'through': 'str',
+    'through': 'str | None',
     'timeZone': 'str | None',
     'period': 'int | None',
     'offset': 'int',
@@ -982,6 +982,22 @@ ManagerThemeRequest = TypedDict('ManagerThemeRequest', {
 
 ManagerThemeResponse = TypedDict('ManagerThemeResponse', {
     'themeMode': 'EThemeMode',
+}, total=False)
+
+MovePublicWallboardPageRequest = TypedDict('MovePublicWallboardPageRequest', {
+    'revision': 'str | None',
+    'publicRevision': 'str | None',
+    'pageIndex': Required['int'],
+    'targetPageIndex': Required['int'],
+    'targetDisplayId': 'str | None',
+    'portrait': 'bool',
+    'toPublic': 'bool',
+    'sourceDisplayId': 'str | None',
+}, total=False)
+
+MovePublicWallboardPageResponse = TypedDict('MovePublicWallboardPageResponse', {
+    'personal': 'PersonalWallboardsResponse',
+    'public': 'PublicWallboardEditorResponse',
 }, total=False)
 
 NearestLocationItem = TypedDict('NearestLocationItem', {

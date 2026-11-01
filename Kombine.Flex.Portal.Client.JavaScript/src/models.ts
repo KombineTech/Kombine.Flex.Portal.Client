@@ -80,7 +80,7 @@ export interface AccountResponse {
   /** from */
   "from"?: string;
   /** through */
-  "through"?: string;
+  "through"?: string | null;
   /** timeZone */
   "timeZone"?: string | null;
   /** period */
@@ -1711,6 +1711,34 @@ export interface ManagerThemeRequest {
 export interface ManagerThemeResponse {
   /** themeMode */
   "themeMode"?: EThemeMode;
+}
+
+/** Moves one committed page between public and private layouts. Indexes are zero-based and bound to both revisions. ToPublic selects publication; SourceDisplayId then selects the private source instead of TargetDisplayId. */
+export interface MovePublicWallboardPageRequest {
+  /** revision */
+  "revision"?: string | null;
+  /** publicRevision */
+  "publicRevision"?: string | null;
+  /** pageIndex */
+  "pageIndex": number;
+  /** targetPageIndex */
+  "targetPageIndex": number;
+  /** targetDisplayId */
+  "targetDisplayId"?: string | null;
+  /** portrait */
+  "portrait"?: boolean;
+  /** toPublic */
+  "toPublic"?: boolean;
+  /** sourceDisplayId */
+  "sourceDisplayId"?: string | null;
+}
+
+/** Both committed settings after an atomic page move across the public/private boundary. */
+export interface MovePublicWallboardPageResponse {
+  /** personal */
+  "personal"?: PersonalWallboardsResponse;
+  /** public */
+  "public"?: PublicWallboardEditorResponse;
 }
 
 /** Authorized display identity and great-circle distance in metres, without the caller's position. */
@@ -3544,7 +3572,7 @@ export interface WashDocPresentation {
 /** Wire values: [0, 1, 2]. */
 export type EThemeMode = number;
 
-/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52]. */
+/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53]. */
 export type EWidgetType = number;
 
 /** Public tenant-wide count; does not expose or grant access to any individual account. */
@@ -3705,9 +3733,9 @@ export interface PublicWidgetPresentationResponse {
   "labels"?: Record<string, string> | null;
   /** Public browser Maps key, restricted by HTTP referrer at Google; never a server credential. Null when maps are not configured. */
   "googleMapsBrowserKey"?: string | null;
-  /** The trusted tenant's wallboard map renderer; other maps retain their existing renderer. */
+  /** Trusted tenant's wallboard map renderer: google or maptiler. Applies to LocationMap (36), purchase-map (7) and revenue heatmap (8); other maps retain their current renderer. */
   "mapProvider"?: string | null;
-  /** Public MapTiler browser key, restricted to configured origins; null when disabled or missing. */
+  /** Public MapTiler browser key, restricted by allowed HTTP origins at MapTiler; never a server credential. Null when disabled or not configured. An enabled provider without its key is unavailable and must not silently change providers. */
   "mapTilerBrowserKey"?: string | null;
   /** Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable. */
   "brandIconUrl"?: string | null;
@@ -3717,13 +3745,13 @@ export interface PublicWidgetPresentationResponse {
   "brandLogoUrl"?: string | null;
   /** Dark-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable. */
   "brandDarkLogoUrl"?: string | null;
-  /** Tenant's symbol-only light logo, or null when unavailable. */
+  /** Tenant's symbol-only light logo, or null when this variant is unavailable. */
   "brandLogoMarkUrl"?: string | null;
-  /** Tenant's symbol-only dark logo, or null when unavailable. */
+  /** Tenant's symbol-only dark logo, or null when this variant is unavailable. */
   "brandDarkLogoMarkUrl"?: string | null;
-  /** Tenant's text-only light logo, or null when unavailable. */
+  /** Tenant's text-only light logo, or null when this variant is unavailable. */
   "brandLogoWordmarkUrl"?: string | null;
-  /** Tenant's text-only dark logo, or null when unavailable. */
+  /** Tenant's text-only dark logo, or null when this variant is unavailable. */
   "brandDarkLogoWordmarkUrl"?: string | null;
   /** Public validated CSS custom properties for this tenant's light presentation. */
   "brandLightTokens"?: Record<string, string> | null;
@@ -4221,8 +4249,16 @@ export interface GetNearestLocationsOptions {
   longitude?: number;
 }
 
+export interface GetMyManagerWallboardsOptions {
+  after?: string;
+}
+
 export interface GetMyManagerWallboardDisplayOptions {
   portrait?: boolean;
+  after?: string;
+}
+
+export interface GetPublicWallboardOptions {
   after?: string;
 }
 
