@@ -230,13 +230,16 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type UserTagResponse array{'kid'?: string|null, 'state'?: string|null}
  * @phpstan-type UserWorkspaceResponse array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'number'?: string|null, 'deletedAtUtc'?: string|null, 'deleteAtUtc'?: string|null, 'locations'?: list<UserScopeState>|null, 'tags'?: list<UserScopeState>|null, 'attributes'?: list<UserAttributeInput>|null, 'canWrite'?: bool, 'canCreate'?: bool, 'synchronization'?: string|null, 'canDelete'?: bool, 'canRenameExternalId'?: bool, 'canRename'?: bool, 'iconKid'?: string|null, 'availableIcons'?: list<string>|null, 'canEditIcon'?: bool}
  * @phpstan-type ValidationProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
- * @phpstan-type Wallboard array{'i'?: list<string>|null, 'n'?: string|null, 'a'?: int|float, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
+ * @phpstan-type VideoSearchItem array{'id'?: string|null, 'name'?: string|null, 'sourceUrl'?: string|null}
+ * @phpstan-type VideoSearchResponse array{'items'?: list<VideoSearchItem>|null, 'source'?: string|null}
+ * @phpstan-type Wallboard array{'i'?: list<string>|null, 'n'?: string|null, 'a'?: int|float, 'c'?: list<list<int>>|null, 's'?: list<WallboardPage>|null}
  * @phpstan-type WallboardAnonymousReservation array{'unitKid'?: string|null, 'startMinute'?: int, 'durationMinutes'?: int}
  * @phpstan-type WallboardBankStorageItem array{'kid'?: string|null, 'name'?: string|null, 'dataBytes'?: string|null, 'indexBytes'?: string|null, 'freeBytes'?: string|null, 'dataRecordedAtUtc'?: string|null, 'indexRecordedAtUtc'?: string|null, 'freeRecordedAtUtc'?: string|null}
  * @phpstan-type WallboardBankStorageResponse array{'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<WallboardBankStorageItem>|null}
  * @phpstan-type WallboardDeviceChallenge array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
  * @phpstan-type WallboardDeviceInfo array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
  * @phpstan-type WallboardDisplayResponse array{'layout'?: Wallboard, 'revision'?: string|null, 'dateFormat'?: string|null}
+ * @phpstan-type WallboardLocationInfoResponse array{'locationKid'?: string|null, 'name'?: string|null}
  * @phpstan-type WallboardLocationMapItem array{'kid'?: string|null, 'name'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float}
  * @phpstan-type WallboardLocationMapResponse array{'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<WallboardLocationMapItem>|null}
  * @phpstan-type WallboardPage array{'n'?: string|null, 'd'?: int, 's'?: list<WallboardWidget>|null}
@@ -253,7 +256,6 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type WashDocChartSeries array{'kind'?: string|null, 'name'?: string|null, 'label'?: string|null, 'localization'?: string|null, 'group'?: string|null, 'role'?: string|null, 'unit'?: string|null, 'step'?: bool, 'points'?: list<WashDocChartPoint>|null}
  * @phpstan-type WashDocChartSignal array{'ms2000'?: int, 'flags'?: int|null, 'heat'?: bool|null, 'inlet'?: bool|null, 'outlet'?: bool|null, 'isCalculated'?: bool, 'airflow'?: bool|null}
  * @phpstan-type WashDocPresentation array{'unitType'?: int|null, 'kind'?: string|null, 'groupOrder'?: list<string>|null}
- * @phpstan-type eColor int
  * @phpstan-type eThemeMode int
  * @phpstan-type eWidgetType int
  * @phpstan-type ActiveUsersResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackDays'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string}
@@ -267,7 +269,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PublicMachineErrorsPage array{'items'?: list<PublicMachineError>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
  * @phpstan-type PublicScopedProgressItem array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string|null, 'doneAtUtc'?: string|null, 'progress'?: UnitProgressResponse}
  * @phpstan-type PublicScopedProgressResponse array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PublicScopedProgressItem>|null, 'nextCursor'?: string|null}
- * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandName'?: string|null, 'brandLogoUrl'?: string|null, 'brandDarkLogoUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
+ * @phpstan-type PublicWidgetPresentationResponse array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'mapProvider'?: string|null, 'mapTilerBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandName'?: string|null, 'brandLogoUrl'?: string|null, 'brandDarkLogoUrl'?: string|null, 'brandLogoMarkUrl'?: string|null, 'brandDarkLogoMarkUrl'?: string|null, 'brandLogoWordmarkUrl'?: string|null, 'brandDarkLogoWordmarkUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
  * @phpstan-type PurchaseCurrencySnapshot array{'currency'?: string|null, 'count'?: int, 'amount'?: int|float}
  * @phpstan-type PurchaseHeatmapPoint array{'latitude'?: int|float, 'longitude'?: int|float, 'amount'?: int|float}
  * @phpstan-type PurchaseMapPoint array{'kid'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float, 'timestampUtc'?: string, 'amount'?: int|float}
@@ -1981,6 +1983,27 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Read a location name for a manager's LocationInfo preview.
+     * @param array{'locationKid'?: string} $options
+     * @return WallboardLocationInfoResponse
+     */
+    public function getMyWallboardLocationInfo(array $options = []): mixed
+    {
+        return $this->request('GetMyWallboardLocationInfo', [] + $options, null);
+    }
+
+    /**
+     * Read the location name for its exact LocationInfo widget on an approved screen.
+     * @param string $displayId
+     * @param array{'locationKid'?: string, 'portrait'?: bool} $options
+     * @return WallboardLocationInfoResponse
+     */
+    public function getWallboardDisplayLocationInfo(mixed $displayId, array $options = []): mixed
+    {
+        return $this->request('GetWallboardDisplayLocationInfo', ['displayId' => $displayId] + $options, null);
+    }
+
+    /**
      * Read all visible locations with valid coordinates for a manager preview.
      * @return WallboardLocationMapResponse
      */
@@ -2112,6 +2135,16 @@ final class PortalClient extends BaseClient
     public function getWallboardDisplayReservationCalendar(mixed $displayId, array $options = []): mixed
     {
         return $this->request('GetWallboardDisplayReservationCalendar', ['displayId' => $displayId] + $options, null);
+    }
+
+    /**
+     * Find up to twenty titles for YouTube (39), Vimeo (40), Wistia (41) or Mux (45).
+     * @param array{'widgetType'?: int, 'query'?: string} $options
+     * @return VideoSearchResponse
+     */
+    public function searchMyWallboardVideos(array $options = []): mixed
+    {
+        return $this->request('SearchMyWallboardVideos', [] + $options, null);
     }
 
     /**

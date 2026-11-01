@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-217 operations. OpenAPI SHA-256: `adb5a85c18ae5f40726c034e64bea11e84311a56b201bb5bb5aa5a08375334b2`.
+220 operations. OpenAPI SHA-256: `9ce24e175c69d3d148be5147ae59227157f744c2dd0baa6145e71c4d227619c6`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -165,6 +165,8 @@
 | `SearchUserActivation` | `searchUserActivation` | GET | `/api/v1/search/user-activation` |
 | `GetMyWallboardBankStorage` | `getMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` |
 | `GetWallboardDisplayBankStorage` | `getWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
+| `GetMyWallboardLocationInfo` | `getMyWallboardLocationInfo` | GET | `/api/v1/session/me/wallboards/location-info` |
+| `GetWallboardDisplayLocationInfo` | `getWallboardDisplayLocationInfo` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` |
 | `GetMyWallboardLocationMap` | `getMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` |
 | `GetWallboardDisplayLocationMap` | `getWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
 | `StartWallboardPairing` | `startWallboardPairing` | POST | `/api/v1/wallboard/pairings` |
@@ -178,6 +180,7 @@
 | `RevokeWallboardDevice` | `revokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
 | `GetMyWallboardReservationCalendar` | `getMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetWallboardDisplayReservationCalendar` | `getWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
+| `SearchMyWallboardVideos` | `searchMyWallboardVideos` | GET | `/api/v1/session/me/wallboards/videos/search` |
 | `GetPortalAppDownloadPage` | `getPortalAppDownloadPage` | GET | `/download` |
 | `DownloadPortalWindowsAppInstaller` | `downloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackage` | `downloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` |

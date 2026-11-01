@@ -1,3 +1,7 @@
+## 0.15.0
+
+- Update the Portal contract with separate light and dark Wallboard color palettes and the new authorized widget operations.
+
 ## 0.14.0
 
 - Synchronize the consolidated Portal API contract, including compact Wallboard layouts, public Portal wallboards and widget presentation/data operations.

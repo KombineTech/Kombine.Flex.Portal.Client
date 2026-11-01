@@ -808,6 +808,16 @@ export class PortalClient extends BaseClient {
     return this.send("GetWallboardDisplayBankStorage", {"displayId": displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.WallboardBankStorageResponse>;
   }
 
+  /** Read a location name for a manager's LocationInfo preview. */
+  getMyWallboardLocationInfo(options: Models.GetMyWallboardLocationInfoOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardLocationInfoResponse> {
+    return this.send("GetMyWallboardLocationInfo", {"locationKid": options.locationKid}, undefined, request) as Promise<Models.WallboardLocationInfoResponse>;
+  }
+
+  /** Read the location name for its exact LocationInfo widget on an approved screen. */
+  getWallboardDisplayLocationInfo(displayId: string, options: Models.GetWallboardDisplayLocationInfoOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardLocationInfoResponse> {
+    return this.send("GetWallboardDisplayLocationInfo", {"displayId": displayId, "locationKid": options.locationKid, "portrait": options.portrait}, undefined, request) as Promise<Models.WallboardLocationInfoResponse>;
+  }
+
   /** Read all visible locations with valid coordinates for a manager preview. */
   getMyWallboardLocationMap(request: RequestOptions = {}): Promise<Models.WallboardLocationMapResponse> {
     return this.send("GetMyWallboardLocationMap", {}, undefined, request) as Promise<Models.WallboardLocationMapResponse>;
@@ -871,6 +881,11 @@ export class PortalClient extends BaseClient {
   /** Read one location's schedule and anonymous occupancy for its approved screen. */
   getWallboardDisplayReservationCalendar(displayId: string, options: Models.GetWallboardDisplayReservationCalendarOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardReservationCalendarResponse> {
     return this.send("GetWallboardDisplayReservationCalendar", {"displayId": displayId, "locationKid": options.locationKid, "portrait": options.portrait}, undefined, request) as Promise<Models.WallboardReservationCalendarResponse>;
+  }
+
+  /** Find up to twenty titles for YouTube (39), Vimeo (40), Wistia (41) or Mux (45). */
+  searchMyWallboardVideos(options: Models.SearchMyWallboardVideosOptions = {}, request: RequestOptions = {}): Promise<Models.VideoSearchResponse> {
+    return this.send("SearchMyWallboardVideos", {"widgetType": options.widgetType, "query": options.query}, undefined, request) as Promise<Models.VideoSearchResponse>;
   }
 
   /** Displays Windows downloads for this tenant, or an explicit unavailable state. */

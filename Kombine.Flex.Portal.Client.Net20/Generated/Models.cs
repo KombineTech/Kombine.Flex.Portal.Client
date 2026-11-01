@@ -6709,6 +6709,41 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>A canonical provider reference and plain-text title.</summary>
+    public sealed class VideoSearchItem
+    {
+        /// <summary>id</summary>
+        [JsonField("id")]
+        public string Id { get { return _Id; } set { _Id = value; } }
+        private string _Id;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
+
+        /// <summary>sourceUrl</summary>
+        [JsonField("sourceUrl")]
+        public string SourceUrl { get { return _SourceUrl; } set { _SourceUrl = value; } }
+        private string _SourceUrl;
+
+    }
+
+    /// <summary>At most twenty results, identifying provider search or cited public web discovery.</summary>
+    public sealed class VideoSearchResponse
+    {
+        /// <summary>items</summary>
+        [JsonField("items")]
+        public VideoSearchItem[] Items { get { return _Items; } set { _Items = value; } }
+        private VideoSearchItem[] _Items;
+
+        /// <summary>source</summary>
+        [JsonField("source")]
+        public string Source { get { return _Source; } set { _Source = value; } }
+        private string _Source;
+
+    }
+
     /// <summary>Wallboard</summary>
     public sealed class Wallboard
     {
@@ -6729,8 +6764,8 @@ namespace Kombine.Flex.Portal.Client.Net20
 
         /// <summary>c</summary>
         [JsonField("c")]
-        public int[] C { get { return _C; } set { _C = value; } }
-        private int[] _C;
+        public int[][] C { get { return _C; } set { _C = value; } }
+        private int[][] _C;
 
         /// <summary>s</summary>
         [JsonField("s")]
@@ -6886,6 +6921,21 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("dateFormat")]
         public string DateFormat { get { return _DateFormat; } set { _DateFormat = value; } }
         private string _DateFormat;
+
+    }
+
+    /// <summary>The selected location's canonical identity and stored name, without other location metadata.</summary>
+    public sealed class WallboardLocationInfoResponse
+    {
+        /// <summary>locationKid</summary>
+        [JsonField("locationKid")]
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>name</summary>
+        [JsonField("name")]
+        public string Name { get { return _Name; } set { _Name = value; } }
+        private string _Name;
 
     }
 
@@ -7742,6 +7792,16 @@ namespace Kombine.Flex.Portal.Client.Net20
         public string GoogleMapsBrowserKey { get { return _GoogleMapsBrowserKey; } set { _GoogleMapsBrowserKey = value; } }
         private string _GoogleMapsBrowserKey;
 
+        /// <summary>The trusted tenant's wallboard map renderer; other maps retain their existing renderer.</summary>
+        [JsonField("mapProvider")]
+        public string MapProvider { get { return _MapProvider; } set { _MapProvider = value; } }
+        private string _MapProvider;
+
+        /// <summary>Public MapTiler browser key, restricted to configured origins; null when disabled or missing.</summary>
+        [JsonField("mapTilerBrowserKey")]
+        public string MapTilerBrowserKey { get { return _MapTilerBrowserKey; } set { _MapTilerBrowserKey = value; } }
+        private string _MapTilerBrowserKey;
+
         /// <summary>Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable.</summary>
         [JsonField("brandIconUrl")]
         public string BrandIconUrl { get { return _BrandIconUrl; } set { _BrandIconUrl = value; } }
@@ -7761,6 +7821,26 @@ namespace Kombine.Flex.Portal.Client.Net20
         [JsonField("brandDarkLogoUrl")]
         public string BrandDarkLogoUrl { get { return _BrandDarkLogoUrl; } set { _BrandDarkLogoUrl = value; } }
         private string _BrandDarkLogoUrl;
+
+        /// <summary>Tenant's symbol-only light logo, or null when unavailable.</summary>
+        [JsonField("brandLogoMarkUrl")]
+        public string BrandLogoMarkUrl { get { return _BrandLogoMarkUrl; } set { _BrandLogoMarkUrl = value; } }
+        private string _BrandLogoMarkUrl;
+
+        /// <summary>Tenant's symbol-only dark logo, or null when unavailable.</summary>
+        [JsonField("brandDarkLogoMarkUrl")]
+        public string BrandDarkLogoMarkUrl { get { return _BrandDarkLogoMarkUrl; } set { _BrandDarkLogoMarkUrl = value; } }
+        private string _BrandDarkLogoMarkUrl;
+
+        /// <summary>Tenant's text-only light logo, or null when unavailable.</summary>
+        [JsonField("brandLogoWordmarkUrl")]
+        public string BrandLogoWordmarkUrl { get { return _BrandLogoWordmarkUrl; } set { _BrandLogoWordmarkUrl = value; } }
+        private string _BrandLogoWordmarkUrl;
+
+        /// <summary>Tenant's text-only dark logo, or null when unavailable.</summary>
+        [JsonField("brandDarkLogoWordmarkUrl")]
+        public string BrandDarkLogoWordmarkUrl { get { return _BrandDarkLogoWordmarkUrl; } set { _BrandDarkLogoWordmarkUrl = value; } }
+        private string _BrandDarkLogoWordmarkUrl;
 
         /// <summary>Public validated CSS custom properties for this tenant's light presentation.</summary>
         [JsonField("brandLightTokens")]
@@ -9722,6 +9802,28 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Optional query/header parameters for GetMyWallboardLocationInfo. Null values use API defaults.</summary>
+    public sealed class GetMyWallboardLocationInfoOptions
+    {
+        /// <summary>locationKid</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetWallboardDisplayLocationInfo. Null values use API defaults.</summary>
+    public sealed class GetWallboardDisplayLocationInfoOptions
+    {
+        /// <summary>locationKid</summary>
+        public string LocationKid { get { return _LocationKid; } set { _LocationKid = value; } }
+        private string _LocationKid;
+
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
+
+    }
+
     /// <summary>Optional query/header parameters for GetWallboardDisplayLocationMap. Null values use API defaults.</summary>
     public sealed class GetWallboardDisplayLocationMapOptions
     {
@@ -9759,6 +9861,19 @@ namespace Kombine.Flex.Portal.Client.Net20
         /// <summary>portrait</summary>
         public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
         private bool? _Portrait;
+
+    }
+
+    /// <summary>Optional query/header parameters for SearchMyWallboardVideos. Null values use API defaults.</summary>
+    public sealed class SearchMyWallboardVideosOptions
+    {
+        /// <summary>widgetType</summary>
+        public int? WidgetType { get { return _WidgetType; } set { _WidgetType = value; } }
+        private int? _WidgetType;
+
+        /// <summary>query</summary>
+        public string Query { get { return _Query; } set { _Query = value; } }
+        private string _Query;
 
     }
 

@@ -2354,7 +2354,8 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
         /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards and PortalWallboard. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
-        /// <br/>            Enums 2.0.153: layout i/n/a/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Enums 2.0.156: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Legacy stored single palettes are converted in memory to identical light and dark palettes without writes or revision changes.
         /// <br/>            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.
         /// <br/>            Legacy Video (26) widgets in both collections are returned as YouTube (39), preserving KID, rectangle and order without database writes or revision changes.
         /// <br/>            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.
@@ -2380,7 +2381,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].
         /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.
         /// <br/>            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.
-        /// <br/>            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40) and Wistia (41) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar requires a location KID; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured; other widgets accept only the default scope and optional light/dark style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.
+        /// <br/>            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40), Wistia (41), LiveLocation (42), LogoMark (43), LogoWordmark (44), Mux (45) and LocationInfo (46) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar and LocationInfo require a canonical same-tenant location KID or may remain unconfigured; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured. Logo variants accept only empty/style-only KIDs; LocationInfo remains protected and is never available on the public wallboard; other widgets accept only their documented scopes and optional style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.
+        /// <br/>            Mux (45) accepts only a public playback ID (16–128 case-sensitive ASCII letters/digits) in Kid.Text and optional Style 0/1/2; empty/style-only is unconfigured. URLs, tokens and other KID metadata are rejected.
+        /// <br/>            LogoMark (43) and LogoWordmark (44) use their tenant branding variants with no cross-tenant or full-logo fallback. LocationInfo (46) requires Wallboard1, Location Read and matching location grants; approved screens must contain the exact location in their selected saved layout.
         /// <br/>            Vimeo (40) accepts only Kid.Text containing a positive 1–20-digit decimal ID without leading zero and optional / followed by a 10-character lowercase hexadecimal privacy hash. Wistia (41) accepts only a 10-character lowercase ASCII letter/digit media ID. Both allow optional Style 0/1/2 and empty/style-only unconfigured KIDs. URLs, HTML, other KID fields and noncanonical references return 400 invalid-wallboard-widget; no provider content or credentials are fetched by this API.
         /// <br/>            Legacy input t=26 is normalized to YouTube (39) before widget validation and unchanged-small-widget matching; a successful authorized, revision-checked save writes t=39. KID and rectangle values are preserved. Video (26) is not a separate implemented type. LiveLocation (42), displayed as Location status, composes the existing public Machine status widgets for a canonical same-tenant location with optional Style.
         /// <br/>            Weather uses the public standalone Wallboard API with the exact screen ID and saved scan position before client-IP fallback. Clock uses the device's local time and the owner's dateFormat. No business permissions, device approvals or grants are changed.
@@ -3663,6 +3666,28 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read a location name for a manager's LocationInfo preview.
+        /// </summary>
+        /// <remarks>
+        /// Requires active credentials, Wallboard1, Location Read and a current matching tenant/bank/location grant. Use a canonical same-tenant location KID without Style. Location retention applies; missing or invisible locations return 404. Names use the existing Log24 location cache (up to 60 seconds). Authorization is freshly checked before and after the read. No units or resident data are read. Not anonymous.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<WallboardLocationInfoResponse> GetMyWallboardLocationInfoAsync(string? locationKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read the location name for its exact LocationInfo widget on an approved screen.
+        /// </summary>
+        /// <remarks>
+        /// The chosen display/orientation must contain type 46 with this exact location KID (optional saved Style). Rechecks layout, manager authority, retention and device approval after reading. Poll at most once per minute while visible.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<WallboardLocationInfoResponse> GetWallboardDisplayLocationInfoAsync(string displayId, string? locationKid = null, bool? portrait = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read all visible locations with valid coordinates for a manager preview.
         /// </summary>
         /// <remarks>
@@ -3762,6 +3787,8 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// No maximum offline duration. Challenges are single-use; device approval itself has no expiry.
+        /// <br/>            A correctly signed but expired, consumed or superseded challenge returns status retry without a token.
+        /// <br/>            Retain the device key and approval, wait briefly, then request and sign a new challenge.
         /// <br/>            Rechecks the active manager and credential stamps before returning a ten-day screen-only bearer.
         /// <br/>            Only GetCurrentManager accepts this bearer, with no manager permissions or business data.
         /// <br/>            The returned displayId comes from the stored approval and must exactly match the requested screen ID.
@@ -3810,6 +3837,39 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<WallboardReservationCalendarResponse> GetWallboardDisplayReservationCalendarAsync(string displayId, string? locationKid = null, bool? portrait = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Find up to twenty titles for YouTube (39), Vimeo (40), Wistia (41) or Mux (45).
+        /// </summary>
+        /// <remarks>
+        /// Requires active same-site manager Wallboard1 authority, checked before and after every provider/cache read.
+        /// <br/>Screens and anonymous requests are denied. Query is optional, at most 256 raw/120 trimmed characters, with no controls.
+        /// <br/>Empty/one-character queries return an empty provider (YouTube) or web result without remote calls. Longer YouTube
+        /// <br/>queries require an enabled tenant API key. Vimeo/Wistia/Mux require explicitly enabled same-application Assistant discovery.
+        /// <br/>The response source is provider or web. Only web items include sourceUrl: an exact observed,
+        /// <br/>validated public publisher/provider evidence URL, for visible attribution. Source URLs and titles never change saved widget KIDs.
+        /// <br/>Web discovery makes one Responses request with at most three completed search/open-page/find-in-page tool calls, without manager
+        /// <br/>credentials, history, MCP or business tools. Strict structured proposals bind video URLs to exact observed source/citation URLs.
+        /// <br/>It validates at most ten references with bounded official Vimeo/Wistia metadata or Mux manifest reads. This independently
+        /// <br/>checks the provider reference, not the model's claim that the video belongs to a particular publisher page.
+        /// <br/>Mux labels prefer source/citation titles; an AI-extracted cited-page title may otherwise be used and is not independently verified.
+        /// <br/>No arbitrary webpage, manifest child or video download is requested. Indexed metadata and tokenless manifests do not
+        /// <br/>establish continuing playback availability or usage permission. YouTube excludes any region-restriction metadata.
+        /// <br/>Results retain discovery order and preserve canonical IDs and Vimeo hashes. Web results are bounded by 64KiB serialized JSON.
+        /// <br/>YouTube and Assistant web discovery have separate tenant budgets, cooldowns and bounded two-minute caches. Assistant
+        /// <br/>discovery permits two searches concurrently, four metadata reads per search, six uncached searches/minute and 80/day.
+        /// <br/>The endpoint deadline is 35 seconds, with eight seconds for YouTube or 25 seconds for the complete Assistant search/validation.
+        /// <br/>No automatic retries or fixed-list fallback. A completed search with no eligible references returns an empty result.
+        /// <br/>Limits return 429 video-search-rate-limited (remaining cooldown Retry-After, rounded up and capped; default 60).
+        /// <br/>Missing configuration and provider failures return 503 video-search-unavailable, never partial success after an outage/deadline.
+        /// <br/>Invalid type/query returns
+        /// <br/>400 video-search-invalid-type/query. No account enumeration, saved-layout collection or business writes.
+        /// <br/>Selection still uses the existing authorized, revision-checked save.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<VideoSearchResponse> SearchMyWallboardVideosAsync(int? widgetType = null, string? query = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -19218,7 +19278,8 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
         /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards and PortalWallboard. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
-        /// <br/>            Enums 2.0.153: layout i/n/a/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Enums 2.0.156: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Legacy stored single palettes are converted in memory to identical light and dark palettes without writes or revision changes.
         /// <br/>            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.
         /// <br/>            Legacy Video (26) widgets in both collections are returned as YouTube (39), preserving KID, rectangle and order without database writes or revision changes.
         /// <br/>            Recognized older stored schemas are converted in memory. Legacy orientation pairs remain readable but must be explicitly reconciled to one layout per display before saving.
@@ -19346,7 +19407,9 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].
         /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.
         /// <br/>            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.
-        /// <br/>            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40) and Wistia (41) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar requires a location KID; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured; other widgets accept only the default scope and optional light/dark style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.
+        /// <br/>            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40), Wistia (41), LiveLocation (42), LogoMark (43), LogoWordmark (44), Mux (45) and LocationInfo (46) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar and LocationInfo require a canonical same-tenant location KID or may remain unconfigured; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured. Logo variants accept only empty/style-only KIDs; LocationInfo remains protected and is never available on the public wallboard; other widgets accept only their documented scopes and optional style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.
+        /// <br/>            Mux (45) accepts only a public playback ID (16–128 case-sensitive ASCII letters/digits) in Kid.Text and optional Style 0/1/2; empty/style-only is unconfigured. URLs, tokens and other KID metadata are rejected.
+        /// <br/>            LogoMark (43) and LogoWordmark (44) use their tenant branding variants with no cross-tenant or full-logo fallback. LocationInfo (46) requires Wallboard1, Location Read and matching location grants; approved screens must contain the exact location in their selected saved layout.
         /// <br/>            Vimeo (40) accepts only Kid.Text containing a positive 1–20-digit decimal ID without leading zero and optional / followed by a 10-character lowercase hexadecimal privacy hash. Wistia (41) accepts only a 10-character lowercase ASCII letter/digit media ID. Both allow optional Style 0/1/2 and empty/style-only unconfigured KIDs. URLs, HTML, other KID fields and noncanonical references return 400 invalid-wallboard-widget; no provider content or credentials are fetched by this API.
         /// <br/>            Legacy input t=26 is normalized to YouTube (39) before widget validation and unchanged-small-widget matching; a successful authorized, revision-checked save writes t=39. KID and rectangle values are preserved. Video (26) is not a separate implemented type. LiveLocation (42), displayed as Location status, composes the existing public Machine status widgets for a canonical same-tenant location with optional Style.
         /// <br/>            Weather uses the public standalone Wallboard API with the exact screen ID and saved scan position before client-IP fallback. Clock uses the device's local time and the owner's dateFormat. No business permissions, device approvals or grants are changed.
@@ -27973,6 +28036,293 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read a location name for a manager's LocationInfo preview.
+        /// </summary>
+        /// <remarks>
+        /// Requires active credentials, Wallboard1, Location Read and a current matching tenant/bank/location grant. Use a canonical same-tenant location KID without Style. Location retention applies; missing or invisible locations return 404. Names use the existing Log24 location cache (up to 60 seconds). Authorization is freshly checked before and after the read. No units or resident data are read. Not anonymous.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<WallboardLocationInfoResponse> GetMyWallboardLocationInfoAsync(string? locationKid = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/wallboards/location-info"
+                    urlBuilder_.Append("api/v1/session/me/wallboards/location-info");
+                    urlBuilder_.Append('?');
+                    if (locationKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("locationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<WallboardLocationInfoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read the location name for its exact LocationInfo widget on an approved screen.
+        /// </summary>
+        /// <remarks>
+        /// The chosen display/orientation must contain type 46 with this exact location KID (optional saved Style). Rechecks layout, manager authority, retention and device approval after reading. Poll at most once per minute while visible.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<WallboardLocationInfoResponse> GetWallboardDisplayLocationInfoAsync(string displayId, string? locationKid = null, bool? portrait = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (displayId == null)
+                throw new System.ArgumentNullException("displayId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/wallboards/display/{displayId}/location-info"
+                    urlBuilder_.Append("api/v1/session/me/wallboards/display/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(displayId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/location-info");
+                    urlBuilder_.Append('?');
+                    if (locationKid != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("locationKid")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(locationKid, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (portrait != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("portrait")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(portrait, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<WallboardLocationInfoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read all visible locations with valid coordinates for a manager preview.
         /// </summary>
         /// <remarks>
@@ -28881,6 +29231,8 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         /// <remarks>
         /// No maximum offline duration. Challenges are single-use; device approval itself has no expiry.
+        /// <br/>            A correctly signed but expired, consumed or superseded challenge returns status retry without a token.
+        /// <br/>            Retain the device key and approval, wait briefly, then request and sign a new challenge.
         /// <br/>            Rechecks the active manager and credential stamps before returning a ten-day screen-only bearer.
         /// <br/>            Only GetCurrentManager accepts this bearer, with no manager permissions or business data.
         /// <br/>            The returned displayId comes from the stored approval and must exactly match the requested screen ID.
@@ -29451,6 +29803,165 @@ namespace Kombine.Flex.Portal.Client
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
                             throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Find up to twenty titles for YouTube (39), Vimeo (40), Wistia (41) or Mux (45).
+        /// </summary>
+        /// <remarks>
+        /// Requires active same-site manager Wallboard1 authority, checked before and after every provider/cache read.
+        /// <br/>Screens and anonymous requests are denied. Query is optional, at most 256 raw/120 trimmed characters, with no controls.
+        /// <br/>Empty/one-character queries return an empty provider (YouTube) or web result without remote calls. Longer YouTube
+        /// <br/>queries require an enabled tenant API key. Vimeo/Wistia/Mux require explicitly enabled same-application Assistant discovery.
+        /// <br/>The response source is provider or web. Only web items include sourceUrl: an exact observed,
+        /// <br/>validated public publisher/provider evidence URL, for visible attribution. Source URLs and titles never change saved widget KIDs.
+        /// <br/>Web discovery makes one Responses request with at most three completed search/open-page/find-in-page tool calls, without manager
+        /// <br/>credentials, history, MCP or business tools. Strict structured proposals bind video URLs to exact observed source/citation URLs.
+        /// <br/>It validates at most ten references with bounded official Vimeo/Wistia metadata or Mux manifest reads. This independently
+        /// <br/>checks the provider reference, not the model's claim that the video belongs to a particular publisher page.
+        /// <br/>Mux labels prefer source/citation titles; an AI-extracted cited-page title may otherwise be used and is not independently verified.
+        /// <br/>No arbitrary webpage, manifest child or video download is requested. Indexed metadata and tokenless manifests do not
+        /// <br/>establish continuing playback availability or usage permission. YouTube excludes any region-restriction metadata.
+        /// <br/>Results retain discovery order and preserve canonical IDs and Vimeo hashes. Web results are bounded by 64KiB serialized JSON.
+        /// <br/>YouTube and Assistant web discovery have separate tenant budgets, cooldowns and bounded two-minute caches. Assistant
+        /// <br/>discovery permits two searches concurrently, four metadata reads per search, six uncached searches/minute and 80/day.
+        /// <br/>The endpoint deadline is 35 seconds, with eight seconds for YouTube or 25 seconds for the complete Assistant search/validation.
+        /// <br/>No automatic retries or fixed-list fallback. A completed search with no eligible references returns an empty result.
+        /// <br/>Limits return 429 video-search-rate-limited (remaining cooldown Retry-After, rounded up and capped; default 60).
+        /// <br/>Missing configuration and provider failures return 503 video-search-unavailable, never partial success after an outage/deadline.
+        /// <br/>Invalid type/query returns
+        /// <br/>400 video-search-invalid-type/query. No account enumeration, saved-layout collection or business writes.
+        /// <br/>Selection still uses the existing authorized, revision-checked save.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<VideoSearchResponse> SearchMyWallboardVideosAsync(int? widgetType = null, string? query = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/session/me/wallboards/videos/search"
+                    urlBuilder_.Append("api/v1/session/me/wallboards/videos/search");
+                    urlBuilder_.Append('?');
+                    if (widgetType != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("widgetType")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(widgetType, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (query != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("query")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(query, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<VideoSearchResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 429)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Too Many Requests", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -40609,6 +41120,39 @@ namespace Kombine.Flex.Portal.Client
 
     }
 
+    /// <summary>
+    /// A canonical provider reference and plain-text title.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class VideoSearchItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceUrl")]
+        public string? SourceUrl { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// At most twenty results, identifying provider search or cited public web discovery.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class VideoSearchResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<VideoSearchItem>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("source")]
+        public string? Source { get; set; } = default!;
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Wallboard
     {
@@ -40623,7 +41167,7 @@ namespace Kombine.Flex.Portal.Client
         public float? A { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("c")]
-        public System.Collections.Generic.ICollection<EColor>? C { get; set; } = default!;
+        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<int>>? C { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("s")]
         public System.Collections.Generic.ICollection<WallboardPage>? S { get; set; } = default!;
@@ -40747,6 +41291,21 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("dateFormat")]
         public string? DateFormat { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// The selected location's canonical identity and stored name, without other location metadata.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WallboardLocationInfoResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationKid")]
+        public string? LocationKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
 
     }
 
@@ -41142,136 +41701,6 @@ namespace Kombine.Flex.Portal.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum EColor : long
-    {
-
-        _0 = 0,
-
-        _16777216 = 16777216,
-
-        _19803451 = 19803451,
-
-        _49342943 = 49342943,
-
-        _66515692 = 66515692,
-
-        _83886079 = 83886079,
-
-        _301717822 = 301717822,
-
-        _586316818 = 586316818,
-
-        _872109863 = 872109863,
-
-        _1148802545 = 1148802545,
-
-        _1430742526 = 1430742526,
-
-        _1717269026 = 1717269026,
-
-        _1735697169 = 1735697169,
-
-        _2246665236 = 2246665236,
-
-        _2573393397 = 2573393397,
-
-        _2663948613 = 2663948613,
-
-        _2699079935 = 2699079935,
-
-        _2714280648 = 2714280648,
-
-        _2733703167 = 2733703167,
-
-        _2749942179 = 2749942179,
-
-        _2751462864 = 2751462864,
-
-        _2768224459 = 2768224459,
-
-        _2769641661 = 2769641661,
-
-        _2787281698 = 2787281698,
-
-        _2818346668 = 2818346668,
-
-        _2830712137 = 2830712137,
-
-        _2834349618 = 2834349618,
-
-        _2844424541 = 2844424541,
-
-        _2866338008 = 2866338008,
-
-        _2917435280 = 2917435280,
-
-        _2995767495 = 2995767495,
-
-        _3079273262 = 3079273262,
-
-        _3161949195 = 3161949195,
-
-        _3251336146 = 3251336146,
-
-        _3336873398 = 3336873398,
-
-        _3414481233 = 3414481233,
-
-        _3504172543 = 3504172543,
-
-        _3519070400 = 3519070400,
-
-        _3556759296 = 3556759296,
-
-        _3570237234 = 3570237234,
-
-        _3584940262 = 3584940262,
-
-        _3585341471 = 3585341471,
-
-        _3602906880 = 3602906880,
-
-        _3665568446 = 3665568446,
-
-        _3743790278 = 3743790278,
-
-        _3839692917 = 3839692917,
-
-        _4009820159 = 4009820159,
-
-        _4059490203 = 4059490203,
-
-        _4076199087 = 4076199087,
-
-        _4093564881 = 4093564881,
-
-        _4107256821 = 4107256821,
-
-        _4123120887 = 4123120887,
-
-        _4140555679 = 4140555679,
-
-        _4160732928 = 4160732928,
-
-        _4164306255 = 4164306255,
-
-        _4194303984 = 4194303984,
-
-        _4198924980 = 4198924980,
-
-        _4215333072 = 4215333072,
-
-        _4235231376 = 4235231376,
-
-        _4260754908 = 4260754908,
-
-        _4274834687 = 4274834687,
-
-        _4282924082 = 4282924082,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum EThemeMode
     {
 
@@ -41372,6 +41801,14 @@ namespace Kombine.Flex.Portal.Client
         _41 = 41,
 
         _42 = 42,
+
+        _43 = 43,
+
+        _44 = 44,
+
+        _45 = 45,
+
+        _46 = 46,
 
     }
 
@@ -41734,6 +42171,18 @@ namespace Kombine.Flex.Portal.Client
         public string? GoogleMapsBrowserKey { get; set; } = default!;
 
         /// <summary>
+        /// The trusted tenant's wallboard map renderer; other maps retain their existing renderer.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("mapProvider")]
+        public string? MapProvider { get; set; } = default!;
+
+        /// <summary>
+        /// Public MapTiler browser key, restricted to configured origins; null when disabled or missing.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("mapTilerBrowserKey")]
+        public string? MapTilerBrowserKey { get; set; } = default!;
+
+        /// <summary>
         /// Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("brandIconUrl")]
@@ -41756,6 +42205,30 @@ namespace Kombine.Flex.Portal.Client
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("brandDarkLogoUrl")]
         public string? BrandDarkLogoUrl { get; set; } = default!;
+
+        /// <summary>
+        /// Tenant's symbol-only light logo, or null when unavailable.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("brandLogoMarkUrl")]
+        public string? BrandLogoMarkUrl { get; set; } = default!;
+
+        /// <summary>
+        /// Tenant's symbol-only dark logo, or null when unavailable.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("brandDarkLogoMarkUrl")]
+        public string? BrandDarkLogoMarkUrl { get; set; } = default!;
+
+        /// <summary>
+        /// Tenant's text-only light logo, or null when unavailable.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("brandLogoWordmarkUrl")]
+        public string? BrandLogoWordmarkUrl { get; set; } = default!;
+
+        /// <summary>
+        /// Tenant's text-only dark logo, or null when unavailable.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("brandDarkLogoWordmarkUrl")]
+        public string? BrandDarkLogoWordmarkUrl { get; set; } = default!;
 
         /// <summary>
         /// Public validated CSS custom properties for this tenant's light presentation.

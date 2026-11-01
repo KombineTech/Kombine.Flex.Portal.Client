@@ -2492,6 +2492,44 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (WallboardBankStorageResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardBankStorageResponse));
         }
 
+        /// <summary>Read a location name for a manager's LocationInfo preview.</summary>
+        public WallboardLocationInfoResponse GetMyWallboardLocationInfo()
+        {
+            return GetMyWallboardLocationInfo(null);
+        }
+
+        /// <summary>Read a location name for a manager's LocationInfo preview.</summary>
+        public WallboardLocationInfoResponse GetMyWallboardLocationInfo(GetMyWallboardLocationInfoOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/location-info";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "locationKid", options.LocationKid);
+            }
+            return (WallboardLocationInfoResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardLocationInfoResponse));
+        }
+
+        /// <summary>Read the location name for its exact LocationInfo widget on an approved screen.</summary>
+        public WallboardLocationInfoResponse GetWallboardDisplayLocationInfo(string @displayId)
+        {
+            return GetWallboardDisplayLocationInfo(@displayId, null);
+        }
+
+        /// <summary>Read the location name for its exact LocationInfo widget on an approved screen.</summary>
+        public WallboardLocationInfoResponse GetWallboardDisplayLocationInfo(string @displayId, GetWallboardDisplayLocationInfoOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/display/{displayId}/location-info";
+            path = path.Replace("{displayId}", PathValue(@displayId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "locationKid", options.LocationKid);
+                path = AddQuery(path, "portrait", options.Portrait);
+            }
+            return (WallboardLocationInfoResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardLocationInfoResponse));
+        }
+
         /// <summary>Read all visible locations with valid coordinates for a manager preview.</summary>
         public WallboardLocationMapResponse GetMyWallboardLocationMap()
         {
@@ -2644,6 +2682,25 @@ namespace Kombine.Flex.Portal.Client.Compact20
                 path = AddQuery(path, "portrait", options.Portrait);
             }
             return (WallboardReservationCalendarResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardReservationCalendarResponse));
+        }
+
+        /// <summary>Find up to twenty titles for YouTube (39), Vimeo (40), Wistia (41) or Mux (45).</summary>
+        public VideoSearchResponse SearchMyWallboardVideos()
+        {
+            return SearchMyWallboardVideos(null);
+        }
+
+        /// <summary>Find up to twenty titles for YouTube (39), Vimeo (40), Wistia (41) or Mux (45).</summary>
+        public VideoSearchResponse SearchMyWallboardVideos(SearchMyWallboardVideosOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/videos/search";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "widgetType", options.WidgetType);
+                path = AddQuery(path, "query", options.Query);
+            }
+            return (VideoSearchResponse)SendJson("GET", path, null, headers, 200, typeof(VideoSearchResponse));
         }
 
         /// <summary>Displays Windows downloads for this tenant, or an explicit unavailable state.</summary>

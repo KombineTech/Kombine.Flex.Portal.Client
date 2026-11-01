@@ -3415,7 +3415,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
+          "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
         }
       ],
       "nextCursor": null
@@ -3470,7 +3470,7 @@
         "enabled": true,
         "deleted": false,
         "deletedAt": null,
-        "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
+        "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
       },
       "canEditIcon": true,
       "iconRevision": "5CE7200DE215F47D73E8C782F447813306BD7DD66F0C468AD961D92D0C950FDE",
@@ -4722,7 +4722,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
+          "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
           "retentionDays": 30,
           "canEditPermissions": true,
           "canEditTabs": true,
@@ -5523,7 +5523,7 @@
       "enabled": true,
       "deleted": false,
       "deletedAt": null,
-      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
+      "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
       "retentionDays": 30,
       "canEditPermissions": true,
       "canEditTabs": true,
@@ -9318,6 +9318,84 @@
     "example": {}
   },
   {
+    "operation": "GetMyWallboardLocationInfo",
+    "python": "get_my_wallboard_location_info",
+    "javascript": "getMyWallboardLocationInfo",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/location-info",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationInfoResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayLocationInfo",
+    "python": "get_wallboard_display_location_info",
+    "javascript": "getWallboardDisplayLocationInfo",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/location-info",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationInfoResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetMyWallboardLocationMap",
     "python": "get_my_wallboard_location_map",
     "javascript": "getMyWallboardLocationMap",
@@ -9717,6 +9795,46 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "SearchMyWallboardVideos",
+    "python": "search_my_wallboard_videos",
+    "javascript": "searchMyWallboardVideos",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/videos/search",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "widgetType",
+        "where": "query",
+        "py": "widget_type",
+        "js": "widgetType",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "query",
+        "where": "query",
+        "py": "query",
+        "js": "query",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/VideoSearchResponse"
     },
     "binary": false,
     "example": {}
@@ -11313,8 +11431,8 @@
         }
       ],
       "lookbackHours": 1,
-      "sinceUtc": "2026-09-23T09:00:00+00:00",
-      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
+      "sinceUtc": "2026-09-23T11:00:00+02:00",
+      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
     }
   },
   {
@@ -11339,8 +11457,8 @@
       "tenantKid": "3E7QAo",
       "count": 12450,
       "lookbackDays": 100,
-      "sinceUtc": "2026-06-15T10:00:00+00:00",
-      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
+      "sinceUtc": "2026-06-15T12:00:00+02:00",
+      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
     }
   },
   {

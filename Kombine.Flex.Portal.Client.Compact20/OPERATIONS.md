@@ -119,6 +119,7 @@
 | `GetMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` |
 | `GetMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` |
 | `GetMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` |
+| `GetMyWallboardLocationInfo` | GET | `/api/v1/session/me/wallboards/location-info` |
 | `GetMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` |
 | `GetMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetNearestLocations` | GET | `/api/v1/locations/nearest` |
@@ -176,6 +177,7 @@
 | `GetWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` |
 | `GetWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
 | `GetWallboardDisplayDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` |
+| `GetWallboardDisplayLocationInfo` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` |
 | `GetWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
 | `GetWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
 | `GetWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
@@ -201,6 +203,7 @@
 | `SearchBanks` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` |
 | `SearchLocations` | GET | `/api/v1/search/locations` |
+| `SearchMyWallboardVideos` | GET | `/api/v1/session/me/wallboards/videos/search` |
 | `SearchUserActivation` | GET | `/api/v1/search/user-activation` |
 | `SearchUserSms` | GET | `/api/v1/search/user-sms` |
 | `SearchUsers` | GET | `/api/v1/search/users` |

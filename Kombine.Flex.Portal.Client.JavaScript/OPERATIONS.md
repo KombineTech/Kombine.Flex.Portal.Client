@@ -163,6 +163,8 @@
 | `SearchUserActivation` | `search_user_activation` | `searchUserActivation` | GET | `/api/v1/search/user-activation` |
 | `GetMyWallboardBankStorage` | `get_my_wallboard_bank_storage` | `getMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` |
 | `GetWallboardDisplayBankStorage` | `get_wallboard_display_bank_storage` | `getWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
+| `GetMyWallboardLocationInfo` | `get_my_wallboard_location_info` | `getMyWallboardLocationInfo` | GET | `/api/v1/session/me/wallboards/location-info` |
+| `GetWallboardDisplayLocationInfo` | `get_wallboard_display_location_info` | `getWallboardDisplayLocationInfo` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` |
 | `GetMyWallboardLocationMap` | `get_my_wallboard_location_map` | `getMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` |
 | `GetWallboardDisplayLocationMap` | `get_wallboard_display_location_map` | `getWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
 | `StartWallboardPairing` | `start_wallboard_pairing` | `startWallboardPairing` | POST | `/api/v1/wallboard/pairings` |
@@ -176,6 +178,7 @@
 | `RevokeWallboardDevice` | `revoke_wallboard_device` | `revokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
 | `GetMyWallboardReservationCalendar` | `get_my_wallboard_reservation_calendar` | `getMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetWallboardDisplayReservationCalendar` | `get_wallboard_display_reservation_calendar` | `getWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
+| `SearchMyWallboardVideos` | `search_my_wallboard_videos` | `searchMyWallboardVideos` | GET | `/api/v1/session/me/wallboards/videos/search` |
 | `GetPortalAppDownloadPage` | `get_portal_app_download_page` | `getPortalAppDownloadPage` | GET | `/download` |
 | `DownloadPortalWindowsAppInstaller` | `download_portal_windows_app_installer` | `downloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackage` | `download_portal_windows_package` | `downloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` |

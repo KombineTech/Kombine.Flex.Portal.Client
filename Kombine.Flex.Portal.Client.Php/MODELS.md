@@ -1352,10 +1352,22 @@ array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'numb
 array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
 ```
 
+### VideoSearchItem
+
+```php
+array{'id'?: string|null, 'name'?: string|null, 'sourceUrl'?: string|null}
+```
+
+### VideoSearchResponse
+
+```php
+array{'items'?: list<VideoSearchItem>|null, 'source'?: string|null}
+```
+
 ### Wallboard
 
 ```php
-array{'i'?: list<string>|null, 'n'?: string|null, 'a'?: int|float, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
+array{'i'?: list<string>|null, 'n'?: string|null, 'a'?: int|float, 'c'?: list<list<int>>|null, 's'?: list<WallboardPage>|null}
 ```
 
 ### WallboardAnonymousReservation
@@ -1392,6 +1404,12 @@ array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string,
 
 ```php
 array{'layout'?: Wallboard, 'revision'?: string|null, 'dateFormat'?: string|null}
+```
+
+### WallboardLocationInfoResponse
+
+```php
+array{'locationKid'?: string|null, 'name'?: string|null}
 ```
 
 ### WallboardLocationMapItem
@@ -1490,12 +1508,6 @@ array{'ms2000'?: int, 'flags'?: int|null, 'heat'?: bool|null, 'inlet'?: bool|nul
 array{'unitType'?: int|null, 'kind'?: string|null, 'groupOrder'?: list<string>|null}
 ```
 
-### eColor
-
-```php
-int
-```
-
 ### eThemeMode
 
 ```php
@@ -1577,7 +1589,7 @@ array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: s
 ### PublicWidgetPresentationResponse
 
 ```php
-array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandName'?: string|null, 'brandLogoUrl'?: string|null, 'brandDarkLogoUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
+array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'mapProvider'?: string|null, 'mapTilerBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandName'?: string|null, 'brandLogoUrl'?: string|null, 'brandDarkLogoUrl'?: string|null, 'brandLogoMarkUrl'?: string|null, 'brandDarkLogoMarkUrl'?: string|null, 'brandLogoWordmarkUrl'?: string|null, 'brandDarkLogoWordmarkUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
 ```
 
 ### PurchaseCurrencySnapshot

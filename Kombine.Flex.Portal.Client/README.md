@@ -1,3 +1,5 @@
+Version 0.25.0 updates the Wallboard contract: c contains separate light and dark color palettes. Regenerate callers and migrate flat c arrays when saving; the API retains existing layouts on read. The client contains 220 operations. See the API changelog.
+
 Version 0.24.0 synchronizes 217 API operations with the 60 by 60 Wallboard model: ordered display IDs and rectangle arrays replace the older scalar/coordinate fields. Personal and public Portal wallboards have separate authorized, revision-checked saves. New operations expose public layouts and the protected storage, load, map and reservation-calendar projections. Preserve stored geometry and retry conflicts only after reloading. UserBalance remains compatible.
 
 Version 0.24.0 covers 217 operations, including GetUnitTimeline and GetUnitTimelineFields. Wallboard responses identify the exact approved display; screen sessions expose minimal identity without ordinary manager permissions. Use a normal manager login for Portal operations. Permanent device approval and UserBalance remain compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
