@@ -1,3 +1,7 @@
+## 0.19.0
+
+- Update the widget type contract to include Plex (52); server availability remains separately controlled.
+
 ## 0.18.0
 
 - Correct the release history documentation.

@@ -1,3 +1,5 @@
+Version 0.28.0 updates the widget type contract with Plex (52); server availability is controlled separately.
+
 Version 0.27.0 adds GetPublicReservedMachines and includes 221 operations. The enum includes values 47–51; only implemented widget types are enabled by the server.
 
 Version 0.25.0 updates the Wallboard contract: c contains separate light and dark color palettes. Regenerate callers and migrate flat c arrays when saving; the API retains existing layouts on read. The client contains 220 operations. See the API changelog.

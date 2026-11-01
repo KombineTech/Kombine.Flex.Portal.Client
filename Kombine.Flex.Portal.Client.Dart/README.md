@@ -1,3 +1,5 @@
+Version 0.19.0 updates the widget type contract with Plex (52); server availability is controlled separately.
+
 Version 0.18.0 includes GetPublicReservedMachines and includes 221 operations. The enum includes values 47–51; only implemented widget types are enabled by the server.
 
 Version 0.15.0 uses separate light and dark c palettes in Wallboard layouts; migrate flat c arrays before saving. The client covers 220 operations. See the API changelog.

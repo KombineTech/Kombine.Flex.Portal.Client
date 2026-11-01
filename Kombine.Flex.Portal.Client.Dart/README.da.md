@@ -1,3 +1,5 @@
+Version 0.19.0 opdaterer widgettypen med Plex (52); serveren bestemmer separat, hvilke typer der er tilgængelige.
+
 Version 0.18.0 indeholder GetPublicReservedMachines og omfatter 221 operationer. Enum indeholder værdierne 47–51; serveren aktiverer kun implementerede widgettyper.
 
 Version 0.15.0 bruger separate lyse og mørke c-paletter i Wallboard-layouts; konvertér flade c-arrays før gemning. Klienten omfatter 220 operationer. Se API-changelog.
