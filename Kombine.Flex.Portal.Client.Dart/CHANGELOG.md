@@ -1,3 +1,7 @@
+## 0.17.0
+
+- Add the public reserved-machines statistic and update the Wallboard widget enum.
+
 ## 0.16.0
 
 - Add the public reserved-machines statistic and update the Wallboard widget enum.

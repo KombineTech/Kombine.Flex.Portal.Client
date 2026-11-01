@@ -1,4 +1,6 @@
-La versión 0.26.0 actualiza el contrato Wallboard: c contiene paletas claras y oscuras separadas. Regenere las llamadas y migre los arrays c planos al guardar; la API conserva los diseños existentes al leer. El cliente contiene 221 operaciones. Consulte el registro de cambios de la API.
+La versión 0.27.0 añade GetPublicReservedMachines e incluye 221 operaciones. El enum contiene los valores 47–51; el servidor solo habilita los tipos de widget implementados.
+
+La versión 0.25.0 actualiza el contrato Wallboard: c contiene paletas claras y oscuras separadas. Regenere las llamadas y migre los arrays c planos al guardar; la API conserva los diseños existentes al leer. El cliente contiene 220 operaciones. Consulte el registro de cambios de la API.
 
 La versión 0.24.0 sincroniza 217 operaciones con el modelo Wallboard de 60 por 60: listas ordenadas de pantallas y matrices de rectángulos sustituyen los antiguos campos individuales. Los wallboards personales y públicos del Portal se guardan por separado con autorización y control de revisión. Las nuevas operaciones incluyen diseños públicos y proyecciones protegidas de almacenamiento, carga, mapas y reservas. Conserve la geometría guardada y recargue tras un conflicto antes de reintentar. UserBalance sigue siendo compatible.
 
