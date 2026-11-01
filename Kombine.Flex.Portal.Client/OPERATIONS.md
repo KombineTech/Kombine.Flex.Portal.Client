@@ -121,6 +121,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetMyManagerWallboardsAsync` | GET | `/api/v1/session/me/wallboards` |
 | `GetMyWallboardBankStorageAsync` | GET | `/api/v1/session/me/wallboards/bank-storage` |
 | `GetMyWallboardDatabaseLoadHistoryAsync` | GET | `/api/v1/session/me/wallboards/database-load-history` |
+| `GetMyWallboardLocationInfoAsync` | GET | `/api/v1/session/me/wallboards/location-info` |
 | `GetMyWallboardLocationMapAsync` | GET | `/api/v1/session/me/wallboards/location-map` |
 | `GetMyWallboardReservationCalendarAsync` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetNearestLocationsAsync` | GET | `/api/v1/locations/nearest` |
@@ -178,6 +179,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetWallboardDeviceAsync` | GET | `/api/v1/wallboard/devices/{deviceId}` |
 | `GetWallboardDisplayBankStorageAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
 | `GetWallboardDisplayDatabaseLoadHistoryAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` |
+| `GetWallboardDisplayLocationInfoAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` |
 | `GetWallboardDisplayLocationMapAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
 | `GetWallboardDisplayReservationCalendarAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
 | `GetWallboardPairingAsync` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
@@ -203,6 +205,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `SearchBanksAsync` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivationAsync` | GET | `/api/v1/search/location-activation` |
 | `SearchLocationsAsync` | GET | `/api/v1/search/locations` |
+| `SearchMyWallboardVideosAsync` | GET | `/api/v1/session/me/wallboards/videos/search` |
 | `SearchUserActivationAsync` | GET | `/api/v1/search/user-activation` |
 | `SearchUsersAsync` | GET | `/api/v1/search/users` |
 | `SearchUserSmsAsync` | GET | `/api/v1/search/user-sms` |

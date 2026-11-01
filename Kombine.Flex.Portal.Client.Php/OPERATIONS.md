@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `adb5a85c18ae5f40726c034e64bea11e84311a56b201bb5bb5aa5a08375334b2`).
-217 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `f95c10f8046cc9924b4ebc85ab4dd71ea627c8bf6a9b2edcc1c24f2868d1e6a1`).
+220 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -122,6 +122,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `adb5a85c18ae5f40726
 | `getMyManagerWallboards` | `GetMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` | Bearer |
 | `getMyWallboardBankStorage` | `GetMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` | Bearer |
 | `getMyWallboardDatabaseLoadHistory` | `GetMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` | Bearer |
+| `getMyWallboardLocationInfo` | `GetMyWallboardLocationInfo` | GET | `/api/v1/session/me/wallboards/location-info` | Bearer |
 | `getMyWallboardLocationMap` | `GetMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` | Bearer |
 | `getMyWallboardReservationCalendar` | `GetMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` | Bearer |
 | `getNearestLocations` | `GetNearestLocations` | GET | `/api/v1/locations/nearest` | Bearer |
@@ -179,6 +180,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `adb5a85c18ae5f40726
 | `getWallboardDevice` | `GetWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` | Bearer |
 | `getWallboardDisplayBankStorage` | `GetWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` | Bearer |
 | `getWallboardDisplayDatabaseLoadHistory` | `GetWallboardDisplayDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` | Bearer |
+| `getWallboardDisplayLocationInfo` | `GetWallboardDisplayLocationInfo` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` | Bearer |
 | `getWallboardDisplayLocationMap` | `GetWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` | Bearer |
 | `getWallboardDisplayReservationCalendar` | `GetWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` | Bearer |
 | `getWallboardPairing` | `GetWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` | Bearer |
@@ -204,6 +206,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `adb5a85c18ae5f40726
 | `searchBanks` | `SearchBanks` | GET | `/api/v1/search/banks` | Bearer |
 | `searchLocationActivation` | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` | Bearer |
 | `searchLocations` | `SearchLocations` | GET | `/api/v1/search/locations` | Bearer |
+| `searchMyWallboardVideos` | `SearchMyWallboardVideos` | GET | `/api/v1/session/me/wallboards/videos/search` | Bearer |
 | `searchUserActivation` | `SearchUserActivation` | GET | `/api/v1/search/user-activation` | Bearer |
 | `searchUserSms` | `SearchUserSms` | GET | `/api/v1/search/user-sms` | Bearer |
 | `searchUsers` | `SearchUsers` | GET | `/api/v1/search/users` | Bearer |

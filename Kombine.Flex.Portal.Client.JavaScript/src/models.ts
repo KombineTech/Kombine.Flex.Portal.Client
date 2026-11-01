@@ -3131,6 +3131,24 @@ export interface ValidationProblemDetails {
   "errors"?: Record<string, (string)[]> | null;
 }
 
+/** A canonical provider reference and plain-text title. */
+export interface VideoSearchItem {
+  /** id */
+  "id"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** sourceUrl */
+  "sourceUrl"?: string | null;
+}
+
+/** At most twenty results, identifying provider search or cited public web discovery. */
+export interface VideoSearchResponse {
+  /** items */
+  "items"?: (VideoSearchItem)[] | null;
+  /** source */
+  "source"?: string | null;
+}
+
 /** Wallboard */
 export interface Wallboard {
   /** i */
@@ -3140,7 +3158,7 @@ export interface Wallboard {
   /** a */
   "a"?: number;
   /** c */
-  "c"?: (EColor)[] | null;
+  "c"?: ((number)[])[] | null;
   /** s */
   "s"?: (WallboardPage)[] | null;
 }
@@ -3215,6 +3233,14 @@ export interface WallboardDisplayResponse {
   "revision"?: string | null;
   /** dateFormat */
   "dateFormat"?: string | null;
+}
+
+/** The selected location's canonical identity and stored name, without other location metadata. */
+export interface WallboardLocationInfoResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** name */
+  "name"?: string | null;
 }
 
 /** A location's canonical identity, name and WGS84 coordinates in decimal degrees. */
@@ -3455,13 +3481,10 @@ export interface WashDocPresentation {
   "groupOrder"?: (string)[] | null;
 }
 
-/** Wire values: [0, 16777216, 19803451, 49342943, 66515692, 83886079, 301717822, 586316818, 872109863, 1148802545, 1430742526, 1717269026, 1735697169, 2246665236, 2573393397, 2663948613, 2699079935, 2714280648, 2733703167, 2749942179, 2751462864, 2768224459, 2769641661, 2787281698, 2818346668, 2830712137, 2834349618, 2844424541, 2866338008, 2917435280, 2995767495, 3079273262, 3161949195, 3251336146, 3336873398, 3414481233, 3504172543, 3519070400, 3556759296, 3570237234, 3584940262, 3585341471, 3602906880, 3665568446, 3743790278, 3839692917, 4009820159, 4059490203, 4076199087, 4093564881, 4107256821, 4123120887, 4140555679, 4160732928, 4164306255, 4194303984, 4198924980, 4215333072, 4235231376, 4260754908, 4274834687, 4282924082]. */
-export type EColor = number;
-
 /** Wire values: [0, 1, 2]. */
 export type EThemeMode = number;
 
-/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]. */
+/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46]. */
 export type EWidgetType = number;
 
 /** Public tenant-wide count; does not expose or grant access to any individual account. */
@@ -3622,6 +3645,10 @@ export interface PublicWidgetPresentationResponse {
   "labels"?: Record<string, string> | null;
   /** Public browser Maps key, restricted by HTTP referrer at Google; never a server credential. Null when maps are not configured. */
   "googleMapsBrowserKey"?: string | null;
+  /** The trusted tenant's wallboard map renderer; other maps retain their existing renderer. */
+  "mapProvider"?: string | null;
+  /** Public MapTiler browser key, restricted to configured origins; null when disabled or missing. */
+  "mapTilerBrowserKey"?: string | null;
   /** Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable. */
   "brandIconUrl"?: string | null;
   /** Display name from the trusted tenant's branding profile. */
@@ -3630,6 +3657,14 @@ export interface PublicWidgetPresentationResponse {
   "brandLogoUrl"?: string | null;
   /** Dark-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable. */
   "brandDarkLogoUrl"?: string | null;
+  /** Tenant's symbol-only light logo, or null when unavailable. */
+  "brandLogoMarkUrl"?: string | null;
+  /** Tenant's symbol-only dark logo, or null when unavailable. */
+  "brandDarkLogoMarkUrl"?: string | null;
+  /** Tenant's text-only light logo, or null when unavailable. */
+  "brandLogoWordmarkUrl"?: string | null;
+  /** Tenant's text-only dark logo, or null when unavailable. */
+  "brandDarkLogoWordmarkUrl"?: string | null;
   /** Public validated CSS custom properties for this tenant's light presentation. */
   "brandLightTokens"?: Record<string, string> | null;
   /** Public validated CSS custom properties for this tenant's dark presentation. */
@@ -4311,6 +4346,15 @@ export interface GetWallboardDisplayBankStorageOptions {
   portrait?: boolean;
 }
 
+export interface GetMyWallboardLocationInfoOptions {
+  locationKid?: string;
+}
+
+export interface GetWallboardDisplayLocationInfoOptions {
+  locationKid?: string;
+  portrait?: boolean;
+}
+
 export interface GetWallboardDisplayLocationMapOptions {
   portrait?: boolean;
 }
@@ -4326,6 +4370,11 @@ export interface GetMyWallboardReservationCalendarOptions {
 export interface GetWallboardDisplayReservationCalendarOptions {
   locationKid?: string;
   portrait?: boolean;
+}
+
+export interface SearchMyWallboardVideosOptions {
+  widgetType?: number;
+  query?: string;
 }
 
 export interface GetIconPresentationOptions {

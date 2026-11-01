@@ -651,6 +651,14 @@ class PortalClient(BaseClient):
         'Read saved bank storage measurements for an approved display containing the widget.'
         return self._request('GetWallboardDisplayBankStorage', {'displayId': display_id, 'portrait': portrait}, None)
 
+    def get_my_wallboard_location_info(self, *, location_kid: str | None = None) -> WallboardLocationInfoResponse:
+        "Read a location name for a manager's LocationInfo preview."
+        return self._request('GetMyWallboardLocationInfo', {'locationKid': location_kid}, None)
+
+    def get_wallboard_display_location_info(self, display_id: str, *, location_kid: str | None = None, portrait: bool | None = None) -> WallboardLocationInfoResponse:
+        'Read the location name for its exact LocationInfo widget on an approved screen.'
+        return self._request('GetWallboardDisplayLocationInfo', {'displayId': display_id, 'locationKid': location_kid, 'portrait': portrait}, None)
+
     def get_my_wallboard_location_map(self) -> WallboardLocationMapResponse:
         'Read all visible locations with valid coordinates for a manager preview.'
         return self._request('GetMyWallboardLocationMap', {}, None)
@@ -702,6 +710,10 @@ class PortalClient(BaseClient):
     def get_wallboard_display_reservation_calendar(self, display_id: str, *, location_kid: str | None = None, portrait: bool | None = None) -> WallboardReservationCalendarResponse:
         "Read one location's schedule and anonymous occupancy for its approved screen."
         return self._request('GetWallboardDisplayReservationCalendar', {'displayId': display_id, 'locationKid': location_kid, 'portrait': portrait}, None)
+
+    def search_my_wallboard_videos(self, *, widget_type: int | None = None, query: str | None = None) -> VideoSearchResponse:
+        'Find up to twenty titles for YouTube (39), Vimeo (40), Wistia (41) or Mux (45).'
+        return self._request('SearchMyWallboardVideos', {'widgetType': widget_type, 'query': query}, None)
 
     def get_portal_app_download_page(self) -> PortalDownload:
         'Displays Windows downloads for this tenant, or an explicit unavailable state.'

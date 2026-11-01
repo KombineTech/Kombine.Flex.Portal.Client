@@ -6243,6 +6243,41 @@
       },
       "additionalProperties": {}
     },
+    "VideoSearchItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
+          "type": "string",
+          "nullable": true
+        },
+        "sourceUrl": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "VideoSearchResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/VideoSearchItem"
+          },
+          "nullable": true
+        },
+        "source": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "Wallboard": {
       "type": "object",
       "properties": {
@@ -6264,7 +6299,11 @@
         "c": {
           "type": "array",
           "items": {
-            "$ref": "#/components/schemas/eColor"
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
           },
           "nullable": true
         },
@@ -6408,6 +6447,20 @@
           "nullable": true
         },
         "dateFormat": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "WallboardLocationInfoResponse": {
+      "type": "object",
+      "properties": {
+        "locationKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "name": {
           "type": "string",
           "nullable": true
         }
@@ -6893,10 +6946,6 @@
       },
       "additionalProperties": false
     },
-    "eColor": {
-      "type": "integer",
-      "format": "int64"
-    },
     "eThemeMode": {
       "type": "integer",
       "format": "int32"
@@ -7216,6 +7265,14 @@
           "type": "string",
           "nullable": true
         },
+        "mapProvider": {
+          "type": "string",
+          "nullable": true
+        },
+        "mapTilerBrowserKey": {
+          "type": "string",
+          "nullable": true
+        },
         "brandIconUrl": {
           "type": "string",
           "nullable": true
@@ -7229,6 +7286,22 @@
           "nullable": true
         },
         "brandDarkLogoUrl": {
+          "type": "string",
+          "nullable": true
+        },
+        "brandLogoMarkUrl": {
+          "type": "string",
+          "nullable": true
+        },
+        "brandDarkLogoMarkUrl": {
+          "type": "string",
+          "nullable": true
+        },
+        "brandLogoWordmarkUrl": {
+          "type": "string",
+          "nullable": true
+        },
+        "brandDarkLogoWordmarkUrl": {
           "type": "string",
           "nullable": true
         },
@@ -13728,6 +13801,70 @@
       },
       "binary": false
     },
+    "GetMyWallboardLocationInfo": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/location-info",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "locationKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardLocationInfoResponse"
+      },
+      "binary": false
+    },
+    "GetWallboardDisplayLocationInfo": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/display/{displayId}/location-info",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "displayId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "locationKid",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/WallboardLocationInfoResponse"
+      },
+      "binary": false
+    },
     "GetMyWallboardLocationMap": {
       "method": "GET",
       "path": "api/v1/session/me/wallboards/location-map",
@@ -14050,6 +14187,39 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+      },
+      "binary": false
+    },
+    "SearchMyWallboardVideos": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/videos/search",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "widgetType",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "query",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/VideoSearchResponse"
       },
       "binary": false
     },

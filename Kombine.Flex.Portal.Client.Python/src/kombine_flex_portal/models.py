@@ -1793,11 +1793,22 @@ ValidationProblemDetails = TypedDict('ValidationProblemDetails', {
     'errors': 'dict[str, list[str]] | None',
 }, total=False)
 
+VideoSearchItem = TypedDict('VideoSearchItem', {
+    'id': 'str | None',
+    'name': 'str | None',
+    'sourceUrl': 'str | None',
+}, total=False)
+
+VideoSearchResponse = TypedDict('VideoSearchResponse', {
+    'items': 'list[VideoSearchItem] | None',
+    'source': 'str | None',
+}, total=False)
+
 Wallboard = TypedDict('Wallboard', {
     'i': 'list[str] | None',
     'n': 'str | None',
     'a': 'float',
-    'c': 'list[EColor] | None',
+    'c': 'list[list[int]] | None',
     's': 'list[WallboardPage] | None',
 }, total=False)
 
@@ -1841,6 +1852,11 @@ WallboardDisplayResponse = TypedDict('WallboardDisplayResponse', {
     'layout': 'Wallboard',
     'revision': 'str | None',
     'dateFormat': 'str | None',
+}, total=False)
+
+WallboardLocationInfoResponse = TypedDict('WallboardLocationInfoResponse', {
+    'locationKid': 'str | None',
+    'name': 'str | None',
 }, total=False)
 
 WallboardLocationMapItem = TypedDict('WallboardLocationMapItem', {
@@ -1978,8 +1994,6 @@ WashDocPresentation = TypedDict('WashDocPresentation', {
     'groupOrder': 'list[str] | None',
 }, total=False)
 
-EColor = int
-
 EThemeMode = int
 
 EWidgetType = int
@@ -2074,10 +2088,16 @@ PublicWidgetPresentationResponse = TypedDict('PublicWidgetPresentationResponse',
     'webBase': 'str | None',
     'labels': 'dict[str, str] | None',
     'googleMapsBrowserKey': 'str | None',
+    'mapProvider': 'str | None',
+    'mapTilerBrowserKey': 'str | None',
     'brandIconUrl': 'str | None',
     'brandName': 'str | None',
     'brandLogoUrl': 'str | None',
     'brandDarkLogoUrl': 'str | None',
+    'brandLogoMarkUrl': 'str | None',
+    'brandDarkLogoMarkUrl': 'str | None',
+    'brandLogoWordmarkUrl': 'str | None',
+    'brandDarkLogoWordmarkUrl': 'str | None',
     'brandLightTokens': 'dict[str, str] | None',
     'brandDarkTokens': 'dict[str, str] | None',
 }, total=False)

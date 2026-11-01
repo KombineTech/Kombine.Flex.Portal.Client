@@ -3196,6 +3196,43 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetMyWallboardLocationInfo", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/location-info");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["locationKid"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"locationKid": null, "name": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyWallboardLocationInfo(locationKid: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"locationKid": null, "name": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetWallboardDisplayLocationInfo", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/display/fixture%20%2F%C3%A6%3F%26/location-info");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["locationKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"locationKid": null, "name": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getWallboardDisplayLocationInfo(displayId: "fixture /\u00e6?&", locationKid: "fixture", portrait: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"locationKid": null, "name": null}));
+    expect(sends, 1);
+  });
+
   test("wire GetMyWallboardLocationMap", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -3432,6 +3469,25 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getWallboardDisplayReservationCalendar(displayId: "fixture /\u00e6?&", locationKid: "fixture", portrait: false);
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"locationKid": null, "groups": null, "timeZone": null, "from": "2026-10-20", "days": 7, "reservations": null}));
+    expect(sends, 1);
+  });
+
+  test("wire SearchMyWallboardVideos", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/videos/search");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["widgetType"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["query"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"items": null, "source": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.searchMyWallboardVideos(widgetType: 7, query: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "source": null}));
     expect(sends, 1);
   });
 
@@ -4154,11 +4210,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], isNull);
 
-      return http.Response(encodeApiJson(<String, Object?>{"language": null, "colors": null, "background": null, "webBase": null, "labels": null, "googleMapsBrowserKey": null, "brandIconUrl": null, "brandName": null, "brandLogoUrl": null, "brandDarkLogoUrl": null, "brandLightTokens": null, "brandDarkTokens": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"language": null, "colors": null, "background": null, "webBase": null, "labels": null, "googleMapsBrowserKey": null, "mapProvider": null, "mapTilerBrowserKey": null, "brandIconUrl": null, "brandName": null, "brandLogoUrl": null, "brandDarkLogoUrl": null, "brandLogoMarkUrl": null, "brandDarkLogoMarkUrl": null, "brandLogoWordmarkUrl": null, "brandDarkLogoWordmarkUrl": null, "brandLightTokens": null, "brandDarkTokens": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getPublicWidgetPresentation();
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"language": null, "colors": null, "background": null, "webBase": null, "labels": null, "googleMapsBrowserKey": null, "brandIconUrl": null, "brandName": null, "brandLogoUrl": null, "brandDarkLogoUrl": null, "brandLightTokens": null, "brandDarkTokens": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"language": null, "colors": null, "background": null, "webBase": null, "labels": null, "googleMapsBrowserKey": null, "mapProvider": null, "mapTilerBrowserKey": null, "brandIconUrl": null, "brandName": null, "brandLogoUrl": null, "brandDarkLogoUrl": null, "brandLogoMarkUrl": null, "brandDarkLogoMarkUrl": null, "brandLogoWordmarkUrl": null, "brandDarkLogoWordmarkUrl": null, "brandLightTokens": null, "brandDarkTokens": null}));
     expect(sends, 1);
   });
 
