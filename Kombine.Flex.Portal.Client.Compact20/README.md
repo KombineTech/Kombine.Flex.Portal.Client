@@ -1,4 +1,4 @@
-Version 0.25.0 updates the Wallboard contract: c contains separate light and dark color palettes. Regenerate callers and migrate flat c arrays when saving; the API retains existing layouts on read. The client contains 220 operations. See the API changelog.
+Version 0.26.0 updates the Wallboard contract: c contains separate light and dark color palettes. Regenerate callers and migrate flat c arrays when saving; the API retains existing layouts on read. The client contains 221 operations. See the API changelog.
 
 Version 0.24.0 synchronizes 217 API operations with the 60 by 60 Wallboard model: ordered display IDs and rectangle arrays replace the older scalar/coordinate fields. Personal and public Portal wallboards have separate authorized, revision-checked saves. New operations expose public layouts and the protected storage, load, map and reservation-calendar projections. Preserve stored geometry and retry conflicts only after reloading. UserBalance remains compatible.
 

@@ -216,5 +216,6 @@ GetPublicPurchases	GET	/api/v1/public/statistics/purchases	200	{"tenantKid":"3E7
 GetPublicActiveUsers	GET	/api/v1/public/statistics/active-users	200	{"tenantKid":"3E7QAo","count":12450,"lookbackDays":100,"sinceUtc":"2026-06-15T12:00:00+02:00","measuredAtUtc":"2026-09-23T12:00:00+02:00"}
 GetPublicWidgetPresentation	GET	/api/v1/public/widgets	200	{}
 GetPublicReservations	GET	/api/v1/public/statistics/reservations	200	{}
+GetPublicReservedMachines	GET	/api/v1/public/statistics/reserved-machines	200	{}
 GetPublicRunningMachines	GET	/api/v1/public/statistics/running-machines	200	{}
 GetPortalStatus	GET	/api/v1/status	200	{"service":"Kombine Flex Portal API","status":"Available","apiVersion":"v1"}

@@ -2145,6 +2145,13 @@ ReservationsStatisticsResponse = TypedDict('ReservationsStatisticsResponse', {
     'refreshAfterSeconds': 'int',
 }, total=False)
 
+ReservedMachinesStatisticsResponse = TypedDict('ReservedMachinesStatisticsResponse', {
+    'tenantKid': 'str | None',
+    'count': 'int',
+    'measuredAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
+}, total=False)
+
 RunningMachinesResponse = TypedDict('RunningMachinesResponse', {
     'tenantKid': 'str | None',
     'count': 'int',

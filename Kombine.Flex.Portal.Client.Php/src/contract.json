@@ -7467,6 +7467,28 @@
       },
       "additionalProperties": false
     },
+    "ReservedMachinesStatisticsResponse": {
+      "type": "object",
+      "properties": {
+        "tenantKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "measuredAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
     "RunningMachinesResponse": {
       "type": "object",
       "properties": {
@@ -15573,6 +15595,21 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ReservationsStatisticsResponse"
+      },
+      "binary": false
+    },
+    "GetPublicReservedMachines": {
+      "method": "GET",
+      "path": "api/v1/public/statistics/reserved-machines",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ReservedMachinesStatisticsResponse"
       },
       "binary": false
     },

@@ -137,6 +137,7 @@
 | `GetPublicPurchases` | GET | `/api/v1/public/statistics/purchases` |
 | `GetPublicRecentCameraPhotos` | GET | `/api/v1/public/camera/photos` |
 | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
+| `GetPublicReservedMachines` | GET | `/api/v1/public/statistics/reserved-machines` |
 | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |
 | `GetPublicWallboardEditor` | GET | `/api/v1/session/me/wallboards/public` |

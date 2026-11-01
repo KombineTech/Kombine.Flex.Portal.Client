@@ -2354,7 +2354,7 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
         /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards and PortalWallboard. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
-        /// <br/>            Enums 2.0.156: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Enums 2.0.159: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
         /// <br/>            Legacy stored single palettes are converted in memory to identical light and dark palettes without writes or revision changes.
         /// <br/>            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.
         /// <br/>            Legacy Video (26) widgets in both collections are returned as YouTube (39), preserving KID, rectangle and order without database writes or revision changes.
@@ -2381,7 +2381,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].
         /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.
         /// <br/>            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.
-        /// <br/>            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40), Wistia (41), LiveLocation (42), LogoMark (43), LogoWordmark (44), Mux (45) and LocationInfo (46) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar and LocationInfo require a canonical same-tenant location KID or may remain unconfigured; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured. Logo variants accept only empty/style-only KIDs; LocationInfo remains protected and is never available on the public wallboard; other widgets accept only their documented scopes and optional style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.
+        /// <br/>            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40), Wistia (41), LiveLocation (42), LogoMark (43), LogoWordmark (44), Mux (45), LocationInfo (46) and ReservedMachines (47) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar and LocationInfo require a canonical same-tenant location KID or may remain unconfigured; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured. Logo variants accept only empty/style-only KIDs; LocationInfo remains protected and is never available on the public wallboard; other widgets accept only their documented scopes and optional style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.
         /// <br/>            Mux (45) accepts only a public playback ID (16–128 case-sensitive ASCII letters/digits) in Kid.Text and optional Style 0/1/2; empty/style-only is unconfigured. URLs, tokens and other KID metadata are rejected.
         /// <br/>            LogoMark (43) and LogoWordmark (44) use their tenant branding variants with no cross-tenant or full-logo fallback. LocationInfo (46) requires Wallboard1, Location Read and matching location grants; approved screens must contain the exact location in their selected saved layout.
         /// <br/>            Vimeo (40) accepts only Kid.Text containing a positive 1–20-digit decimal ID without leading zero and optional / followed by a 10-character lowercase hexadecimal privacy hash. Wistia (41) accepts only a 10-character lowercase ASCII letter/digit media ID. Both allow optional Style 0/1/2 and empty/style-only unconfigured KIDs. URLs, HTML, other KID fields and noncanonical references return 400 invalid-wallboard-widget; no provider content or credentials are fetched by this API.
@@ -4495,6 +4495,23 @@ namespace Kombine.Flex.Portal.Client
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ReservationsStatisticsResponse> GetPublicReservationsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Counts distinct machines with a dated reservation that is currently in progress.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous tenant aggregate; trusted site configuration selects the tenant without request inputs.
+        /// <br/>Uses the current tenant Log5 snapshot keyed by start/bank/location/unit/type. Amount must be positive; local start must be at or before now, and end strictly after now.
+        /// <br/>Overlapping reservations for the same bank/location/unit count once. Host has no machines.
+        /// <br/>End is local start minutes plus duration; location/bank Log24 time-zone settings are respected.
+        /// <br/>Weekly templates and AUT/isy auxiliary entries are excluded. Invalid or ambiguous time-zone settings fail closed.
+        /// <br/>No resident or reservation identities are returned. Results and failures are cached for 60 seconds.
+        /// <br/>More than 100000 candidate rows, invalid time zones or unavailable storage return 503; retry after 60 seconds.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ReservedMachinesStatisticsResponse> GetPublicReservedMachinesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -19278,7 +19295,7 @@ namespace Kombine.Flex.Portal.Client
         /// <remarks>
         /// Requires a current active manager and Wallboard1. Screen sessions cannot list layouts.
         /// <br/>            Reads only the authenticated manager's bank-zero Log7 WallBoards and PortalWallboard. StorageUsedCharacters counts the exact stored JSON text, including escapes and whitespace; StorageLimitCharacters is the shared 4092-character limit for all layouts.
-        /// <br/>            Enums 2.0.156: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
+        /// <br/>            Enums 2.0.159: layout i/n/a/c/s, page n/d/s, widget t/k/r. Layout i is an ordered array of display IDs; a is a positive finite aspect ratio (width divided by height); c contains light and dark arrays of signed 32-bit colors; r is [x,y,width,height] with zero-based x/y. Pages/widgets have no persistent IDs.
         /// <br/>            Legacy stored single palettes are converted in memory to identical light and dark palettes without writes or revision changes.
         /// <br/>            Previously stored widgets smaller than 3x3 remain readable at their original dimensions; omitted stored rectangles retain the old [0,0,1,1] default. No read resizes widgets or writes data.
         /// <br/>            Legacy Video (26) widgets in both collections are returned as YouTube (39), preserving KID, rectangle and order without database writes or revision changes.
@@ -19407,7 +19424,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].
         /// <br/>            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.
         /// <br/>            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.
-        /// <br/>            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40), Wistia (41), LiveLocation (42), LogoMark (43), LogoWordmark (44), Mux (45) and LocationInfo (46) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar and LocationInfo require a canonical same-tenant location KID or may remain unconfigured; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured. Logo variants accept only empty/style-only KIDs; LocationInfo remains protected and is never available on the public wallboard; other widgets accept only their documented scopes and optional style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.
+        /// <br/>            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40), Wistia (41), LiveLocation (42), LogoMark (43), LogoWordmark (44), Mux (45), LocationInfo (46) and ReservedMachines (47) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar and LocationInfo require a canonical same-tenant location KID or may remain unconfigured; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured. Logo variants accept only empty/style-only KIDs; LocationInfo remains protected and is never available on the public wallboard; other widgets accept only their documented scopes and optional style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.
         /// <br/>            Mux (45) accepts only a public playback ID (16–128 case-sensitive ASCII letters/digits) in Kid.Text and optional Style 0/1/2; empty/style-only is unconfigured. URLs, tokens and other KID metadata are rejected.
         /// <br/>            LogoMark (43) and LogoWordmark (44) use their tenant branding variants with no cross-tenant or full-logo fallback. LocationInfo (46) requires Wallboard1, Location Read and matching location grants; approved screens must contain the exact location in their selected saved layout.
         /// <br/>            Vimeo (40) accepts only Kid.Text containing a positive 1–20-digit decimal ID without leading zero and optional / followed by a 10-character lowercase hexadecimal privacy hash. Wistia (41) accepts only a 10-character lowercase ASCII letter/digit media ID. Both allow optional Style 0/1/2 and empty/style-only unconfigured KIDs. URLs, HTML, other KID fields and noncanonical references return 400 invalid-wallboard-widget; no provider content or credentials are fetched by this API.
@@ -34560,6 +34577,95 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Counts distinct machines with a dated reservation that is currently in progress.
+        /// </summary>
+        /// <remarks>
+        /// Anonymous tenant aggregate; trusted site configuration selects the tenant without request inputs.
+        /// <br/>Uses the current tenant Log5 snapshot keyed by start/bank/location/unit/type. Amount must be positive; local start must be at or before now, and end strictly after now.
+        /// <br/>Overlapping reservations for the same bank/location/unit count once. Host has no machines.
+        /// <br/>End is local start minutes plus duration; location/bank Log24 time-zone settings are respected.
+        /// <br/>Weekly templates and AUT/isy auxiliary entries are excluded. Invalid or ambiguous time-zone settings fail closed.
+        /// <br/>No resident or reservation identities are returned. Results and failures are cached for 60 seconds.
+        /// <br/>More than 100000 candidate rows, invalid time zones or unavailable storage return 503; retry after 60 seconds.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ReservedMachinesStatisticsResponse> GetPublicReservedMachinesAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/public/statistics/reserved-machines"
+                    urlBuilder_.Append("api/v1/public/statistics/reserved-machines");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ReservedMachinesStatisticsResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("Service Unavailable", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Counts machines whose current Started is before now and Done is after now.
         /// </summary>
         /// <remarks>
@@ -41810,6 +41916,16 @@ namespace Kombine.Flex.Portal.Client
 
         _46 = 46,
 
+        _47 = 47,
+
+        _48 = 48,
+
+        _49 = 49,
+
+        _50 = 50,
+
+        _51 = 51,
+
     }
 
     /// <summary>
@@ -42403,6 +42519,39 @@ namespace Kombine.Flex.Portal.Client
 
         /// <summary>
         /// UTC instant used for the strict reservation-end comparison.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("measuredAtUtc")]
+        public System.DateTimeOffset? MeasuredAtUtc { get; set; } = default!;
+
+        /// <summary>
+        /// Recommended polling interval, 60 seconds.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Public count of machines with an ongoing dated reservation.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ReservedMachinesStatisticsResponse
+    {
+
+        /// <summary>
+        /// Configured site's canonical tenant KID.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("tenantKid")]
+        public string? TenantKid { get; set; } = default!;
+
+        /// <summary>
+        /// Distinct qualifying machines; zero only for a successful empty count.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public long? Count { get; set; } = default!;
+
+        /// <summary>
+        /// UTC instant used for the location-local start/end comparison.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("measuredAtUtc")]
         public System.DateTimeOffset? MeasuredAtUtc { get; set; } = default!;

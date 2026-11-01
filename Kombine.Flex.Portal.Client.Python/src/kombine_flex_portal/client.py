@@ -879,6 +879,10 @@ class PortalClient(BaseClient):
         'Counts noncancelled dated reservations that have not ended, including ongoing reservations.'
         return self._request('GetPublicReservations', {}, None)
 
+    def get_public_reserved_machines(self) -> ReservedMachinesStatisticsResponse:
+        'Counts distinct machines with a dated reservation that is currently in progress.'
+        return self._request('GetPublicReservedMachines', {}, None)
+
     def get_public_running_machines(self) -> RunningMachinesResponse:
         'Counts machines whose current Started is before now and Done is after now.'
         return self._request('GetPublicRunningMachines', {}, None)

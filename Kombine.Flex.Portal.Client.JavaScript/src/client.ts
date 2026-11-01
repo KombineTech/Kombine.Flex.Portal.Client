@@ -1093,6 +1093,11 @@ export class PortalClient extends BaseClient {
     return this.send("GetPublicReservations", {}, undefined, request) as Promise<Models.ReservationsStatisticsResponse>;
   }
 
+  /** Counts distinct machines with a dated reservation that is currently in progress. */
+  getPublicReservedMachines(request: RequestOptions = {}): Promise<Models.ReservedMachinesStatisticsResponse> {
+    return this.send("GetPublicReservedMachines", {}, undefined, request) as Promise<Models.ReservedMachinesStatisticsResponse>;
+  }
+
   /** Counts machines whose current Started is before now and Done is after now. */
   getPublicRunningMachines(request: RequestOptions = {}): Promise<Models.RunningMachinesResponse> {
     return this.send("GetPublicRunningMachines", {}, undefined, request) as Promise<Models.RunningMachinesResponse>;

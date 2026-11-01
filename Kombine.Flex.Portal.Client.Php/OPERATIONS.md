@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `f95c10f8046cc9924b4ebc85ab4dd71ea627c8bf6a9b2edcc1c24f2868d1e6a1`).
-220 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `a220208a2a65be5b1366d9a9c954b9a33538d87e7cb2ae75d32d86769f7c31ec`).
+221 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -140,6 +140,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `f95c10f8046cc9924b4
 | `getPublicPurchases` | `GetPublicPurchases` | GET | `/api/v1/public/statistics/purchases` | Anonymous |
 | `getPublicRecentCameraPhotos` | `GetPublicRecentCameraPhotos` | GET | `/api/v1/public/camera/photos` | Anonymous |
 | `getPublicReservations` | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` | Anonymous |
+| `getPublicReservedMachines` | `GetPublicReservedMachines` | GET | `/api/v1/public/statistics/reserved-machines` | Anonymous |
 | `getPublicRunningMachines` | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` | Anonymous |
 | `getPublicScopedUnitProgress` | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` | Anonymous |
 | `getPublicWallboardEditor` | `GetPublicWallboardEditor` | GET | `/api/v1/session/me/wallboards/public` | Bearer |

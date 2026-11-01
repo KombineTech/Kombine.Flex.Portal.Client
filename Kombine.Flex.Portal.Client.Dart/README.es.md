@@ -1,4 +1,4 @@
-La versión 0.15.0 usa paletas c claras y oscuras separadas en diseños Wallboard; migre los arrays c planos antes de guardar. El cliente cubre 220 operaciones. Consulte el registro de cambios de la API.
+La versión 0.16.0 usa paletas c claras y oscuras separadas en diseños Wallboard; migre los arrays c planos antes de guardar. El cliente cubre 221 operaciones. Consulte el registro de cambios de la API.
 
 La versión 0.14.0 sincroniza 217 operaciones con el modelo Wallboard de 60 por 60: listas ordenadas de pantallas y matrices de rectángulos sustituyen los antiguos campos individuales. Los wallboards personales y públicos del Portal se guardan por separado con autorización y control de revisión. Las nuevas operaciones incluyen diseños públicos y proyecciones protegidas de almacenamiento, carga, mapas y reservas. Conserve la geometría guardada y recargue tras un conflicto antes de reintentar. UserBalance sigue siendo compatible.
 

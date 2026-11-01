@@ -276,6 +276,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PurchaseMapSnapshot array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PurchaseMapPoint>|null, 'heatmap'?: list<PurchaseHeatmapPoint>|null}
  * @phpstan-type PurchasesResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string, 'currencies'?: list<PurchaseCurrencySnapshot>|null}
  * @phpstan-type ReservationsStatisticsResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
+ * @phpstan-type ReservedMachinesStatisticsResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
  * @phpstan-type RunningMachinesResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
  */
 final class PortalClient extends BaseClient
@@ -2615,6 +2616,15 @@ final class PortalClient extends BaseClient
     public function getPublicReservations(): mixed
     {
         return $this->request('GetPublicReservations', [], null);
+    }
+
+    /**
+     * Counts distinct machines with a dated reservation that is currently in progress.
+     * @return ReservedMachinesStatisticsResponse
+     */
+    public function getPublicReservedMachines(): mixed
+    {
+        return $this->request('GetPublicReservedMachines', [], null);
     }
 
     /**

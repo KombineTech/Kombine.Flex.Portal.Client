@@ -271,4 +271,5 @@ typedef PurchaseMapPoint = Map<String, Object?>;
 typedef PurchaseMapSnapshot = Map<String, Object?>;
 typedef PurchasesResponse = Map<String, Object?>;
 typedef ReservationsStatisticsResponse = Map<String, Object?>;
+typedef ReservedMachinesStatisticsResponse = Map<String, Object?>;
 typedef RunningMachinesResponse = Map<String, Object?>;
