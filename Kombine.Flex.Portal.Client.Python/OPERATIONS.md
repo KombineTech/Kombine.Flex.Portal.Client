@@ -40,6 +40,8 @@
 | `GetRecentCameraPhotoMetadata` | `get_recent_camera_photo_metadata` | `getRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` |
 | `GetChecklist` | `get_checklist` | `getChecklist` | GET | `/api/v1/settlement-checklist` |
 | `GetChecklistPeriod` | `get_checklist_period` | `getChecklistPeriod` | GET | `/api/v1/settlement-checklist/{periodKid}` |
+| `GetMyWallboardDatabaseLoadHistory` | `get_my_wallboard_database_load_history` | `getMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` |
+| `GetWallboardDisplayDatabaseLoadHistory` | `get_wallboard_display_database_load_history` | `getWallboardDisplayDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` |
 | `ExportBankAccount` | `export_bank_account` | `exportBankAccount` | GET | `/api/v1/banks/{bankKid}/account/export` |
 | `ExportBankUsers` | `export_bank_users` | `exportBankUsers` | GET | `/api/v1/banks/{bankKid}/users/export` |
 | `DownloadBankSettlement` | `download_bank_settlement` | `downloadBankSettlement` | GET | `/api/v1/banks/{bankKid}/settlements/{period}/download` |
@@ -100,6 +102,8 @@
 | `AddMyManagerWallboard` | `add_my_manager_wallboard` | `addMyManagerWallboard` | POST | `/api/v1/session/me/wallboards` |
 | `GetMyManagerWallboards` | `get_my_manager_wallboards` | `getMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` |
 | `SaveMyManagerWallboards` | `save_my_manager_wallboards` | `saveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` |
+| `GetPublicWallboardEditor` | `get_public_wallboard_editor` | `getPublicWallboardEditor` | GET | `/api/v1/session/me/wallboards/public` |
+| `SavePublicWallboardEditor` | `save_public_wallboard_editor` | `savePublicWallboardEditor` | PUT | `/api/v1/session/me/wallboards/public` |
 | `GetMyManagerWallboardDisplay` | `get_my_manager_wallboard_display` | `getMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerApiKey` | `get_my_manager_api_key` | `getMyManagerApiKey` | GET | `/api/v1/session/me/api-key` |
 | `GenerateMyManagerApiKey` | `generate_my_manager_api_key` | `generateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` |
@@ -109,6 +113,7 @@
 | `RequestMyManagerEmailVerification` | `request_my_manager_email_verification` | `requestMyManagerEmailVerification` | POST | `/api/v1/session/me/email-verification` |
 | `ConfirmMyManagerEmail` | `confirm_my_manager_email` | `confirmMyManagerEmail` | POST | `/api/v1/session/me/email-confirmation` |
 | `ChangeMyManagerPassword` | `change_my_manager_password` | `changeMyManagerPassword` | POST | `/api/v1/session/me/password` |
+| `GetPublicWallboard` | `get_public_wallboard` | `getPublicWallboard` | GET | `/api/v1/public/wallboard` |
 | `GetServiceExportCount` | `get_service_export_count` | `getServiceExportCount` | GET | `/api/v1/services/export-count` |
 | `GetServices` | `get_services` | `getServices` | GET | `/api/v1/services` |
 | `GetServiceCount` | `get_service_count` | `getServiceCount` | GET | `/api/v1/services/count` |
@@ -156,6 +161,10 @@
 | `SearchUsers` | `search_users` | `searchUsers` | GET | `/api/v1/search/users` |
 | `SearchUserSms` | `search_user_sms` | `searchUserSms` | GET | `/api/v1/search/user-sms` |
 | `SearchUserActivation` | `search_user_activation` | `searchUserActivation` | GET | `/api/v1/search/user-activation` |
+| `GetMyWallboardBankStorage` | `get_my_wallboard_bank_storage` | `getMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` |
+| `GetWallboardDisplayBankStorage` | `get_wallboard_display_bank_storage` | `getWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
+| `GetMyWallboardLocationMap` | `get_my_wallboard_location_map` | `getMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` |
+| `GetWallboardDisplayLocationMap` | `get_wallboard_display_location_map` | `getWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
 | `StartWallboardPairing` | `start_wallboard_pairing` | `startWallboardPairing` | POST | `/api/v1/wallboard/pairings` |
 | `FindWallboardPairings` | `find_wallboard_pairings` | `findWallboardPairings` | GET | `/api/v1/wallboard/pairings` |
 | `GetWallboardPairing` | `get_wallboard_pairing` | `getWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
@@ -165,6 +174,8 @@
 | `ResumeWallboardSession` | `resume_wallboard_session` | `resumeWallboardSession` | POST | `/api/v1/wallboard/devices/{deviceId}/session` |
 | `GetWallboardDevice` | `get_wallboard_device` | `getWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` |
 | `RevokeWallboardDevice` | `revoke_wallboard_device` | `revokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
+| `GetMyWallboardReservationCalendar` | `get_my_wallboard_reservation_calendar` | `getMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
+| `GetWallboardDisplayReservationCalendar` | `get_wallboard_display_reservation_calendar` | `getWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
 | `GetPortalAppDownloadPage` | `get_portal_app_download_page` | `getPortalAppDownloadPage` | GET | `/download` |
 | `DownloadPortalWindowsAppInstaller` | `download_portal_windows_app_installer` | `downloadPortalWindowsAppInstaller` | GET | `/download/windows/{architecture}/portal.appinstaller` |
 | `DownloadPortalWindowsPackage` | `download_portal_windows_package` | `downloadPortalWindowsPackage` | GET | `/download/windows/{architecture}/{fileName}` |

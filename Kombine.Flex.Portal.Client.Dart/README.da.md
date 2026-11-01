@@ -1,6 +1,6 @@
-Version 0.13.0 tilføjer personlige Wallboard-layouts, registrering af skannede skærme og revisionsbaseret læsning af skærmlayout. Gem kun allerede skannede skærm-id’er med den nyeste revision. Bevar kladder ved konflikter, og gentag aldrig usikre skrivninger automatisk. Skærmsessioner kan kun læse deres godkendte skærm. UserBalance er fortsat kompatibel. Se [API-changelog](https://api.team.kombine.technology/docs#changelog).
+Version 0.14.0 synkroniserer 217 API-operationer med Wallboards 60 gange 60-model: ordnede skærm-id’er og rektangel-arrays erstatter de tidligere enkelt-id’er og koordinatfelter. Personlige og offentlige Portal-wallboards gemmes separat med rettigheds- og revisionskontrol. Nye operationer giver adgang til offentlige layouts og de beskyttede lager-, belastnings-, kort- og reservationsvisninger. Bevar gemt geometri, og genindlæs efter konflikter før et nyt forsøg. UserBalance er fortsat kompatibel.
 
-Version 0.13.0 indeholder 206 operationer, herunder GetUnitTimeline og GetUnitTimelineFields. Wallboard-svar identificerer den præcise godkendte skærm; skærmsessioner viser kun minimal identitet uden normale administratorrettigheder. Brug et normalt administratorlogin til Portal-operationer. Permanent enhedsgodkendelse og UserBalance er fortsat kompatible. Se [API-changelog](https://api.team.kombine.technology/docs#changelog).
+Version 0.14.0 indeholder 217 operationer, herunder GetUnitTimeline og GetUnitTimelineFields. Wallboard-svar identificerer den præcise godkendte skærm; skærmsessioner viser kun minimal identitet uden normale administratorrettigheder. Brug et normalt administratorlogin til Portal-operationer. Permanent enhedsgodkendelse og UserBalance er fortsat kompatible. Se [API-changelog](https://api.team.kombine.technology/docs#changelog).
 
 Version 0.8.0 tilføjer FindWallboardPairings og GetWallboardDevice (200 operationer i alt) samt valgfri lokationsmetadata ved skærmgodkendelse. Den samlede Wallboard-opsætning bruger én QR-skanning; privat lokation er kun tilgængelig for den godkendende administrator via enheds-endpointet. Enhedsgodkendelsen udløber ikke automatisk og kontrollerer fortsat tilbagekaldelse, administratoroplysninger samt tenant og miljø. Eksisterende UserBalance-klienter er fortsat kompatible. Se [API-changelog](https://api.team.kombine.technology/docs#changelog) og [Wallboard-vejledningen](https://api.team.kombine.technology/docs#wallboard-pairing).
 
@@ -16,7 +16,7 @@ Version 0.3.0 flytter ConvertToolTime og InspectToolKid til /api/v1/tenant/tools
 
 # Kombine Flex Portal Dart-klient
 
-Version **0.13.0** dÃ¦kker **182 operationer** fra den medfÃ¸lgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilfÃ¸j nedenstÃ¥ende sti i `pubspec.yaml`, og kÃ¸r `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
+Version **0.14.0** dÃ¦kker **182 operationer** fra den medfÃ¸lgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilfÃ¸j nedenstÃ¥ende sti i `pubspec.yaml`, og kÃ¸r `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
 
 ```yaml
 dependencies:

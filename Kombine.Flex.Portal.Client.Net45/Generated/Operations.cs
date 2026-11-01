@@ -653,6 +653,33 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (ChecklistItem)SendJson("GET", path, null, headers, 200, typeof(ChecklistItem));
         }
 
+        /// <summary>Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview.</summary>
+        public DatabaseLoadHistoryResponse GetMyWallboardDatabaseLoadHistory()
+        {
+            string path = "api/v1/session/me/wallboards/database-load-history";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (DatabaseLoadHistoryResponse)SendJson("GET", path, null, headers, 200, typeof(DatabaseLoadHistoryResponse));
+        }
+
+        /// <summary>Read the Team MySQL cluster's load and CPU history for a display that contains the widget.</summary>
+        public DatabaseLoadHistoryResponse GetWallboardDisplayDatabaseLoadHistory(string @displayId)
+        {
+            return GetWallboardDisplayDatabaseLoadHistory(@displayId, null);
+        }
+
+        /// <summary>Read the Team MySQL cluster's load and CPU history for a display that contains the widget.</summary>
+        public DatabaseLoadHistoryResponse GetWallboardDisplayDatabaseLoadHistory(string @displayId, GetWallboardDisplayDatabaseLoadHistoryOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/display/{displayId}/database-load-history";
+            path = path.Replace("{displayId}", PathValue(@displayId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "portrait", options.Portrait);
+            }
+            return (DatabaseLoadHistoryResponse)SendJson("GET", path, null, headers, 200, typeof(DatabaseLoadHistoryResponse));
+        }
+
         /// <summary>Downloads the complete filtered selection as CSV or a genuine Excel workbook.</summary>
         public PortalDownload ExportBankAccount(string @bankKid)
         {
@@ -1560,12 +1587,28 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (PersonalWallboardsResponse)SendJson("GET", path, null, headers, 200, typeof(PersonalWallboardsResponse));
         }
 
-        /// <summary>Save your own complete Wallboard1 layout collection.</summary>
+        /// <summary>Save your own Wallboard1 layouts and optional portal overview layout.</summary>
         public PersonalWallboardsResponse SaveMyManagerWallboards(SavePersonalWallboardsRequest body)
         {
             string path = "api/v1/session/me/wallboards";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (PersonalWallboardsResponse)SendJson("PUT", path, body, headers, 200, typeof(PersonalWallboardsResponse));
+        }
+
+        /// <summary>Read the tenant-wide public wallboard for editing.</summary>
+        public PublicWallboardEditorResponse GetPublicWallboardEditor()
+        {
+            string path = "api/v1/session/me/wallboards/public";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PublicWallboardEditorResponse)SendJson("GET", path, null, headers, 200, typeof(PublicWallboardEditorResponse));
+        }
+
+        /// <summary>Save the tenant-wide public wallboard with a revision check.</summary>
+        public PublicWallboardEditorResponse SavePublicWallboardEditor(SavePublicWallboardRequest body)
+        {
+            string path = "api/v1/session/me/wallboards/public";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (PublicWallboardEditorResponse)SendJson("PUT", path, body, headers, 200, typeof(PublicWallboardEditorResponse));
         }
 
         /// <summary>Read the selected orientation for one of your Wallboards.</summary>
@@ -1652,6 +1695,14 @@ namespace Kombine.Flex.Portal.Client.Net45
             string path = "api/v1/session/me/password";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (PersonalAccountResult)SendJson("POST", path, body, headers, 200, typeof(PersonalAccountResult));
+        }
+
+        /// <summary>Read the trusted tenant's public wallboard without manager data.</summary>
+        public WallboardDisplayResponse GetPublicWallboard()
+        {
+            string path = "api/v1/public/wallboard";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (WallboardDisplayResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardDisplayResponse));
         }
 
         /// <summary>Count the complete filtered export selection using the same directory authorization and visibility.</summary>
@@ -2414,6 +2465,60 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (SearchResults)SendJson("GET", path, null, headers, 200, typeof(SearchResults));
         }
 
+        /// <summary>Read visible banks' saved storage measurements for a manager preview.</summary>
+        public WallboardBankStorageResponse GetMyWallboardBankStorage()
+        {
+            string path = "api/v1/session/me/wallboards/bank-storage";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (WallboardBankStorageResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardBankStorageResponse));
+        }
+
+        /// <summary>Read saved bank storage measurements for an approved display containing the widget.</summary>
+        public WallboardBankStorageResponse GetWallboardDisplayBankStorage(string @displayId)
+        {
+            return GetWallboardDisplayBankStorage(@displayId, null);
+        }
+
+        /// <summary>Read saved bank storage measurements for an approved display containing the widget.</summary>
+        public WallboardBankStorageResponse GetWallboardDisplayBankStorage(string @displayId, GetWallboardDisplayBankStorageOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/display/{displayId}/bank-storage";
+            path = path.Replace("{displayId}", PathValue(@displayId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "portrait", options.Portrait);
+            }
+            return (WallboardBankStorageResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardBankStorageResponse));
+        }
+
+        /// <summary>Read all visible locations with valid coordinates for a manager preview.</summary>
+        public WallboardLocationMapResponse GetMyWallboardLocationMap()
+        {
+            string path = "api/v1/session/me/wallboards/location-map";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (WallboardLocationMapResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardLocationMapResponse));
+        }
+
+        /// <summary>Read visible coordinates for an approved screen whose selected layout contains LocationMap.</summary>
+        public WallboardLocationMapResponse GetWallboardDisplayLocationMap(string @displayId)
+        {
+            return GetWallboardDisplayLocationMap(@displayId, null);
+        }
+
+        /// <summary>Read visible coordinates for an approved screen whose selected layout contains LocationMap.</summary>
+        public WallboardLocationMapResponse GetWallboardDisplayLocationMap(string @displayId, GetWallboardDisplayLocationMapOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/display/{displayId}/location-map";
+            path = path.Replace("{displayId}", PathValue(@displayId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "portrait", options.Portrait);
+            }
+            return (WallboardLocationMapResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardLocationMapResponse));
+        }
+
         /// <summary>Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code.</summary>
         public WallboardPairingStarted StartWallboardPairing(StartWallboardPairing body)
         {
@@ -2501,6 +2606,44 @@ namespace Kombine.Flex.Portal.Client.Net45
             path = path.Replace("{deviceId}", PathValue(@deviceId));
             Dictionary<string, string> headers = new Dictionary<string, string>();
             SendJson("DELETE", path, null, headers, 204, typeof(object));
+        }
+
+        /// <summary>Read two local days of a location's reservation schedule and anonymous occupancy for a preview.</summary>
+        public WallboardReservationCalendarResponse GetMyWallboardReservationCalendar()
+        {
+            return GetMyWallboardReservationCalendar(null);
+        }
+
+        /// <summary>Read two local days of a location's reservation schedule and anonymous occupancy for a preview.</summary>
+        public WallboardReservationCalendarResponse GetMyWallboardReservationCalendar(GetMyWallboardReservationCalendarOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/reservation-calendar";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "locationKid", options.LocationKid);
+            }
+            return (WallboardReservationCalendarResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardReservationCalendarResponse));
+        }
+
+        /// <summary>Read one location's schedule and anonymous occupancy for its approved screen.</summary>
+        public WallboardReservationCalendarResponse GetWallboardDisplayReservationCalendar(string @displayId)
+        {
+            return GetWallboardDisplayReservationCalendar(@displayId, null);
+        }
+
+        /// <summary>Read one location's schedule and anonymous occupancy for its approved screen.</summary>
+        public WallboardReservationCalendarResponse GetWallboardDisplayReservationCalendar(string @displayId, GetWallboardDisplayReservationCalendarOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/display/{displayId}/reservation-calendar";
+            path = path.Replace("{displayId}", PathValue(@displayId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "locationKid", options.LocationKid);
+                path = AddQuery(path, "portrait", options.Portrait);
+            }
+            return (WallboardReservationCalendarResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardReservationCalendarResponse));
         }
 
         /// <summary>Displays Windows downloads for this tenant, or an explicit unavailable state.</summary>

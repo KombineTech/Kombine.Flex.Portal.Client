@@ -159,6 +159,14 @@ class PortalClient(BaseClient):
         'Read one current checklist period, including its hidden/completed status.'
         return self._request('GetChecklistPeriod', {'periodKid': period_kid}, None)
 
+    def get_my_wallboard_database_load_history(self) -> DatabaseLoadHistoryResponse:
+        "Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview."
+        return self._request('GetMyWallboardDatabaseLoadHistory', {}, None)
+
+    def get_wallboard_display_database_load_history(self, display_id: str, *, portrait: bool | None = None) -> DatabaseLoadHistoryResponse:
+        "Read the Team MySQL cluster's load and CPU history for a display that contains the widget."
+        return self._request('GetWallboardDisplayDatabaseLoadHistory', {'displayId': display_id, 'portrait': portrait}, None)
+
     def export_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None, format: str | None = None) -> PortalDownload:
         'Downloads the complete filtered selection as CSV or a genuine Excel workbook.'
         return self._request('ExportBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit, 'format': format}, None)
@@ -399,6 +407,14 @@ class PortalClient(BaseClient):
         'Save your own Wallboard1 layouts and optional portal overview layout.'
         return self._request('SaveMyManagerWallboards', {}, body)
 
+    def get_public_wallboard_editor(self) -> PublicWallboardEditorResponse:
+        'Read the tenant-wide public wallboard for editing.'
+        return self._request('GetPublicWallboardEditor', {}, None)
+
+    def save_public_wallboard_editor(self, body: SavePublicWallboardRequest) -> PublicWallboardEditorResponse:
+        'Save the tenant-wide public wallboard with a revision check.'
+        return self._request('SavePublicWallboardEditor', {}, body)
+
     def get_my_manager_wallboard_display(self, display_id: str, *, portrait: bool | None = None, after: str | None = None) -> WallboardDisplayResponse:
         'Read the selected orientation for one of your Wallboards.'
         return self._request('GetMyManagerWallboardDisplay', {'displayId': display_id, 'portrait': portrait, 'after': after}, None)
@@ -434,6 +450,10 @@ class PortalClient(BaseClient):
     def change_my_manager_password(self, body: PersonalPasswordRequest) -> PersonalAccountResult:
         'Change your password after reauthentication and repeated new-password entry.'
         return self._request('ChangeMyManagerPassword', {}, body)
+
+    def get_public_wallboard(self) -> WallboardDisplayResponse:
+        "Read the trusted tenant's public wallboard without manager data."
+        return self._request('GetPublicWallboard', {}, None)
 
     def get_service_export_count(self, *, filter: str | None = None, sort: str | None = None, direction: str | None = None) -> DirectoryExportCountResponse:
         'Count the complete filtered export selection using the same directory authorization and visibility.'
@@ -623,6 +643,22 @@ class PortalClient(BaseClient):
         'Decode an ordinary resident activation code and resolve name and icon from current Log7.'
         return self._request('SearchUserActivation', {'q': q}, None)
 
+    def get_my_wallboard_bank_storage(self) -> WallboardBankStorageResponse:
+        "Read visible banks' saved storage measurements for a manager preview."
+        return self._request('GetMyWallboardBankStorage', {}, None)
+
+    def get_wallboard_display_bank_storage(self, display_id: str, *, portrait: bool | None = None) -> WallboardBankStorageResponse:
+        'Read saved bank storage measurements for an approved display containing the widget.'
+        return self._request('GetWallboardDisplayBankStorage', {'displayId': display_id, 'portrait': portrait}, None)
+
+    def get_my_wallboard_location_map(self) -> WallboardLocationMapResponse:
+        'Read all visible locations with valid coordinates for a manager preview.'
+        return self._request('GetMyWallboardLocationMap', {}, None)
+
+    def get_wallboard_display_location_map(self, display_id: str, *, portrait: bool | None = None) -> WallboardLocationMapResponse:
+        'Read visible coordinates for an approved screen whose selected layout contains LocationMap.'
+        return self._request('GetWallboardDisplayLocationMap', {'displayId': display_id, 'portrait': portrait}, None)
+
     def start_wallboard_pairing(self, body: StartWallboardPairing) -> WallboardPairingStarted:
         'Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code.'
         return self._request('StartWallboardPairing', {}, body)
@@ -658,6 +694,14 @@ class PortalClient(BaseClient):
     def revoke_wallboard_device(self, device_id: str) -> None:
         'Revoke a screen you approved. Its existing bearer sessions also lose access.'
         return self._request('RevokeWallboardDevice', {'deviceId': device_id}, None)
+
+    def get_my_wallboard_reservation_calendar(self, *, location_kid: str | None = None) -> WallboardReservationCalendarResponse:
+        "Read two local days of a location's reservation schedule and anonymous occupancy for a preview."
+        return self._request('GetMyWallboardReservationCalendar', {'locationKid': location_kid}, None)
+
+    def get_wallboard_display_reservation_calendar(self, display_id: str, *, location_kid: str | None = None, portrait: bool | None = None) -> WallboardReservationCalendarResponse:
+        "Read one location's schedule and anonymous occupancy for its approved screen."
+        return self._request('GetWallboardDisplayReservationCalendar', {'displayId': display_id, 'locationKid': location_kid, 'portrait': portrait}, None)
 
     def get_portal_app_download_page(self) -> PortalDownload:
         'Displays Windows downloads for this tenant, or an explicit unavailable state.'

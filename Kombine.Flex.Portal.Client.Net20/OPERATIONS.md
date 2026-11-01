@@ -117,6 +117,10 @@
 | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` |
 | `GetMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` |
+| `GetMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` |
+| `GetMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` |
+| `GetMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` |
+| `GetMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetNearestLocations` | GET | `/api/v1/locations/nearest` |
 | `GetObjectAddress` | GET | `/api/v1/addresses/{kid}` |
 | `GetOutOfOrderUnits` | GET | `/api/v1/units/out-of-service` |
@@ -134,6 +138,8 @@
 | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` |
+| `GetPublicWallboardEditor` | GET | `/api/v1/session/me/wallboards/public` |
+| `GetPublicWallboard` | GET | `/api/v1/public/wallboard` |
 | `GetPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
 | `GetRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` |
 | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` |
@@ -168,6 +174,10 @@
 | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
 | `GetUsers` | GET | `/api/v1/users` |
 | `GetWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` |
+| `GetWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
+| `GetWallboardDisplayDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` |
+| `GetWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
+| `GetWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
 | `GetWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
 | `InspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
 | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` |
@@ -186,6 +196,7 @@
 | `RevokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
 | `SaveCameraCapture` | POST | `/api/v1/camera` |
 | `SaveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` |
+| `SavePublicWallboardEditor` | PUT | `/api/v1/session/me/wallboards/public` |
 | `SearchBankActivation` | GET | `/api/v1/search/bank-activation` |
 | `SearchBanks` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` |

@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `eab3e02ef3432807541d2a0fe677c2f3b79611b3940a9ffd7de75887f9663f0d`).
-206 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `adb5a85c18ae5f40726c034e64bea11e84311a56b201bb5bb5aa5a08375334b2`).
+217 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -120,6 +120,10 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `eab3e02ef3432807541
 | `getMyManagerTabs` | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` | Bearer |
 | `getMyManagerWallboardDisplay` | `GetMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` | Bearer |
 | `getMyManagerWallboards` | `GetMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` | Bearer |
+| `getMyWallboardBankStorage` | `GetMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` | Bearer |
+| `getMyWallboardDatabaseLoadHistory` | `GetMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` | Bearer |
+| `getMyWallboardLocationMap` | `GetMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` | Bearer |
+| `getMyWallboardReservationCalendar` | `GetMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` | Bearer |
 | `getNearestLocations` | `GetNearestLocations` | GET | `/api/v1/locations/nearest` | Bearer |
 | `getObjectAddress` | `GetObjectAddress` | GET | `/api/v1/addresses/{kid}` | Bearer |
 | `getOutOfOrderUnits` | `GetOutOfOrderUnits` | GET | `/api/v1/units/out-of-service` | Bearer |
@@ -137,6 +141,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `eab3e02ef3432807541
 | `getPublicReservations` | `GetPublicReservations` | GET | `/api/v1/public/statistics/reservations` | Anonymous |
 | `getPublicRunningMachines` | `GetPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` | Anonymous |
 | `getPublicScopedUnitProgress` | `GetPublicScopedUnitProgress` | GET | `/api/v1/public/widgets/progress/{kid}` | Anonymous |
+| `getPublicWallboardEditor` | `GetPublicWallboardEditor` | GET | `/api/v1/session/me/wallboards/public` | Bearer |
+| `getPublicWallboard` | `GetPublicWallboard` | GET | `/api/v1/public/wallboard` | Anonymous |
 | `getPublicWidgetPresentation` | `GetPublicWidgetPresentation` | GET | `/api/v1/public/widgets` | Anonymous |
 | `getRecentCameraPhotoMetadata` | `GetRecentCameraPhotoMetadata` | GET | `/api/v1/camera/recent/{id}/metadata` | Bearer |
 | `getSearchBank` | `GetSearchBank` | GET | `/api/v1/search/banks/{bankKid}` | Bearer |
@@ -171,6 +177,10 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `eab3e02ef3432807541
 | `getUserReceipts` | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` | Bearer |
 | `getUsers` | `GetUsers` | GET | `/api/v1/users` | Bearer |
 | `getWallboardDevice` | `GetWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` | Bearer |
+| `getWallboardDisplayBankStorage` | `GetWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` | Bearer |
+| `getWallboardDisplayDatabaseLoadHistory` | `GetWallboardDisplayDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` | Bearer |
+| `getWallboardDisplayLocationMap` | `GetWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` | Bearer |
+| `getWallboardDisplayReservationCalendar` | `GetWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` | Bearer |
 | `getWallboardPairing` | `GetWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` | Bearer |
 | `inspectToolKid` | `InspectToolKid` | POST | `/api/v1/tenant/tools/kid` | Bearer |
 | `inviteManager` | `InviteManager` | POST | `/api/v1/managers/{managerKid}/invitation` | Bearer |
@@ -189,6 +199,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `eab3e02ef3432807541
 | `revokeWallboardDevice` | `RevokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` | Bearer |
 | `saveCameraCapture` | `SaveCameraCapture` | POST | `/api/v1/camera` | Bearer |
 | `saveMyManagerWallboards` | `SaveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` | Bearer |
+| `savePublicWallboardEditor` | `SavePublicWallboardEditor` | PUT | `/api/v1/session/me/wallboards/public` | Bearer |
 | `searchBankActivation` | `SearchBankActivation` | GET | `/api/v1/search/bank-activation` | Bearer |
 | `searchBanks` | `SearchBanks` | GET | `/api/v1/search/banks` | Bearer |
 | `searchLocationActivation` | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` | Bearer |

@@ -641,6 +641,28 @@ export interface DatabaseAccessResponse {
   "checkedAtUtc"?: string;
 }
 
+/** Bounded 24-hour MySQL load and CPU histories, without provider identifiers or labels. */
+export interface DatabaseLoadHistoryResponse {
+  /** fromUtc */
+  "fromUtc"?: string;
+  /** toUtc */
+  "toUtc"?: string;
+  /** fetchedAtUtc */
+  "fetchedAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** series */
+  "series"?: (DatabaseLoadHistorySeries)[] | null;
+  /** cpuSeries */
+  "cpuSeries"?: (DatabaseLoadHistorySeries)[] | null;
+}
+
+/** One anonymous load series; null values represent missing samples. */
+export interface DatabaseLoadHistorySeries {
+  /** points */
+  "points"?: (HostingPoint)[] | null;
+}
+
 /** The complete number of rows matching the authorized export selection. */
 export interface DirectoryExportCountResponse {
   /** count */
@@ -1971,6 +1993,8 @@ export interface PersonalWallboardsResponse {
   "portalStorageUsedCharacters"?: number;
   /** portalStorageLimitCharacters */
   "portalStorageLimitCharacters"?: number;
+  /** dateFormat */
+  "dateFormat"?: string | null;
 }
 
 /** ProblemDetails */
@@ -1985,6 +2009,18 @@ export interface ProblemDetails {
   "detail"?: string | null;
   /** instance */
   "instance"?: string | null;
+}
+
+/** The separately revisioned tenant-wide wallboard stored for user zero. */
+export interface PublicWallboardEditorResponse {
+  /** wallboard */
+  "wallboard"?: Wallboard;
+  /** Opaque revision. */
+  "revision"?: string | null;
+  /** Stored characters. */
+  "storageUsedCharacters"?: number;
+  /** Maximum characters. */
+  "storageLimitCharacters"?: number;
 }
 
 /** RedeemWallboardPairing */
@@ -2009,6 +2045,14 @@ export interface SavePersonalWallboardsRequest {
   "wallboards": unknown;
   /** portalWallboard */
   "portalWallboard"?: unknown;
+}
+
+/** A revision-checked replacement of the public wallboard. */
+export interface SavePublicWallboardRequest {
+  /** The revision from the editor read. */
+  "revision"?: string | null;
+  /** The compact wallboard layout. */
+  "wallboard": unknown;
 }
 
 /** Mixed-result shape; kind is an enum-derived type. Kid identifies the result; optional BankKid identifies a resident's parent bank. */
@@ -3101,6 +3145,46 @@ export interface Wallboard {
   "s"?: (WallboardPage)[] | null;
 }
 
+/** One reservation without resident or payment details, in local minutes since 2000-01-01. */
+export interface WallboardAnonymousReservation {
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** startMinute */
+  "startMinute"?: number;
+  /** durationMinutes */
+  "durationMinutes"?: number;
+}
+
+/** Saved byte measurements and their individual registration times; null means unknown. */
+export interface WallboardBankStorageItem {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** dataBytes */
+  "dataBytes"?: string | null;
+  /** indexBytes */
+  "indexBytes"?: string | null;
+  /** freeBytes */
+  "freeBytes"?: string | null;
+  /** dataRecordedAtUtc */
+  "dataRecordedAtUtc"?: string | null;
+  /** indexRecordedAtUtc */
+  "indexRecordedAtUtc"?: string | null;
+  /** freeRecordedAtUtc */
+  "freeRecordedAtUtc"?: string | null;
+}
+
+/** Bank storage values visible to this authorized Wallboard session. */
+export interface WallboardBankStorageResponse {
+  /** fetchedAtUtc */
+  "fetchedAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** items */
+  "items"?: (WallboardBankStorageItem)[] | null;
+}
+
 /** WallboardDeviceChallenge */
 export interface WallboardDeviceChallenge {
   /** challenge */
@@ -3129,6 +3213,30 @@ export interface WallboardDisplayResponse {
   "layout"?: Wallboard;
   /** revision */
   "revision"?: string | null;
+  /** dateFormat */
+  "dateFormat"?: string | null;
+}
+
+/** A location's canonical identity, name and WGS84 coordinates in decimal degrees. */
+export interface WallboardLocationMapItem {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** latitude */
+  "latitude"?: number;
+  /** longitude */
+  "longitude"?: number;
+}
+
+/** Authorized visible locations with valid coordinates, never a partial catalogue. */
+export interface WallboardLocationMapResponse {
+  /** fetchedAtUtc */
+  "fetchedAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** items */
+  "items"?: (WallboardLocationMapItem)[] | null;
 }
 
 /** WallboardPage */
@@ -3177,6 +3285,22 @@ export interface WallboardPairingToken {
   "expiresIn"?: bigint | null;
   /** displayId */
   "displayId"?: string | null;
+}
+
+/** Configured dated calendars and anonymous current reservations in location-local time. */
+export interface WallboardReservationCalendarResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** groups */
+  "groups"?: (LocationBookingCalendarGroup)[] | null;
+  /** timeZone */
+  "timeZone"?: string | null;
+  /** from */
+  "from"?: string;
+  /** days */
+  "days"?: number;
+  /** reservations */
+  "reservations"?: (WallboardAnonymousReservation)[] | null;
 }
 
 /** WallboardScanLocation */
@@ -3337,7 +3461,7 @@ export type EColor = number;
 /** Wire values: [0, 1, 2]. */
 export type EThemeMode = number;
 
-/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]. */
+/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]. */
 export type EWidgetType = number;
 
 /** Public tenant-wide count; does not expose or grant access to any individual account. */
@@ -3500,6 +3624,12 @@ export interface PublicWidgetPresentationResponse {
   "googleMapsBrowserKey"?: string | null;
   /** Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable. */
   "brandIconUrl"?: string | null;
+  /** Display name from the trusted tenant's branding profile. */
+  "brandName"?: string | null;
+  /** Light-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable. */
+  "brandLogoUrl"?: string | null;
+  /** Dark-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable. */
+  "brandDarkLogoUrl"?: string | null;
   /** Public validated CSS custom properties for this tenant's light presentation. */
   "brandLightTokens"?: Record<string, string> | null;
   /** Public validated CSS custom properties for this tenant's dark presentation. */
@@ -3781,6 +3911,10 @@ export interface GetChecklistOptions {
   includeResolved?: boolean;
   pageSize?: number;
   cursor?: string;
+}
+
+export interface GetWallboardDisplayDatabaseLoadHistoryOptions {
+  portrait?: boolean;
 }
 
 export interface ExportBankAccountOptions {
@@ -4173,8 +4307,25 @@ export interface SearchUserActivationOptions {
   q?: string;
 }
 
+export interface GetWallboardDisplayBankStorageOptions {
+  portrait?: boolean;
+}
+
+export interface GetWallboardDisplayLocationMapOptions {
+  portrait?: boolean;
+}
+
 export interface FindWallboardPairingsOptions {
   displayId?: string;
+}
+
+export interface GetMyWallboardReservationCalendarOptions {
+  locationKid?: string;
+}
+
+export interface GetWallboardDisplayReservationCalendarOptions {
+  locationKid?: string;
+  portrait?: boolean;
 }
 
 export interface GetIconPresentationOptions {

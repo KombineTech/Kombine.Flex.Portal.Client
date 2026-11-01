@@ -369,6 +369,19 @@ DatabaseAccessResponse = TypedDict('DatabaseAccessResponse', {
     'checkedAtUtc': 'str',
 }, total=False)
 
+DatabaseLoadHistoryResponse = TypedDict('DatabaseLoadHistoryResponse', {
+    'fromUtc': 'str',
+    'toUtc': 'str',
+    'fetchedAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
+    'series': 'list[DatabaseLoadHistorySeries] | None',
+    'cpuSeries': 'list[DatabaseLoadHistorySeries] | None',
+}, total=False)
+
+DatabaseLoadHistorySeries = TypedDict('DatabaseLoadHistorySeries', {
+    'points': 'list[HostingPoint] | None',
+}, total=False)
+
 DirectoryExportCountResponse = TypedDict('DirectoryExportCountResponse', {
     'count': 'int',
 }, total=False)
@@ -1133,6 +1146,7 @@ PersonalWallboardsResponse = TypedDict('PersonalWallboardsResponse', {
     'portalWallboard': 'Wallboard',
     'portalStorageUsedCharacters': 'int',
     'portalStorageLimitCharacters': 'int',
+    'dateFormat': 'str | None',
 }, total=False)
 
 ProblemDetails = TypedDict('ProblemDetails', {
@@ -1141,6 +1155,13 @@ ProblemDetails = TypedDict('ProblemDetails', {
     'status': 'int | None',
     'detail': 'str | None',
     'instance': 'str | None',
+}, total=False)
+
+PublicWallboardEditorResponse = TypedDict('PublicWallboardEditorResponse', {
+    'wallboard': 'Wallboard',
+    'revision': 'str | None',
+    'storageUsedCharacters': 'int',
+    'storageLimitCharacters': 'int',
 }, total=False)
 
 RedeemWallboardPairing = TypedDict('RedeemWallboardPairing', {
@@ -1156,6 +1177,11 @@ SavePersonalWallboardsRequest = TypedDict('SavePersonalWallboardsRequest', {
     'revision': 'str | None',
     'wallboards': Required['Any'],
     'portalWallboard': 'Any',
+}, total=False)
+
+SavePublicWallboardRequest = TypedDict('SavePublicWallboardRequest', {
+    'revision': 'str | None',
+    'wallboard': Required['Any'],
 }, total=False)
 
 SearchResult = TypedDict('SearchResult', {
@@ -1775,6 +1801,29 @@ Wallboard = TypedDict('Wallboard', {
     's': 'list[WallboardPage] | None',
 }, total=False)
 
+WallboardAnonymousReservation = TypedDict('WallboardAnonymousReservation', {
+    'unitKid': 'str | None',
+    'startMinute': 'int',
+    'durationMinutes': 'int',
+}, total=False)
+
+WallboardBankStorageItem = TypedDict('WallboardBankStorageItem', {
+    'kid': 'str | None',
+    'name': 'str | None',
+    'dataBytes': 'str | None',
+    'indexBytes': 'str | None',
+    'freeBytes': 'str | None',
+    'dataRecordedAtUtc': 'str | None',
+    'indexRecordedAtUtc': 'str | None',
+    'freeRecordedAtUtc': 'str | None',
+}, total=False)
+
+WallboardBankStorageResponse = TypedDict('WallboardBankStorageResponse', {
+    'fetchedAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
+    'items': 'list[WallboardBankStorageItem] | None',
+}, total=False)
+
 WallboardDeviceChallenge = TypedDict('WallboardDeviceChallenge', {
     'challenge': 'str | None',
     'message': 'str | None',
@@ -1791,6 +1840,20 @@ WallboardDeviceInfo = TypedDict('WallboardDeviceInfo', {
 WallboardDisplayResponse = TypedDict('WallboardDisplayResponse', {
     'layout': 'Wallboard',
     'revision': 'str | None',
+    'dateFormat': 'str | None',
+}, total=False)
+
+WallboardLocationMapItem = TypedDict('WallboardLocationMapItem', {
+    'kid': 'str | None',
+    'name': 'str | None',
+    'latitude': 'float',
+    'longitude': 'float',
+}, total=False)
+
+WallboardLocationMapResponse = TypedDict('WallboardLocationMapResponse', {
+    'fetchedAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
+    'items': 'list[WallboardLocationMapItem] | None',
 }, total=False)
 
 WallboardPage = TypedDict('WallboardPage', {
@@ -1819,6 +1882,15 @@ WallboardPairingToken = TypedDict('WallboardPairingToken', {
     'accessToken': 'str | None',
     'expiresIn': 'int | None',
     'displayId': 'str | None',
+}, total=False)
+
+WallboardReservationCalendarResponse = TypedDict('WallboardReservationCalendarResponse', {
+    'locationKid': 'str | None',
+    'groups': 'list[LocationBookingCalendarGroup] | None',
+    'timeZone': 'str | None',
+    'from': 'str',
+    'days': 'int',
+    'reservations': 'list[WallboardAnonymousReservation] | None',
 }, total=False)
 
 WallboardScanLocation = TypedDict('WallboardScanLocation', {
@@ -2003,6 +2075,9 @@ PublicWidgetPresentationResponse = TypedDict('PublicWidgetPresentationResponse',
     'labels': 'dict[str, str] | None',
     'googleMapsBrowserKey': 'str | None',
     'brandIconUrl': 'str | None',
+    'brandName': 'str | None',
+    'brandLogoUrl': 'str | None',
+    'brandDarkLogoUrl': 'str | None',
     'brandLightTokens': 'dict[str, str] | None',
     'brandDarkTokens': 'dict[str, str] | None',
 }, total=False)

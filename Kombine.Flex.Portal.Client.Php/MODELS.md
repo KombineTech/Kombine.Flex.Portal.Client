@@ -278,6 +278,18 @@ array{'code'?: int|null, 'state'?: string|null}
 array{'canWrite'?: bool|null, 'checkedAtUtc'?: string}
 ```
 
+### DatabaseLoadHistoryResponse
+
+```php
+array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'series'?: list<DatabaseLoadHistorySeries>|null, 'cpuSeries'?: list<DatabaseLoadHistorySeries>|null}
+```
+
+### DatabaseLoadHistorySeries
+
+```php
+array{'points'?: list<HostingPoint>|null}
+```
+
 ### DirectoryExportCountResponse
 
 ```php
@@ -875,13 +887,19 @@ array{'displayId': string|null, 'targetDisplayId'?: string|null}
 ### PersonalWallboardsResponse
 
 ```php
-array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int, 'portalWallboard'?: Wallboard, 'portalStorageUsedCharacters'?: int, 'portalStorageLimitCharacters'?: int}
+array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int, 'portalWallboard'?: Wallboard, 'portalStorageUsedCharacters'?: int, 'portalStorageLimitCharacters'?: int, 'dateFormat'?: string|null}
 ```
 
 ### ProblemDetails
 
 ```php
 array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
+```
+
+### PublicWallboardEditorResponse
+
+```php
+array{'wallboard'?: Wallboard, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int}
 ```
 
 ### RedeemWallboardPairing
@@ -900,6 +918,12 @@ array{'challenge'?: string|null, 'signature'?: string|null}
 
 ```php
 array{'revision'?: string|null, 'wallboards': mixed, 'portalWallboard'?: mixed}
+```
+
+### SavePublicWallboardRequest
+
+```php
+array{'revision'?: string|null, 'wallboard': mixed}
 ```
 
 ### SearchResult
@@ -1334,6 +1358,24 @@ array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'
 array{'i'?: list<string>|null, 'n'?: string|null, 'a'?: int|float, 'c'?: list<eColor>|null, 's'?: list<WallboardPage>|null}
 ```
 
+### WallboardAnonymousReservation
+
+```php
+array{'unitKid'?: string|null, 'startMinute'?: int, 'durationMinutes'?: int}
+```
+
+### WallboardBankStorageItem
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'dataBytes'?: string|null, 'indexBytes'?: string|null, 'freeBytes'?: string|null, 'dataRecordedAtUtc'?: string|null, 'indexRecordedAtUtc'?: string|null, 'freeRecordedAtUtc'?: string|null}
+```
+
+### WallboardBankStorageResponse
+
+```php
+array{'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<WallboardBankStorageItem>|null}
+```
+
 ### WallboardDeviceChallenge
 
 ```php
@@ -1349,7 +1391,19 @@ array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string,
 ### WallboardDisplayResponse
 
 ```php
-array{'layout'?: Wallboard, 'revision'?: string|null}
+array{'layout'?: Wallboard, 'revision'?: string|null, 'dateFormat'?: string|null}
+```
+
+### WallboardLocationMapItem
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float}
+```
+
+### WallboardLocationMapResponse
+
+```php
+array{'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<WallboardLocationMapItem>|null}
 ```
 
 ### WallboardPage
@@ -1374,6 +1428,12 @@ array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: strin
 
 ```php
 array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null, 'displayId'?: string|null}
+```
+
+### WallboardReservationCalendarResponse
+
+```php
+array{'locationKid'?: string|null, 'groups'?: list<LocationBookingCalendarGroup>|null, 'timeZone'?: string|null, 'from'?: string, 'days'?: int, 'reservations'?: list<WallboardAnonymousReservation>|null}
 ```
 
 ### WallboardScanLocation
@@ -1517,7 +1577,7 @@ array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: s
 ### PublicWidgetPresentationResponse
 
 ```php
-array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
+array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandName'?: string|null, 'brandLogoUrl'?: string|null, 'brandDarkLogoUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
 ```
 
 ### PurchaseCurrencySnapshot

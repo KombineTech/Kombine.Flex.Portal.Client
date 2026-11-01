@@ -804,6 +804,42 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetMyWallboardDatabaseLoadHistory", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/database-load-history");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "series": null, "cpuSeries": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyWallboardDatabaseLoadHistory();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "series": null, "cpuSeries": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetWallboardDisplayDatabaseLoadHistory", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/display/fixture%20%2F%C3%A6%3F%26/database-load-history");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "series": null, "cpuSeries": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getWallboardDisplayDatabaseLoadHistory(displayId: "fixture /\u00e6?&", portrait: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "series": null, "cpuSeries": null}));
+    expect(sends, 1);
+  });
+
   test("wire ExportBankAccount", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -1939,11 +1975,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
 
-      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7, "dateFormat": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getMyManagerWallboards();
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7, "dateFormat": null}));
     expect(sends, 1);
   });
 
@@ -1958,11 +1994,48 @@ void main() {
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.body, encodeApiJson(<String, Object?>{"revision": null, "wallboards": null, "portalWallboard": null}));
       expect(request.headers['content-type'], contains('application/json'));
-      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7, "dateFormat": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.saveMyManagerWallboards(body: <String, Object?>{"revision": null, "wallboards": null, "portalWallboard": null});
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7, "dateFormat": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetPublicWallboardEditor", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/public");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"wallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getPublicWallboardEditor();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}));
+    expect(sends, 1);
+  });
+
+  test("wire SavePublicWallboardEditor", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "PUT");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/public");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{"revision": null, "wallboard": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"wallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.savePublicWallboardEditor(body: <String, Object?>{"revision": null, "wallboard": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}));
     expect(sends, 1);
   });
 
@@ -1977,11 +2050,11 @@ void main() {
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
       expect(request.url.queryParametersAll["after"], <Object?>["fixture"]);
-      return http.Response(encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "dateFormat": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getMyManagerWallboardDisplay(displayId: "fixture /\u00e6?&", portrait: false, after: "fixture");
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "dateFormat": null}));
     expect(sends, 1);
   });
 
@@ -2132,6 +2205,24 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.changeMyManagerPassword(body: <String, Object?>{"currentPassword": null, "password": null, "confirmPassword": null, "language": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"code": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetPublicWallboard", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/public/wallboard");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+
+      return http.Response(encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "dateFormat": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getPublicWallboard();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "dateFormat": null}));
     expect(sends, 1);
   });
 
@@ -3069,6 +3160,78 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetMyWallboardBankStorage", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/bank-storage");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "items": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyWallboardBankStorage();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "items": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetWallboardDisplayBankStorage", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/display/fixture%20%2F%C3%A6%3F%26/bank-storage");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "items": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getWallboardDisplayBankStorage(displayId: "fixture /\u00e6?&", portrait: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "items": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetMyWallboardLocationMap", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/location-map");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "items": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyWallboardLocationMap();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "items": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetWallboardDisplayLocationMap", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/display/fixture%20%2F%C3%A6%3F%26/location-map");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "items": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getWallboardDisplayLocationMap(displayId: "fixture /\u00e6?&", portrait: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "items": null}));
+    expect(sends, 1);
+  });
+
   test("wire StartWallboardPairing", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -3232,6 +3395,43 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     await client.revokeWallboardDevice(deviceId: "fixture /\u00e6?&");
     
+    expect(sends, 1);
+  });
+
+  test("wire GetMyWallboardReservationCalendar", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/reservation-calendar");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["locationKid"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"locationKid": null, "groups": null, "timeZone": null, "from": "2026-10-20", "days": 7, "reservations": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyWallboardReservationCalendar(locationKid: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"locationKid": null, "groups": null, "timeZone": null, "from": "2026-10-20", "days": 7, "reservations": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetWallboardDisplayReservationCalendar", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/display/fixture%20%2F%C3%A6%3F%26/reservation-calendar");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["locationKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"locationKid": null, "groups": null, "timeZone": null, "from": "2026-10-20", "days": 7, "reservations": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getWallboardDisplayReservationCalendar(displayId: "fixture /\u00e6?&", locationKid: "fixture", portrait: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"locationKid": null, "groups": null, "timeZone": null, "from": "2026-10-20", "days": 7, "reservations": null}));
     expect(sends, 1);
   });
 
@@ -3954,11 +4154,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], isNull);
 
-      return http.Response(encodeApiJson(<String, Object?>{"language": null, "colors": null, "background": null, "webBase": null, "labels": null, "googleMapsBrowserKey": null, "brandIconUrl": null, "brandLightTokens": null, "brandDarkTokens": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"language": null, "colors": null, "background": null, "webBase": null, "labels": null, "googleMapsBrowserKey": null, "brandIconUrl": null, "brandName": null, "brandLogoUrl": null, "brandDarkLogoUrl": null, "brandLightTokens": null, "brandDarkTokens": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getPublicWidgetPresentation();
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"language": null, "colors": null, "background": null, "webBase": null, "labels": null, "googleMapsBrowserKey": null, "brandIconUrl": null, "brandLightTokens": null, "brandDarkTokens": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"language": null, "colors": null, "background": null, "webBase": null, "labels": null, "googleMapsBrowserKey": null, "brandIconUrl": null, "brandName": null, "brandLogoUrl": null, "brandDarkLogoUrl": null, "brandLightTokens": null, "brandDarkTokens": null}));
     expect(sends, 1);
   });
 
