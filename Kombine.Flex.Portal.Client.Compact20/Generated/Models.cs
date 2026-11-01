@@ -324,6 +324,31 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>Protected tenant-wide activity count without manager identities.</summary>
+    public sealed class ActiveManagerStatisticsResponse
+    {
+        /// <summary>count</summary>
+        [JsonField("count")]
+        public long? Count { get { return _Count; } set { _Count = value; } }
+        private long? _Count;
+
+        /// <summary>measuredAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("measuredAtUtc")]
+        public string MeasuredAtUtc { get { return _MeasuredAtUtc; } set { _MeasuredAtUtc = value; } }
+        private string _MeasuredAtUtc;
+
+        /// <summary>refreshAfterSeconds</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+        /// <summary>activeWithinMinutes</summary>
+        [JsonField("activeWithinMinutes")]
+        public int? ActiveWithinMinutes { get { return _ActiveWithinMinutes; } set { _ActiveWithinMinutes = value; } }
+        private int? _ActiveWithinMinutes;
+
+    }
+
     /// <summary>Accessible active units or terminals, independent of search and paging, with a ready-to-render navigation icon.</summary>
     public sealed class ActiveUnitCountResponse
     {
@@ -336,6 +361,41 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("iconKid")]
         public string IconKid { get { return _IconKid; } set { _IconKid = value; } }
         private string _IconKid;
+
+    }
+
+    /// <summary>Protected production app CPU and memory percentages for the previous 24 hours, without provider identities.</summary>
+    public sealed class ApplicationLoadHistoryResponse
+    {
+        /// <summary>fromUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("fromUtc")]
+        public string FromUtc { get { return _FromUtc; } set { _FromUtc = value; } }
+        private string _FromUtc;
+
+        /// <summary>toUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("toUtc")]
+        public string ToUtc { get { return _ToUtc; } set { _ToUtc = value; } }
+        private string _ToUtc;
+
+        /// <summary>fetchedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("fetchedAtUtc")]
+        public string FetchedAtUtc { get { return _FetchedAtUtc; } set { _FetchedAtUtc = value; } }
+        private string _FetchedAtUtc;
+
+        /// <summary>refreshAfterSeconds</summary>
+        [JsonField("refreshAfterSeconds")]
+        public int? RefreshAfterSeconds { get { return _RefreshAfterSeconds; } set { _RefreshAfterSeconds = value; } }
+        private int? _RefreshAfterSeconds;
+
+        /// <summary>cpuSeries</summary>
+        [JsonField("cpuSeries")]
+        public DatabaseLoadHistorySeries[] CpuSeries { get { return _CpuSeries; } set { _CpuSeries = value; } }
+        private DatabaseLoadHistorySeries[] _CpuSeries;
+
+        /// <summary>memorySeries</summary>
+        [JsonField("memorySeries")]
+        public DatabaseLoadHistorySeries[] MemorySeries { get { return _MemorySeries; } set { _MemorySeries = value; } }
+        private DatabaseLoadHistorySeries[] _MemorySeries;
 
     }
 
@@ -9911,6 +9971,24 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     /// <summary>Optional query/header parameters for GetWallboardDisplayLocationMap. Null values use API defaults.</summary>
     public sealed class GetWallboardDisplayLocationMapOptions
+    {
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetWallboardDisplayActiveManagers. Null values use API defaults.</summary>
+    public sealed class GetWallboardDisplayActiveManagersOptions
+    {
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetWallboardDisplayApplicationLoadHistory. Null values use API defaults.</summary>
+    public sealed class GetWallboardDisplayApplicationLoadHistoryOptions
     {
         /// <summary>portrait</summary>
         public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }

@@ -117,6 +117,8 @@
 | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` |
 | `GetMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` |
+| `GetMyWallboardActiveManagers` | GET | `/api/v1/session/me/wallboards/active-managers` |
+| `GetMyWallboardApplicationLoadHistory` | GET | `/api/v1/session/me/wallboards/application-load-history/{widgetType}` |
 | `GetMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` |
 | `GetMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` |
 | `GetMyWallboardLocationInfo` | GET | `/api/v1/session/me/wallboards/location-info` |
@@ -177,6 +179,8 @@
 | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` |
 | `GetUsers` | GET | `/api/v1/users` |
 | `GetWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` |
+| `GetWallboardDisplayActiveManagers` | GET | `/api/v1/session/me/wallboards/display/{displayId}/active-managers` |
+| `GetWallboardDisplayApplicationLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}` |
 | `GetWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
 | `GetWallboardDisplayDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` |
 | `GetWallboardDisplayLocationInfo` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` |

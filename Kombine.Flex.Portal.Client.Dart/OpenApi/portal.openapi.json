@@ -26382,6 +26382,206 @@
         ]
       }
     },
+    "/api/v1/session/me/wallboards/active-managers": {
+      "get": {
+        "tags": [
+          "WallboardOperations"
+        ],
+        "summary": "Counts unique administrators active in the last fifteen minutes; requires Managers Read and whole-tenant Wallboard1 access.",
+        "operationId": "GetMyWallboardActiveManagers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/display/{displayId}/active-managers": {
+      "get": {
+        "tags": [
+          "WallboardOperations"
+        ],
+        "summary": "Counts active administrators only for an approved display containing widget 48.",
+        "operationId": "GetWallboardDisplayActiveManagers",
+        "parameters": [
+          {
+            "name": "displayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "portrait",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/application-load-history/{widgetType}": {
+      "get": {
+        "tags": [
+          "WallboardOperations"
+        ],
+        "summary": "Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.",
+        "operationId": "GetMyWallboardApplicationLoadHistory",
+        "parameters": [
+          {
+            "name": "widgetType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}": {
+      "get": {
+        "tags": [
+          "WallboardOperations"
+        ],
+        "summary": "Reads a load widget saved on the exact approved display, rechecking layout and approval after the provider read.",
+        "operationId": "GetWallboardDisplayApplicationLoadHistory",
+        "parameters": [
+          {
+            "name": "widgetType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "displayId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "portrait",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/wallboard/pairings": {
       "post": {
         "tags": [
@@ -31552,6 +31752,29 @@
         "additionalProperties": false,
         "description": "Number of accessible locations with Enabled=1 and Deleted=0, independent of search and paging."
       },
+      "ActiveManagerStatisticsResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "measuredAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeWithinMinutes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Protected tenant-wide activity count without manager identities."
+      },
       "ActiveUnitCountResponse": {
         "type": "object",
         "properties": {
@@ -31566,6 +31789,43 @@
         },
         "additionalProperties": false,
         "description": "Accessible active units or terminals, independent of search and paging, with a ready-to-render navigation icon."
+      },
+      "ApplicationLoadHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "fromUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "toUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fetchedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refreshAfterSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cpuSeries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+            },
+            "nullable": true
+          },
+          "memorySeries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Protected production app CPU and memory percentages for the previous 24 hours, without provider identities."
       },
       "ApproveWallboardPairing": {
         "type": "object",
@@ -39703,6 +39963,9 @@
     },
     {
       "name": "WallboardLocationMap"
+    },
+    {
+      "name": "WallboardOperations"
     },
     {
       "name": "WallboardPairing"

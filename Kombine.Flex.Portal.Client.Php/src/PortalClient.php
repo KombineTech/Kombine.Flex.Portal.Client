@@ -15,7 +15,9 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type AcknowledgeErrorRequest array{'expectedRevision': string|null}
  * @phpstan-type ActiveBankCountResponse array{'count'?: int, 'iconKid'?: string|null}
  * @phpstan-type ActiveLocationCountResponse array{'count'?: int, 'iconKid'?: string|null}
+ * @phpstan-type ActiveManagerStatisticsResponse array{'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'activeWithinMinutes'?: int}
  * @phpstan-type ActiveUnitCountResponse array{'count'?: int, 'iconKid'?: string|null}
+ * @phpstan-type ApplicationLoadHistoryResponse array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<DatabaseLoadHistorySeries>|null, 'memorySeries'?: list<DatabaseLoadHistorySeries>|null}
  * @phpstan-type ApproveWallboardPairing array{'location'?: WallboardScanLocation}
  * @phpstan-type AssistantLink array{'kid'?: string|null, 'path'?: string|null, 'name'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type AssistantMessage array{'role'?: string|null, 'content'?: string|null}
@@ -2026,6 +2028,48 @@ final class PortalClient extends BaseClient
     public function getWallboardDisplayLocationMap(mixed $displayId, array $options = []): mixed
     {
         return $this->request('GetWallboardDisplayLocationMap', ['displayId' => $displayId] + $options, null);
+    }
+
+    /**
+     * Counts unique administrators active in the last fifteen minutes; requires Managers Read and whole-tenant Wallboard1 access.
+     * @return ActiveManagerStatisticsResponse
+     */
+    public function getMyWallboardActiveManagers(): mixed
+    {
+        return $this->request('GetMyWallboardActiveManagers', [], null);
+    }
+
+    /**
+     * Counts active administrators only for an approved display containing widget 48.
+     * @param string $displayId
+     * @param array{'portrait'?: bool} $options
+     * @return ActiveManagerStatisticsResponse
+     */
+    public function getWallboardDisplayActiveManagers(mixed $displayId, array $options = []): mixed
+    {
+        return $this->request('GetWallboardDisplayActiveManagers', ['displayId' => $displayId] + $options, null);
+    }
+
+    /**
+     * Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.
+     * @param int $widgetType
+     * @return ApplicationLoadHistoryResponse
+     */
+    public function getMyWallboardApplicationLoadHistory(mixed $widgetType): mixed
+    {
+        return $this->request('GetMyWallboardApplicationLoadHistory', ['widgetType' => $widgetType], null);
+    }
+
+    /**
+     * Reads a load widget saved on the exact approved display, rechecking layout and approval after the provider read.
+     * @param int $widgetType
+     * @param string $displayId
+     * @param array{'portrait'?: bool} $options
+     * @return ApplicationLoadHistoryResponse
+     */
+    public function getWallboardDisplayApplicationLoadHistory(mixed $widgetType, mixed $displayId, array $options = []): mixed
+    {
+        return $this->request('GetWallboardDisplayApplicationLoadHistory', ['widgetType' => $widgetType, 'displayId' => $displayId] + $options, null);
     }
 
     /**

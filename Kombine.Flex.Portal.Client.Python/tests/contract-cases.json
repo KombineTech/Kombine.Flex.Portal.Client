@@ -9455,6 +9455,145 @@
     "example": {}
   },
   {
+    "operation": "GetMyWallboardActiveManagers",
+    "python": "get_my_wallboard_active_managers",
+    "javascript": "getMyWallboardActiveManagers",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/active-managers",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayActiveManagers",
+    "python": "get_wallboard_display_active_managers",
+    "javascript": "getWallboardDisplayActiveManagers",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/active-managers",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardApplicationLoadHistory",
+    "python": "get_my_wallboard_application_load_history",
+    "javascript": "getMyWallboardApplicationLoadHistory",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/application-load-history/{widgetType}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "widgetType",
+        "where": "path",
+        "py": "widget_type",
+        "js": "widgetType",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayApplicationLoadHistory",
+    "python": "get_wallboard_display_application_load_history",
+    "javascript": "getWallboardDisplayApplicationLoadHistory",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "widgetType",
+        "where": "path",
+        "py": "widget_type",
+        "js": "widgetType",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "StartWallboardPairing",
     "python": "start_wallboard_pairing",
     "javascript": "startWallboardPairing",

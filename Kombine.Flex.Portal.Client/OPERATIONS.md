@@ -119,6 +119,8 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetMyManagerTabsAsync` | GET | `/api/v1/session/me/tabs` |
 | `GetMyManagerWallboardDisplayAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerWallboardsAsync` | GET | `/api/v1/session/me/wallboards` |
+| `GetMyWallboardActiveManagersAsync` | GET | `/api/v1/session/me/wallboards/active-managers` |
+| `GetMyWallboardApplicationLoadHistoryAsync` | GET | `/api/v1/session/me/wallboards/application-load-history/{widgetType}` |
 | `GetMyWallboardBankStorageAsync` | GET | `/api/v1/session/me/wallboards/bank-storage` |
 | `GetMyWallboardDatabaseLoadHistoryAsync` | GET | `/api/v1/session/me/wallboards/database-load-history` |
 | `GetMyWallboardLocationInfoAsync` | GET | `/api/v1/session/me/wallboards/location-info` |
@@ -179,6 +181,8 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetUserReceiptsAsync` | GET | `/api/v1/users/{userKid}/receipts` |
 | `GetUsersAsync` | GET | `/api/v1/users` |
 | `GetWallboardDeviceAsync` | GET | `/api/v1/wallboard/devices/{deviceId}` |
+| `GetWallboardDisplayActiveManagersAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/active-managers` |
+| `GetWallboardDisplayApplicationLoadHistoryAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}` |
 | `GetWallboardDisplayBankStorageAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` |
 | `GetWallboardDisplayDatabaseLoadHistoryAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` |
 | `GetWallboardDisplayLocationInfoAsync` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` |

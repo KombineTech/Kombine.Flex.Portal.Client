@@ -300,6 +300,28 @@
       },
       "additionalProperties": false
     },
+    "ActiveManagerStatisticsResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "measuredAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "activeWithinMinutes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
     "ActiveUnitCountResponse": {
       "type": "object",
       "properties": {
@@ -309,6 +331,42 @@
         },
         "iconKid": {
           "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ApplicationLoadHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "fromUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "toUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fetchedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshAfterSeconds": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cpuSeries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+          },
+          "nullable": true
+        },
+        "memorySeries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+          },
           "nullable": true
         }
       },
@@ -13990,6 +14048,119 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/WallboardLocationMapResponse"
+      },
+      "binary": false
+    },
+    "GetMyWallboardActiveManagers": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/active-managers",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+      },
+      "binary": false
+    },
+    "GetWallboardDisplayActiveManagers": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/display/{displayId}/active-managers",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "displayId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+      },
+      "binary": false
+    },
+    "GetMyWallboardApplicationLoadHistory": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/application-load-history/{widgetType}",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "widgetType",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+      },
+      "binary": false
+    },
+    "GetWallboardDisplayApplicationLoadHistory": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "widgetType",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "displayId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
       },
       "binary": false
     },

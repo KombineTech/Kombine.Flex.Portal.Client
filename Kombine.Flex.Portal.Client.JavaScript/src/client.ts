@@ -828,6 +828,26 @@ export class PortalClient extends BaseClient {
     return this.send("GetWallboardDisplayLocationMap", {"displayId": displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.WallboardLocationMapResponse>;
   }
 
+  /** Counts unique administrators active in the last fifteen minutes; requires Managers Read and whole-tenant Wallboard1 access. */
+  getMyWallboardActiveManagers(request: RequestOptions = {}): Promise<Models.ActiveManagerStatisticsResponse> {
+    return this.send("GetMyWallboardActiveManagers", {}, undefined, request) as Promise<Models.ActiveManagerStatisticsResponse>;
+  }
+
+  /** Counts active administrators only for an approved display containing widget 48. */
+  getWallboardDisplayActiveManagers(displayId: string, options: Models.GetWallboardDisplayActiveManagersOptions = {}, request: RequestOptions = {}): Promise<Models.ActiveManagerStatisticsResponse> {
+    return this.send("GetWallboardDisplayActiveManagers", {"displayId": displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.ActiveManagerStatisticsResponse>;
+  }
+
+  /** Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access. */
+  getMyWallboardApplicationLoadHistory(widgetType: number, request: RequestOptions = {}): Promise<Models.ApplicationLoadHistoryResponse> {
+    return this.send("GetMyWallboardApplicationLoadHistory", {"widgetType": widgetType}, undefined, request) as Promise<Models.ApplicationLoadHistoryResponse>;
+  }
+
+  /** Reads a load widget saved on the exact approved display, rechecking layout and approval after the provider read. */
+  getWallboardDisplayApplicationLoadHistory(widgetType: number, displayId: string, options: Models.GetWallboardDisplayApplicationLoadHistoryOptions = {}, request: RequestOptions = {}): Promise<Models.ApplicationLoadHistoryResponse> {
+    return this.send("GetWallboardDisplayApplicationLoadHistory", {"widgetType": widgetType, "displayId": displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.ApplicationLoadHistoryResponse>;
+  }
+
   /** Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code. */
   startWallboardPairing(body: Models.StartWallboardPairing, request: RequestOptions = {}): Promise<Models.WallboardPairingStarted> {
     return this.send("StartWallboardPairing", {}, body, request) as Promise<Models.WallboardPairingStarted>;

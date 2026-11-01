@@ -1,3 +1,7 @@
+## 0.21.0
+
+- Add protected activity and application load widget operations.
+
 ## 0.20.0
 
 - Add authorized Plex search and playback operations.

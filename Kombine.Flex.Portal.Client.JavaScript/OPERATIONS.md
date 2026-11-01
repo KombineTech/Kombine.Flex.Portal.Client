@@ -167,6 +167,10 @@
 | `GetWallboardDisplayLocationInfo` | `get_wallboard_display_location_info` | `getWallboardDisplayLocationInfo` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` |
 | `GetMyWallboardLocationMap` | `get_my_wallboard_location_map` | `getMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` |
 | `GetWallboardDisplayLocationMap` | `get_wallboard_display_location_map` | `getWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
+| `GetMyWallboardActiveManagers` | `get_my_wallboard_active_managers` | `getMyWallboardActiveManagers` | GET | `/api/v1/session/me/wallboards/active-managers` |
+| `GetWallboardDisplayActiveManagers` | `get_wallboard_display_active_managers` | `getWallboardDisplayActiveManagers` | GET | `/api/v1/session/me/wallboards/display/{displayId}/active-managers` |
+| `GetMyWallboardApplicationLoadHistory` | `get_my_wallboard_application_load_history` | `getMyWallboardApplicationLoadHistory` | GET | `/api/v1/session/me/wallboards/application-load-history/{widgetType}` |
+| `GetWallboardDisplayApplicationLoadHistory` | `get_wallboard_display_application_load_history` | `getWallboardDisplayApplicationLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}` |
 | `StartWallboardPairing` | `start_wallboard_pairing` | `startWallboardPairing` | POST | `/api/v1/wallboard/pairings` |
 | `FindWallboardPairings` | `find_wallboard_pairings` | `findWallboardPairings` | GET | `/api/v1/wallboard/pairings` |
 | `GetWallboardPairing` | `get_wallboard_pairing` | `getWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` |

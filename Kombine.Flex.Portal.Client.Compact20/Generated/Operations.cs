@@ -2557,6 +2557,62 @@ namespace Kombine.Flex.Portal.Client.Compact20
             return (WallboardLocationMapResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardLocationMapResponse));
         }
 
+        /// <summary>Counts unique administrators active in the last fifteen minutes; requires Managers Read and whole-tenant Wallboard1 access.</summary>
+        public ActiveManagerStatisticsResponse GetMyWallboardActiveManagers()
+        {
+            string path = "api/v1/session/me/wallboards/active-managers";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ActiveManagerStatisticsResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveManagerStatisticsResponse));
+        }
+
+        /// <summary>Counts active administrators only for an approved display containing widget 48.</summary>
+        public ActiveManagerStatisticsResponse GetWallboardDisplayActiveManagers(string @displayId)
+        {
+            return GetWallboardDisplayActiveManagers(@displayId, null);
+        }
+
+        /// <summary>Counts active administrators only for an approved display containing widget 48.</summary>
+        public ActiveManagerStatisticsResponse GetWallboardDisplayActiveManagers(string @displayId, GetWallboardDisplayActiveManagersOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/display/{displayId}/active-managers";
+            path = path.Replace("{displayId}", PathValue(@displayId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "portrait", options.Portrait);
+            }
+            return (ActiveManagerStatisticsResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveManagerStatisticsResponse));
+        }
+
+        /// <summary>Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.</summary>
+        public ApplicationLoadHistoryResponse GetMyWallboardApplicationLoadHistory(int @widgetType)
+        {
+            string path = "api/v1/session/me/wallboards/application-load-history/{widgetType}";
+            path = path.Replace("{widgetType}", PathValue(@widgetType));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ApplicationLoadHistoryResponse)SendJson("GET", path, null, headers, 200, typeof(ApplicationLoadHistoryResponse));
+        }
+
+        /// <summary>Reads a load widget saved on the exact approved display, rechecking layout and approval after the provider read.</summary>
+        public ApplicationLoadHistoryResponse GetWallboardDisplayApplicationLoadHistory(int @widgetType, string @displayId)
+        {
+            return GetWallboardDisplayApplicationLoadHistory(@widgetType, @displayId, null);
+        }
+
+        /// <summary>Reads a load widget saved on the exact approved display, rechecking layout and approval after the provider read.</summary>
+        public ApplicationLoadHistoryResponse GetWallboardDisplayApplicationLoadHistory(int @widgetType, string @displayId, GetWallboardDisplayApplicationLoadHistoryOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}";
+            path = path.Replace("{widgetType}", PathValue(@widgetType));
+            path = path.Replace("{displayId}", PathValue(@displayId));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "portrait", options.Portrait);
+            }
+            return (ApplicationLoadHistoryResponse)SendJson("GET", path, null, headers, 200, typeof(ApplicationLoadHistoryResponse));
+        }
+
         /// <summary>Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code.</summary>
         public WallboardPairingStarted StartWallboardPairing(StartWallboardPairing body)
         {

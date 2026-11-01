@@ -62,10 +62,22 @@ array{'count'?: int, 'iconKid'?: string|null}
 array{'count'?: int, 'iconKid'?: string|null}
 ```
 
+### ActiveManagerStatisticsResponse
+
+```php
+array{'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'activeWithinMinutes'?: int}
+```
+
 ### ActiveUnitCountResponse
 
 ```php
 array{'count'?: int, 'iconKid'?: string|null}
+```
+
+### ApplicationLoadHistoryResponse
+
+```php
+array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<DatabaseLoadHistorySeries>|null, 'memorySeries'?: list<DatabaseLoadHistorySeries>|null}
 ```
 
 ### ApproveWallboardPairing

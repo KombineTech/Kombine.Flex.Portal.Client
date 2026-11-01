@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `5934f5815e1c875239dc6458655c1dfa31f9e9f4dba5282c22307ccb2491d7e4`).
-226 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `7f926c62a0067ad109413c3c41f7b00b9ffa4aab485106b3f9f8aae4c31f16bc`).
+230 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -120,6 +120,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `5934f5815e1c875239d
 | `getMyManagerTabs` | `GetMyManagerTabs` | GET | `/api/v1/session/me/tabs` | Bearer |
 | `getMyManagerWallboardDisplay` | `GetMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` | Bearer |
 | `getMyManagerWallboards` | `GetMyManagerWallboards` | GET | `/api/v1/session/me/wallboards` | Bearer |
+| `getMyWallboardActiveManagers` | `GetMyWallboardActiveManagers` | GET | `/api/v1/session/me/wallboards/active-managers` | Bearer |
+| `getMyWallboardApplicationLoadHistory` | `GetMyWallboardApplicationLoadHistory` | GET | `/api/v1/session/me/wallboards/application-load-history/{widgetType}` | Bearer |
 | `getMyWallboardBankStorage` | `GetMyWallboardBankStorage` | GET | `/api/v1/session/me/wallboards/bank-storage` | Bearer |
 | `getMyWallboardDatabaseLoadHistory` | `GetMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` | Bearer |
 | `getMyWallboardLocationInfo` | `GetMyWallboardLocationInfo` | GET | `/api/v1/session/me/wallboards/location-info` | Bearer |
@@ -180,6 +182,8 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `5934f5815e1c875239d
 | `getUserReceipts` | `GetUserReceipts` | GET | `/api/v1/users/{userKid}/receipts` | Bearer |
 | `getUsers` | `GetUsers` | GET | `/api/v1/users` | Bearer |
 | `getWallboardDevice` | `GetWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` | Bearer |
+| `getWallboardDisplayActiveManagers` | `GetWallboardDisplayActiveManagers` | GET | `/api/v1/session/me/wallboards/display/{displayId}/active-managers` | Bearer |
+| `getWallboardDisplayApplicationLoadHistory` | `GetWallboardDisplayApplicationLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}` | Bearer |
 | `getWallboardDisplayBankStorage` | `GetWallboardDisplayBankStorage` | GET | `/api/v1/session/me/wallboards/display/{displayId}/bank-storage` | Bearer |
 | `getWallboardDisplayDatabaseLoadHistory` | `GetWallboardDisplayDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/database-load-history` | Bearer |
 | `getWallboardDisplayLocationInfo` | `GetWallboardDisplayLocationInfo` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` | Bearer |

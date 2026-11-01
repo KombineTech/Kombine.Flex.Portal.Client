@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-226 operations. OpenAPI SHA-256: `5934f5815e1c875239dc6458655c1dfa31f9e9f4dba5282c22307ccb2491d7e4`.
+230 operations. OpenAPI SHA-256: `7f926c62a0067ad109413c3c41f7b00b9ffa4aab485106b3f9f8aae4c31f16bc`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -169,6 +169,10 @@
 | `GetWallboardDisplayLocationInfo` | `getWallboardDisplayLocationInfo` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-info` |
 | `GetMyWallboardLocationMap` | `getMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` |
 | `GetWallboardDisplayLocationMap` | `getWallboardDisplayLocationMap` | GET | `/api/v1/session/me/wallboards/display/{displayId}/location-map` |
+| `GetMyWallboardActiveManagers` | `getMyWallboardActiveManagers` | GET | `/api/v1/session/me/wallboards/active-managers` |
+| `GetWallboardDisplayActiveManagers` | `getWallboardDisplayActiveManagers` | GET | `/api/v1/session/me/wallboards/display/{displayId}/active-managers` |
+| `GetMyWallboardApplicationLoadHistory` | `getMyWallboardApplicationLoadHistory` | GET | `/api/v1/session/me/wallboards/application-load-history/{widgetType}` |
+| `GetWallboardDisplayApplicationLoadHistory` | `getWallboardDisplayApplicationLoadHistory` | GET | `/api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}` |
 | `StartWallboardPairing` | `startWallboardPairing` | POST | `/api/v1/wallboard/pairings` |
 | `FindWallboardPairings` | `findWallboardPairings` | GET | `/api/v1/wallboard/pairings` |
 | `GetWallboardPairing` | `getWallboardPairing` | GET | `/api/v1/wallboard/pairings/{pairingId}` |
