@@ -104,6 +104,7 @@
 | `SaveMyManagerWallboards` | `save_my_manager_wallboards` | `saveMyManagerWallboards` | PUT | `/api/v1/session/me/wallboards` |
 | `GetPublicWallboardEditor` | `get_public_wallboard_editor` | `getPublicWallboardEditor` | GET | `/api/v1/session/me/wallboards/public` |
 | `SavePublicWallboardEditor` | `save_public_wallboard_editor` | `savePublicWallboardEditor` | PUT | `/api/v1/session/me/wallboards/public` |
+| `MovePublicWallboardPage` | `move_public_wallboard_page` | `movePublicWallboardPage` | POST | `/api/v1/session/me/wallboards/public/move-page` |
 | `GetMyManagerWallboardDisplay` | `get_my_manager_wallboard_display` | `getMyManagerWallboardDisplay` | GET | `/api/v1/session/me/wallboards/display/{displayId}` |
 | `GetMyManagerApiKey` | `get_my_manager_api_key` | `getMyManagerApiKey` | GET | `/api/v1/session/me/api-key` |
 | `GenerateMyManagerApiKey` | `generate_my_manager_api_key` | `generateMyManagerApiKey` | POST | `/api/v1/session/me/api-key` |

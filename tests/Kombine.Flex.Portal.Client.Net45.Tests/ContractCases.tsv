@@ -100,6 +100,7 @@ GetMyManagerWallboards	GET	/api/v1/session/me/wallboards	200	{}
 SaveMyManagerWallboards	PUT	/api/v1/session/me/wallboards	200	{}
 GetPublicWallboardEditor	GET	/api/v1/session/me/wallboards/public	200	{}
 SavePublicWallboardEditor	PUT	/api/v1/session/me/wallboards/public	200	{}
+MovePublicWallboardPage	POST	/api/v1/session/me/wallboards/public/move-page	200	{}
 GetMyManagerWallboardDisplay	GET	/api/v1/session/me/wallboards/display/{displayId}	200	{}
 GetMyManagerApiKey	GET	/api/v1/session/me/api-key	200	{}
 GenerateMyManagerApiKey	POST	/api/v1/session/me/api-key	200	{}

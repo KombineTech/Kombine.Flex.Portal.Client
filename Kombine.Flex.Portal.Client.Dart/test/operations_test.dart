@@ -45,11 +45,11 @@ void main() {
       expect(request.url.queryParametersAll["IncludeMonthly"], <Object?>["false"]);
       expect(request.url.queryParametersAll["Offset"], <Object?>["7"]);
       expect(request.url.queryParametersAll["Limit"], <Object?>["7"]);
-      return http.Response(encodeApiJson(<String, Object?>{"items": null, "units": null, "periods": null, "totals": null, "from": "2026-10-20", "through": "2026-10-20", "timeZone": null, "period": null, "offset": 7, "limit": 7, "hasMore": false, "revision": null, "documents": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"items": null, "units": null, "periods": null, "totals": null, "from": "2026-10-20", "through": null, "timeZone": null, "period": null, "offset": 7, "limit": 7, "hasMore": false, "revision": null, "documents": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getBankAccount(bankKid: "fixture /\u00e6?&", from: "2026-10-20", through: "2026-10-20", timeZone: "fixture", period: 7, locationKid: "fixture", locationKids: <String>["fixture"], unitKid: "fixture", userKid: "fixture", kind: "fixture", includeZero: false, includeBookings: false, includeMonthly: false, offset: 7, limit: 7);
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "units": null, "periods": null, "totals": null, "from": "2026-10-20", "through": "2026-10-20", "timeZone": null, "period": null, "offset": 7, "limit": 7, "hasMore": false, "revision": null, "documents": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "units": null, "periods": null, "totals": null, "from": "2026-10-20", "through": null, "timeZone": null, "period": null, "offset": 7, "limit": 7, "hasMore": false, "revision": null, "documents": null}));
     expect(sends, 1);
   });
 
@@ -1974,11 +1974,11 @@ void main() {
       expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards");
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
-
+      expect(request.url.queryParametersAll["after"], <Object?>["fixture"]);
       return http.Response(encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7, "dateFormat": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getMyManagerWallboards();
+    final result = await client.getMyManagerWallboards(after: "fixture");
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7, "dateFormat": null}));
     expect(sends, 1);
   });
@@ -2036,6 +2036,25 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.savePublicWallboardEditor(body: <String, Object?>{"revision": null, "wallboard": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"wallboard": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}));
+    expect(sends, 1);
+  });
+
+  test("wire MovePublicWallboardPage", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/public/move-page");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{"revision": null, "publicRevision": null, "pageIndex": 7, "targetPageIndex": 7, "targetDisplayId": null, "portrait": false, "toPublic": false, "sourceDisplayId": null}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"personal": <String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7, "dateFormat": null}, "public": <String, Object?>{"wallboard": <String, Object?>{}, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.movePublicWallboardPage(body: <String, Object?>{"revision": null, "publicRevision": null, "pageIndex": 7, "targetPageIndex": 7, "targetDisplayId": null, "portrait": false, "toPublic": false, "sourceDisplayId": null});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"personal": <String, Object?>{"wallboards": null, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7, "portalWallboard": <String, Object?>{}, "portalStorageUsedCharacters": 7, "portalStorageLimitCharacters": 7, "dateFormat": null}, "public": <String, Object?>{"wallboard": <String, Object?>{}, "revision": null, "storageUsedCharacters": 7, "storageLimitCharacters": 7}}));
     expect(sends, 1);
   });
 
@@ -2217,11 +2236,11 @@ void main() {
       expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/public/wallboard");
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], isNull);
-
+      expect(request.url.queryParametersAll["after"], <Object?>["fixture"]);
       return http.Response(encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "dateFormat": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getPublicWallboard();
+    final result = await client.getPublicWallboard(after: "fixture");
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"layout": <String, Object?>{"i": null, "n": null, "a": 1.25, "c": null, "s": null}, "revision": null, "dateFormat": null}));
     expect(sends, 1);
   });

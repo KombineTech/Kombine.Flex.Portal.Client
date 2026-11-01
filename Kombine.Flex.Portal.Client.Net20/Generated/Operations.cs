@@ -1582,8 +1582,18 @@ namespace Kombine.Flex.Portal.Client.Net20
         /// <summary>Read your own Wallboard1 editor layouts and concurrency revision.</summary>
         public PersonalWallboardsResponse GetMyManagerWallboards()
         {
+            return GetMyManagerWallboards(null);
+        }
+
+        /// <summary>Read your own Wallboard1 editor layouts and concurrency revision.</summary>
+        public PersonalWallboardsResponse GetMyManagerWallboards(GetMyManagerWallboardsOptions options)
+        {
             string path = "api/v1/session/me/wallboards";
             Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "after", options.After);
+            }
             return (PersonalWallboardsResponse)SendJson("GET", path, null, headers, 200, typeof(PersonalWallboardsResponse));
         }
 
@@ -1609,6 +1619,14 @@ namespace Kombine.Flex.Portal.Client.Net20
             string path = "api/v1/session/me/wallboards/public";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (PublicWallboardEditorResponse)SendJson("PUT", path, body, headers, 200, typeof(PublicWallboardEditorResponse));
+        }
+
+        /// <summary>Move one page between the public wallboard and your private Portal or an existing approved display layout.</summary>
+        public MovePublicWallboardPageResponse MovePublicWallboardPage(MovePublicWallboardPageRequest body)
+        {
+            string path = "api/v1/session/me/wallboards/public/move-page";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (MovePublicWallboardPageResponse)SendJson("POST", path, body, headers, 200, typeof(MovePublicWallboardPageResponse));
         }
 
         /// <summary>Read the selected orientation for one of your Wallboards.</summary>
@@ -1700,8 +1718,18 @@ namespace Kombine.Flex.Portal.Client.Net20
         /// <summary>Read the trusted tenant's public wallboard without manager data.</summary>
         public WallboardDisplayResponse GetPublicWallboard()
         {
+            return GetPublicWallboard(null);
+        }
+
+        /// <summary>Read the trusted tenant's public wallboard without manager data.</summary>
+        public WallboardDisplayResponse GetPublicWallboard(GetPublicWallboardOptions options)
+        {
             string path = "api/v1/public/wallboard";
             Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "after", options.After);
+            }
             return (WallboardDisplayResponse)SendJson("GET", path, null, headers, 200, typeof(WallboardDisplayResponse));
         }
 

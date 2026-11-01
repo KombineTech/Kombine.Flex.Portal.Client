@@ -23,7 +23,7 @@ array{'currency'?: string|null, 'iconKid'?: string|null}
 ### AccountResponse
 
 ```php
-array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'documents'?: list<AccountDocumentResponse>|null}
+array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string|null, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'documents'?: list<AccountDocumentResponse>|null}
 ```
 
 ### AccountRevisionResponse
@@ -750,6 +750,18 @@ array{'themeMode': eThemeMode}
 
 ```php
 array{'themeMode'?: eThemeMode}
+```
+
+### MovePublicWallboardPageRequest
+
+```php
+array{'revision'?: string|null, 'publicRevision'?: string|null, 'pageIndex': int, 'targetPageIndex': int, 'targetDisplayId'?: string|null, 'portrait'?: bool, 'toPublic'?: bool, 'sourceDisplayId'?: string|null}
+```
+
+### MovePublicWallboardPageResponse
+
+```php
+array{'personal'?: PersonalWallboardsResponse, 'public'?: PublicWallboardEditorResponse}
 ```
 
 ### NearestLocationItem

@@ -8,7 +8,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type AccountDocumentResponse array{'key'?: string|null, 'docId'?: int|null, 'lines'?: list<AccountEntryResponse>|null, 'totals'?: list<AccountTotal>|null}
  * @phpstan-type AccountEntryResponse array{'kid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'userKid'?: string|null, 'recordedAtUtc'?: string, 'amountMinor'?: int, 'currency'?: string|null, 'description'?: string|null, 'transactionType'?: string|null, 'period'?: int, 'reversed'?: bool, 'reversalOfKid'?: string|null, 'userName'?: string|null, 'userNumber'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'canReverse'?: bool, 'unitIconKid'?: string|null, 'documentKey'?: string|null, 'documentId'?: int|null, 'isAnonymized'?: bool, 'paymentKind'?: string|null}
  * @phpstan-type AccountIconResponse array{'currency'?: string|null, 'iconKid'?: string|null}
- * @phpstan-type AccountResponse array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'documents'?: list<AccountDocumentResponse>|null}
+ * @phpstan-type AccountResponse array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string|null, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'documents'?: list<AccountDocumentResponse>|null}
  * @phpstan-type AccountRevisionResponse array{'revision'?: string|null}
  * @phpstan-type AccountTotal array{'currency'?: string|null, 'entries'?: int, 'amountMinor'?: int}
  * @phpstan-type AccountUnitResponse array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: string|null, 'name'?: string|null}
@@ -130,6 +130,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ManagerTabResponse array{'id'?: int, 'name'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type ManagerThemeRequest array{'themeMode': eThemeMode}
  * @phpstan-type ManagerThemeResponse array{'themeMode'?: eThemeMode}
+ * @phpstan-type MovePublicWallboardPageRequest array{'revision'?: string|null, 'publicRevision'?: string|null, 'pageIndex': int, 'targetPageIndex': int, 'targetDisplayId'?: string|null, 'portrait'?: bool, 'toPublic'?: bool, 'sourceDisplayId'?: string|null}
+ * @phpstan-type MovePublicWallboardPageResponse array{'personal'?: PersonalWallboardsResponse, 'public'?: PublicWallboardEditorResponse}
  * @phpstan-type NearestLocationItem array{'kid'?: string|null, 'name'?: string|null, 'bankName'?: string|null, 'iconKid'?: string|null, 'distanceMeters'?: int|float}
  * @phpstan-type ObjectAddressResponse array{'kid'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'latitude'?: int|null, 'longitude'?: int|null, 'autoLatitudeLongitude'?: int|null, 'revision'?: string|null, 'outcome'?: string|null, 'canWrite'?: bool}
  * @phpstan-type ObjectAddressRevisionRequest array{'expectedRevision': string|null}
@@ -1336,11 +1338,12 @@ final class PortalClient extends BaseClient
 
     /**
      * Read your own Wallboard1 editor layouts and concurrency revision.
+     * @param array{'after'?: string} $options
      * @return PersonalWallboardsResponse
      */
-    public function getMyManagerWallboards(): mixed
+    public function getMyManagerWallboards(array $options = []): mixed
     {
-        return $this->request('GetMyManagerWallboards', [], null);
+        return $this->request('GetMyManagerWallboards', [] + $options, null);
     }
 
     /**
@@ -1370,6 +1373,16 @@ final class PortalClient extends BaseClient
     public function savePublicWallboardEditor(#[\SensitiveParameter] array $body): mixed
     {
         return $this->request('SavePublicWallboardEditor', [], $body);
+    }
+
+    /**
+     * Move one page between the public wallboard and your private Portal or an existing approved display layout.
+     * @param MovePublicWallboardPageRequest $body
+     * @return MovePublicWallboardPageResponse
+     */
+    public function movePublicWallboardPage(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('MovePublicWallboardPage', [], $body);
     }
 
     /**
@@ -1465,11 +1478,12 @@ final class PortalClient extends BaseClient
 
     /**
      * Read the trusted tenant's public wallboard without manager data.
+     * @param array{'after'?: string} $options
      * @return WallboardDisplayResponse
      */
-    public function getPublicWallboard(): mixed
+    public function getPublicWallboard(array $options = []): mixed
     {
-        return $this->request('GetPublicWallboard', [], null);
+        return $this->request('GetPublicWallboard', [] + $options, null);
     }
 
     /**

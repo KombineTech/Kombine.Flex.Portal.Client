@@ -6578,7 +6578,17 @@
       200
     ],
     "auth": true,
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "after",
+        "where": "query",
+        "py": "after",
+        "js": "after",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "body": null,
     "multipart": null,
     "response": {
@@ -6647,6 +6657,28 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "MovePublicWallboardPage",
+    "python": "move_public_wallboard_page",
+    "javascript": "movePublicWallboardPage",
+    "method": "POST",
+    "path": "api/v1/session/me/wallboards/public/move-page",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/MovePublicWallboardPageRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/MovePublicWallboardPageResponse"
     },
     "binary": false,
     "example": {}
@@ -6903,7 +6935,17 @@
       200
     ],
     "auth": false,
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "after",
+        "where": "query",
+        "py": "after",
+        "js": "after",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "body": null,
     "multipart": null,
     "response": {

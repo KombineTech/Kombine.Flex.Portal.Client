@@ -173,7 +173,8 @@
         },
         "through": {
           "type": "string",
-          "format": "date"
+          "format": "date",
+          "nullable": true
         },
         "timeZone": {
           "type": "string",
@@ -3425,6 +3426,58 @@
       "properties": {
         "themeMode": {
           "$ref": "#/components/schemas/eThemeMode"
+        }
+      },
+      "additionalProperties": false
+    },
+    "MovePublicWallboardPageRequest": {
+      "required": [
+        "pageIndex",
+        "targetPageIndex"
+      ],
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "string",
+          "nullable": true
+        },
+        "publicRevision": {
+          "type": "string",
+          "nullable": true
+        },
+        "pageIndex": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "targetPageIndex": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "targetDisplayId": {
+          "type": "string",
+          "nullable": true
+        },
+        "portrait": {
+          "type": "boolean"
+        },
+        "toPublic": {
+          "type": "boolean"
+        },
+        "sourceDisplayId": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "MovePublicWallboardPageResponse": {
+      "type": "object",
+      "properties": {
+        "personal": {
+          "$ref": "#/components/schemas/PersonalWallboardsResponse"
+        },
+        "public": {
+          "$ref": "#/components/schemas/PublicWallboardEditorResponse"
         }
       },
       "additionalProperties": false
@@ -11719,7 +11772,16 @@
         200
       ],
       "auth": true,
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "after",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "body": null,
       "multipart": null,
       "response": {
@@ -11773,6 +11835,23 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+      },
+      "binary": false
+    },
+    "MovePublicWallboardPage": {
+      "method": "POST",
+      "path": "api/v1/session/me/wallboards/public/move-page",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": {
+        "$ref": "#/components/schemas/MovePublicWallboardPageRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/MovePublicWallboardPageResponse"
       },
       "binary": false
     },
@@ -11974,7 +12053,16 @@
         200
       ],
       "auth": false,
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "after",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "body": null,
       "multipart": null,
       "response": {
