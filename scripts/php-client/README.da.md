@@ -18,7 +18,7 @@ Version 0.13.0 flytter ConvertToolTime og InspectToolKid til /api/v1/tenant/tool
 
 [API-kontraktens changelog](__ORIGIN__/docs#changelog) — brug `/docs#changelog` på samme tenant-API og miljø som klienten. Changelog er kun på engelsk.
 
-Version **0.1.0**, klargjort lokalt; ikke deployet eller udgivet på Packagist. Indeholder __COUNT__ offentlige operationer fra den medfølgende OpenAPI-kontrakt. Kræver **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS og betroede CA-certifikater. Ingen ekstra PHP-biblioteker eller interne Kombine-DLL'er kræves. Transporten understøtter Windows, Linux og macOS; denne version er testet med Windows CLI. Brug en PHP-version, der fortsat understøttes.
+Version **0.1.0**, deployment og udgivelse på Packagist følges separat. Indeholder __COUNT__ offentlige operationer fra den medfølgende OpenAPI-kontrakt. Kræver **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS og betroede CA-certifikater. Ingen ekstra PHP-biblioteker eller interne Kombine-DLL'er kræves. Transporten understøtter Windows, Linux og macOS; denne version er testet med Windows CLI. Brug en PHP-version, der fortsat understøttes.
 
 ## Installation
 

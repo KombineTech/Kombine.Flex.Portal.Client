@@ -123,6 +123,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetMyWallboardDatabaseLoadHistoryAsync` | GET | `/api/v1/session/me/wallboards/database-load-history` |
 | `GetMyWallboardLocationInfoAsync` | GET | `/api/v1/session/me/wallboards/location-info` |
 | `GetMyWallboardLocationMapAsync` | GET | `/api/v1/session/me/wallboards/location-map` |
+| `GetMyWallboardPlexQueueAsync` | GET | `/api/v1/session/me/wallboards/plex/queue` |
 | `GetMyWallboardReservationCalendarAsync` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetNearestLocationsAsync` | GET | `/api/v1/locations/nearest` |
 | `GetObjectAddressAsync` | GET | `/api/v1/addresses/{kid}` |
@@ -189,6 +190,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `LoginManagerAsync` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinatesAsync` | POST | `/api/v1/addresses/{kid}/lookup` |
 | `PrepareCameraCaptureAsync` | POST | `/api/v1/camera/prepare` |
+| `ReadMyWallboardPlexStreamAsync` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` |
 | `RedeemWallboardPairingAsync` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` |
 | `RenewManagerSessionAsync` | POST | `/api/v1/session/renew` |
 | `RequestManagerPasswordResetAsync` | POST | `/api/v1/session/forgot-password` |
@@ -206,6 +208,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `SearchBanksAsync` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivationAsync` | GET | `/api/v1/search/location-activation` |
 | `SearchLocationsAsync` | GET | `/api/v1/search/locations` |
+| `SearchMyWallboardPlexAsync` | GET | `/api/v1/session/me/wallboards/plex/search` |
 | `SearchMyWallboardVideosAsync` | GET | `/api/v1/session/me/wallboards/videos/search` |
 | `SearchUserActivationAsync` | GET | `/api/v1/search/user-activation` |
 | `SearchUsersAsync` | GET | `/api/v1/search/users` |
@@ -223,5 +226,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `SetObjectCoordinatesAsync` | PUT | `/api/v1/addresses/{kid}/coordinates` |
 | `SetServiceProfileFieldAsync` | POST | `/api/v1/services/{serviceKid}/profile/{field}` |
 | `SetUnitSettingAsync` | POST | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}` |
+| `StartMyWallboardPlexPlaybackAsync` | GET | `/api/v1/session/me/wallboards/plex/start` |
 | `StartWallboardPairingAsync` | POST | `/api/v1/wallboard/pairings` |
+| `StopMyWallboardPlexPlaybackAsync` | GET | `/api/v1/session/me/wallboards/plex/stop/{ticket}` |
 | `UpdateObjectAddressAsync` | PUT | `/api/v1/addresses/{kid}` |

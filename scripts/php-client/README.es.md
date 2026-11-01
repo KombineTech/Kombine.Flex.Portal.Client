@@ -18,7 +18,7 @@ La versión 0.13.0 mueve ConvertToolTime e InspectToolKid a /api/v1/tenant/tools
 
 [Changelog del contrato API](__ORIGIN__/docs#changelog) — utiliza `/docs#changelog` en la API del mismo tenant y entorno que el cliente. El changelog está solo en inglés.
 
-Versión **0.1.0**, preparada localmente; no desplegada ni publicada en Packagist. Incluye __COUNT__ operaciones públicas del contrato OpenAPI adjunto. Requiere **PHP 8.2+ de 64 bits**, `ext-curl`, `ext-json`, HTTPS y certificados CA de confianza. No necesita bibliotecas PHP externas ni ensamblados internos de Kombine. El transporte admite Windows, Linux y macOS; esta versión se probó con Windows CLI. Utiliza una versión de PHP con soporte vigente.
+Versión **0.1.0**, el despliegue y la publicación en Packagist se gestionan por separado. Incluye __COUNT__ operaciones públicas del contrato OpenAPI adjunto. Requiere **PHP 8.2+ de 64 bits**, `ext-curl`, `ext-json`, HTTPS y certificados CA de confianza. No necesita bibliotecas PHP externas ni ensamblados internos de Kombine. El transporte admite Windows, Linux y macOS; esta versión se probó con Windows CLI. Utiliza una versión de PHP con soporte vigente.
 
 ## Instalación
 

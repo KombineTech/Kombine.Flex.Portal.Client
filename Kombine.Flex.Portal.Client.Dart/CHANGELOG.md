@@ -1,3 +1,7 @@
+## 0.20.0
+
+- Add authorized Plex search and playback operations.
+
 ## 0.19.0
 
 - Update the widget type contract to include Plex (52); server availability remains separately controlled.

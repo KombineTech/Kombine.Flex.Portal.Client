@@ -23,7 +23,7 @@ internal static class Program
 #if DESKTOP_TEST_HOST
         LoopbackCamera(false); LoopbackCamera(true); LoopbackTransport(); LoopbackPost(false); LoopbackPost(true); StalledTransport(false); StalledTransport(true);
 #endif
-        return "PASS: " + _assertions + " checks, 221 API operations; runtime " + Environment.Version + ".";
+        return "PASS: " + _assertions + " checks, 226 API operations; runtime " + Environment.Version + ".";
     }
     private static string _directory;
     private static void Check(bool ok, string label) { _assertions++; if (!ok) throw new Exception(label); }
@@ -178,7 +178,7 @@ internal static class Program
     private static void Contracts()
     {
         string[] rows = ReadRows(Path.Combine(_directory, "ContractCases.tsv"));
-        Equal(221, rows.Length, "Published operation count");
+        Equal(226, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });
@@ -195,7 +195,7 @@ internal static class Program
                 arguments[i] = type == typeof(string) ? (object)"opaque-KID" : type == typeof(int) ? (object)7 : Activator.CreateInstance(type);
                 expected = expected.Replace("{" + parameters[i].Name + "}", Convert.ToString(arguments[i], CultureInfo.InvariantCulture));
             }
-            Fake fake = new Fake(Int32.Parse(fields[3], CultureInfo.InvariantCulture), fields[4]);
+            Fake fake = new Fake(Int32.Parse(fields[3], CultureInfo.InvariantCulture), fields[4] == "~" ? "" : fields[4]);
             using (PortalApiClient client = Client(fake))
             {
                 object result = chosen.Invoke(client, arguments);

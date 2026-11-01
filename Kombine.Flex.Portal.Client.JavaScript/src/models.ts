@@ -1997,6 +1997,38 @@ export interface PersonalWallboardsResponse {
   "dateFormat"?: string | null;
 }
 
+/** Current playback queue without exposing media paths. */
+export interface PlexQueueResponse {
+  /** Canonical reference requested by the caller. */
+  "reference"?: string | null;
+  /** Current video or playlist title. */
+  "title"?: string | null;
+  /** Current number of items, zero for an empty playlist. */
+  "count"?: number;
+}
+
+/** A selectable private Plex item; contains no media URL or credential. */
+export interface PlexSearchItem {
+  /** Canonical machine/v-or-p/numeric-ID reference. */
+  "reference"?: string | null;
+  /** Plex title, at most 240 characters. */
+  "title"?: string | null;
+  /** video or playlist. */
+  "kind"?: string | null;
+}
+
+/** At most thirty items from the caller's explicitly configured server. */
+export interface PlexSearchResponse {
+  /** Deduplicated selectable items. */
+  "items"?: (PlexSearchItem)[] | null;
+}
+
+/** An opaque ticket bound to the same authenticated manager/screen and selected layout. */
+export interface PlexStartResponse {
+  /** Append to the stream route; never contains a Plex credential. */
+  "ticket"?: string | null;
+}
+
 /** ProblemDetails */
 export interface ProblemDetails {
   /** type */
@@ -4373,6 +4405,23 @@ export interface GetWallboardDisplayLocationMapOptions {
 
 export interface FindWallboardPairingsOptions {
   displayId?: string;
+}
+
+export interface SearchMyWallboardPlexOptions {
+  query?: string;
+}
+
+export interface GetMyWallboardPlexQueueOptions {
+  reference?: string;
+  displayId?: string;
+  portrait?: boolean;
+}
+
+export interface StartMyWallboardPlexPlaybackOptions {
+  reference?: string;
+  index?: number;
+  displayId?: string;
+  portrait?: boolean;
 }
 
 export interface GetMyWallboardReservationCalendarOptions {

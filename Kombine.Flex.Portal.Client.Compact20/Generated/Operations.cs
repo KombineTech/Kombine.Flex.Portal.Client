@@ -2646,6 +2646,83 @@ namespace Kombine.Flex.Portal.Client.Compact20
             SendJson("DELETE", path, null, headers, 204, typeof(object));
         }
 
+        /// <summary>Search own configured Plex server for up to thirty videos/video playlists. Screens cannot browse.</summary>
+        public PlexSearchResponse SearchMyWallboardPlex()
+        {
+            return SearchMyWallboardPlex(null);
+        }
+
+        /// <summary>Search own configured Plex server for up to thirty videos/video playlists. Screens cannot browse.</summary>
+        public PlexSearchResponse SearchMyWallboardPlex(SearchMyWallboardPlexOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/plex/search";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "query", options.Query);
+            }
+            return (PlexSearchResponse)SendJson("GET", path, null, headers, 200, typeof(PlexSearchResponse));
+        }
+
+        /// <summary>Read a selected video's or playlist's current title and item count; no media URLs or Plex credentials.</summary>
+        public PlexQueueResponse GetMyWallboardPlexQueue()
+        {
+            return GetMyWallboardPlexQueue(null);
+        }
+
+        /// <summary>Read a selected video's or playlist's current title and item count; no media URLs or Plex credentials.</summary>
+        public PlexQueueResponse GetMyWallboardPlexQueue(GetMyWallboardPlexQueueOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/plex/queue";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "reference", options.Reference);
+                path = AddQuery(path, "displayId", options.DisplayId);
+                path = AddQuery(path, "portrait", options.Portrait);
+            }
+            return (PlexQueueResponse)SendJson("GET", path, null, headers, 200, typeof(PlexQueueResponse));
+        }
+
+        /// <summary>Open the selected current playlist item as H.264/AAC HLS, muted by the official player.</summary>
+        public PlexStartResponse StartMyWallboardPlexPlayback()
+        {
+            return StartMyWallboardPlexPlayback(null);
+        }
+
+        /// <summary>Open the selected current playlist item as H.264/AAC HLS, muted by the official player.</summary>
+        public PlexStartResponse StartMyWallboardPlexPlayback(StartMyWallboardPlexPlaybackOptions options)
+        {
+            string path = "api/v1/session/me/wallboards/plex/start";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "reference", options.Reference);
+                path = AddQuery(path, "index", options.Index);
+                path = AddQuery(path, "displayId", options.DisplayId);
+                path = AddQuery(path, "portrait", options.Portrait);
+            }
+            return (PlexStartResponse)SendJson("GET", path, null, headers, 200, typeof(PlexStartResponse));
+        }
+
+        /// <summary>Read one bounded HLS manifest or segment after fresh manager, device and exact-layout checks.</summary>
+        public PortalDownload ReadMyWallboardPlexStream(string @ticket)
+        {
+            string path = "api/v1/session/me/wallboards/plex/stream/{ticket}";
+            path = path.Replace("{ticket}", PathValue(@ticket));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return SendDownload("GET", path, null, headers, 200);
+        }
+
+        /// <summary>Stop only the playback session represented by this authenticated caller's ticket.</summary>
+        public void StopMyWallboardPlexPlayback(string @ticket)
+        {
+            string path = "api/v1/session/me/wallboards/plex/stop/{ticket}";
+            path = path.Replace("{ticket}", PathValue(@ticket));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            SendJson("GET", path, null, headers, 204, typeof(object));
+        }
+
         /// <summary>Read two local days of a location's reservation schedule and anonymous occupancy for a preview.</summary>
         public WallboardReservationCalendarResponse GetMyWallboardReservationCalendar()
         {

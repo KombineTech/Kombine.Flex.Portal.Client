@@ -153,6 +153,10 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PersonalTabRequest array{'revision': string|null, 'enabled': bool}
  * @phpstan-type PersonalWallboardRequest array{'displayId': string|null, 'targetDisplayId'?: string|null}
  * @phpstan-type PersonalWallboardsResponse array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int, 'portalWallboard'?: Wallboard, 'portalStorageUsedCharacters'?: int, 'portalStorageLimitCharacters'?: int, 'dateFormat'?: string|null}
+ * @phpstan-type PlexQueueResponse array{'reference'?: string|null, 'title'?: string|null, 'count'?: int}
+ * @phpstan-type PlexSearchItem array{'reference'?: string|null, 'title'?: string|null, 'kind'?: string|null}
+ * @phpstan-type PlexSearchResponse array{'items'?: list<PlexSearchItem>|null}
+ * @phpstan-type PlexStartResponse array{'ticket'?: string|null}
  * @phpstan-type ProblemDetails array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
  * @phpstan-type PublicWallboardEditorResponse array{'wallboard'?: Wallboard, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int}
  * @phpstan-type RedeemWallboardPairing array{'deviceCode'?: string|null}
@@ -2115,6 +2119,57 @@ final class PortalClient extends BaseClient
     public function revokeWallboardDevice(mixed $deviceId): mixed
     {
         return $this->request('RevokeWallboardDevice', ['deviceId' => $deviceId], null);
+    }
+
+    /**
+     * Search own configured Plex server for up to thirty videos/video playlists. Screens cannot browse.
+     * @param array{'query'?: string} $options
+     * @return PlexSearchResponse
+     */
+    public function searchMyWallboardPlex(array $options = []): mixed
+    {
+        return $this->request('SearchMyWallboardPlex', [] + $options, null);
+    }
+
+    /**
+     * Read a selected video's or playlist's current title and item count; no media URLs or Plex credentials.
+     * @param array{'reference'?: string, 'displayId'?: string, 'portrait'?: bool} $options
+     * @return PlexQueueResponse
+     */
+    public function getMyWallboardPlexQueue(array $options = []): mixed
+    {
+        return $this->request('GetMyWallboardPlexQueue', [] + $options, null);
+    }
+
+    /**
+     * Open the selected current playlist item as H.264/AAC HLS, muted by the official player.
+     * @param array{'reference'?: string, 'index'?: int, 'displayId'?: string, 'portrait'?: bool} $options
+     * @return PlexStartResponse
+     */
+    public function startMyWallboardPlexPlayback(array $options = []): mixed
+    {
+        return $this->request('StartMyWallboardPlexPlayback', [] + $options, null);
+    }
+
+    /**
+     * Read one bounded HLS manifest or segment after fresh manager, device and exact-layout checks.
+     * @param string $ticket
+     * @param resource $destination Writable stream; may contain partial data on failure.
+     * @return DownloadResponse
+     */
+    public function readMyWallboardPlexStream(mixed $ticket, mixed $destination): mixed
+    {
+        return $this->request('ReadMyWallboardPlexStream', ['ticket' => $ticket], null, $destination);
+    }
+
+    /**
+     * Stop only the playback session represented by this authenticated caller's ticket.
+     * @param string $ticket
+     * @return null
+     */
+    public function stopMyWallboardPlexPlayback(mixed $ticket): mixed
+    {
+        return $this->request('StopMyWallboardPlexPlayback', ['ticket' => $ticket], null);
     }
 
     /**

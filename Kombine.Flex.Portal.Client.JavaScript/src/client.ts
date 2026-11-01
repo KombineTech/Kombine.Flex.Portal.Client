@@ -873,6 +873,31 @@ export class PortalClient extends BaseClient {
     return this.send("RevokeWallboardDevice", {"deviceId": deviceId}, undefined, request) as Promise<void>;
   }
 
+  /** Search own configured Plex server for up to thirty videos/video playlists. Screens cannot browse. */
+  searchMyWallboardPlex(options: Models.SearchMyWallboardPlexOptions = {}, request: RequestOptions = {}): Promise<Models.PlexSearchResponse> {
+    return this.send("SearchMyWallboardPlex", {"query": options.query}, undefined, request) as Promise<Models.PlexSearchResponse>;
+  }
+
+  /** Read a selected video's or playlist's current title and item count; no media URLs or Plex credentials. */
+  getMyWallboardPlexQueue(options: Models.GetMyWallboardPlexQueueOptions = {}, request: RequestOptions = {}): Promise<Models.PlexQueueResponse> {
+    return this.send("GetMyWallboardPlexQueue", {"reference": options.reference, "displayId": options.displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.PlexQueueResponse>;
+  }
+
+  /** Open the selected current playlist item as H.264/AAC HLS, muted by the official player. */
+  startMyWallboardPlexPlayback(options: Models.StartMyWallboardPlexPlaybackOptions = {}, request: RequestOptions = {}): Promise<Models.PlexStartResponse> {
+    return this.send("StartMyWallboardPlexPlayback", {"reference": options.reference, "index": options.index, "displayId": options.displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.PlexStartResponse>;
+  }
+
+  /** Read one bounded HLS manifest or segment after fresh manager, device and exact-layout checks. */
+  readMyWallboardPlexStream(ticket: string, request: RequestOptions = {}): Promise<PortalDownload> {
+    return this.send("ReadMyWallboardPlexStream", {"ticket": ticket}, undefined, request) as Promise<PortalDownload>;
+  }
+
+  /** Stop only the playback session represented by this authenticated caller's ticket. */
+  stopMyWallboardPlexPlayback(ticket: string, request: RequestOptions = {}): Promise<void> {
+    return this.send("StopMyWallboardPlexPlayback", {"ticket": ticket}, undefined, request) as Promise<void>;
+  }
+
   /** Read two local days of a location's reservation schedule and anonymous occupancy for a preview. */
   getMyWallboardReservationCalendar(options: Models.GetMyWallboardReservationCalendarOptions = {}, request: RequestOptions = {}): Promise<Models.WallboardReservationCalendarResponse> {
     return this.send("GetMyWallboardReservationCalendar", {"locationKid": options.locationKid}, undefined, request) as Promise<Models.WallboardReservationCalendarResponse>;

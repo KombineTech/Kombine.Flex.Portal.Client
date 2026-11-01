@@ -1,3 +1,5 @@
+La versión 0.29.0 agrega operaciones Plex autorizadas; Plex no es público.
+
 La versión 0.28.0 actualiza el tipo de widget con Plex (52); el servidor controla por separado los tipos disponibles.
 
 La versión 0.27.0 añade GetPublicReservedMachines e incluye 221 operaciones. El enum contiene los valores 47–51; el servidor solo habilita los tipos de widget implementados.
