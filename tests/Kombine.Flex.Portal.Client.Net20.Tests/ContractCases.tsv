@@ -163,6 +163,10 @@ GetMyWallboardLocationInfo	GET	/api/v1/session/me/wallboards/location-info	200	{
 GetWallboardDisplayLocationInfo	GET	/api/v1/session/me/wallboards/display/{displayId}/location-info	200	{}
 GetMyWallboardLocationMap	GET	/api/v1/session/me/wallboards/location-map	200	{}
 GetWallboardDisplayLocationMap	GET	/api/v1/session/me/wallboards/display/{displayId}/location-map	200	{}
+GetMyWallboardActiveManagers	GET	/api/v1/session/me/wallboards/active-managers	200	{}
+GetWallboardDisplayActiveManagers	GET	/api/v1/session/me/wallboards/display/{displayId}/active-managers	200	{}
+GetMyWallboardApplicationLoadHistory	GET	/api/v1/session/me/wallboards/application-load-history/{widgetType}	200	{}
+GetWallboardDisplayApplicationLoadHistory	GET	/api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}	200	{}
 StartWallboardPairing	POST	/api/v1/wallboard/pairings	200	{}
 FindWallboardPairings	GET	/api/v1/wallboard/pairings	200	[]
 GetWallboardPairing	GET	/api/v1/wallboard/pairings/{pairingId}	200	{}

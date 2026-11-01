@@ -86,9 +86,25 @@ ActiveLocationCountResponse = TypedDict('ActiveLocationCountResponse', {
     'iconKid': 'str | None',
 }, total=False)
 
+ActiveManagerStatisticsResponse = TypedDict('ActiveManagerStatisticsResponse', {
+    'count': 'int',
+    'measuredAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
+    'activeWithinMinutes': 'int',
+}, total=False)
+
 ActiveUnitCountResponse = TypedDict('ActiveUnitCountResponse', {
     'count': 'int',
     'iconKid': 'str | None',
+}, total=False)
+
+ApplicationLoadHistoryResponse = TypedDict('ApplicationLoadHistoryResponse', {
+    'fromUtc': 'str',
+    'toUtc': 'str',
+    'fetchedAtUtc': 'str',
+    'refreshAfterSeconds': 'int',
+    'cpuSeries': 'list[DatabaseLoadHistorySeries] | None',
+    'memorySeries': 'list[DatabaseLoadHistorySeries] | None',
 }, total=False)
 
 ApproveWallboardPairing = TypedDict('ApproveWallboardPairing', {

@@ -147,12 +147,40 @@ export interface ActiveLocationCountResponse {
   "iconKid"?: string | null;
 }
 
+/** Protected tenant-wide activity count without manager identities. */
+export interface ActiveManagerStatisticsResponse {
+  /** count */
+  "count"?: bigint;
+  /** measuredAtUtc */
+  "measuredAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** activeWithinMinutes */
+  "activeWithinMinutes"?: number;
+}
+
 /** Accessible active units or terminals, independent of search and paging, with a ready-to-render navigation icon. */
 export interface ActiveUnitCountResponse {
   /** count */
   "count"?: bigint;
   /** iconKid */
   "iconKid"?: string | null;
+}
+
+/** Protected production app CPU and memory percentages for the previous 24 hours, without provider identities. */
+export interface ApplicationLoadHistoryResponse {
+  /** fromUtc */
+  "fromUtc"?: string;
+  /** toUtc */
+  "toUtc"?: string;
+  /** fetchedAtUtc */
+  "fetchedAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** cpuSeries */
+  "cpuSeries"?: (DatabaseLoadHistorySeries)[] | null;
+  /** memorySeries */
+  "memorySeries"?: (DatabaseLoadHistorySeries)[] | null;
 }
 
 /** ApproveWallboardPairing */
@@ -4400,6 +4428,14 @@ export interface GetWallboardDisplayLocationInfoOptions {
 }
 
 export interface GetWallboardDisplayLocationMapOptions {
+  portrait?: boolean;
+}
+
+export interface GetWallboardDisplayActiveManagersOptions {
+  portrait?: boolean;
+}
+
+export interface GetWallboardDisplayApplicationLoadHistoryOptions {
   portrait?: boolean;
 }
 

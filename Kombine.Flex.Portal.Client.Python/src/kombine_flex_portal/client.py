@@ -667,6 +667,22 @@ class PortalClient(BaseClient):
         'Read visible coordinates for an approved screen whose selected layout contains LocationMap.'
         return self._request('GetWallboardDisplayLocationMap', {'displayId': display_id, 'portrait': portrait}, None)
 
+    def get_my_wallboard_active_managers(self) -> ActiveManagerStatisticsResponse:
+        'Counts unique administrators active in the last fifteen minutes; requires Managers Read and whole-tenant Wallboard1 access.'
+        return self._request('GetMyWallboardActiveManagers', {}, None)
+
+    def get_wallboard_display_active_managers(self, display_id: str, *, portrait: bool | None = None) -> ActiveManagerStatisticsResponse:
+        'Counts active administrators only for an approved display containing widget 48.'
+        return self._request('GetWallboardDisplayActiveManagers', {'displayId': display_id, 'portrait': portrait}, None)
+
+    def get_my_wallboard_application_load_history(self, widget_type: int) -> ApplicationLoadHistoryResponse:
+        'Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.'
+        return self._request('GetMyWallboardApplicationLoadHistory', {'widgetType': widget_type}, None)
+
+    def get_wallboard_display_application_load_history(self, widget_type: int, display_id: str, *, portrait: bool | None = None) -> ApplicationLoadHistoryResponse:
+        'Reads a load widget saved on the exact approved display, rechecking layout and approval after the provider read.'
+        return self._request('GetWallboardDisplayApplicationLoadHistory', {'widgetType': widget_type, 'displayId': display_id, 'portrait': portrait}, None)
+
     def start_wallboard_pairing(self, body: StartWallboardPairing) -> WallboardPairingStarted:
         'Start a five-minute pairing. Keep deviceCode private; show only pairingId in the QR code.'
         return self._request('StartWallboardPairing', {}, body)

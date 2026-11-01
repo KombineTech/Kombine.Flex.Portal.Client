@@ -8840,6 +8840,135 @@
     "binary": false
   },
   {
+    "operation": "GetMyWallboardActiveManagers",
+    "dartMethod": "getMyWallboardActiveManagers",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/active-managers",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetWallboardDisplayActiveManagers",
+    "dartMethod": "getWallboardDisplayActiveManagers",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/active-managers",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetMyWallboardApplicationLoadHistory",
+    "dartMethod": "getMyWallboardApplicationLoadHistory",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/application-load-history/{widgetType}",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "widgetType",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetWallboardDisplayApplicationLoadHistory",
+    "dartMethod": "getWallboardDisplayApplicationLoadHistory",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "widgetType",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "displayId",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+    },
+    "binary": false
+  },
+  {
     "operation": "StartWallboardPairing",
     "dartMethod": "startWallboardPairing",
     "example": null,

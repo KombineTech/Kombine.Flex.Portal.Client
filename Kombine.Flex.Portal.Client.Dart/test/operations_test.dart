@@ -3269,6 +3269,78 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetMyWallboardActiveManagers", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/active-managers");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "measuredAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "activeWithinMinutes": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyWallboardActiveManagers();
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "measuredAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "activeWithinMinutes": 7}));
+    expect(sends, 1);
+  });
+
+  test("wire GetWallboardDisplayActiveManagers", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/display/fixture%20%2F%C3%A6%3F%26/active-managers");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "measuredAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "activeWithinMinutes": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getWallboardDisplayActiveManagers(displayId: "fixture /\u00e6?&", portrait: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"count": BigInt.parse('9007199254740993'), "measuredAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "activeWithinMinutes": 7}));
+    expect(sends, 1);
+  });
+
+  test("wire GetMyWallboardApplicationLoadHistory", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/application-load-history/7");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyWallboardApplicationLoadHistory(widgetType: 7);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetWallboardDisplayApplicationLoadHistory", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/display/fixture%20%2F%C3%A6%3F%26/application-load-history/7");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getWallboardDisplayApplicationLoadHistory(widgetType: 7, displayId: "fixture /\u00e6?&", portrait: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null}));
+    expect(sends, 1);
+  });
+
   test("wire StartWallboardPairing", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
