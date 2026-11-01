@@ -176,6 +176,11 @@
 | `ResumeWallboardSession` | `resume_wallboard_session` | `resumeWallboardSession` | POST | `/api/v1/wallboard/devices/{deviceId}/session` |
 | `GetWallboardDevice` | `get_wallboard_device` | `getWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` |
 | `RevokeWallboardDevice` | `revoke_wallboard_device` | `revokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
+| `SearchMyWallboardPlex` | `search_my_wallboard_plex` | `searchMyWallboardPlex` | GET | `/api/v1/session/me/wallboards/plex/search` |
+| `GetMyWallboardPlexQueue` | `get_my_wallboard_plex_queue` | `getMyWallboardPlexQueue` | GET | `/api/v1/session/me/wallboards/plex/queue` |
+| `StartMyWallboardPlexPlayback` | `start_my_wallboard_plex_playback` | `startMyWallboardPlexPlayback` | GET | `/api/v1/session/me/wallboards/plex/start` |
+| `ReadMyWallboardPlexStream` | `read_my_wallboard_plex_stream` | `readMyWallboardPlexStream` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` |
+| `StopMyWallboardPlexPlayback` | `stop_my_wallboard_plex_playback` | `stopMyWallboardPlexPlayback` | GET | `/api/v1/session/me/wallboards/plex/stop/{ticket}` |
 | `GetMyWallboardReservationCalendar` | `get_my_wallboard_reservation_calendar` | `getMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetWallboardDisplayReservationCalendar` | `get_wallboard_display_reservation_calendar` | `getWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
 | `SearchMyWallboardVideos` | `search_my_wallboard_videos` | `searchMyWallboardVideos` | GET | `/api/v1/session/me/wallboards/videos/search` |

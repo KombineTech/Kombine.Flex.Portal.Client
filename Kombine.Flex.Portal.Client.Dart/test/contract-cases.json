@@ -3082,7 +3082,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
         }
       ],
       "nextCursor": null
@@ -3176,7 +3176,7 @@
         "enabled": true,
         "deleted": false,
         "deletedAt": null,
-        "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+        "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
       },
       "canEditIcon": true,
       "iconRevision": "5CE7200DE215F47D73E8C782F447813306BD7DD66F0C468AD961D92D0C950FDE",
@@ -4312,7 +4312,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
           "retentionDays": 30,
           "canEditPermissions": true,
           "canEditTabs": true,
@@ -5126,7 +5126,7 @@
       "enabled": true,
       "deleted": false,
       "deletedAt": null,
-      "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
       "retentionDays": 30,
       "canEditPermissions": true,
       "canEditTabs": true,
@@ -9090,6 +9090,186 @@
     "binary": false
   },
   {
+    "operation": "SearchMyWallboardPlex",
+    "dartMethod": "searchMyWallboardPlex",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/search",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "query",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PlexSearchResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "GetMyWallboardPlexQueue",
+    "dartMethod": "getMyWallboardPlexQueue",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/queue",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "reference",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "displayId",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PlexQueueResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "StartMyWallboardPlexPlayback",
+    "dartMethod": "startMyWallboardPlexPlayback",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/start",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "reference",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "index",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "displayId",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PlexStartResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "ReadMyWallboardPlexStream",
+    "dartMethod": "readMyWallboardPlexStream",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/stream/{ticket}",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "ticket",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true
+  },
+  {
+    "operation": "StopMyWallboardPlexPlayback",
+    "dartMethod": "stopMyWallboardPlexPlayback",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/stop/{ticket}",
+    "auth": true,
+    "statuses": [
+      204
+    ],
+    "parameters": [
+      {
+        "name": "ticket",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": null,
+    "binary": false
+  },
+  {
     "operation": "GetMyWallboardReservationCalendar",
     "dartMethod": "getMyWallboardReservationCalendar",
     "example": null,
@@ -10658,8 +10838,8 @@
         }
       ],
       "lookbackHours": 1,
-      "sinceUtc": "2026-09-23T11:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-09-23T09:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     },
     "method": "GET",
     "path": "api/v1/public/statistics/purchases",
@@ -10683,8 +10863,8 @@
       "tenantKid": "3E7QAo",
       "count": 12450,
       "lookbackDays": 100,
-      "sinceUtc": "2026-06-15T12:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-06-15T10:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     },
     "method": "GET",
     "path": "api/v1/public/statistics/active-users",

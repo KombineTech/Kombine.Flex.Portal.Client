@@ -703,6 +703,26 @@ class PortalClient(BaseClient):
         'Revoke a screen you approved. Its existing bearer sessions also lose access.'
         return self._request('RevokeWallboardDevice', {'deviceId': device_id}, None)
 
+    def search_my_wallboard_plex(self, *, query: str | None = None) -> PlexSearchResponse:
+        'Search own configured Plex server for up to thirty videos/video playlists. Screens cannot browse.'
+        return self._request('SearchMyWallboardPlex', {'query': query}, None)
+
+    def get_my_wallboard_plex_queue(self, *, reference: str | None = None, display_id: str | None = None, portrait: bool | None = None) -> PlexQueueResponse:
+        "Read a selected video's or playlist's current title and item count; no media URLs or Plex credentials."
+        return self._request('GetMyWallboardPlexQueue', {'reference': reference, 'displayId': display_id, 'portrait': portrait}, None)
+
+    def start_my_wallboard_plex_playback(self, *, reference: str | None = None, index: int | None = None, display_id: str | None = None, portrait: bool | None = None) -> PlexStartResponse:
+        'Open the selected current playlist item as H.264/AAC HLS, muted by the official player.'
+        return self._request('StartMyWallboardPlexPlayback', {'reference': reference, 'index': index, 'displayId': display_id, 'portrait': portrait}, None)
+
+    def read_my_wallboard_plex_stream(self, ticket: str) -> PortalDownload:
+        'Read one bounded HLS manifest or segment after fresh manager, device and exact-layout checks.'
+        return self._request('ReadMyWallboardPlexStream', {'ticket': ticket}, None)
+
+    def stop_my_wallboard_plex_playback(self, ticket: str) -> None:
+        "Stop only the playback session represented by this authenticated caller's ticket."
+        return self._request('StopMyWallboardPlexPlayback', {'ticket': ticket}, None)
+
     def get_my_wallboard_reservation_calendar(self, *, location_kid: str | None = None) -> WallboardReservationCalendarResponse:
         "Read two local days of a location's reservation schedule and anonymous occupancy for a preview."
         return self._request('GetMyWallboardReservationCalendar', {'locationKid': location_kid}, None)

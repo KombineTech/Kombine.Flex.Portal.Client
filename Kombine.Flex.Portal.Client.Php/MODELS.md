@@ -890,6 +890,30 @@ array{'displayId': string|null, 'targetDisplayId'?: string|null}
 array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int, 'portalWallboard'?: Wallboard, 'portalStorageUsedCharacters'?: int, 'portalStorageLimitCharacters'?: int, 'dateFormat'?: string|null}
 ```
 
+### PlexQueueResponse
+
+```php
+array{'reference'?: string|null, 'title'?: string|null, 'count'?: int}
+```
+
+### PlexSearchItem
+
+```php
+array{'reference'?: string|null, 'title'?: string|null, 'kind'?: string|null}
+```
+
+### PlexSearchResponse
+
+```php
+array{'items'?: list<PlexSearchItem>|null}
+```
+
+### PlexStartResponse
+
+```php
+array{'ticket'?: string|null}
+```
+
 ### ProblemDetails
 
 ```php

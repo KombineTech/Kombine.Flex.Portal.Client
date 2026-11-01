@@ -3339,7 +3339,7 @@ void main() {
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     await client.approveWallboardPairing(pairingId: "fixture /\u00e6?&", body: <String, Object?>{"location": <String, Object?>{"latitude": 1.25, "longitude": 1.25, "accuracyMeters": 1.25, "capturedAt": "2026-10-20T10:00:00Z"}});
-    
+
     expect(sends, 1);
   });
 
@@ -3431,7 +3431,102 @@ void main() {
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     await client.revokeWallboardDevice(deviceId: "fixture /\u00e6?&");
-    
+
+    expect(sends, 1);
+  });
+
+  test("wire SearchMyWallboardPlex", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/plex/search");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["query"], <Object?>["fixture"]);
+      return http.Response(encodeApiJson(<String, Object?>{"items": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.searchMyWallboardPlex(query: "fixture");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null}));
+    expect(sends, 1);
+  });
+
+  test("wire GetMyWallboardPlexQueue", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/plex/queue");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["reference"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["displayId"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"reference": null, "title": null, "count": 7}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getMyWallboardPlexQueue(reference: "fixture", displayId: "fixture", portrait: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"reference": null, "title": null, "count": 7}));
+    expect(sends, 1);
+  });
+
+  test("wire StartMyWallboardPlexPlayback", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/plex/start");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["reference"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["index"], <Object?>["7"]);
+      expect(request.url.queryParametersAll["displayId"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"ticket": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.startMyWallboardPlexPlayback(reference: "fixture", index: 7, displayId: "fixture", portrait: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"ticket": null}));
+    expect(sends, 1);
+  });
+
+  test("wire ReadMyWallboardPlexStream", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/plex/stream/fixture%20%2F%C3%A6%3F%26");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response.bytes([1, 2, 3], 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.readMyWallboardPlexStream(ticket: "fixture /\u00e6?&");
+    expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
+    expect(sends, 1);
+  });
+
+  test("wire StopMyWallboardPlexPlayback", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/session/me/wallboards/plex/stop/fixture%20%2F%C3%A6%3F%26");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response("", 204);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    await client.stopMyWallboardPlexPlayback(ticket: "fixture /\u00e6?&");
+
     expect(sends, 1);
   });
 

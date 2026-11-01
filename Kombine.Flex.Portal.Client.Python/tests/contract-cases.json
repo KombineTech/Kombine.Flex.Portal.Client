@@ -3415,7 +3415,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
         }
       ],
       "nextCursor": null
@@ -3470,7 +3470,7 @@
         "enabled": true,
         "deleted": false,
         "deletedAt": null,
-        "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+        "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
       },
       "canEditIcon": true,
       "iconRevision": "5CE7200DE215F47D73E8C782F447813306BD7DD66F0C468AD961D92D0C950FDE",
@@ -4722,7 +4722,7 @@
           "enabled": true,
           "deleted": false,
           "deletedAt": null,
-          "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+          "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
           "retentionDays": 30,
           "canEditPermissions": true,
           "canEditTabs": true,
@@ -5523,7 +5523,7 @@
       "enabled": true,
       "deleted": false,
       "deletedAt": null,
-      "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
       "retentionDays": 30,
       "canEditPermissions": true,
       "canEditTabs": true,
@@ -9722,6 +9722,201 @@
     "example": null
   },
   {
+    "operation": "SearchMyWallboardPlex",
+    "python": "search_my_wallboard_plex",
+    "javascript": "searchMyWallboardPlex",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/search",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "query",
+        "where": "query",
+        "py": "query",
+        "js": "query",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PlexSearchResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardPlexQueue",
+    "python": "get_my_wallboard_plex_queue",
+    "javascript": "getMyWallboardPlexQueue",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/queue",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "reference",
+        "where": "query",
+        "py": "reference",
+        "js": "reference",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "displayId",
+        "where": "query",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PlexQueueResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "StartMyWallboardPlexPlayback",
+    "python": "start_my_wallboard_plex_playback",
+    "javascript": "startMyWallboardPlexPlayback",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/start",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "reference",
+        "where": "query",
+        "py": "reference",
+        "js": "reference",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "index",
+        "where": "query",
+        "py": "index",
+        "js": "index",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "displayId",
+        "where": "query",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PlexStartResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ReadMyWallboardPlexStream",
+    "python": "read_my_wallboard_plex_stream",
+    "javascript": "readMyWallboardPlexStream",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/stream/{ticket}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "ticket",
+        "where": "path",
+        "py": "ticket",
+        "js": "ticket",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "StopMyWallboardPlexPlayback",
+    "python": "stop_my_wallboard_plex_playback",
+    "javascript": "stopMyWallboardPlexPlayback",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/stop/{ticket}",
+    "status": 204,
+    "statuses": [
+      204
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "ticket",
+        "where": "path",
+        "py": "ticket",
+        "js": "ticket",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": null,
+    "binary": false,
+    "example": null
+  },
+  {
     "operation": "GetMyWallboardReservationCalendar",
     "python": "get_my_wallboard_reservation_calendar",
     "javascript": "getMyWallboardReservationCalendar",
@@ -11431,8 +11626,8 @@
         }
       ],
       "lookbackHours": 1,
-      "sinceUtc": "2026-09-23T11:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-09-23T09:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     }
   },
   {
@@ -11457,8 +11652,8 @@
       "tenantKid": "3E7QAo",
       "count": 12450,
       "lookbackDays": 100,
-      "sinceUtc": "2026-06-15T12:00:00+02:00",
-      "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+      "sinceUtc": "2026-06-15T10:00:00+00:00",
+      "measuredAtUtc": "2026-09-23T10:00:00+00:00"
     }
   },
   {

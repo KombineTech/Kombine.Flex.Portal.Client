@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-221 operations. OpenAPI SHA-256: `e5ce9dd7a4d49b6b275936de705d61029265099b5a825b4c20fd384aa6117420`.
+226 operations. OpenAPI SHA-256: `5934f5815e1c875239dc6458655c1dfa31f9e9f4dba5282c22307ccb2491d7e4`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -178,6 +178,11 @@
 | `ResumeWallboardSession` | `resumeWallboardSession` | POST | `/api/v1/wallboard/devices/{deviceId}/session` |
 | `GetWallboardDevice` | `getWallboardDevice` | GET | `/api/v1/wallboard/devices/{deviceId}` |
 | `RevokeWallboardDevice` | `revokeWallboardDevice` | DELETE | `/api/v1/wallboard/devices/{deviceId}` |
+| `SearchMyWallboardPlex` | `searchMyWallboardPlex` | GET | `/api/v1/session/me/wallboards/plex/search` |
+| `GetMyWallboardPlexQueue` | `getMyWallboardPlexQueue` | GET | `/api/v1/session/me/wallboards/plex/queue` |
+| `StartMyWallboardPlexPlayback` | `startMyWallboardPlexPlayback` | GET | `/api/v1/session/me/wallboards/plex/start` |
+| `ReadMyWallboardPlexStream` | `readMyWallboardPlexStream` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` |
+| `StopMyWallboardPlexPlayback` | `stopMyWallboardPlexPlayback` | GET | `/api/v1/session/me/wallboards/plex/stop/{ticket}` |
 | `GetMyWallboardReservationCalendar` | `getMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetWallboardDisplayReservationCalendar` | `getWallboardDisplayReservationCalendar` | GET | `/api/v1/session/me/wallboards/display/{displayId}/reservation-calendar` |
 | `SearchMyWallboardVideos` | `searchMyWallboardVideos` | GET | `/api/v1/session/me/wallboards/videos/search` |

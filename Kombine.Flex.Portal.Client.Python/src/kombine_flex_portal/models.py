@@ -1149,6 +1149,26 @@ PersonalWallboardsResponse = TypedDict('PersonalWallboardsResponse', {
     'dateFormat': 'str | None',
 }, total=False)
 
+PlexQueueResponse = TypedDict('PlexQueueResponse', {
+    'reference': 'str | None',
+    'title': 'str | None',
+    'count': 'int',
+}, total=False)
+
+PlexSearchItem = TypedDict('PlexSearchItem', {
+    'reference': 'str | None',
+    'title': 'str | None',
+    'kind': 'str | None',
+}, total=False)
+
+PlexSearchResponse = TypedDict('PlexSearchResponse', {
+    'items': 'list[PlexSearchItem] | None',
+}, total=False)
+
+PlexStartResponse = TypedDict('PlexStartResponse', {
+    'ticket': 'str | None',
+}, total=False)
+
 ProblemDetails = TypedDict('ProblemDetails', {
     'type': 'str | None',
     'title': 'str | None',

@@ -165,6 +165,8 @@ class {api}Client extends ApiClient {{
         destination/'example/browser_smoke.dart':(HERE/'browser_smoke.dart').read_text(encoding='utf-8').replace('PACKAGE',package)}
     stale=[]
     for path,text in files.items():
+        if path.name == 'operations_test.dart':
+            text = '\n'.join(line.rstrip(' \t') for line in text.split('\n'))
         if check:
             if not path.exists() or path.read_text(encoding='utf-8')!=text:stale.append(str(path))
         else:

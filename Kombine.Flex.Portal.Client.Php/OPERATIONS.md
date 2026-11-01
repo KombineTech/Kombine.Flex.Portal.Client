@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `67ae69324f19d823fc6e2d3227ca29e65f64412a6d6e9bbaf83172f12d51196c`).
-221 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `4427c13297d59559a433f1ee07d0f8d62ddfed8523a4b9a762df6af680d29805`).
+226 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -124,6 +124,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `67ae69324f19d823fc6
 | `getMyWallboardDatabaseLoadHistory` | `GetMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` | Bearer |
 | `getMyWallboardLocationInfo` | `GetMyWallboardLocationInfo` | GET | `/api/v1/session/me/wallboards/location-info` | Bearer |
 | `getMyWallboardLocationMap` | `GetMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` | Bearer |
+| `getMyWallboardPlexQueue` | `GetMyWallboardPlexQueue` | GET | `/api/v1/session/me/wallboards/plex/queue` | Bearer |
 | `getMyWallboardReservationCalendar` | `GetMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` | Bearer |
 | `getNearestLocations` | `GetNearestLocations` | GET | `/api/v1/locations/nearest` | Bearer |
 | `getObjectAddress` | `GetObjectAddress` | GET | `/api/v1/addresses/{kid}` | Bearer |
@@ -190,6 +191,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `67ae69324f19d823fc6
 | `loginManager` | `LoginManager` | POST | `/api/v1/session/login` | Anonymous |
 | `lookupObjectCoordinates` | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` | Bearer |
 | `prepareCameraCapture` | `PrepareCameraCapture` | POST | `/api/v1/camera/prepare` | Bearer |
+| `readMyWallboardPlexStream` | `ReadMyWallboardPlexStream` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` | Bearer |
 | `redeemWallboardPairing` | `RedeemWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` | Anonymous |
 | `renewManagerSession` | `RenewManagerSession` | POST | `/api/v1/session/renew` | Bearer |
 | `requestManagerPasswordReset` | `RequestManagerPasswordReset` | POST | `/api/v1/session/forgot-password` | Anonymous |
@@ -207,6 +209,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `67ae69324f19d823fc6
 | `searchBanks` | `SearchBanks` | GET | `/api/v1/search/banks` | Bearer |
 | `searchLocationActivation` | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` | Bearer |
 | `searchLocations` | `SearchLocations` | GET | `/api/v1/search/locations` | Bearer |
+| `searchMyWallboardPlex` | `SearchMyWallboardPlex` | GET | `/api/v1/session/me/wallboards/plex/search` | Bearer |
 | `searchMyWallboardVideos` | `SearchMyWallboardVideos` | GET | `/api/v1/session/me/wallboards/videos/search` | Bearer |
 | `searchUserActivation` | `SearchUserActivation` | GET | `/api/v1/search/user-activation` | Bearer |
 | `searchUserSms` | `SearchUserSms` | GET | `/api/v1/search/user-sms` | Bearer |
@@ -224,5 +227,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `67ae69324f19d823fc6
 | `setObjectCoordinates` | `SetObjectCoordinates` | PUT | `/api/v1/addresses/{kid}/coordinates` | Bearer |
 | `setServiceProfileField` | `SetServiceProfileField` | POST | `/api/v1/services/{serviceKid}/profile/{field}` | Bearer |
 | `setUnitSetting` | `SetUnitSetting` | POST | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}` | Bearer |
+| `startMyWallboardPlexPlayback` | `StartMyWallboardPlexPlayback` | GET | `/api/v1/session/me/wallboards/plex/start` | Bearer |
 | `startWallboardPairing` | `StartWallboardPairing` | POST | `/api/v1/wallboard/pairings` | Anonymous |
+| `stopMyWallboardPlexPlayback` | `StopMyWallboardPlexPlayback` | GET | `/api/v1/session/me/wallboards/plex/stop/{ticket}` | Bearer |
 | `updateObjectAddress` | `UpdateObjectAddress` | PUT | `/api/v1/addresses/{kid}` | Bearer |

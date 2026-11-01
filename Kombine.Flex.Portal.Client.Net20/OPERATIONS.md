@@ -121,6 +121,7 @@
 | `GetMyWallboardDatabaseLoadHistory` | GET | `/api/v1/session/me/wallboards/database-load-history` |
 | `GetMyWallboardLocationInfo` | GET | `/api/v1/session/me/wallboards/location-info` |
 | `GetMyWallboardLocationMap` | GET | `/api/v1/session/me/wallboards/location-map` |
+| `GetMyWallboardPlexQueue` | GET | `/api/v1/session/me/wallboards/plex/queue` |
 | `GetMyWallboardReservationCalendar` | GET | `/api/v1/session/me/wallboards/reservation-calendar` |
 | `GetNearestLocations` | GET | `/api/v1/locations/nearest` |
 | `GetObjectAddress` | GET | `/api/v1/addresses/{kid}` |
@@ -187,6 +188,7 @@
 | `LoginManager` | POST | `/api/v1/session/login` |
 | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` |
 | `PrepareCameraCapture` | POST | `/api/v1/camera/prepare` |
+| `ReadMyWallboardPlexStream` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` |
 | `RedeemWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` |
 | `RenewManagerSession` | POST | `/api/v1/session/renew` |
 | `RequestManagerPasswordReset` | POST | `/api/v1/session/forgot-password` |
@@ -204,6 +206,7 @@
 | `SearchBanks` | GET | `/api/v1/search/banks` |
 | `SearchLocationActivation` | GET | `/api/v1/search/location-activation` |
 | `SearchLocations` | GET | `/api/v1/search/locations` |
+| `SearchMyWallboardPlex` | GET | `/api/v1/session/me/wallboards/plex/search` |
 | `SearchMyWallboardVideos` | GET | `/api/v1/session/me/wallboards/videos/search` |
 | `SearchUserActivation` | GET | `/api/v1/search/user-activation` |
 | `SearchUserSms` | GET | `/api/v1/search/user-sms` |
@@ -221,5 +224,7 @@
 | `SetObjectCoordinates` | PUT | `/api/v1/addresses/{kid}/coordinates` |
 | `SetServiceProfileField` | POST | `/api/v1/services/{serviceKid}/profile/{field}` |
 | `SetUnitSetting` | POST | `/api/v1/units/{unitKid}/groups/settings/{group}/{setting}` |
+| `StartMyWallboardPlexPlayback` | GET | `/api/v1/session/me/wallboards/plex/start` |
 | `StartWallboardPairing` | POST | `/api/v1/wallboard/pairings` |
+| `StopMyWallboardPlexPlayback` | GET | `/api/v1/session/me/wallboards/plex/stop/{ticket}` |
 | `UpdateObjectAddress` | PUT | `/api/v1/addresses/{kid}` |

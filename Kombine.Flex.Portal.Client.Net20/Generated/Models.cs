@@ -4259,6 +4259,66 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Current playback queue without exposing media paths.</summary>
+    public sealed class PlexQueueResponse
+    {
+        /// <summary>Canonical reference requested by the caller.</summary>
+        [JsonField("reference")]
+        public string Reference { get { return _Reference; } set { _Reference = value; } }
+        private string _Reference;
+
+        /// <summary>Current video or playlist title.</summary>
+        [JsonField("title")]
+        public string Title { get { return _Title; } set { _Title = value; } }
+        private string _Title;
+
+        /// <summary>Current number of items, zero for an empty playlist.</summary>
+        [JsonField("count")]
+        public int? Count { get { return _Count; } set { _Count = value; } }
+        private int? _Count;
+
+    }
+
+    /// <summary>A selectable private Plex item; contains no media URL or credential.</summary>
+    public sealed class PlexSearchItem
+    {
+        /// <summary>Canonical machine/v-or-p/numeric-ID reference.</summary>
+        [JsonField("reference")]
+        public string Reference { get { return _Reference; } set { _Reference = value; } }
+        private string _Reference;
+
+        /// <summary>Plex title, at most 240 characters.</summary>
+        [JsonField("title")]
+        public string Title { get { return _Title; } set { _Title = value; } }
+        private string _Title;
+
+        /// <summary>video or playlist.</summary>
+        [JsonField("kind")]
+        public string Kind { get { return _Kind; } set { _Kind = value; } }
+        private string _Kind;
+
+    }
+
+    /// <summary>At most thirty items from the caller's explicitly configured server.</summary>
+    public sealed class PlexSearchResponse
+    {
+        /// <summary>Deduplicated selectable items.</summary>
+        [JsonField("items")]
+        public PlexSearchItem[] Items { get { return _Items; } set { _Items = value; } }
+        private PlexSearchItem[] _Items;
+
+    }
+
+    /// <summary>An opaque ticket bound to the same authenticated manager/screen and selected layout.</summary>
+    public sealed class PlexStartResponse
+    {
+        /// <summary>Append to the stream route; never contains a Plex credential.</summary>
+        [JsonField("ticket")]
+        public string Ticket { get { return _Ticket; } set { _Ticket = value; } }
+        private string _Ticket;
+
+    }
+
     /// <summary>ProblemDetails</summary>
     public sealed class ProblemDetails
     {
@@ -9864,6 +9924,53 @@ namespace Kombine.Flex.Portal.Client.Net20
         /// <summary>displayId</summary>
         public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
         private string _DisplayId;
+
+    }
+
+    /// <summary>Optional query/header parameters for SearchMyWallboardPlex. Null values use API defaults.</summary>
+    public sealed class SearchMyWallboardPlexOptions
+    {
+        /// <summary>query</summary>
+        public string Query { get { return _Query; } set { _Query = value; } }
+        private string _Query;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetMyWallboardPlexQueue. Null values use API defaults.</summary>
+    public sealed class GetMyWallboardPlexQueueOptions
+    {
+        /// <summary>reference</summary>
+        public string Reference { get { return _Reference; } set { _Reference = value; } }
+        private string _Reference;
+
+        /// <summary>displayId</summary>
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
+
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
+
+    }
+
+    /// <summary>Optional query/header parameters for StartMyWallboardPlexPlayback. Null values use API defaults.</summary>
+    public sealed class StartMyWallboardPlexPlaybackOptions
+    {
+        /// <summary>reference</summary>
+        public string Reference { get { return _Reference; } set { _Reference = value; } }
+        private string _Reference;
+
+        /// <summary>index</summary>
+        public int? Index { get { return _Index; } set { _Index = value; } }
+        private int? _Index;
+
+        /// <summary>displayId</summary>
+        public string DisplayId { get { return _DisplayId; } set { _DisplayId = value; } }
+        private string _DisplayId;
+
+        /// <summary>portrait</summary>
+        public bool? Portrait { get { return _Portrait; } set { _Portrait = value; } }
+        private bool? _Portrait;
 
     }
 

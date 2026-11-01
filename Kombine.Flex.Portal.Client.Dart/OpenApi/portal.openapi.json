@@ -9268,7 +9268,7 @@
                       "enabled": true,
                       "deleted": false,
                       "deletedAt": null,
-                      "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+                      "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
                     }
                   ],
                   "nextCursor": null
@@ -9431,7 +9431,7 @@
                     "enabled": true,
                     "deleted": false,
                     "deletedAt": null,
-                    "lastActiveAt": "2026-09-25T14:34:56.789+02:00"
+                    "lastActiveAt": "2026-09-25T12:34:56.789+00:00"
                   },
                   "canEditIcon": true,
                   "iconRevision": "5CE7200DE215F47D73E8C782F447813306BD7DD66F0C468AD961D92D0C950FDE",
@@ -12906,7 +12906,7 @@
                       "enabled": true,
                       "deleted": false,
                       "deletedAt": null,
-                      "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+                      "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
                       "retentionDays": 30,
                       "canEditPermissions": true,
                       "canEditTabs": true,
@@ -14895,7 +14895,7 @@
                   "enabled": true,
                   "deleted": false,
                   "deletedAt": null,
-                  "lastActiveAt": "2026-09-25T14:34:56.789+02:00",
+                  "lastActiveAt": "2026-09-25T12:34:56.789+00:00",
                   "retentionDays": 30,
                   "canEditPermissions": true,
                   "canEditTabs": true,
@@ -27188,6 +27188,259 @@
         ]
       }
     },
+    "/api/v1/session/me/wallboards/plex/search": {
+      "get": {
+        "tags": [
+          "WallboardPlex"
+        ],
+        "summary": "Search own configured Plex server for up to thirty videos/video playlists. Screens cannot browse.",
+        "operationId": "SearchMyWallboardPlex",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlexSearchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlexSearchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlexSearchResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/plex/queue": {
+      "get": {
+        "tags": [
+          "WallboardPlex"
+        ],
+        "summary": "Read a selected video's or playlist's current title and item count; no media URLs or Plex credentials.",
+        "operationId": "GetMyWallboardPlexQueue",
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "displayId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "portrait",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlexQueueResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlexQueueResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlexQueueResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/plex/start": {
+      "get": {
+        "tags": [
+          "WallboardPlex"
+        ],
+        "summary": "Open the selected current playlist item as H.264/AAC HLS, muted by the official player.",
+        "description": "Requires fresh Wallboard1 authority and an operator-configured manager-owned connection. A screen must provide its exact approved displayId and a reference saved in that display's layout. index is zero-based, 0 for a video. The opaque ticket contains no Plex token and is usable only with the same authorized manager/screen session. Fetch stream/{ticket}; relative manifest entries resolve under that same route. Stop the ticket when the player is hidden or removed. Streams do not change Plex watched state.",
+        "operationId": "StartMyWallboardPlexPlayback",
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "index",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "displayId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "portrait",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlexStartResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlexStartResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlexStartResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/plex/stream/{ticket}": {
+      "get": {
+        "tags": [
+          "WallboardPlex"
+        ],
+        "summary": "Read one bounded HLS manifest or segment after fresh manager, device and exact-layout checks.",
+        "operationId": "ReadMyWallboardPlexStream",
+        "parameters": [
+          {
+            "name": "ticket",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/vnd.apple.mpegurl": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "video/mp2t": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "video/mp4": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/session/me/wallboards/plex/stop/{ticket}": {
+      "get": {
+        "tags": [
+          "WallboardPlex"
+        ],
+        "summary": "Stop only the playback session represented by this authenticated caller's ticket.",
+        "operationId": "StopMyWallboardPlexPlayback",
+        "parameters": [
+          {
+            "name": "ticket",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/session/me/wallboards/reservation-calendar": {
       "get": {
         "tags": [
@@ -30711,8 +30964,8 @@
                     }
                   ],
                   "lookbackHours": 1,
-                  "sinceUtc": "2026-09-23T11:00:00+02:00",
-                  "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+                  "sinceUtc": "2026-09-23T09:00:00+00:00",
+                  "measuredAtUtc": "2026-09-23T10:00:00+00:00"
                 }
               },
               "text/json": {
@@ -30770,8 +31023,8 @@
                   "tenantKid": "3E7QAo",
                   "count": 12450,
                   "lookbackDays": 100,
-                  "sinceUtc": "2026-06-15T12:00:00+02:00",
-                  "measuredAtUtc": "2026-09-23T12:00:00+02:00"
+                  "sinceUtc": "2026-06-15T10:00:00+00:00",
+                  "measuredAtUtc": "2026-09-23T10:00:00+00:00"
                 }
               },
               "text/json": {
@@ -35366,6 +35619,77 @@
         "additionalProperties": false,
         "description": "Own layout collection and opaque optimistic concurrency revision."
       },
+      "PlexQueueResponse": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Canonical reference requested by the caller.",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Current video or playlist title.",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "description": "Current number of items, zero for an empty playlist.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Current playback queue without exposing media paths."
+      },
+      "PlexSearchItem": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Canonical machine/v-or-p/numeric-ID reference.",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Plex title, at most 240 characters.",
+            "nullable": true
+          },
+          "kind": {
+            "type": "string",
+            "description": "video or playlist.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A selectable private Plex item; contains no media URL or credential."
+      },
+      "PlexSearchResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlexSearchItem"
+            },
+            "description": "Deduplicated selectable items.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "At most thirty items from the caller's explicitly configured server."
+      },
+      "PlexStartResponse": {
+        "type": "object",
+        "properties": {
+          "ticket": {
+            "type": "string",
+            "description": "Append to the stream route; never contains a Plex credential.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "An opaque ticket bound to the same authenticated manager/screen and selected layout."
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -39382,6 +39706,9 @@
     },
     {
       "name": "WallboardPairing"
+    },
+    {
+      "name": "WallboardPlex"
     },
     {
       "name": "WallboardReservationCalendar"

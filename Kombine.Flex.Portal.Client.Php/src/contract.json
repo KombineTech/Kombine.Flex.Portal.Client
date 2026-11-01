@@ -3999,6 +3999,65 @@
       },
       "additionalProperties": false
     },
+    "PlexQueueResponse": {
+      "type": "object",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "nullable": true
+        },
+        "title": {
+          "type": "string",
+          "nullable": true
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PlexSearchItem": {
+      "type": "object",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "nullable": true
+        },
+        "title": {
+          "type": "string",
+          "nullable": true
+        },
+        "kind": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PlexSearchResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/PlexSearchItem"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PlexStartResponse": {
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "ProblemDetails": {
       "type": "object",
       "properties": {
@@ -14136,6 +14195,166 @@
       "parameters": [
         {
           "name": "deviceId",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": null,
+      "binary": false
+    },
+    "SearchMyWallboardPlex": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/plex/search",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "query",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PlexSearchResponse"
+      },
+      "binary": false
+    },
+    "GetMyWallboardPlexQueue": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/plex/queue",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "reference",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "displayId",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PlexQueueResponse"
+      },
+      "binary": false
+    },
+    "StartMyWallboardPlexPlayback": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/plex/start",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "reference",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "index",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "displayId",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "portrait",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/PlexStartResponse"
+      },
+      "binary": false
+    },
+    "ReadMyWallboardPlexStream": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/plex/stream/{ticket}",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "ticket",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "string",
+        "format": "binary"
+      },
+      "binary": true
+    },
+    "StopMyWallboardPlexPlayback": {
+      "method": "GET",
+      "path": "api/v1/session/me/wallboards/plex/stop/{ticket}",
+      "statuses": [
+        204
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "ticket",
           "where": "path",
           "required": true,
           "schema": {
