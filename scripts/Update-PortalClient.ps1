@@ -45,6 +45,17 @@ try {
 $generatedSource = Join-Path $project 'Generated/PortalApiClient.g.cs'
 $generatedText = [IO.File]::ReadAllText($generatedSource)
 $generatedText = $generatedText.Replace('client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken)', 'SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken)')
+# NSwag 14.7.1 treats a non-nullable multipart file as required even when the
+# containing schema omits it from required. Keep the API's optional motion part
+# absent for ordinary photos/videos; do not weaken the required original/token.
+$contract = Get-Content $snapshot -Raw | ConvertFrom-Json -AsHashtable
+$cameraForm = $contract.paths['/api/v1/camera'].post.requestBody.content['multipart/form-data'].schema
+if ($cameraForm.properties.Contains('motion') -and $cameraForm.required -notcontains 'motion') {
+    $guard = '(?m)^(?<indent> +)if \(motion == null\)\r?\n +throw new System.ArgumentNullException\("motion"\);\r?\n +else'
+    if ([regex]::Matches($generatedText, $guard).Count -ne 1) { throw 'The optional camera motion guard changed; review NSwag output before packaging.' }
+    $generatedText = [regex]::Replace($generatedText, $guard, '${indent}if (motion != null)')
+    $generatedText = $generatedText.Replace('FileParameter motion = null', 'FileParameter? motion = null')
+}
 $generatedText = [Text.RegularExpressions.Regex]::Replace($generatedText, '(?m)[ \t]+(?=\r?$)', '')
 for ($attempt = 0; ; $attempt++) {
     try {

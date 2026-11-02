@@ -1,0 +1,102 @@
+## 0.25.0
+
+- Refresh the generated API contract for the current Portal release.
+
+## 0.22.0
+
+- Add revision-checked public/private wallboard page transfers and wallboard change polling.
+- Refresh nullable account date filters and widget type definitions.
+
+## 0.21.0
+
+- Add protected activity and application load widget operations.
+
+## 0.20.0
+
+- Add authorized Plex search and playback operations.
+
+## 0.19.0
+
+- Update the widget type contract to include Plex (52); server availability remains separately controlled.
+
+## 0.18.0
+
+- Correct the release history documentation.
+
+## 0.17.0
+
+- Correct release notes and versioning while retaining the reserved-machines endpoint and updated widget enum from 0.16.0.
+
+## 0.16.0
+
+- Add the public reserved-machines statistic and update the Wallboard widget enum.
+
+## 0.15.0
+
+- Update the Portal contract with separate light and dark Wallboard color palettes and the new authorized widget operations.
+
+## 0.14.0
+
+- Synchronize the consolidated Portal API contract, including compact Wallboard layouts, public Portal wallboards and widget presentation/data operations.
+
+## 0.13.0
+
+Synchronizes the beta API contract with Enums 2.0.151: wallboard display-ID arrays, rectangle arrays, editor aspect ratios, minimum size of 3 by 3 for new or changed widgets, and the personal Portal wallboard. Stored smaller widgets remain unchanged when retained. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
+## 0.12.0
+
+Synchronizes the reviewed main API contract. New Wallboard registrations reject reserved routes and root asset names; existing stored display identities and approvals remain valid. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
+## 0.11.0
+
+Synchronizes the October 31 Portal API contract, including compact Wallboard layouts and manager presentation preferences.
+
+## 0.10.0
+
+Version 0.10.0 adds personal Wallboard layouts, scanned display registration and revision-aware display reads. Save only existing scanned display IDs with the latest revision. Preserve drafts on conflicts and never retry uncertain writes automatically. Screen sessions may read only their approved display. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
+## 0.9.0
+
+Version 0.9.0 covers 202 operations, including GetUnitTimeline and GetUnitTimelineFields. Wallboard responses identify the exact approved display; screen sessions expose minimal identity without ordinary manager permissions. Use a normal manager login for Portal operations. Permanent device approval and UserBalance remain compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
+## 0.8.0
+
+Version 0.8.0 adds FindWallboardPairings and GetWallboardDevice (200 operations total), plus optional location metadata when approving a screen. Central Wallboard setup uses one QR scan; private location is available only to the approving manager through the device endpoint. Device approval has no automatic expiry and still checks revocation, manager credentials and tenant/environment binding. Existing UserBalance clients remain compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog) and [Wallboard guide](https://api.team.kombine.technology/docs#wallboard-pairing).
+
+## 0.7.0
+
+Version 0.7.0 adds seven Wallboard pairing/device operations (198 operations total). An active manager approves a screen once; its device approval has no automatic expiry. Keep the non-exportable ECDSA P-256 private key on the screen, sign one-use challenges to reconnect, and keep manager credentials and bearer tokens out of URLs and browser storage. Explicit revocation and manager credential/account checks remain enforced. Ten-day bearer sessions do not limit device approval. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog) and [Wallboard guide](https://api.team.kombine.technology/docs#wallboard-pairing).
+
+## 0.6.0
+
+Version 0.6.0 adds the read-only settlement checklist, machine error history and acknowledgement, out-of-service listing and restore, and authorized eVaskeri resident delegation. Resident search includes bankKid. All operations retain manager, tenant and resource authorization. eVaskeri links are sensitive bearer credentials: open immediately without opener/referrer and never log or persist them. Never replay mutation requests automatically after an uncertain response. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
+## 0.5.0
+
+Version 0.5.0 uses GetPublicCycleWidget and GetCycleChartPresentation. Replace the retired WashDoc widget/presentation routes with /api/v1/public/widgets/cycle and /api/v1/public/cycle-chart/presentation. Document path parameters and table/graph/widget fields use cycleKid; the widget display field is cycleKidText. Existing KID values and document operation IDs remain valid. Rebuild callers and update property bindings. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
+## 0.4.0
+
+Version 0.4.0 synchronizes personal language, date/time, number and line-spacing preferences. WashDoc widgets replace unitKidText with documentKidText; graphSvg may be null when no measurements exist. Treat refreshAfterSeconds=0 as stop polling; running documents use 15 seconds. Manager sessions last ten days: use the returned expiresIn and renew only after activity. UserBalance remains compatible. See the [API changelog](/docs#changelog).
+
+## 0.3.0
+
+Breaking: More1 time/KID methods no longer accept bankKid and use tenant routes. Adds GetUnitDocumentNeighbors.
+
+## 0.3.0 — 2026-10-25
+
+- Add scoped WashDoc list/count operations.
+- No registry publication.
+
+## 0.2.1
+
+- Refresh the reviewed API contract and generated operations for beta preparation on 2026-10-23.
+- No registry publication.
+
+# Changelog
+
+## 0.1.0 — 2026-10-20
+
+Initial Dart/Flutter source client: 155 operations from the bundled Portal contract,
+bearer sessions, lossless int64 values, streaming, multipart, cancellation and deadlines.
+Not deployed or published to pub.dev. See the API contract changelog at `/docs#changelog`.

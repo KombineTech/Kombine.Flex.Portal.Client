@@ -127,7 +127,7 @@ public sealed class ClientTests
         using var http = Transport(new Handler(async (_, cancellation) => { await Task.Delay(Timeout.Infinite, cancellation); return Json("{}"); }));
         using var client = new PortalApiClient(http);
         using var cancellation = new CancellationTokenSource();
-        var pending = client.GetCurrentManagerAsync(cancellation.Token);
+        var pending = client.GetCurrentManagerAsync(cancellationToken: cancellation.Token);
         cancellation.Cancel();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending);
     }
@@ -194,11 +194,18 @@ public sealed class ClientTests
             var arguments = method.GetParameters().Select(parameter =>
             {
                 var type = Nullable.GetUnderlyingType(parameter.ParameterType) ?? parameter.ParameterType;
-                object? value = type == typeof(string) ? "opaque-KID" : type.IsValueType ? Activator.CreateInstance(type) : parameter.HasDefaultValue ? null : Activator.CreateInstance(type);
-                if (expectedPath.Contains("{" + parameter.Name + "}")) expectedPath = expectedPath.Replace("{" + parameter.Name + "}", value?.ToString());
+                object? value = type == typeof(FileParameter) ? new FileParameter(new MemoryStream([1]), "fixture.jpg", "image/jpeg") : type == typeof(string) ? "opaque-KID" : type.IsValueType ? Activator.CreateInstance(type) : parameter.HasDefaultValue ? null : Activator.CreateInstance(type);
+                var pathName = parameter.Name!;
+                if (pathName.EndsWith("Path", StringComparison.Ordinal)) pathName = pathName.Substring(0, pathName.Length - 4);
+                if (expectedPath.Contains("{" + pathName + "}")) expectedPath = expectedPath.Replace("{" + pathName + "}", value?.ToString());
                 return value;
             }).ToArray();
-            if (method.Invoke(client, arguments) is Task task) await task;
+            if (method.Invoke(client, arguments) is Task task)
+            {
+                await task;
+                if (task.GetType().GetProperty("Result")?.GetValue(task) is IDisposable result) result.Dispose();
+            }
+            foreach (var file in arguments.OfType<FileParameter>()) file.Data.Dispose();
             Assert.NotNull(sent);
             Assert.Equal(verb.ToUpperInvariant(), sent.Method.Method);
             Assert.Equal(expectedPath, Uri.UnescapeDataString(sent.RequestUri!.AbsolutePath));
@@ -361,7 +368,7 @@ public sealed class ClientTests
             using var client = new PortalApiClient(endpoint) { AccessToken = "fixture-token" };
             try
             {
-                var manager = await client.GetCurrentManagerAsync(deadline.Token);
+                var manager = await client.GetCurrentManagerAsync(cancellationToken: deadline.Token);
                 Assert.Equal("Æøå fixture", manager.Name);
             }
             finally

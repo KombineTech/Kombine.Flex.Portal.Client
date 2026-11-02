@@ -1,10 +1,24 @@
+Version 0.24.0 covers 217 operations, including GetUnitTimeline and GetUnitTimelineFields. Wallboard responses identify the exact approved display; screen sessions expose minimal identity without ordinary manager permissions. Use a normal manager login for Portal operations. Permanent device approval and UserBalance remain compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
+Version 0.18.0 adds FindWallboardPairings and GetWallboardDevice (217 operations total), plus optional location metadata when approving a screen. Central Wallboard setup uses one QR scan; private location is available only to the approving manager through the device endpoint. Device approval has no automatic expiry and still checks revocation, manager credentials and tenant/environment binding. Existing UserBalance clients remain compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog) and [Wallboard guide](https://api.team.kombine.technology/docs#wallboard-pairing).
+
+Version 0.17.0 adds seven Wallboard pairing/device operations (198 operations total). An active manager approves a screen once; its device approval has no automatic expiry. Keep the non-exportable ECDSA P-256 private key on the screen, sign one-use challenges to reconnect, and keep manager credentials and bearer tokens out of URLs and browser storage. Explicit revocation and manager credential/account checks remain enforced. Ten-day bearer sessions do not limit device approval. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog) and [Wallboard guide](https://api.team.kombine.technology/docs#wallboard-pairing).
+
+Version 0.16.1 adds the read-only settlement checklist, machine error history and acknowledgement, out-of-service listing and restore, and authorized eVaskeri resident delegation. Resident search includes bankKid. All operations retain manager, tenant and resource authorization. eVaskeri links are sensitive bearer credentials: open immediately without opener/referrer and never log or persist them. Never replay mutation requests automatically after an uncertain response. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
+Version 0.15.0 uses GetPublicCycleWidget and GetCycleChartPresentation. Replace the retired WashDoc widget/presentation routes with /api/v1/public/widgets/cycle and /api/v1/public/cycle-chart/presentation. Document path parameters and table/graph/widget fields use cycleKid; the widget display field is cycleKidText. Existing KID values and document operation IDs remain valid. Rebuild callers and update property bindings. UserBalance remains compatible. See the [API changelog](https://api.team.kombine.technology/docs#changelog).
+
+Version 0.14.0 synchronizes personal language, date/time, number and line-spacing preferences. WashDoc widgets replace unitKidText with documentKidText; graphSvg may be null when no measurements exist. Treat refreshAfterSeconds=0 as stop polling; running documents use 15 seconds. Manager sessions last ten days: use the returned expiresIn and renew only after activity. UserBalance remains compatible. See the [API changelog](/docs#changelog).
+
+Version 0.13.0 moves ConvertToolTime and InspectToolKid to /api/v1/tenant/tools/time and /api/v1/tenant/tools/kid. Remove the bankKid argument when rebuilding callers; the site selects the tenant. Active manager, More1, Bank Read and a resource grant in the site tenant remain required. JSON bodies and responses are unchanged. GetUnitDocumentNeighbors adds authorized same-unit document navigation. See the [API changelog](/docs#changelog).
+
 [English](README.md) · [Dansk](README.da.md) · [Español](README.es.md)
 
 # Kombine Flex __API__ PHP client
 
 [API contract changelog](__ORIGIN__/docs#changelog) — use `/docs#changelog` on the same tenant API and environment as your client. The changelog is English-only.
 
-Version **0.1.0**, prepared locally; not deployed or published to Packagist. Covers __COUNT__ public operations from the included OpenAPI snapshot. Requires **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS support and trusted CA certificates. No external PHP library or internal Kombine assembly is required. Windows, Linux and macOS are supported by the transport; this version was tested on Windows CLI. Use a currently supported PHP release.
+Version **0.1.0**, deployment and Packagist publication are tracked separately. Covers __COUNT__ public operations from the included OpenAPI snapshot. Requires **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS support and trusted CA certificates. No external PHP library or internal Kombine assembly is required. Windows, Linux and macOS are supported by the transport; this version was tested on Windows CLI. Use a currently supported PHP release.
 
 ## Install
 
@@ -74,3 +88,6 @@ The default total request deadline is 30 seconds, connect timeout at most 10 sec
 ## Build and verification
 
 Repository maintainers: `scripts/Update-PhpClients.ps1` exports current controller metadata without starting API workers or touching a database, then generates PHP. `scripts/Test-PhpClients.ps1` verifies generation, exercises all operations against loopback fixtures, creates deterministic ZIPs, tests the extracted packages and copies only the PHP downloads into both APIs. Existing clients retain their own release snapshots. There is no registry publication or deployment step.
+
+
+GetTerminals uses the reported ComputerName for name, filtering and sorting; missing names are empty. Request fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight for terminal telemetry. Values are strings, null when not selected, and empty when missing. Keep fields unchanged during paging and restart old cursors. Location names remain part of every row. See /docs#changelog for all migration requirements.

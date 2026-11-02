@@ -1,10 +1,24 @@
+La versión 0.24.0 incluye 217 operaciones, entre ellas GetUnitTimeline y GetUnitTimelineFields. Las respuestas de Wallboard identifican la pantalla aprobada exacta; las sesiones de pantalla exponen solo una identidad mínima, sin permisos de administrador. Use una sesión normal para las operaciones de Portal. La aprobación permanente y UserBalance siguen siendo compatibles. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
+
+La versión 0.18.0 añade FindWallboardPairings y GetWallboardDevice (217 operaciones en total), además de metadatos opcionales de ubicación al aprobar una pantalla. La configuración central de Wallboard utiliza un único escaneo QR; la ubicación privada solo está disponible para el administrador que aprobó el dispositivo. La aprobación no caduca automáticamente y conserva las comprobaciones de revocación, credenciales, tenant y entorno. Los clientes UserBalance existentes siguen siendo compatibles. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog) y la [guía Wallboard](https://api.team.kombine.technology/docs#wallboard-pairing).
+
+La versión 0.17.0 añade siete operaciones para vincular y gestionar pantallas Wallboard (198 en total). Un administrador activo aprueba cada pantalla una vez; la aprobación del dispositivo no caduca automáticamente. Mantenga la clave privada ECDSA P-256 no exportable en la pantalla, firme desafíos de un solo uso para reconectar y no incluya credenciales ni tokens bearer en URL o almacenamiento del navegador. Se conservan la revocación y las comprobaciones de la cuenta y credenciales del administrador. La sesión de diez días no limita la aprobación. UserBalance mantiene la compatibilidad. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog) y la [guía Wallboard](https://api.team.kombine.technology/docs#wallboard-pairing).
+
+La versión 0.16.1 añade la lista de liquidaciones de solo lectura, el historial y reconocimiento de errores, la consulta y restauración de máquinas fuera de servicio y el acceso autorizado a eVaskeri del residente. La búsqueda de residentes incluye bankKid. Todas las operaciones mantienen la autorización del administrador, tenant y recurso. Los enlaces de eVaskeri son credenciales sensibles: ábralos inmediatamente sin opener/referrer y nunca los registre ni almacene. No repita automáticamente solicitudes de modificación tras una respuesta incierta. UserBalance conserva la compatibilidad. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
+
+La versión 0.15.0 utiliza GetPublicCycleWidget y GetCycleChartPresentation. Sustituya las rutas retiradas de widgets/presentación WashDoc por /api/v1/public/widgets/cycle y /api/v1/public/cycle-chart/presentation. Los parámetros de ruta y los campos de tablas/gráficos/widgets usan cycleKid; el campo de visualización del widget es cycleKidText. Se mantienen los valores KID y los ID de las operaciones de documentos. Recompile los clientes y actualice las referencias a campos. UserBalance conserva la compatibilidad. Consulte el [registro de cambios](https://api.team.kombine.technology/docs#changelog).
+
+La versión 0.14.0 sincroniza idioma, fecha/hora, formato numérico y espaciado personal. Los widgets WashDoc sustituyen unitKidText por documentKidText; graphSvg puede ser null sin mediciones. Detenga el sondeo con refreshAfterSeconds=0; los documentos en curso usan 15 segundos. Las sesiones de administrador duran diez días: use expiresIn de la respuesta y renueve solo tras actividad. UserBalance sigue siendo compatible. Consulte el [registro de cambios](/docs#changelog).
+
+La versión 0.13.0 mueve ConvertToolTime e InspectToolKid a /api/v1/tenant/tools/time y /api/v1/tenant/tools/kid. Quite el argumento bankKid al recompilar; el sitio selecciona el tenant. Se mantienen manager activo, More1, Bank Read y un permiso de recurso del tenant del sitio. Los cuerpos y respuestas JSON no cambian. GetUnitDocumentNeighbors añade navegación autorizada entre documentos de la misma unidad. Consulte el [registro de cambios](/docs#changelog).
+
 [English](README.md) · [Dansk](README.da.md) · [Español](README.es.md)
 
 # Cliente PHP de Kombine Flex __API__
 
 [Changelog del contrato API](__ORIGIN__/docs#changelog) — utiliza `/docs#changelog` en la API del mismo tenant y entorno que el cliente. El changelog está solo en inglés.
 
-Versión **0.1.0**, preparada localmente; no desplegada ni publicada en Packagist. Incluye __COUNT__ operaciones públicas del contrato OpenAPI adjunto. Requiere **PHP 8.2+ de 64 bits**, `ext-curl`, `ext-json`, HTTPS y certificados CA de confianza. No necesita bibliotecas PHP externas ni ensamblados internos de Kombine. El transporte admite Windows, Linux y macOS; esta versión se probó con Windows CLI. Utiliza una versión de PHP con soporte vigente.
+Versión **0.1.0**, el despliegue y la publicación en Packagist se gestionan por separado. Incluye __COUNT__ operaciones públicas del contrato OpenAPI adjunto. Requiere **PHP 8.2+ de 64 bits**, `ext-curl`, `ext-json`, HTTPS y certificados CA de confianza. No necesita bibliotecas PHP externas ni ensamblados internos de Kombine. El transporte admite Windows, Linux y macOS; esta versión se probó con Windows CLI. Utiliza una versión de PHP con soporte vigente.
 
 ## Instalación
 
@@ -74,3 +88,6 @@ Límites predeterminados: 30 segundos por llamada completa, hasta 10 segundos de
 ## Compilación y verificación
 
 Para mantenedores: `scripts/Update-PhpClients.ps1` exporta metadatos del código API actual sin iniciar trabajos ni acceder a bases de datos y genera PHP. `scripts/Test-PhpClients.ps1` comprueba la generación, prueba todas las operaciones con fixtures HTTP locales, crea ZIP deterministas, prueba los paquetes extraídos y copia únicamente las descargas PHP a ambas API. Los demás clientes conservan sus propios contratos de versión. No se publica en registros ni se despliega.
+
+
+GetTerminals usa el ComputerName comunicado para el nombre, el filtro y la ordenación; los nombres ausentes están vacíos. Solicite fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight para los datos del terminal. Son cadenas, null si no se seleccionan y vacías si faltan. Mantenga fields al paginar y reinicie los cursores anteriores. Cada fila incluye el nombre de la ubicación. Consulte /docs#changelog para todos los requisitos de migración.

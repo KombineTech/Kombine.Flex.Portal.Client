@@ -1,11 +1,44 @@
 [
   {
+    "operation": "GetBankAccountIcon",
+    "python": "get_bank_account_icon",
+    "javascript": "getBankAccountIcon",
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/account/icon",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/AccountIconResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetBankAccount",
     "python": "get_bank_account",
     "javascript": "getBankAccount",
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/account",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -66,12 +99,36 @@
         }
       },
       {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "UnitKid",
         "where": "query",
         "py": "unit_kid",
         "js": "unitKid",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -141,6 +198,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/AccountResponse"
     },
@@ -154,6 +212,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/account/revision",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -214,12 +275,36 @@
         }
       },
       {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "UnitKid",
         "where": "query",
         "py": "unit_kid",
         "js": "unitKid",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -289,6 +374,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/AccountRevisionResponse"
     },
@@ -304,6 +390,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/account/{transactionKid}/reversal",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -326,6 +415,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/AccountEntryResponse"
     },
@@ -339,6 +429,9 @@
     "method": "GET",
     "path": "api/v1/addresses/{kid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -352,6 +445,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -365,6 +459,9 @@
     "method": "PUT",
     "path": "api/v1/addresses/{kid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -380,6 +477,7 @@
     "body": {
       "$ref": "#/components/schemas/UpdateObjectAddressRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -393,6 +491,9 @@
     "method": "POST",
     "path": "api/v1/addresses/{kid}/lookup",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -408,6 +509,7 @@
     "body": {
       "$ref": "#/components/schemas/ObjectAddressRevisionRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -421,6 +523,9 @@
     "method": "PUT",
     "path": "api/v1/addresses/{kid}/coordinates",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -436,6 +541,7 @@
     "body": {
       "$ref": "#/components/schemas/SetObjectCoordinatesRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -449,6 +555,9 @@
     "method": "PUT",
     "path": "api/v1/addresses/{kid}/provenance",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -464,6 +573,7 @@
     "body": {
       "$ref": "#/components/schemas/SetObjectCoordinateProvenanceRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ObjectAddressResponse"
     },
@@ -477,13 +587,206 @@
     "method": "POST",
     "path": "api/v1/assistant/query",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/AssistantRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/AssistantResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetBankExportCount",
+    "python": "get_bank_export_count",
+    "javascript": "getBankExportCount",
+    "method": "GET",
+    "path": "api/v1/banks/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "bankType",
+        "where": "query",
+        "py": "bank_type",
+        "js": "bankType",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetBanks",
+    "python": "get_banks",
+    "javascript": "getBanks",
+    "method": "GET",
+    "path": "api/v1/banks",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "bankType",
+        "where": "query",
+        "py": "bank_type",
+        "js": "bankType",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/BankDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetActiveBankCount",
+    "python": "get_active_bank_count",
+    "javascript": "getActiveBankCount",
+    "method": "GET",
+    "path": "api/v1/banks/active-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveBankCountResponse"
     },
     "binary": false,
     "example": {}
@@ -495,6 +798,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/documents",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -511,6 +817,66 @@
         "where": "query",
         "py": "location_kid",
         "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
         "schema": {
           "type": "string"
         }
@@ -564,8 +930,405 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BankDocumentPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetBankDocumentsCount",
+    "python": "get_bank_documents_count",
+    "javascript": "getBankDocumentsCount",
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/documents/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "LocationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKid",
+        "where": "query",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "From",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Through",
+        "where": "query",
+        "py": "through",
+        "js": "through",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "py": "offset",
+        "js": "offset",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "py": "limit",
+        "js": "limit",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationDocuments",
+    "python": "get_location_documents",
+    "javascript": "getLocationDocuments",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/documents",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKid",
+        "where": "query",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "From",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Through",
+        "where": "query",
+        "py": "through",
+        "js": "through",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "py": "offset",
+        "js": "offset",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "py": "limit",
+        "js": "limit",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/BankDocumentPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationDocumentsCount",
+    "python": "get_location_documents_count",
+    "javascript": "getLocationDocumentsCount",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/documents/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "UnitKid",
+        "where": "query",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "From",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Through",
+        "where": "query",
+        "py": "through",
+        "js": "through",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "py": "offset",
+        "js": "offset",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "py": "limit",
+        "js": "limit",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentCount"
     },
     "binary": false,
     "example": {}
@@ -577,6 +1340,9 @@
     "method": "GET",
     "path": "api/v1/banks/icons",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -593,6 +1359,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BankIconsResponse"
     },
@@ -606,6 +1373,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/locations",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -619,6 +1389,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "array",
       "items": {
@@ -635,6 +1406,9 @@
     "method": "GET",
     "path": "api/v1/search/banks",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -648,6 +1422,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -661,6 +1436,9 @@
     "method": "GET",
     "path": "api/v1/search/bank-activation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -674,6 +1452,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -687,6 +1466,9 @@
     "method": "GET",
     "path": "api/v1/search/banks/{bankKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -700,8 +1482,96 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetBankUserExportCount",
+    "python": "get_bank_user_export_count",
+    "javascript": "getBankUserExportCount",
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/users/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "deleted",
+        "where": "query",
+        "py": "deleted",
+        "js": "deleted",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
     },
     "binary": false,
     "example": {}
@@ -713,6 +1583,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -796,9 +1669,22 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BankUsersResponse"
     },
@@ -829,6 +1715,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/users",
     "status": 201,
+    "statuses": [
+      201
+    ],
     "auth": true,
     "parameters": [
       {
@@ -844,6 +1733,7 @@
     "body": {
       "$ref": "#/components/schemas/UserCommandRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserWorkspaceResponse"
     },
@@ -857,6 +1747,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/bookings",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -952,9 +1845,22 @@
           "type": "integer",
           "format": "int32"
         }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BookingsResponse"
     },
@@ -968,6 +1874,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/bookings/{bookingKid}/commands",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -992,8 +1901,484 @@
     "body": {
       "$ref": "#/components/schemas/BookingCommand"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/BookingResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetCameraNearestLocation",
+    "python": "get_camera_nearest_location",
+    "javascript": "getCameraNearestLocation",
+    "method": "GET",
+    "path": "api/v1/camera/nearest-location",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "latitude",
+        "where": "query",
+        "py": "latitude",
+        "js": "latitude",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      {
+        "name": "longitude",
+        "where": "query",
+        "py": "longitude",
+        "js": "longitude",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      {
+        "name": "accuracyMeters",
+        "where": "query",
+        "py": "accuracy_meters",
+        "js": "accuracyMeters",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraResourceResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetCameraResource",
+    "python": "get_camera_resource",
+    "javascript": "getCameraResource",
+    "method": "GET",
+    "path": "api/v1/camera/resource",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "resourceKid",
+        "where": "query",
+        "py": "resource_kid",
+        "js": "resourceKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraResourceResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetCameraAvailability",
+    "python": "get_camera_availability",
+    "javascript": "getCameraAvailability",
+    "method": "GET",
+    "path": "api/v1/camera/availability",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "resourceKid",
+        "where": "query",
+        "py": "resource_kid",
+        "js": "resourceKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraAvailabilityResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "PrepareCameraCapture",
+    "python": "prepare_camera_capture",
+    "javascript": "prepareCameraCapture",
+    "method": "POST",
+    "path": "api/v1/camera/prepare",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/CameraPrepareRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraPrepareResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "SaveCameraCapture",
+    "python": "save_camera_capture",
+    "javascript": "saveCameraCapture",
+    "method": "POST",
+    "path": "api/v1/camera",
+    "status": 200,
+    "statuses": [
+      200,
+      202
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "background",
+        "where": "query",
+        "py": "background",
+        "js": "background",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": {
+      "required": [
+        "uploadToken",
+        "original"
+      ],
+      "type": "object",
+      "properties": {
+        "uploadToken": {
+          "type": "string",
+          "description": "Unchanged token from PrepareCameraCapture."
+        },
+        "original": {
+          "type": "string",
+          "description": "Original captured bytes matching the prepared length and SHA-256.",
+          "format": "binary"
+        },
+        "motion": {
+          "type": "string",
+          "description": "Required only for live-photo: the original QuickTime MOV companion matching its prepared length and hash. Omit for other capture kinds.",
+          "format": "binary"
+        }
+      }
+    },
+    "response": {
+      "$ref": "#/components/schemas/CameraSaveResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetCameraCaptures",
+    "python": "get_camera_captures",
+    "javascript": "getCameraCaptures",
+    "method": "GET",
+    "path": "api/v1/camera",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "resourceKid",
+        "where": "query",
+        "py": "resource_kid",
+        "js": "resourceKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraCapturePage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ConfirmCameraCapture",
+    "python": "confirm_camera_capture",
+    "javascript": "confirmCameraCapture",
+    "method": "POST",
+    "path": "api/v1/camera/confirmation",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/CameraConfirmationRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CameraConfirmationResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetCameraCaptureContent",
+    "python": "get_camera_capture_content",
+    "javascript": "getCameraCaptureContent",
+    "method": "GET",
+    "path": "api/v1/camera/{id}/content",
+    "status": 200,
+    "statuses": [
+      200,
+      206
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "id",
+        "where": "path",
+        "py": "id",
+        "js": "id",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "part",
+        "where": "query",
+        "py": "part",
+        "js": "part",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Range",
+        "where": "header",
+        "py": "range",
+        "js": "range",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetRecentCameraPhotoMetadata",
+    "python": "get_recent_camera_photo_metadata",
+    "javascript": "getRecentCameraPhotoMetadata",
+    "method": "GET",
+    "path": "api/v1/camera/recent/{id}/metadata",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "id",
+        "where": "path",
+        "py": "id",
+        "js": "id",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetChecklist",
+    "python": "get_checklist",
+    "javascript": "getChecklist",
+    "method": "GET",
+    "path": "api/v1/settlement-checklist",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "scopeKid",
+        "where": "query",
+        "py": "scope_kid",
+        "js": "scopeKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeResolved",
+        "where": "query",
+        "py": "include_resolved",
+        "js": "includeResolved",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ChecklistPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetChecklistPeriod",
+    "python": "get_checklist_period",
+    "javascript": "getChecklistPeriod",
+    "method": "GET",
+    "path": "api/v1/settlement-checklist/{periodKid}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "periodKid",
+        "where": "path",
+        "py": "period_kid",
+        "js": "periodKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ChecklistItem"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardDatabaseLoadHistory",
+    "python": "get_my_wallboard_database_load_history",
+    "javascript": "getMyWallboardDatabaseLoadHistory",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/database-load-history",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayDatabaseLoadHistory",
+    "python": "get_wallboard_display_database_load_history",
+    "javascript": "getWallboardDisplayDatabaseLoadHistory",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/database-load-history",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DatabaseLoadHistoryResponse"
     },
     "binary": false,
     "example": {}
@@ -1005,6 +2390,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/account/export",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1065,12 +2453,36 @@
         }
       },
       {
+        "name": "LocationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "UnitKid",
         "where": "query",
         "py": "unit_kid",
         "js": "unitKid",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -1149,6 +2561,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -1163,6 +2576,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/export",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1218,9 +2634,22 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "locationKids",
+        "where": "query",
+        "py": "location_kids",
+        "js": "locationKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -1235,6 +2664,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/settlements/{period}/download",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1267,6 +2699,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -1279,15 +2712,18 @@
     "python": "download_unit_document_csv",
     "javascript": "downloadUnitDocumentCsv",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table.csv",
+    "path": "api/v1/documents/{cycleKid}/table.csv",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -1309,9 +2745,19 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -1324,15 +2770,18 @@
     "python": "download_unit_document_xls",
     "javascript": "downloadUnitDocumentXls",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table.xls",
+    "path": "api/v1/documents/{cycleKid}/table.xls",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -1354,14 +2803,163 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
     },
     "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetBankErrors",
+    "python": "get_bank_errors",
+    "javascript": "getBankErrors",
+    "method": "GET",
+    "path": "api/v1/banks/{bankKid}/errors",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "path",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "py": "days",
+        "js": "days",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "level",
+        "where": "query",
+        "py": "level",
+        "js": "level",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeAcknowledged",
+        "where": "query",
+        "py": "include_acknowledged",
+        "js": "includeAcknowledged",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitErrorPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetError",
+    "python": "get_error",
+    "javascript": "getError",
+    "method": "GET",
+    "path": "api/v1/errors/{errorKid}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "errorKid",
+        "where": "path",
+        "py": "error_kid",
+        "js": "errorKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitErrorItem"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "AcknowledgeError",
+    "python": "acknowledge_error",
+    "javascript": "acknowledgeError",
+    "method": "POST",
+    "path": "api/v1/errors/{errorKid}/acknowledge",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "errorKid",
+        "where": "path",
+        "py": "error_kid",
+        "js": "errorKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/AcknowledgeErrorRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitErrorItem"
+    },
+    "binary": false,
     "example": {}
   },
   {
@@ -1371,6 +2969,9 @@
     "method": "GET",
     "path": "api/v1/hosting/logs",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1393,6 +2994,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/HostingLogsResponse"
     },
@@ -1406,6 +3008,9 @@
     "method": "GET",
     "path": "api/v1/hosting/metrics",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1438,6 +3043,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/HostingMetricsResponse"
     },
@@ -1451,6 +3057,9 @@
     "method": "POST",
     "path": "api/v1/installers/{installerKid}/icon",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1466,6 +3075,7 @@
     "body": {
       "$ref": "#/components/schemas/InstallerIconRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/InstallerIconResponse"
     },
@@ -1689,12 +3299,72 @@
     }
   },
   {
+    "operation": "GetInstallerExportCount",
+    "python": "get_installer_export_count",
+    "javascript": "getInstallerExportCount",
+    "method": "GET",
+    "path": "api/v1/installers/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeActivationCode",
+        "where": "query",
+        "py": "include_activation_code",
+        "js": "includeActivationCode",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetInstallers",
     "python": "get_installers",
     "javascript": "getInstallers",
     "method": "GET",
     "path": "api/v1/installers",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1742,9 +3412,19 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "includeActivationCode",
+        "where": "query",
+        "py": "include_activation_code",
+        "js": "includeActivationCode",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/InstallerDirectoryResponse"
     },
@@ -1784,6 +3464,9 @@
     "method": "GET",
     "path": "api/v1/installers/{installerKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -1797,6 +3480,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/InstallerDetailsResponse"
     },
@@ -2047,9 +3731,13 @@
     "method": "GET",
     "path": "api/v1/diagnostics/live-logs",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LiveLogsResponse"
     },
@@ -2063,9 +3751,23 @@
     "method": "GET",
     "path": "api/v1/locations/active-count",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "bankKid",
+        "where": "query",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ActiveLocationCountResponse"
     },
@@ -2079,6 +3781,9 @@
     "method": "GET",
     "path": "api/v1/locations",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2153,11 +3858,96 @@
         "schema": {
           "type": "boolean"
         }
+      },
+      {
+        "name": "bankKid",
+        "where": "query",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationCount",
+    "python": "get_location_count",
+    "javascript": "getLocationCount",
+    "method": "GET",
+    "path": "api/v1/locations/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "bankKid",
+        "where": "query",
+        "py": "bank_kid",
+        "js": "bankKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationCountResponse"
     },
     "binary": false,
     "example": {}
@@ -2169,6 +3959,9 @@
     "method": "GET",
     "path": "api/v1/search/locations",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2182,6 +3975,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -2195,6 +3989,9 @@
     "method": "GET",
     "path": "api/v1/search/location-activation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2208,8 +4005,68 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationBookingCalendars",
+    "python": "get_location_booking_calendars",
+    "javascript": "getLocationBookingCalendars",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/booking-calendars",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "from",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "py": "days",
+        "js": "days",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationBookingCalendarsResponse"
     },
     "binary": false,
     "example": {}
@@ -2221,6 +4078,9 @@
     "method": "GET",
     "path": "api/v1/locations/{locationKid}/booking-rules",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2243,8 +4103,105 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationBookingRulesResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetControllerOverview",
+    "python": "get_controller_overview",
+    "javascript": "getControllerOverview",
+    "method": "GET",
+    "path": "api/v1/controllers/{controllerKid}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "controllerKid",
+        "where": "path",
+        "py": "controller_kid",
+        "js": "controllerKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDetailsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetControllerGroup",
+    "python": "get_controller_group",
+    "javascript": "getControllerGroup",
+    "method": "GET",
+    "path": "api/v1/controllers/{controllerKid}/groups/{kind}/{group}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "controllerKid",
+        "where": "path",
+        "py": "controller_kid",
+        "js": "controllerKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "kind",
+        "where": "path",
+        "py": "kind",
+        "js": "kind",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "group",
+        "where": "path",
+        "py": "group",
+        "js": "group",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitGroupResponse"
     },
     "binary": false,
     "example": {}
@@ -2256,6 +4213,9 @@
     "method": "GET",
     "path": "api/v1/locations/{locationKid}/units",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2278,6 +4238,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationUnitsResponse"
     },
@@ -2291,6 +4252,9 @@
     "method": "GET",
     "path": "api/v1/units/{unitKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2313,6 +4277,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitDetailsResponse"
     },
@@ -2326,6 +4291,9 @@
     "method": "GET",
     "path": "api/v1/units/{unitKid}/groups/{kind}/{group}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2366,6 +4334,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitGroupResponse"
     },
@@ -2379,6 +4348,9 @@
     "method": "GET",
     "path": "api/v1/units/{unitKid}/groups/settings/{group}/{setting}/history",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2430,6 +4402,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitSettingHistoryResponse"
     },
@@ -2443,6 +4416,9 @@
     "method": "GET",
     "path": "api/v1/units/icons",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2459,6 +4435,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitIconsResponse"
     },
@@ -2472,6 +4449,9 @@
     "method": "GET",
     "path": "api/v1/locations/icons",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2488,6 +4468,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationIconsResponse"
     },
@@ -2501,6 +4482,9 @@
     "method": "GET",
     "path": "api/v1/locations/{locationKid}/opening-hours",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2523,8 +4507,157 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/LocationOpeningHoursResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationReservationHistory",
+    "python": "get_location_reservation_history",
+    "javascript": "getLocationReservationHistory",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/reservation-history",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "from",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "py": "days",
+        "js": "days",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationReservationHistoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationReservations",
+    "python": "get_location_reservations",
+    "javascript": "getLocationReservations",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/reservations",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "from",
+        "where": "query",
+        "py": "from_",
+        "js": "from",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      {
+        "name": "days",
+        "where": "query",
+        "py": "days",
+        "js": "days",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Accept-Language",
+        "where": "header",
+        "py": "accept_language",
+        "js": "acceptLanguage",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationReservationsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetLocationWeather",
+    "python": "get_location_weather",
+    "javascript": "getLocationWeather",
+    "method": "GET",
+    "path": "api/v1/locations/{locationKid}/weather",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "path",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/LocationWeatherResponse"
     },
     "binary": false,
     "example": {}
@@ -2536,9 +4669,13 @@
     "method": "POST",
     "path": "api/v1/managers",
     "status": 201,
+    "statuses": [
+      201
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerCreationResponse"
     },
@@ -2552,6 +4689,9 @@
     "method": "GET",
     "path": "api/v1/managers",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2602,6 +4742,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerDirectoryResponse"
     },
@@ -2751,6 +4892,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/invitation",
     "status": 202,
+    "statuses": [
+      202
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2766,6 +4910,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerInvitationRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerInvitationResponse"
     },
@@ -2779,6 +4924,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/kids",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2794,6 +4942,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerKidChangeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerKidChangeResponse"
     },
@@ -2816,11 +4965,15 @@
     "method": "POST",
     "path": "api/v1/session/forgot-password",
     "status": 202,
+    "statuses": [
+      202
+    ],
     "auth": false,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ManagerForgotPasswordRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerPasswordResetResponse"
     },
@@ -2834,11 +4987,15 @@
     "method": "POST",
     "path": "api/v1/session/reset-password",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ManagerResetPasswordRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerPasswordResetResponse"
     },
@@ -2852,6 +5009,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/permission-role",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -2867,6 +5027,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerPermissionRoleRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerPermissionRoleResponse"
     },
@@ -3003,6 +5164,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/permissions/{resource}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3027,6 +5191,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerPermissionChangeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerOperationPermissionResponse"
     },
@@ -3050,6 +5215,9 @@
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/profile/{field}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3074,6 +5242,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerProfileChangeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerProfileChangeResponse"
     },
@@ -3306,12 +5475,63 @@
     }
   },
   {
+    "operation": "GetManagerExportCount",
+    "python": "get_manager_export_count",
+    "javascript": "getManagerExportCount",
+    "method": "GET",
+    "path": "api/v1/managers/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetManager",
     "python": "get_manager",
     "javascript": "getManager",
     "method": "GET",
     "path": "api/v1/managers/{managerKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3325,6 +5545,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerDirectoryItem"
     },
@@ -3461,16 +5682,6 @@
         }
       ],
       "availableTabs": [
-        {
-          "id": 5,
-          "name": "Banks2",
-          "iconKid": ""
-        },
-        {
-          "id": 60,
-          "name": "Services1",
-          "iconKid": ""
-        },
         {
           "id": 1,
           "name": "Access1",
@@ -3707,11 +5918,6 @@
           "iconKid": ""
         },
         {
-          "id": 50,
-          "name": "Units1",
-          "iconKid": ""
-        },
-        {
           "id": 51,
           "name": "User2",
           "iconKid": ""
@@ -3763,27 +5969,17 @@
         },
         {
           "id": 62,
-          "name": "Disp62",
+          "name": "SignUp1",
           "iconKid": ""
         },
         {
           "id": 63,
-          "name": "Disp63",
+          "name": "Privacy1",
           "iconKid": ""
         },
         {
           "id": 64,
-          "name": "Disp64",
-          "iconKid": ""
-        },
-        {
-          "id": 65,
-          "name": "Disp65",
-          "iconKid": ""
-        },
-        {
-          "id": 66,
-          "name": "Disp66",
+          "name": "DocIdsCurrent1",
           "iconKid": ""
         },
         {
@@ -3813,7 +6009,7 @@
         },
         {
           "id": 73,
-          "name": "Disp73",
+          "name": "Map1",
           "iconKid": ""
         },
         {
@@ -3829,11 +6025,6 @@
         {
           "id": 76,
           "name": "Test1",
-          "iconKid": ""
-        },
-        {
-          "id": 77,
-          "name": "UserFinder1",
           "iconKid": ""
         },
         {
@@ -3862,6 +6053,56 @@
           "iconKid": ""
         },
         {
+          "id": 83,
+          "name": "ForgotPassword1",
+          "iconKid": ""
+        },
+        {
+          "id": 84,
+          "name": "Camera1",
+          "iconKid": ""
+        },
+        {
+          "id": 85,
+          "name": "Zoom1",
+          "iconKid": ""
+        },
+        {
+          "id": 86,
+          "name": "Agent1",
+          "iconKid": ""
+        },
+        {
+          "id": 87,
+          "name": "Wallboard1",
+          "iconKid": ""
+        },
+        {
+          "id": 5,
+          "name": "Banks2",
+          "iconKid": ""
+        },
+        {
+          "id": 65,
+          "name": "Locations1",
+          "iconKid": ""
+        },
+        {
+          "id": 66,
+          "name": "Terminals1",
+          "iconKid": ""
+        },
+        {
+          "id": 50,
+          "name": "Units1",
+          "iconKid": ""
+        },
+        {
+          "id": 60,
+          "name": "Services1",
+          "iconKid": ""
+        },
+        {
           "id": 28,
           "name": "Managers1",
           "iconKid": ""
@@ -3869,6 +6110,11 @@
         {
           "id": 68,
           "name": "Installers1",
+          "iconKid": ""
+        },
+        {
+          "id": 77,
+          "name": "UserFinder1",
           "iconKid": ""
         }
       ]
@@ -3881,6 +6127,9 @@
     "method": "GET",
     "path": "api/v1/managers/{managerKid}/same-email",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -3894,6 +6143,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "array",
       "items": {
@@ -3910,6 +6160,9 @@
     "method": "POST",
     "path": "api/v1/session/login",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -3925,13 +6178,14 @@
     "body": {
       "$ref": "#/components/schemas/ManagerLoginRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerSessionResponse"
     },
     "binary": false,
     "example": {
       "accessToken": "<opaque access token>",
-      "expiresIn": 259200,
+      "expiresIn": 864000,
       "tokenType": "Bearer"
     }
   },
@@ -3942,16 +6196,20 @@
     "method": "POST",
     "path": "api/v1/session/renew",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerSessionResponse"
     },
     "binary": false,
     "example": {
       "accessToken": "<replacement access token>",
-      "expiresIn": 259200,
+      "expiresIn": 864000,
       "tokenType": "Bearer"
     }
   },
@@ -3962,9 +6220,23 @@
     "method": "GET",
     "path": "api/v1/session/me",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "refresh",
+        "where": "query",
+        "py": "refresh",
+        "js": "refresh",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerProfileResponse"
     },
@@ -4080,12 +6352,59 @@
     }
   },
   {
+    "operation": "RequestManagerSignUp",
+    "python": "request_manager_sign_up",
+    "javascript": "requestManagerSignUp",
+    "method": "POST",
+    "path": "api/v1/session/signup",
+    "status": 202,
+    "statuses": [
+      202
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/ManagerSignUpRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ConfirmManagerSignUp",
+    "python": "confirm_manager_sign_up",
+    "javascript": "confirmManagerSignUp",
+    "method": "POST",
+    "path": "api/v1/session/signup-confirmation",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/ManagerSignUpConfirmation"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "SetManagerTab",
     "python": "set_manager_tab",
     "javascript": "setManagerTab",
     "method": "POST",
     "path": "api/v1/managers/{managerKid}/tabs/{tabId}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4111,6 +6430,7 @@
     "body": {
       "$ref": "#/components/schemas/ManagerTabChangeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerTabChangeResponse"
     },
@@ -4140,11 +6460,15 @@
     "method": "POST",
     "path": "api/v1/session/me/theme",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/ManagerThemeRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ManagerThemeResponse"
     },
@@ -4154,17 +6478,333 @@
     }
   },
   {
+    "operation": "GetNearestLocations",
+    "python": "get_nearest_locations",
+    "javascript": "getNearestLocations",
+    "method": "GET",
+    "path": "api/v1/locations/nearest",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "latitude",
+        "where": "query",
+        "py": "latitude",
+        "js": "latitude",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      {
+        "name": "longitude",
+        "where": "query",
+        "py": "longitude",
+        "js": "longitude",
+        "schema": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/NearestLocationItem"
+      }
+    },
+    "binary": false,
+    "example": []
+  },
+  {
+    "operation": "GetManagerCount",
+    "python": "get_manager_count",
+    "javascript": "getManagerCount",
+    "method": "GET",
+    "path": "api/v1/managers/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PeopleDirectoryCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetInstallerCount",
+    "python": "get_installer_count",
+    "javascript": "getInstallerCount",
+    "method": "GET",
+    "path": "api/v1/installers/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PeopleDirectoryCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetMyManagerProfile",
     "python": "get_my_manager_profile",
     "javascript": "getMyManagerProfile",
     "method": "GET",
     "path": "api/v1/session/me/profile",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerProfile"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "AddMyManagerWallboard",
+    "python": "add_my_manager_wallboard",
+    "javascript": "addMyManagerWallboard",
+    "method": "POST",
+    "path": "api/v1/session/me/wallboards",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/PersonalWallboardRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalAccountResult"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyManagerWallboards",
+    "python": "get_my_manager_wallboards",
+    "javascript": "getMyManagerWallboards",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "after",
+        "where": "query",
+        "py": "after",
+        "js": "after",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalWallboardsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "SaveMyManagerWallboards",
+    "python": "save_my_manager_wallboards",
+    "javascript": "saveMyManagerWallboards",
+    "method": "PUT",
+    "path": "api/v1/session/me/wallboards",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/SavePersonalWallboardsRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalWallboardsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicWallboardEditor",
+    "python": "get_public_wallboard_editor",
+    "javascript": "getPublicWallboardEditor",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/public",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "SavePublicWallboardEditor",
+    "python": "save_public_wallboard_editor",
+    "javascript": "savePublicWallboardEditor",
+    "method": "PUT",
+    "path": "api/v1/session/me/wallboards/public",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/SavePublicWallboardRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWallboardEditorResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "MovePublicWallboardPage",
+    "python": "move_public_wallboard_page",
+    "javascript": "movePublicWallboardPage",
+    "method": "POST",
+    "path": "api/v1/session/me/wallboards/public/move-page",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/MovePublicWallboardPageRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/MovePublicWallboardPageResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyManagerWallboardDisplay",
+    "python": "get_my_manager_wallboard_display",
+    "javascript": "getMyManagerWallboardDisplay",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "after",
+        "where": "query",
+        "py": "after",
+        "js": "after",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDisplayResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyManagerApiKey",
+    "python": "get_my_manager_api_key",
+    "javascript": "getMyManagerApiKey",
+    "method": "GET",
+    "path": "api/v1/session/me/api-key",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalManagerApiKey"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GenerateMyManagerApiKey",
+    "python": "generate_my_manager_api_key",
+    "javascript": "generateMyManagerApiKey",
+    "method": "POST",
+    "path": "api/v1/session/me/api-key",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/PersonalApiKeyRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PersonalApiKeyResponse"
     },
     "binary": false,
     "example": {}
@@ -4176,9 +6816,13 @@
     "method": "GET",
     "path": "api/v1/session/me/tabs",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerTabs"
     },
@@ -4192,6 +6836,9 @@
     "method": "POST",
     "path": "api/v1/session/me/tabs/{tabId}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4208,6 +6855,7 @@
     "body": {
       "$ref": "#/components/schemas/PersonalTabRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerTabs"
     },
@@ -4221,6 +6869,9 @@
     "method": "POST",
     "path": "api/v1/session/me/profile/{field}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4236,6 +6887,7 @@
     "body": {
       "$ref": "#/components/schemas/PersonalProfileRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalManagerProfile"
     },
@@ -4249,11 +6901,15 @@
     "method": "POST",
     "path": "api/v1/session/me/email-verification",
     "status": 202,
+    "statuses": [
+      202
+    ],
     "auth": true,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/PersonalEmailRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
     },
@@ -4267,11 +6923,15 @@
     "method": "POST",
     "path": "api/v1/session/me/email-confirmation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/PersonalEmailConfirmation"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
     },
@@ -4285,11 +6945,15 @@
     "method": "POST",
     "path": "api/v1/session/me/password",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [],
     "body": {
       "$ref": "#/components/schemas/PersonalPasswordRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PersonalAccountResult"
     },
@@ -4297,12 +6961,45 @@
     "example": {}
   },
   {
-    "operation": "GetServices",
-    "python": "get_services",
-    "javascript": "getServices",
+    "operation": "GetPublicWallboard",
+    "python": "get_public_wallboard",
+    "javascript": "getPublicWallboard",
     "method": "GET",
-    "path": "api/v1/services",
+    "path": "api/v1/public/wallboard",
     "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "after",
+        "where": "query",
+        "py": "after",
+        "js": "after",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDisplayResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetServiceExportCount",
+    "python": "get_service_export_count",
+    "javascript": "getServiceExportCount",
+    "method": "GET",
+    "path": "api/v1/services/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4334,8 +7031,77 @@
       }
     ],
     "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetServices",
+    "python": "get_services",
+    "javascript": "getServices",
+    "method": "GET",
+    "path": "api/v1/services",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ServiceDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetServiceCount",
+    "python": "get_service_count",
+    "javascript": "getServiceCount",
+    "method": "GET",
+    "path": "api/v1/services/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PeopleDirectoryCount"
     },
     "binary": false,
     "example": {}
@@ -4347,6 +7113,9 @@
     "method": "GET",
     "path": "api/v1/services/{serviceKid}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4360,6 +7129,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ServiceDetailsResponse"
     },
@@ -4373,6 +7143,9 @@
     "method": "POST",
     "path": "api/v1/services/{serviceKid}/profile/{field}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4397,6 +7170,7 @@
     "body": {
       "$ref": "#/components/schemas/ServiceProfileRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ServiceDetailsResponse"
     },
@@ -4410,6 +7184,9 @@
     "method": "POST",
     "path": "api/v1/services/{serviceKid}/api-key",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4425,6 +7202,7 @@
     "body": {
       "$ref": "#/components/schemas/ServiceApiKeyRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ServiceApiKeyResponse"
     },
@@ -4438,6 +7216,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/settlements",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4461,6 +7242,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SettlementHistoryResponse"
     },
@@ -4489,6 +7271,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/settlements/{period}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4512,6 +7297,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SettlementDetailResponse"
     },
@@ -4542,6 +7328,9 @@
     "method": "GET",
     "path": "api/v1/tenant/status",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4556,6 +7345,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/TenantStatusResponse"
     },
@@ -4569,6 +7359,9 @@
     "method": "GET",
     "path": "api/v1/tenant/status/page",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4611,8 +7404,356 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/TenantStatusPageResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ConvertToolTime",
+    "python": "convert_tool_time",
+    "javascript": "convertToolTime",
+    "method": "POST",
+    "path": "api/v1/tenant/tools/time",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/ToolTimeRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ToolTimeResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "InspectToolKid",
+    "python": "inspect_tool_kid",
+    "javascript": "inspectToolKid",
+    "method": "POST",
+    "path": "api/v1/tenant/tools/kid",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/ToolKidInspectionRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ToolKidInspectionResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "QueueMyTestMail",
+    "python": "queue_my_test_mail",
+    "javascript": "queueMyTestMail",
+    "method": "POST",
+    "path": "api/v1/tenant/tools/test-mail",
+    "status": 202,
+    "statuses": [
+      202
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/ToolTestMailRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ToolTestMailResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitTimelineFields",
+    "python": "get_unit_timeline_fields",
+    "javascript": "getUnitTimelineFields",
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/timeline/fields",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitTimelineFields"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitTimeline",
+    "python": "get_unit_timeline",
+    "javascript": "getUnitTimeline",
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/timeline",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "fromUtc",
+        "where": "query",
+        "py": "from_utc",
+        "js": "fromUtc",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      {
+        "name": "untilUtc",
+        "where": "query",
+        "py": "until_utc",
+        "js": "untilUtc",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      {
+        "name": "sources",
+        "where": "query",
+        "py": "sources",
+        "js": "sources",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "field",
+        "where": "query",
+        "py": "field",
+        "js": "field",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitTimelinePage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocuments",
+    "python": "get_unit_documents",
+    "javascript": "getUnitDocuments",
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/documents",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Offset",
+        "where": "query",
+        "py": "offset",
+        "js": "offset",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Limit",
+        "where": "query",
+        "py": "limit",
+        "js": "limit",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentsCount",
+    "python": "get_unit_documents_count",
+    "javascript": "getUnitDocumentsCount",
+    "method": "GET",
+    "path": "api/v1/units/{unitKid}/documents/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Search",
+        "where": "query",
+        "py": "search",
+        "js": "search",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Date",
+        "where": "query",
+        "py": "date",
+        "js": "date",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDocumentCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentNeighbors",
+    "python": "get_unit_document_neighbors",
+    "javascript": "getUnitDocumentNeighbors",
+    "method": "GET",
+    "path": "api/v1/documents/{cycleKid}/neighbors",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "path",
+        "py": "cycle_kid",
+        "js": "cycleKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DocumentNeighbors"
     },
     "binary": false,
     "example": {}
@@ -4622,15 +7763,18 @@
     "python": "get_unit_document_table",
     "javascript": "getUnitDocumentTable",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table",
+    "path": "api/v1/documents/{cycleKid}/table",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -4652,9 +7796,19 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/DocumentTable"
     },
@@ -4666,15 +7820,18 @@
     "python": "get_unit_document_html",
     "javascript": "getUnitDocumentHtml",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/table.html",
+    "path": "api/v1/documents/{cycleKid}/table.html",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -4696,9 +7853,19 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -4711,15 +7878,18 @@
     "python": "get_unit_document_svg",
     "javascript": "getUnitDocumentSvg",
     "method": "GET",
-    "path": "api/v1/documents/{documentKid}/graph.svg",
+    "path": "api/v1/documents/{cycleKid}/graph.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
-        "name": "documentKid",
+        "name": "cycleKid",
         "where": "path",
-        "py": "document_kid",
-        "js": "documentKid",
+        "py": "cycle_kid",
+        "js": "cycleKid",
         "schema": {
           "type": "string"
         }
@@ -4740,6 +7910,15 @@
         "js": "settings",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
         }
       },
       {
@@ -4754,11 +7933,550 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
     },
     "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentSvg2",
+    "python": "get_unit_document_svg2",
+    "javascript": "getUnitDocumentSvg2",
+    "method": "GET",
+    "path": "api/v1/documents/{cycleKid}/graph2.svg",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "path",
+        "py": "cycle_kid",
+        "js": "cycleKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "py": "states",
+        "js": "states",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "py": "settings",
+        "js": "settings",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentGraph",
+    "python": "get_unit_document_graph",
+    "javascript": "getUnitDocumentGraph",
+    "method": "GET",
+    "path": "api/v1/documents/{cycleKid}/graph",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "path",
+        "py": "cycle_kid",
+        "js": "cycleKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "py": "states",
+        "js": "states",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "py": "settings",
+        "js": "settings",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WashDocChartResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentPng",
+    "python": "get_unit_document_png",
+    "javascript": "getUnitDocumentPng",
+    "method": "GET",
+    "path": "api/v1/documents/{cycleKid}/graph.png",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "path",
+        "py": "cycle_kid",
+        "js": "cycleKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "py": "states",
+        "js": "states",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "py": "settings",
+        "js": "settings",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitDocumentIcon",
+    "python": "get_unit_document_icon",
+    "javascript": "getUnitDocumentIcon",
+    "method": "GET",
+    "path": "api/v1/documents/{cycleKid}/icon.svg",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "path",
+        "py": "cycle_kid",
+        "js": "cycleKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "py": "states",
+        "js": "states",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "py": "settings",
+        "js": "settings",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetOutOfOrderUnits",
+    "python": "get_out_of_order_units",
+    "javascript": "getOutOfOrderUnits",
+    "method": "GET",
+    "path": "api/v1/units/out-of-service",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/OutOfOrderPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "RestoreOutOfOrderUnit",
+    "python": "restore_out_of_order_unit",
+    "javascript": "restoreOutOfOrderUnit",
+    "method": "POST",
+    "path": "api/v1/units/{unitKid}/out-of-service/restore",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "unitKid",
+        "where": "path",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/OutOfOrderRestoreRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/OutOfOrderRestoreResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUnitExportCount",
+    "python": "get_unit_export_count",
+    "javascript": "getUnitExportCount",
+    "method": "GET",
+    "path": "api/v1/units/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "py": "terminal_kid",
+        "js": "terminalKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "py": "running_only",
+        "js": "runningOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "autoOutOfOrderOnly",
+        "where": "query",
+        "py": "auto_out_of_order_only",
+        "js": "autoOutOfOrderOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetTerminalExportCount",
+    "python": "get_terminal_export_count",
+    "javascript": "getTerminalExportCount",
+    "method": "GET",
+    "path": "api/v1/terminals/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "py": "terminal_kid",
+        "js": "terminalKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "py": "running_only",
+        "js": "runningOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetActiveUnitCount",
+    "python": "get_active_unit_count",
+    "javascript": "getActiveUnitCount",
+    "method": "GET",
+    "path": "api/v1/units/active-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveUnitCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetActiveTerminalCount",
+    "python": "get_active_terminal_count",
+    "javascript": "getActiveTerminalCount",
+    "method": "GET",
+    "path": "api/v1/terminals/active-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveUnitCountResponse"
+    },
+    "binary": false,
     "example": {}
   },
   {
@@ -4768,6 +8486,9 @@
     "method": "GET",
     "path": "api/v1/units",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4842,9 +8563,167 @@
         "schema": {
           "type": "boolean"
         }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "py": "terminal_kid",
+        "js": "terminalKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "py": "running_only",
+        "js": "runningOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "autoOutOfOrderOnly",
+        "where": "query",
+        "py": "auto_out_of_order_only",
+        "js": "autoOutOfOrderOnly",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UnitDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetTerminals",
+    "python": "get_terminals",
+    "javascript": "getTerminals",
+    "method": "GET",
+    "path": "api/v1/terminals",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "fields",
+        "where": "query",
+        "py": "fields",
+        "js": "fields",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "includeCoordinates",
+        "where": "query",
+        "py": "include_coordinates",
+        "js": "includeCoordinates",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "terminalKid",
+        "where": "query",
+        "py": "terminal_kid",
+        "js": "terminalKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "runningOnly",
+        "where": "query",
+        "py": "running_only",
+        "js": "runningOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitDirectoryResponse"
     },
@@ -4858,6 +8737,9 @@
     "method": "POST",
     "path": "api/v1/units/{unitKid}/groups/settings/{group}/{setting}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4891,6 +8773,7 @@
     "body": {
       "$ref": "#/components/schemas/UnitSettingRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UnitSettingResponse"
     },
@@ -4904,6 +8787,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/users/balances",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4919,6 +8805,7 @@
     "body": {
       "$ref": "#/components/schemas/UserBalancesRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserBalancesResponse"
     },
@@ -4959,6 +8846,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/next-number",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -4972,6 +8862,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserNumberSuggestionResponse"
     },
@@ -4985,6 +8876,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/next-number-after",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5007,6 +8901,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserNumberSuggestionResponse"
     },
@@ -5020,6 +8915,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/{userKid}/workspace",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5042,6 +8940,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserWorkspaceResponse"
     },
@@ -5055,6 +8954,9 @@
     "method": "GET",
     "path": "api/v1/banks/{bankKid}/users/{userKid}/activation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5077,6 +8979,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserActivationResponse"
     },
@@ -5090,6 +8993,9 @@
     "method": "POST",
     "path": "api/v1/banks/{bankKid}/users/{userKid}/commands",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5114,8 +9020,192 @@
     "body": {
       "$ref": "#/components/schemas/UserCommandRequest"
     },
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserWorkspaceResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUserExportCount",
+    "python": "get_user_export_count",
+    "javascript": "getUserExportCount",
+    "method": "GET",
+    "path": "api/v1/users/export-count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DirectoryExportCountResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUsers",
+    "python": "get_users",
+    "javascript": "getUsers",
+    "method": "GET",
+    "path": "api/v1/users",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "filter",
+        "where": "query",
+        "py": "filter",
+        "js": "filter",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "sort",
+        "where": "query",
+        "py": "sort",
+        "js": "sort",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "direction",
+        "where": "query",
+        "py": "direction",
+        "js": "direction",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "enabledOnly",
+        "where": "query",
+        "py": "enabled_only",
+        "js": "enabledOnly",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UserDirectoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetUserCount",
+    "python": "get_user_count",
+    "javascript": "getUserCount",
+    "method": "GET",
+    "path": "api/v1/users/count",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PeopleDirectoryCount"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "CreateUserEvaskeriSession",
+    "python": "create_user_evaskeri_session",
+    "javascript": "createUserEvaskeriSession",
+    "method": "POST",
+    "path": "api/v1/users/{userKid}/evaskeri-session",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "userKid",
+        "where": "path",
+        "py": "user_kid",
+        "js": "userKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/UserEvaskeriSession"
     },
     "binary": false,
     "example": {}
@@ -5127,6 +9217,9 @@
     "method": "GET",
     "path": "api/v1/users/{userKid}/receipts",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5159,6 +9252,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/UserReceiptsResponse"
     },
@@ -5172,6 +9266,9 @@
     "method": "GET",
     "path": "api/v1/search/users",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5194,6 +9291,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -5207,6 +9305,9 @@
     "method": "GET",
     "path": "api/v1/search/user-sms",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5220,6 +9321,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
     },
@@ -5233,6 +9335,9 @@
     "method": "GET",
     "path": "api/v1/search/user-activation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": true,
     "parameters": [
       {
@@ -5246,8 +9351,924 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/SearchResults"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardBankStorage",
+    "python": "get_my_wallboard_bank_storage",
+    "javascript": "getMyWallboardBankStorage",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/bank-storage",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardBankStorageResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayBankStorage",
+    "python": "get_wallboard_display_bank_storage",
+    "javascript": "getWallboardDisplayBankStorage",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/bank-storage",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardBankStorageResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardLocationInfo",
+    "python": "get_my_wallboard_location_info",
+    "javascript": "getMyWallboardLocationInfo",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/location-info",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationInfoResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayLocationInfo",
+    "python": "get_wallboard_display_location_info",
+    "javascript": "getWallboardDisplayLocationInfo",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/location-info",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationInfoResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardLocationMap",
+    "python": "get_my_wallboard_location_map",
+    "javascript": "getMyWallboardLocationMap",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/location-map",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationMapResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayLocationMap",
+    "python": "get_wallboard_display_location_map",
+    "javascript": "getWallboardDisplayLocationMap",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/location-map",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardLocationMapResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardActiveManagers",
+    "python": "get_my_wallboard_active_managers",
+    "javascript": "getMyWallboardActiveManagers",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/active-managers",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayActiveManagers",
+    "python": "get_wallboard_display_active_managers",
+    "javascript": "getWallboardDisplayActiveManagers",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/active-managers",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ActiveManagerStatisticsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardApplicationLoadHistory",
+    "python": "get_my_wallboard_application_load_history",
+    "javascript": "getMyWallboardApplicationLoadHistory",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/application-load-history/{widgetType}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "widgetType",
+        "where": "path",
+        "py": "widget_type",
+        "js": "widgetType",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayApplicationLoadHistory",
+    "python": "get_wallboard_display_application_load_history",
+    "javascript": "getWallboardDisplayApplicationLoadHistory",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/application-load-history/{widgetType}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "widgetType",
+        "where": "path",
+        "py": "widget_type",
+        "js": "widgetType",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ApplicationLoadHistoryResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "StartWallboardPairing",
+    "python": "start_wallboard_pairing",
+    "javascript": "startWallboardPairing",
+    "method": "POST",
+    "path": "api/v1/wallboard/pairings",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/StartWallboardPairing"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingStarted"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "FindWallboardPairings",
+    "python": "find_wallboard_pairings",
+    "javascript": "findWallboardPairings",
+    "method": "GET",
+    "path": "api/v1/wallboard/pairings",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "query",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WallboardPairingInfo"
+      }
+    },
+    "binary": false,
+    "example": []
+  },
+  {
+    "operation": "GetWallboardPairing",
+    "python": "get_wallboard_pairing",
+    "javascript": "getWallboardPairing",
+    "method": "GET",
+    "path": "api/v1/wallboard/pairings/{pairingId}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pairingId",
+        "where": "path",
+        "py": "pairing_id",
+        "js": "pairingId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingInfo"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ApproveWallboardPairing",
+    "python": "approve_wallboard_pairing",
+    "javascript": "approveWallboardPairing",
+    "method": "POST",
+    "path": "api/v1/wallboard/pairings/{pairingId}/approve",
+    "status": 204,
+    "statuses": [
+      204
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "pairingId",
+        "where": "path",
+        "py": "pairing_id",
+        "js": "pairingId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/ApproveWallboardPairing"
+    },
+    "multipart": null,
+    "response": null,
+    "binary": false,
+    "example": null
+  },
+  {
+    "operation": "RedeemWallboardPairing",
+    "python": "redeem_wallboard_pairing",
+    "javascript": "redeemWallboardPairing",
+    "method": "POST",
+    "path": "api/v1/wallboard/pairings/{pairingId}/token",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "pairingId",
+        "where": "path",
+        "py": "pairing_id",
+        "js": "pairingId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/RedeemWallboardPairing"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingToken"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ChallengeWallboardDevice",
+    "python": "challenge_wallboard_device",
+    "javascript": "challengeWallboardDevice",
+    "method": "POST",
+    "path": "api/v1/wallboard/devices/{deviceId}/challenge",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "py": "device_id",
+        "js": "deviceId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDeviceChallenge"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ResumeWallboardSession",
+    "python": "resume_wallboard_session",
+    "javascript": "resumeWallboardSession",
+    "method": "POST",
+    "path": "api/v1/wallboard/devices/{deviceId}/session",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "py": "device_id",
+        "js": "deviceId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": {
+      "$ref": "#/components/schemas/ResumeWallboardSession"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardPairingToken"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDevice",
+    "python": "get_wallboard_device",
+    "javascript": "getWallboardDevice",
+    "method": "GET",
+    "path": "api/v1/wallboard/devices/{deviceId}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "py": "device_id",
+        "js": "deviceId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardDeviceInfo"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "RevokeWallboardDevice",
+    "python": "revoke_wallboard_device",
+    "javascript": "revokeWallboardDevice",
+    "method": "DELETE",
+    "path": "api/v1/wallboard/devices/{deviceId}",
+    "status": 204,
+    "statuses": [
+      204
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "deviceId",
+        "where": "path",
+        "py": "device_id",
+        "js": "deviceId",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": null,
+    "binary": false,
+    "example": null
+  },
+  {
+    "operation": "SearchMyWallboardPlex",
+    "python": "search_my_wallboard_plex",
+    "javascript": "searchMyWallboardPlex",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/search",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "query",
+        "where": "query",
+        "py": "query",
+        "js": "query",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PlexSearchResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetMyWallboardPlexQueue",
+    "python": "get_my_wallboard_plex_queue",
+    "javascript": "getMyWallboardPlexQueue",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/queue",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "reference",
+        "where": "query",
+        "py": "reference",
+        "js": "reference",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "displayId",
+        "where": "query",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PlexQueueResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "StartMyWallboardPlexPlayback",
+    "python": "start_my_wallboard_plex_playback",
+    "javascript": "startMyWallboardPlexPlayback",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/start",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "reference",
+        "where": "query",
+        "py": "reference",
+        "js": "reference",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "index",
+        "where": "query",
+        "py": "index",
+        "js": "index",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "displayId",
+        "where": "query",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PlexStartResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "ReadMyWallboardPlexStream",
+    "python": "read_my_wallboard_plex_stream",
+    "javascript": "readMyWallboardPlexStream",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/stream/{ticket}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "ticket",
+        "where": "path",
+        "py": "ticket",
+        "js": "ticket",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "StopMyWallboardPlexPlayback",
+    "python": "stop_my_wallboard_plex_playback",
+    "javascript": "stopMyWallboardPlexPlayback",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/plex/stop/{ticket}",
+    "status": 204,
+    "statuses": [
+      204
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "ticket",
+        "where": "path",
+        "py": "ticket",
+        "js": "ticket",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": null,
+    "binary": false,
+    "example": null
+  },
+  {
+    "operation": "GetMyWallboardReservationCalendar",
+    "python": "get_my_wallboard_reservation_calendar",
+    "javascript": "getMyWallboardReservationCalendar",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/reservation-calendar",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetWallboardDisplayReservationCalendar",
+    "python": "get_wallboard_display_reservation_calendar",
+    "javascript": "getWallboardDisplayReservationCalendar",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/display/{displayId}/reservation-calendar",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "displayId",
+        "where": "path",
+        "py": "display_id",
+        "js": "displayId",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "locationKid",
+        "where": "query",
+        "py": "location_kid",
+        "js": "locationKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "portrait",
+        "where": "query",
+        "py": "portrait",
+        "js": "portrait",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/WallboardReservationCalendarResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "SearchMyWallboardVideos",
+    "python": "search_my_wallboard_videos",
+    "javascript": "searchMyWallboardVideos",
+    "method": "GET",
+    "path": "api/v1/session/me/wallboards/videos/search",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "widgetType",
+        "where": "query",
+        "py": "widget_type",
+        "js": "widgetType",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "query",
+        "where": "query",
+        "py": "query",
+        "js": "query",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/VideoSearchResponse"
     },
     "binary": false,
     "example": {}
@@ -5259,9 +10280,13 @@
     "method": "GET",
     "path": "download",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5276,6 +10301,9 @@
     "method": "GET",
     "path": "download/windows/{architecture}/portal.appinstaller",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5289,6 +10317,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5303,6 +10332,10 @@
     "method": "GET",
     "path": "download/windows/{architecture}/{fileName}",
     "status": 200,
+    "statuses": [
+      200,
+      206
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5325,6 +10358,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5339,6 +10373,9 @@
     "method": "GET",
     "path": "api/v1/circles/gradient/{colors}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5352,6 +10389,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5366,6 +10404,9 @@
     "method": "GET",
     "path": "api/v1/circles/gradient/{colors}/{width}x{height}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5399,6 +10440,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5413,6 +10455,9 @@
     "method": "GET",
     "path": "api/v1/circles/progress/{background}/{colors}/{percent}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5445,6 +10490,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5459,6 +10505,9 @@
     "method": "GET",
     "path": "api/v1/circles/progress/{background}/{colors}/{percent}/{width}x{height}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5511,6 +10560,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5525,6 +10575,9 @@
     "method": "GET",
     "path": "api/v1/circles/running/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5538,6 +10591,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5552,6 +10606,9 @@
     "method": "GET",
     "path": "api/v1/circles/running/{color}/{width}x{height}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5585,6 +10642,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5599,6 +10657,9 @@
     "method": "GET",
     "path": "api/v1/gradients/linear/{colors}/{angle}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5622,6 +10683,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5636,6 +10698,9 @@
     "method": "GET",
     "path": "api/v1/gradients/linear/{colors}/{angle}/{width}x{height}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5679,6 +10744,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5693,6 +10759,9 @@
     "method": "GET",
     "path": "api/v1/icon/presentation",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5732,9 +10801,19 @@
           "type": "integer",
           "format": "int32"
         }
+      },
+      {
+        "name": "useCalendarText",
+        "where": "query",
+        "py": "use_calendar_text",
+        "js": "useCalendarText",
+        "schema": {
+          "type": "boolean"
+        }
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/IconPresentationResponse"
     },
@@ -5748,6 +10827,9 @@
     "method": "GET",
     "path": "api/v1/icon/catalog/{iconSet}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5761,6 +10843,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "array",
       "items": {
@@ -5777,6 +10860,9 @@
     "method": "GET",
     "path": "api/v1/icon/{iconSet}/{kid}.{format}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5808,6 +10894,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5822,6 +10909,9 @@
     "method": "GET",
     "path": "api/v1/icon/{iconSet}/{kid}/{size}.{format}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5863,6 +10953,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5877,6 +10968,9 @@
     "method": "GET",
     "path": "api/v1/icon/{iconSet}/{kid}/{backColor}/{size}.{format}",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5927,6 +11021,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5941,6 +11036,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5954,6 +11052,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -5968,6 +11067,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{color}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -5991,6 +11093,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6005,6 +11108,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{color}/{background}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6037,6 +11143,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6051,6 +11158,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{parts}/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6073,6 +11183,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6087,6 +11198,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{parts}/{color}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6119,6 +11233,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6133,6 +11248,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine/{parts}/{color}/{background}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6174,6 +11292,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6188,6 +11307,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-text/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6201,6 +11323,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6215,6 +11338,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-text/{color}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6238,6 +11364,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6252,6 +11379,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-text/{color}/{background}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6284,6 +11414,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6298,6 +11429,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-logo-text/{color}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6311,6 +11445,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6325,6 +11460,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-logo-text/{color}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6348,6 +11486,7 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6362,6 +11501,9 @@
     "method": "GET",
     "path": "api/v1/logos/kombine-logo-text/{color}/{background}/{width}.svg",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6394,6 +11536,214 @@
       }
     ],
     "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetCycleChartPresentation",
+    "python": "get_cycle_chart_presentation",
+    "javascript": "getCycleChartPresentation",
+    "method": "GET",
+    "path": "api/v1/public/cycle-chart/presentation",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/CycleChartPresentationResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicLiveMachines",
+    "python": "get_public_live_machines",
+    "javascript": "getPublicLiveMachines",
+    "method": "GET",
+    "path": "api/v1/public/statistics/live-machines",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LiveMachineResponse"
+      }
+    },
+    "binary": false,
+    "example": []
+  },
+  {
+    "operation": "GetPublicMachineErrors",
+    "python": "get_public_machine_errors",
+    "javascript": "getPublicMachineErrors",
+    "method": "GET",
+    "path": "api/v1/public/widgets/machine-errors",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicMachineErrorsPage"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicRecentCameraPhotos",
+    "python": "get_public_recent_camera_photos",
+    "javascript": "getPublicRecentCameraPhotos",
+    "method": "GET",
+    "path": "api/v1/public/camera/photos",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/PublicCameraPhoto"
+      }
+    },
+    "binary": false,
+    "example": []
+  },
+  {
+    "operation": "GetPublicCameraThumbnail",
+    "python": "get_public_camera_thumbnail",
+    "javascript": "getPublicCameraThumbnail",
+    "method": "GET",
+    "path": "api/v1/public/camera/photos/{id}/thumbnail",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "id",
+        "where": "path",
+        "py": "id",
+        "js": "id",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "string",
+      "format": "binary"
+    },
+    "binary": true,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicCycleWidget",
+    "python": "get_public_cycle_widget",
+    "javascript": "getPublicCycleWidget",
+    "method": "GET",
+    "path": "api/v1/public/widgets/cycle",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "query",
+        "py": "cycle_kid",
+        "js": "cycleKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "unitKid",
+        "where": "query",
+        "py": "unit_kid",
+        "js": "unitKid",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicCycleWidgetResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicPurchasesChart",
+    "python": "get_public_purchases_chart",
+    "javascript": "getPublicPurchasesChart",
+    "method": "GET",
+    "path": "api/v1/public/statistics/purchases/chart/{color}.svg",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "color",
+        "where": "path",
+        "py": "color",
+        "js": "color",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
     "response": {
       "type": "string",
       "format": "binary"
@@ -6408,6 +11758,9 @@
     "method": "GET",
     "path": "api/v1/public/displays/Map1",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [
       {
@@ -6422,8 +11775,58 @@
       }
     ],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PurchaseMapSnapshot"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicScopedUnitProgress",
+    "python": "get_public_scoped_unit_progress",
+    "javascript": "getPublicScopedUnitProgress",
+    "method": "GET",
+    "path": "api/v1/public/widgets/progress/{kid}",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [
+      {
+        "name": "kid",
+        "where": "path",
+        "py": "kid",
+        "js": "kid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "pageSize",
+        "where": "query",
+        "py": "page_size",
+        "js": "pageSize",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      {
+        "name": "cursor",
+        "where": "query",
+        "py": "cursor",
+        "js": "cursor",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicScopedProgressResponse"
     },
     "binary": false,
     "example": {}
@@ -6435,9 +11838,13 @@
     "method": "GET",
     "path": "api/v1/public/statistics/purchases",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/PurchasesResponse"
     },
@@ -6445,8 +11852,18 @@
     "example": {
       "tenantKid": "3E7QAo",
       "count": 42,
-      "amount": 123.45,
-      "currency": "DKK",
+      "currencies": [
+        {
+          "currency": "DKK",
+          "count": 30,
+          "amount": 100.25
+        },
+        {
+          "currency": "EUR",
+          "count": 12,
+          "amount": 23.2
+        }
+      ],
       "lookbackHours": 1,
       "sinceUtc": "2026-09-23T09:00:00+00:00",
       "measuredAtUtc": "2026-09-23T10:00:00+00:00"
@@ -6459,9 +11876,13 @@
     "method": "GET",
     "path": "api/v1/public/statistics/active-users",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ActiveUsersResponse"
     },
@@ -6475,15 +11896,99 @@
     }
   },
   {
+    "operation": "GetPublicWidgetPresentation",
+    "python": "get_public_widget_presentation",
+    "javascript": "getPublicWidgetPresentation",
+    "method": "GET",
+    "path": "api/v1/public/widgets",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/PublicWidgetPresentationResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicReservations",
+    "python": "get_public_reservations",
+    "javascript": "getPublicReservations",
+    "method": "GET",
+    "path": "api/v1/public/statistics/reservations",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ReservationsStatisticsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicReservedMachines",
+    "python": "get_public_reserved_machines",
+    "javascript": "getPublicReservedMachines",
+    "method": "GET",
+    "path": "api/v1/public/statistics/reserved-machines",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ReservedMachinesStatisticsResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "GetPublicRunningMachines",
+    "python": "get_public_running_machines",
+    "javascript": "getPublicRunningMachines",
+    "method": "GET",
+    "path": "api/v1/public/statistics/running-machines",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/RunningMachinesResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetPortalStatus",
     "python": "get_portal_status",
     "javascript": "getPortalStatus",
     "method": "GET",
     "path": "api/v1/status",
     "status": 200,
+    "statuses": [
+      200
+    ],
     "auth": false,
     "parameters": [],
     "body": null,
+    "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ApiStatusResponse"
     },
