@@ -1,4 +1,4 @@
-## 0.23.0
+## 0.25.0
 
 - Refresh the generated API contract for the current Portal release.
 

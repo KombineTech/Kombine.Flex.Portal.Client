@@ -47,7 +47,7 @@ def sample(spec):
     if kind == 'number':
         return 12.5
     if kind == 'string':
-        return 'tekst Ã¦ ðŸ˜€'
+        return 'tekst æ 😀'
     if kind == 'boolean':
         return False
     if kind == 'array':
@@ -89,7 +89,7 @@ class ContractTests(unittest.TestCase):
                 for param in case['parameters']:
                     value = sample(param['schema'])
                     if param['schema'].get('type') == 'string':
-                        value = 'Kid /?&+#Ã¦' if param['where'] == 'path' else 'da-DK' if param['where'] == 'header' else 'a b/&?+Ã¦'
+                        value = 'Kid /?&+#æ' if param['where'] == 'path' else 'da-DK' if param['where'] == 'header' else 'a b/&?+æ'
                     text = str(value).lower() if isinstance(value, bool) else str(value)
                     if param['where'] == 'path':
                         args.append(value)
@@ -162,7 +162,7 @@ class RuntimeTests(unittest.TestCase):
         for url in ['https://api.example.test/', 'http://localhost:123/', 'http://127.0.0.1:123/', 'http://[::1]:123/']:
             self.assertEqual(PortalClient(url).base_url, url)
         api = PortalClient('https://api.example.test/')
-        for token in ['', 'a b', 'a\r\nb', 'Ã¦']:
+        for token in ['', 'a b', 'a\r\nb', 'æ']:
             with self.assertRaises(ValueError):
                 api.access_token = token
         with self.assertRaises(AttributeError):
