@@ -10,12 +10,12 @@ export class PortalClient extends BaseClient {
 
   /** Lists Account2 postings with full-selection totals per currency. */
   getBankAccount(bankKid: string, options: Models.GetBankAccountOptions = {}, request: RequestOptions = {}): Promise<Models.AccountResponse> {
-    return this.send("GetBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountResponse>;
+    return this.send("GetBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UnitKids": options.unitKids, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountResponse>;
   }
 
   /** Checks whether filtered Account2 postings changed, including late arrivals with old event timestamps. */
   getBankAccountRevision(bankKid: string, options: Models.GetBankAccountRevisionOptions = {}, request: RequestOptions = {}): Promise<Models.AccountRevisionResponse> {
-    return this.send("GetBankAccountRevision", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountRevisionResponse>;
+    return this.send("GetBankAccountRevision", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UnitKids": options.unitKids, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit}, undefined, request) as Promise<Models.AccountRevisionResponse>;
   }
 
   /** Reverses one eligible resident consumption posting by appending a linked compensation. */
@@ -205,7 +205,7 @@ export class PortalClient extends BaseClient {
 
   /** Downloads the complete filtered selection as CSV or a genuine Excel workbook. */
   exportBankAccount(bankKid: string, options: Models.ExportBankAccountOptions = {}, request: RequestOptions = {}): Promise<PortalDownload> {
-    return this.send("ExportBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit, "format": options.format}, undefined, request) as Promise<PortalDownload>;
+    return this.send("ExportBankAccount", {"bankKid": bankKid, "From": options.from, "Through": options.through, "TimeZone": options.timeZone, "Period": options.period, "LocationKid": options.locationKid, "LocationKids": options.locationKids, "UnitKid": options.unitKid, "UnitKids": options.unitKids, "UserKid": options.userKid, "Kind": options.kind, "IncludeZero": options.includeZero, "IncludeBookings": options.includeBookings, "IncludeMonthly": options.includeMonthly, "Offset": options.offset, "Limit": options.limit, "format": options.format}, undefined, request) as Promise<PortalDownload>;
   }
 
   /** Download filtered residents as UTF-8 CSV, at most 10,000 residents and 4 MiB text. */
@@ -626,6 +626,11 @@ export class PortalClient extends BaseClient {
   /** Inspect only the supplied KID with the installed Kombine.Flex.Kid parser. */
   inspectToolKid(body: Models.ToolKidInspectionRequest, request: RequestOptions = {}): Promise<Models.ToolKidInspectionResponse> {
     return this.send("InspectToolKid", {}, body, request) as Promise<Models.ToolKidInspectionResponse>;
+  }
+
+  /** Queue one fixed test email to the signed-in manager's current registered address. */
+  queueMyTestMail(body: Models.ToolTestMailRequest, request: RequestOptions = {}): Promise<Models.ToolTestMailResponse> {
+    return this.send("QueueMyTestMail", {}, body, request) as Promise<Models.ToolTestMailResponse>;
   }
 
   /** Get the authorized machine context, log categories and readable timeline fields. */

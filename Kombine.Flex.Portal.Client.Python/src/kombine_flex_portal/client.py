@@ -11,13 +11,13 @@ class PortalClient(BaseClient):
         'Resolve the Forbrug icon text from the most frequent authorized Log1 currency.'
         return self._request('GetBankAccountIcon', {'bankKid': bank_kid}, None)
 
-    def get_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None) -> AccountResponse:
+    def get_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, unit_kids: list[str] | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None) -> AccountResponse:
         'Lists Account2 postings with full-selection totals per currency.'
-        return self._request('GetBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit}, None)
+        return self._request('GetBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UnitKids': unit_kids, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit}, None)
 
-    def get_bank_account_revision(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None) -> AccountRevisionResponse:
+    def get_bank_account_revision(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, unit_kids: list[str] | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None) -> AccountRevisionResponse:
         'Checks whether filtered Account2 postings changed, including late arrivals with old event timestamps.'
-        return self._request('GetBankAccountRevision', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit}, None)
+        return self._request('GetBankAccountRevision', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UnitKids': unit_kids, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit}, None)
 
     def reverse_bank_account_entry(self, bank_kid: str, transaction_kid: str) -> AccountEntryResponse:
         'Reverses one eligible resident consumption posting by appending a linked compensation.'
@@ -167,9 +167,9 @@ class PortalClient(BaseClient):
         "Read the Team MySQL cluster's load and CPU history for a display that contains the widget."
         return self._request('GetWallboardDisplayDatabaseLoadHistory', {'displayId': display_id, 'portrait': portrait}, None)
 
-    def export_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None, format: str | None = None) -> PortalDownload:
+    def export_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, unit_kids: list[str] | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None, format: str | None = None) -> PortalDownload:
         'Downloads the complete filtered selection as CSV or a genuine Excel workbook.'
-        return self._request('ExportBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit, 'format': format}, None)
+        return self._request('ExportBankAccount', {'bankKid': bank_kid, 'From': from_, 'Through': through, 'TimeZone': time_zone, 'Period': period, 'LocationKid': location_kid, 'LocationKids': location_kids, 'UnitKid': unit_kid, 'UnitKids': unit_kids, 'UserKid': user_kid, 'Kind': kind, 'IncludeZero': include_zero, 'IncludeBookings': include_bookings, 'IncludeMonthly': include_monthly, 'Offset': offset, 'Limit': limit, 'format': format}, None)
 
     def export_bank_users(self, bank_kid: str, *, filter: str | None = None, location_kid: str | None = None, deleted: str | None = None, sort: str | None = None, direction: str | None = None, location_kids: list[str] | None = None) -> PortalDownload:
         'Download filtered residents as UTF-8 CSV, at most 10,000 residents and 4 MiB text.'
@@ -506,6 +506,10 @@ class PortalClient(BaseClient):
     def inspect_tool_kid(self, body: ToolKidInspectionRequest) -> ToolKidInspectionResponse:
         'Inspect only the supplied KID with the installed Kombine.Flex.Kid parser.'
         return self._request('InspectToolKid', {}, body)
+
+    def queue_my_test_mail(self, body: ToolTestMailRequest) -> ToolTestMailResponse:
+        "Queue one fixed test email to the signed-in manager's current registered address."
+        return self._request('QueueMyTestMail', {}, body)
 
     def get_unit_timeline_fields(self, unit_kid: str) -> UnitTimelineFields:
         'Get the authorized machine context, log categories and readable timeline fields.'

@@ -109,6 +109,17 @@
         }
       },
       {
+        "name": "UnitKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "UserKid",
         "where": "query",
         "required": false,
@@ -256,6 +267,17 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -2240,6 +2262,17 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -6969,6 +7002,27 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ToolKidInspectionResponse"
+    },
+    "binary": false
+  },
+  {
+    "operation": "QueueMyTestMail",
+    "dartMethod": "queueMyTestMail",
+    "example": null,
+    "method": "POST",
+    "path": "api/v1/tenant/tools/test-mail",
+    "auth": true,
+    "statuses": [
+      202
+    ],
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/ToolTestMailRequest"
+    },
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ToolTestMailResponse"
     },
     "binary": false
   },

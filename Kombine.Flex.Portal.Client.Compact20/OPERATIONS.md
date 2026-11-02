@@ -193,6 +193,7 @@
 | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` |
 | `MovePublicWallboardPage` | POST | `/api/v1/session/me/wallboards/public/move-page` |
 | `PrepareCameraCapture` | POST | `/api/v1/camera/prepare` |
+| `QueueMyTestMail` | POST | `/api/v1/tenant/tools/test-mail` |
 | `ReadMyWallboardPlexStream` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` |
 | `RedeemWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` |
 | `RenewManagerSession` | POST | `/api/v1/session/renew` |

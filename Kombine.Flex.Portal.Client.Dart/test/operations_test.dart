@@ -38,6 +38,7 @@ void main() {
       expect(request.url.queryParametersAll["LocationKid"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["LocationKids"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["UnitKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKids"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["UserKid"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Kind"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["IncludeZero"], <Object?>["false"]);
@@ -45,11 +46,11 @@ void main() {
       expect(request.url.queryParametersAll["IncludeMonthly"], <Object?>["false"]);
       expect(request.url.queryParametersAll["Offset"], <Object?>["7"]);
       expect(request.url.queryParametersAll["Limit"], <Object?>["7"]);
-      return http.Response(encodeApiJson(<String, Object?>{"items": null, "units": null, "periods": null, "totals": null, "from": "2026-10-20", "through": null, "timeZone": null, "period": null, "offset": 7, "limit": 7, "hasMore": false, "revision": null, "documents": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"items": null, "units": null, "periods": null, "totals": null, "from": "2026-10-20", "through": null, "timeZone": null, "period": null, "offset": 7, "limit": 7, "hasMore": false, "revision": null, "dayCount": <String, Object?>{"through": null, "entries": BigInt.parse('9007199254740993')}, "documents": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getBankAccount(bankKid: "fixture /\u00e6?&", from: "2026-10-20", through: "2026-10-20", timeZone: "fixture", period: 7, locationKid: "fixture", locationKids: <String>["fixture"], unitKid: "fixture", userKid: "fixture", kind: "fixture", includeZero: false, includeBookings: false, includeMonthly: false, offset: 7, limit: 7);
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "units": null, "periods": null, "totals": null, "from": "2026-10-20", "through": null, "timeZone": null, "period": null, "offset": 7, "limit": 7, "hasMore": false, "revision": null, "documents": null}));
+    final result = await client.getBankAccount(bankKid: "fixture /\u00e6?&", from: "2026-10-20", through: "2026-10-20", timeZone: "fixture", period: 7, locationKid: "fixture", locationKids: <String>["fixture"], unitKid: "fixture", unitKids: <String>["fixture"], userKid: "fixture", kind: "fixture", includeZero: false, includeBookings: false, includeMonthly: false, offset: 7, limit: 7);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"items": null, "units": null, "periods": null, "totals": null, "from": "2026-10-20", "through": null, "timeZone": null, "period": null, "offset": 7, "limit": 7, "hasMore": false, "revision": null, "dayCount": <String, Object?>{"through": null, "entries": BigInt.parse('9007199254740993')}, "documents": null}));
     expect(sends, 1);
   });
 
@@ -69,6 +70,7 @@ void main() {
       expect(request.url.queryParametersAll["LocationKid"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["LocationKids"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["UnitKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKids"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["UserKid"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Kind"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["IncludeZero"], <Object?>["false"]);
@@ -79,7 +81,7 @@ void main() {
       return http.Response(encodeApiJson(<String, Object?>{"revision": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.getBankAccountRevision(bankKid: "fixture /\u00e6?&", from: "2026-10-20", through: "2026-10-20", timeZone: "fixture", period: 7, locationKid: "fixture", locationKids: <String>["fixture"], unitKid: "fixture", userKid: "fixture", kind: "fixture", includeZero: false, includeBookings: false, includeMonthly: false, offset: 7, limit: 7);
+    final result = await client.getBankAccountRevision(bankKid: "fixture /\u00e6?&", from: "2026-10-20", through: "2026-10-20", timeZone: "fixture", period: 7, locationKid: "fixture", locationKids: <String>["fixture"], unitKid: "fixture", unitKids: <String>["fixture"], userKid: "fixture", kind: "fixture", includeZero: false, includeBookings: false, includeMonthly: false, offset: 7, limit: 7);
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"revision": null}));
     expect(sends, 1);
   });
@@ -94,11 +96,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
 
-      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "locationKid": null, "unitKid": null, "userKid": null, "recordedAtUtc": "2026-10-20T10:00:00Z", "amountMinor": BigInt.parse('9007199254740993'), "currency": null, "description": null, "transactionType": null, "period": 7, "reversed": false, "reversalOfKid": null, "userName": null, "userNumber": null, "locationName": null, "unitName": null, "canReverse": false, "unitIconKid": null, "documentKey": null, "documentId": null, "isAnonymized": false, "paymentKind": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"kid": null, "locationKid": null, "unitKid": null, "userKid": null, "recordedAtUtc": "2026-10-20T10:00:00Z", "amountMinor": BigInt.parse('9007199254740993'), "currency": null, "description": null, "transactionType": null, "period": 7, "reversed": false, "reversalOfKid": null, "userName": null, "userNumber": null, "locationName": null, "unitName": null, "canReverse": false, "locationIconKid": null, "unitIconKid": null, "documentKey": null, "documentId": null, "isAnonymized": false, "paymentKind": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.reverseBankAccountEntry(bankKid: "fixture /\u00e6?&", transactionKid: "fixture /\u00e6?&");
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "locationKid": null, "unitKid": null, "userKid": null, "recordedAtUtc": "2026-10-20T10:00:00Z", "amountMinor": BigInt.parse('9007199254740993'), "currency": null, "description": null, "transactionType": null, "period": 7, "reversed": false, "reversalOfKid": null, "userName": null, "userNumber": null, "locationName": null, "unitName": null, "canReverse": false, "unitIconKid": null, "documentKey": null, "documentId": null, "isAnonymized": false, "paymentKind": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"kid": null, "locationKid": null, "unitKid": null, "userKid": null, "recordedAtUtc": "2026-10-20T10:00:00Z", "amountMinor": BigInt.parse('9007199254740993'), "currency": null, "description": null, "transactionType": null, "period": 7, "reversed": false, "reversalOfKid": null, "userName": null, "userNumber": null, "locationName": null, "unitName": null, "canReverse": false, "locationIconKid": null, "unitIconKid": null, "documentKey": null, "documentId": null, "isAnonymized": false, "paymentKind": null}));
     expect(sends, 1);
   });
 
@@ -856,6 +858,7 @@ void main() {
       expect(request.url.queryParametersAll["LocationKid"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["LocationKids"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["UnitKid"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["UnitKids"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["UserKid"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["Kind"], <Object?>["fixture"]);
       expect(request.url.queryParametersAll["IncludeZero"], <Object?>["false"]);
@@ -867,7 +870,7 @@ void main() {
       return http.Response.bytes([1, 2, 3], 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
-    final result = await client.exportBankAccount(bankKid: "fixture /\u00e6?&", from: "2026-10-20", through: "2026-10-20", timeZone: "fixture", period: 7, locationKid: "fixture", locationKids: <String>["fixture"], unitKid: "fixture", userKid: "fixture", kind: "fixture", includeZero: false, includeBookings: false, includeMonthly: false, offset: 7, limit: 7, format: "fixture");
+    final result = await client.exportBankAccount(bankKid: "fixture /\u00e6?&", from: "2026-10-20", through: "2026-10-20", timeZone: "fixture", period: 7, locationKid: "fixture", locationKids: <String>["fixture"], unitKid: "fixture", unitKids: <String>["fixture"], userKid: "fixture", kind: "fixture", includeZero: false, includeBookings: false, includeMonthly: false, offset: 7, limit: 7, format: "fixture");
     expect(await result.chunks.expand((chunk) => chunk).toList(), [1, 2, 3]);
     expect(sends, 1);
   });
@@ -2469,6 +2472,25 @@ void main() {
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.inspectToolKid(body: <String, Object?>{"kid": null});
     expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"canonicalKid": null, "fields": null, "normalized": false}));
+    expect(sends, 1);
+  });
+
+  test("wire QueueMyTestMail", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "POST");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/tenant/tools/test-mail");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.body, encodeApiJson(<String, Object?>{}));
+      expect(request.headers['content-type'], contains('application/json'));
+      return http.Response(encodeApiJson(<String, Object?>{"recipient": null}), 202);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.queueMyTestMail(body: <String, Object?>{});
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"recipient": null}));
     expect(sends, 1);
   });
 

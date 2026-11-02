@@ -2,6 +2,11 @@
 from __future__ import annotations
 from typing import Any, TypedDict, Required
 
+AccountDayCount = TypedDict('AccountDayCount', {
+    'through': 'str | None',
+    'entries': 'int',
+}, total=False)
+
 AccountDocumentResponse = TypedDict('AccountDocumentResponse', {
     'key': 'str | None',
     'docId': 'int | None',
@@ -27,6 +32,7 @@ AccountEntryResponse = TypedDict('AccountEntryResponse', {
     'locationName': 'str | None',
     'unitName': 'str | None',
     'canReverse': 'bool',
+    'locationIconKid': 'str | None',
     'unitIconKid': 'str | None',
     'documentKey': 'str | None',
     'documentId': 'int | None',
@@ -52,6 +58,7 @@ AccountResponse = TypedDict('AccountResponse', {
     'limit': 'int',
     'hasMore': 'bool',
     'revision': 'str | None',
+    'dayCount': 'AccountDayCount',
     'documents': 'list[AccountDocumentResponse] | None',
 }, total=False)
 
@@ -103,8 +110,12 @@ ApplicationLoadHistoryResponse = TypedDict('ApplicationLoadHistoryResponse', {
     'toUtc': 'str',
     'fetchedAtUtc': 'str',
     'refreshAfterSeconds': 'int',
-    'cpuSeries': 'list[DatabaseLoadHistorySeries] | None',
-    'memorySeries': 'list[DatabaseLoadHistorySeries] | None',
+    'cpuSeries': 'list[ApplicationLoadHistorySeries] | None',
+    'memorySeries': 'list[ApplicationLoadHistorySeries] | None',
+}, total=False)
+
+ApplicationLoadHistorySeries = TypedDict('ApplicationLoadHistorySeries', {
+    'points': 'list[HostingPoint] | None',
 }, total=False)
 
 ApproveWallboardPairing = TypedDict('ApproveWallboardPairing', {
@@ -1395,6 +1406,13 @@ ToolKidInspectionResponse = TypedDict('ToolKidInspectionResponse', {
     'canonicalKid': 'str | None',
     'fields': 'list[ToolKidField] | None',
     'normalized': 'bool',
+}, total=False)
+
+ToolTestMailRequest = TypedDict('ToolTestMailRequest', {
+}, total=False)
+
+ToolTestMailResponse = TypedDict('ToolTestMailResponse', {
+    'recipient': 'str | None',
 }, total=False)
 
 ToolTimeOffsetChoice = TypedDict('ToolTimeOffsetChoice', {

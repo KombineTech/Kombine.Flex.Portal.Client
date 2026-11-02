@@ -195,6 +195,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `LookupObjectCoordinatesAsync` | POST | `/api/v1/addresses/{kid}/lookup` |
 | `MovePublicWallboardPageAsync` | POST | `/api/v1/session/me/wallboards/public/move-page` |
 | `PrepareCameraCaptureAsync` | POST | `/api/v1/camera/prepare` |
+| `QueueMyTestMailAsync` | POST | `/api/v1/tenant/tools/test-mail` |
 | `ReadMyWallboardPlexStreamAsync` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` |
 | `RedeemWallboardPairingAsync` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` |
 | `RenewManagerSessionAsync` | POST | `/api/v1/session/renew` |

@@ -2,6 +2,12 @@
 
 Requests and responses use associative arrays with exact JSON field names. Dates remain strings. All integer fields use 64-bit PHP integers; never convert them to floats. Null and absent values are preserved.
 
+### AccountDayCount
+
+```php
+array{'through'?: string|null, 'entries'?: int}
+```
+
 ### AccountDocumentResponse
 
 ```php
@@ -11,7 +17,7 @@ array{'key'?: string|null, 'docId'?: int|null, 'lines'?: list<AccountEntryRespon
 ### AccountEntryResponse
 
 ```php
-array{'kid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'userKid'?: string|null, 'recordedAtUtc'?: string, 'amountMinor'?: int, 'currency'?: string|null, 'description'?: string|null, 'transactionType'?: string|null, 'period'?: int, 'reversed'?: bool, 'reversalOfKid'?: string|null, 'userName'?: string|null, 'userNumber'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'canReverse'?: bool, 'unitIconKid'?: string|null, 'documentKey'?: string|null, 'documentId'?: int|null, 'isAnonymized'?: bool, 'paymentKind'?: string|null}
+array{'kid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'userKid'?: string|null, 'recordedAtUtc'?: string, 'amountMinor'?: int, 'currency'?: string|null, 'description'?: string|null, 'transactionType'?: string|null, 'period'?: int, 'reversed'?: bool, 'reversalOfKid'?: string|null, 'userName'?: string|null, 'userNumber'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'canReverse'?: bool, 'locationIconKid'?: string|null, 'unitIconKid'?: string|null, 'documentKey'?: string|null, 'documentId'?: int|null, 'isAnonymized'?: bool, 'paymentKind'?: string|null}
 ```
 
 ### AccountIconResponse
@@ -23,7 +29,7 @@ array{'currency'?: string|null, 'iconKid'?: string|null}
 ### AccountResponse
 
 ```php
-array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string|null, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'documents'?: list<AccountDocumentResponse>|null}
+array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string|null, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'dayCount'?: AccountDayCount, 'documents'?: list<AccountDocumentResponse>|null}
 ```
 
 ### AccountRevisionResponse
@@ -77,7 +83,13 @@ array{'count'?: int, 'iconKid'?: string|null}
 ### ApplicationLoadHistoryResponse
 
 ```php
-array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<DatabaseLoadHistorySeries>|null, 'memorySeries'?: list<DatabaseLoadHistorySeries>|null}
+array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<ApplicationLoadHistorySeries>|null, 'memorySeries'?: list<ApplicationLoadHistorySeries>|null}
+```
+
+### ApplicationLoadHistorySeries
+
+```php
+array{'points'?: list<HostingPoint>|null}
 ```
 
 ### ApproveWallboardPairing
@@ -1104,6 +1116,18 @@ array{'kid'?: string|null}
 
 ```php
 array{'canonicalKid'?: string|null, 'fields'?: list<ToolKidField>|null, 'normalized'?: bool}
+```
+
+### ToolTestMailRequest
+
+```php
+array{}
+```
+
+### ToolTestMailResponse
+
+```php
+array{'recipient'?: string|null}
 ```
 
 ### ToolTimeOffsetChoice

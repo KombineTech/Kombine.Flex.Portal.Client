@@ -1,3 +1,7 @@
+## 0.23.0
+
+- Refresh the generated API contract for the current Portal release.
+
 ## 0.22.0
 
 - Add revision-checked public/private wallboard page transfers and wallboard change polling.

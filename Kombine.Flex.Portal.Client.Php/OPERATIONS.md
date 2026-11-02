@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `62c482fb1a6826fae1e01c6690f7fdc56e21616e88c84cec86a741cd14476461`).
-231 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `3d48b9c2b8cdd3f079d96032582d088f5e8da841c370e80aa6173dfdfbb265bb`).
+232 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -196,6 +196,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `62c482fb1a6826fae1e
 | `lookupObjectCoordinates` | `LookupObjectCoordinates` | POST | `/api/v1/addresses/{kid}/lookup` | Bearer |
 | `movePublicWallboardPage` | `MovePublicWallboardPage` | POST | `/api/v1/session/me/wallboards/public/move-page` | Bearer |
 | `prepareCameraCapture` | `PrepareCameraCapture` | POST | `/api/v1/camera/prepare` | Bearer |
+| `queueMyTestMail` | `QueueMyTestMail` | POST | `/api/v1/tenant/tools/test-mail` | Bearer |
 | `readMyWallboardPlexStream` | `ReadMyWallboardPlexStream` | GET | `/api/v1/session/me/wallboards/plex/stream/{ticket}` | Bearer |
 | `redeemWallboardPairing` | `RedeemWallboardPairing` | POST | `/api/v1/wallboard/pairings/{pairingId}/token` | Anonymous |
 | `renewManagerSession` | `RenewManagerSession` | POST | `/api/v1/session/renew` | Bearer |
