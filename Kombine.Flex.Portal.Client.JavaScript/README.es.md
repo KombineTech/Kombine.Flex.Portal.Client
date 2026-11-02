@@ -1,4 +1,4 @@
-La versión 0.34.0 incluye widgets protegidos de actividad y carga.
+La versión 0.35.0 incluye widgets protegidos de actividad y carga.
 
 La versión 0.29.0 agrega operaciones Plex autorizadas; Plex no es público.
 
@@ -85,7 +85,7 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 
 # Kombine Flex Portal — cliente JavaScript
 
-`@kombine/flex-portal-client` admite **Node.js 22+ / modern browsers** y las **182 operaciones públicas**. No necesita dependencias de ejecución, .NET, NuGet ni otras bibliotecas Kombine. Es un paquete ESM con JavaScript compilado y declaraciones TypeScript; requiere fetch, BigInt, Web Streams y ES2022. Los permisos y las reglas de negocio siguen en la API.
+`@kombine/flex-portal-client` admite **Node.js 22+ / modern browsers** y las **232 operaciones públicas**. No necesita dependencias de ejecución, .NET, NuGet ni otras bibliotecas Kombine. Es un paquete ESM con JavaScript compilado y declaraciones TypeScript; requiere fetch, BigInt, Web Streams y ES2022. Los permisos y las reglas de negocio siguen en la API.
 
 El paquete **todavía no está publicado en npm**. Instale la distribución local:
 

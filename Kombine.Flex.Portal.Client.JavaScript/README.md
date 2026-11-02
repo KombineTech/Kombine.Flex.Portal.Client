@@ -1,4 +1,4 @@
-Version 0.34.0 includes protected manager activity and application load widgets.
+Version 0.35.0 includes protected manager activity and application load widgets.
 
 Version 0.29.0 adds authorized Plex operations; Plex is not public.
 
@@ -90,7 +90,7 @@ Use the same tenant and environment as your client: append /docs#changelog to it
 The package is **not yet published to npm**. Install the supplied local distribution:
 
 ```sh
-npm install ./kombine-flex-portal-client-0.34.0.tgz
+npm install ./kombine-flex-portal-client-0.35.0.tgz
 ```
 
 Version 0.13.0 targets the current beta candidate (182 operations). Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.

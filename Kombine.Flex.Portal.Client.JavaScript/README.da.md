@@ -1,4 +1,4 @@
-Version 0.34.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
+Version 0.35.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
 
 Version 0.29.0 tilføjer autoriserede Plex-operationer; Plex er ikke offentligt tilgængelig.
 
@@ -85,7 +85,7 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 # Kombine Flex Portal — JavaScript/TypeScript-klient
 
-`@kombine/flex-portal-client` er én ESM-pakke med almindelig JavaScript og TypeScript-typer til alle **181 offentlige API-operationer**. Den understøtter Node.js 22+ og moderne browsere med `fetch`, `BigInt`, Web Streams og ES2022. Ingen runtimeafhængigheder, .NET, NuGet eller andre Kombine-pakker. Rettigheder og forretningsregler håndhæves af API'et.
+`@kombine/flex-portal-client` er én ESM-pakke med almindelig JavaScript og TypeScript-typer til alle **232 offentlige API-operationer**. Den understøtter Node.js 22+ og moderne browsere med `fetch`, `BigInt`, Web Streams og ES2022. Ingen runtimeafhængigheder, .NET, NuGet eller andre Kombine-pakker. Rettigheder og forretningsregler håndhæves af API'et.
 
 Pakken er **ikke publiceret på npm**. Installér den leverede tarball:
 

@@ -1,4 +1,4 @@
-Version 0.34.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
+Version 0.35.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
 
 Version 0.29.0 tilføjer autoriserede Plex-operationer; Plex er ikke offentligt tilgængelig.
 
@@ -87,7 +87,7 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 # Kombine Flex Portal — Python-klient
 
-`kombine-flex-portal-client` er en selvstændig Python 3.11+-pakke til alle **181 offentlige API-operationer**. Den bruger kun Pythons standardbibliotek. Ingen .NET, NuGet, databaseadgang eller andre Kombine-pakker er nødvendige. Rettigheder og forretningsregler håndhæves fortsat af API'et.
+`kombine-flex-portal-client` er en selvstændig Python 3.11+-pakke til alle **232 offentlige API-operationer**. Den bruger kun Pythons standardbibliotek. Ingen .NET, NuGet, databaseadgang eller andre Kombine-pakker er nødvendige. Rettigheder og forretningsregler håndhæves fortsat af API'et.
 
 Pakken er **ikke publiceret på PyPI**. Installér den leverede wheel lokalt:
 
