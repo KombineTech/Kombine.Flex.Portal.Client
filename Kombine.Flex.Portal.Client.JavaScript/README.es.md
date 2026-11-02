@@ -1,4 +1,4 @@
-La versión 0.35.0 incluye widgets protegidos de actividad y carga.
+La versión 0.36.0 incluye widgets protegidos de actividad y carga.
 
 La versión 0.29.0 agrega operaciones Plex autorizadas; Plex no es público.
 
@@ -90,10 +90,10 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 El paquete **todavía no está publicado en npm**. Instale la distribución local:
 
 ```sh
-npm install ./kombine-flex-portal-client-0.13.0.tgz
+npm install ./kombine-flex-portal-client-0.36.0.tgz
 ```
 
-La versión 0.13.0 corresponde al candidato beta actual (182 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
+La versión 0.13.0 correspondía al candidato beta anterior (182 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
 
 La versión 0.2.5 añade GetLocationOpeningHours y GetLocationBookingRules. Ambas requieren Location Read, Unit Read y acceso a la ubicación. Las reglas contienen texto plano y parts ordenadas con text/isValue para resaltar valores de forma opcional; nunca interprete estas cadenas como HTML. Use text como alternativa para respuestas anteriores. Consulte /docs#location-opening-hours y /docs#location-booking-rules para permisos, ejemplos y límites.
 
