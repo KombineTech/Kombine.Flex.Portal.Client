@@ -1,4 +1,12 @@
 // Generated wire models. int64 is bigint; dates remain ISO 8601 strings.
+/** AccountDayCount */
+export interface AccountDayCount {
+  /** through */
+  "through"?: string | null;
+  /** entries */
+  "entries"?: bigint;
+}
+
 /** A receipt assembled from this page's authorized lines. Further pages can contain more lines with the same key. */
 export interface AccountDocumentResponse {
   /** key */
@@ -47,6 +55,8 @@ export interface AccountEntryResponse {
   "unitName"?: string | null;
   /** canReverse */
   "canReverse"?: boolean;
+  /** API-computed house icon with the authorized location number; null for postings without a location. */
+  "locationIconKid"?: string | null;
   /** API-computed unit icon identity, ready for the image URL. */
   "unitIconKid"?: string | null;
   /** Opaque bank-scoped receipt key, shared by lines belonging to the same document. */
@@ -93,6 +103,8 @@ export interface AccountResponse {
   "hasMore"?: boolean;
   /** revision */
   "revision"?: string | null;
+  /** dayCount */
+  "dayCount"?: AccountDayCount;
   /** FlexOrm-style receipt grouping of this page. Items/offset/limit remain posting-based. */
   "documents"?: (AccountDocumentResponse)[] | null;
 }
@@ -178,9 +190,15 @@ export interface ApplicationLoadHistoryResponse {
   /** refreshAfterSeconds */
   "refreshAfterSeconds"?: number;
   /** cpuSeries */
-  "cpuSeries"?: (DatabaseLoadHistorySeries)[] | null;
+  "cpuSeries"?: (ApplicationLoadHistorySeries)[] | null;
   /** memorySeries */
-  "memorySeries"?: (DatabaseLoadHistorySeries)[] | null;
+  "memorySeries"?: (ApplicationLoadHistorySeries)[] | null;
+}
+
+/** One anonymous application CPU or memory series; null values represent missing samples. */
+export interface ApplicationLoadHistorySeries {
+  /** points */
+  "points"?: (HostingPoint)[] | null;
 }
 
 /** ApproveWallboardPairing */
@@ -2421,6 +2439,16 @@ export interface ToolKidInspectionResponse {
   "normalized"?: boolean;
 }
 
+/** No recipient, tenant or message fields are accepted for a self-addressed test mail. */
+export interface ToolTestMailRequest {
+}
+
+/** Confirms only that the fixed test message was queued. */
+export interface ToolTestMailResponse {
+  /** Effective recipient after applying the existing domain restriction. */
+  "recipient"?: string | null;
+}
+
 /** One possible offset for a local time repeated at the end of daylight saving time. */
 export interface ToolTimeOffsetChoice {
   /** offset */
@@ -3865,6 +3893,7 @@ export interface GetBankAccountOptions {
   locationKid?: string;
   locationKids?: (string)[];
   unitKid?: string;
+  unitKids?: (string)[];
   userKid?: string;
   kind?: string;
   includeZero?: boolean;
@@ -3882,6 +3911,7 @@ export interface GetBankAccountRevisionOptions {
   locationKid?: string;
   locationKids?: (string)[];
   unitKid?: string;
+  unitKids?: (string)[];
   userKid?: string;
   kind?: string;
   includeZero?: boolean;
@@ -4060,6 +4090,7 @@ export interface ExportBankAccountOptions {
   locationKid?: string;
   locationKids?: (string)[];
   unitKid?: string;
+  unitKids?: (string)[];
   userKid?: string;
   kind?: string;
   includeZero?: boolean;

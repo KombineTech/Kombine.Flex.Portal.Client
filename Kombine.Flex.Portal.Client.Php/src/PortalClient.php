@@ -5,10 +5,11 @@ namespace Kombine\Flex\Portal;
 
 /**
  * Generated wire models: associative arrays; missing and null values remain distinct.
+ * @phpstan-type AccountDayCount array{'through'?: string|null, 'entries'?: int}
  * @phpstan-type AccountDocumentResponse array{'key'?: string|null, 'docId'?: int|null, 'lines'?: list<AccountEntryResponse>|null, 'totals'?: list<AccountTotal>|null}
- * @phpstan-type AccountEntryResponse array{'kid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'userKid'?: string|null, 'recordedAtUtc'?: string, 'amountMinor'?: int, 'currency'?: string|null, 'description'?: string|null, 'transactionType'?: string|null, 'period'?: int, 'reversed'?: bool, 'reversalOfKid'?: string|null, 'userName'?: string|null, 'userNumber'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'canReverse'?: bool, 'unitIconKid'?: string|null, 'documentKey'?: string|null, 'documentId'?: int|null, 'isAnonymized'?: bool, 'paymentKind'?: string|null}
+ * @phpstan-type AccountEntryResponse array{'kid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'userKid'?: string|null, 'recordedAtUtc'?: string, 'amountMinor'?: int, 'currency'?: string|null, 'description'?: string|null, 'transactionType'?: string|null, 'period'?: int, 'reversed'?: bool, 'reversalOfKid'?: string|null, 'userName'?: string|null, 'userNumber'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'canReverse'?: bool, 'locationIconKid'?: string|null, 'unitIconKid'?: string|null, 'documentKey'?: string|null, 'documentId'?: int|null, 'isAnonymized'?: bool, 'paymentKind'?: string|null}
  * @phpstan-type AccountIconResponse array{'currency'?: string|null, 'iconKid'?: string|null}
- * @phpstan-type AccountResponse array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string|null, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'documents'?: list<AccountDocumentResponse>|null}
+ * @phpstan-type AccountResponse array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string|null, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'dayCount'?: AccountDayCount, 'documents'?: list<AccountDocumentResponse>|null}
  * @phpstan-type AccountRevisionResponse array{'revision'?: string|null}
  * @phpstan-type AccountTotal array{'currency'?: string|null, 'entries'?: int, 'amountMinor'?: int}
  * @phpstan-type AccountUnitResponse array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: string|null, 'name'?: string|null}
@@ -17,7 +18,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ActiveLocationCountResponse array{'count'?: int, 'iconKid'?: string|null}
  * @phpstan-type ActiveManagerStatisticsResponse array{'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'activeWithinMinutes'?: int}
  * @phpstan-type ActiveUnitCountResponse array{'count'?: int, 'iconKid'?: string|null}
- * @phpstan-type ApplicationLoadHistoryResponse array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<DatabaseLoadHistorySeries>|null, 'memorySeries'?: list<DatabaseLoadHistorySeries>|null}
+ * @phpstan-type ApplicationLoadHistoryResponse array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<ApplicationLoadHistorySeries>|null, 'memorySeries'?: list<ApplicationLoadHistorySeries>|null}
+ * @phpstan-type ApplicationLoadHistorySeries array{'points'?: list<HostingPoint>|null}
  * @phpstan-type ApproveWallboardPairing array{'location'?: WallboardScanLocation}
  * @phpstan-type AssistantLink array{'kid'?: string|null, 'path'?: string|null, 'name'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type AssistantMessage array{'role'?: string|null, 'content'?: string|null}
@@ -189,6 +191,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ToolKidField array{'name'?: string|null, 'value'?: string|null, 'enumName'?: string|null, 'enumNumber'?: string|null, 'index'?: int|null}
  * @phpstan-type ToolKidInspectionRequest array{'kid'?: string|null}
  * @phpstan-type ToolKidInspectionResponse array{'canonicalKid'?: string|null, 'fields'?: list<ToolKidField>|null, 'normalized'?: bool}
+ * @phpstan-type ToolTestMailRequest array{}
+ * @phpstan-type ToolTestMailResponse array{'recipient'?: string|null}
  * @phpstan-type ToolTimeOffsetChoice array{'offset'?: string|null, 'utc'?: string|null}
  * @phpstan-type ToolTimeRequest array{'format'?: string|null, 'value'?: string|null, 'timeZone'?: string|null, 'offset'?: string|null}
  * @phpstan-type ToolTimeResponse array{'success'?: bool, 'error'?: string|null, 'result'?: ToolTimeResult, 'offsetChoices'?: list<ToolTimeOffsetChoice>|null}
@@ -314,7 +318,7 @@ final class PortalClient extends BaseClient
     /**
      * Lists Account2 postings with full-selection totals per currency.
      * @param string $bankKid
-     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'LocationKids'?: list<string>, 'UnitKid'?: string, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int} $options
+     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'LocationKids'?: list<string>, 'UnitKid'?: string, 'UnitKids'?: list<string>, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int} $options
      * @return AccountResponse
      */
     public function getBankAccount(mixed $bankKid, array $options = []): mixed
@@ -325,7 +329,7 @@ final class PortalClient extends BaseClient
     /**
      * Checks whether filtered Account2 postings changed, including late arrivals with old event timestamps.
      * @param string $bankKid
-     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'LocationKids'?: list<string>, 'UnitKid'?: string, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int} $options
+     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'LocationKids'?: list<string>, 'UnitKid'?: string, 'UnitKids'?: list<string>, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int} $options
      * @return AccountRevisionResponse
      */
     public function getBankAccountRevision(mixed $bankKid, array $options = []): mixed
@@ -725,7 +729,7 @@ final class PortalClient extends BaseClient
      * Downloads the complete filtered selection as CSV or a genuine Excel workbook.
      * @param string $bankKid
      * @param resource $destination Writable stream; may contain partial data on failure.
-     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'LocationKids'?: list<string>, 'UnitKid'?: string, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int, 'format'?: string} $options
+     * @param array{'From'?: string, 'Through'?: string, 'TimeZone'?: string, 'Period'?: int, 'LocationKid'?: string, 'LocationKids'?: list<string>, 'UnitKid'?: string, 'UnitKids'?: list<string>, 'UserKid'?: string, 'Kind'?: string, 'IncludeZero'?: bool, 'IncludeBookings'?: bool, 'IncludeMonthly'?: bool, 'Offset'?: int, 'Limit'?: int, 'format'?: string} $options
      * @return DownloadResponse
      */
     public function exportBankAccount(mixed $bankKid, mixed $destination, array $options = []): mixed
@@ -1608,6 +1612,16 @@ final class PortalClient extends BaseClient
     public function inspectToolKid(#[\SensitiveParameter] array $body): mixed
     {
         return $this->request('InspectToolKid', [], $body);
+    }
+
+    /**
+     * Queue one fixed test email to the signed-in manager's current registered address.
+     * @param ToolTestMailRequest $body
+     * @return ToolTestMailResponse
+     */
+    public function queueMyTestMail(#[\SensitiveParameter] array $body): mixed
+    {
+        return $this->request('QueueMyTestMail', [], $body);
     }
 
     /**

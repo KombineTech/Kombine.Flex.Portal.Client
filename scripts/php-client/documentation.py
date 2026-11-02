@@ -73,7 +73,7 @@ RELEASE_DOCUMENTATION = {'en': 'Version 0.24.0 synchronizes 217 API operations w
 
 def generate(root, project, api, count, write):
     lower = api.lower()
-    version = '0.31.0' if api == 'Portal' else '0.1.0'
+    version = '0.32.0' if api == 'Portal' else '0.1.0'
     archive = f'kombine-flex-{lower}-client-php-{version}.zip'
     domain = 'technology' if api == 'Portal' else 'equipment'
     login = '$email, $password' if api == 'Portal' else '$serviceKid, $apiKey'
@@ -121,9 +121,9 @@ def generate(root, project, api, count, write):
             'es': 'La versión 0.25.0 actualiza el contrato Wallboard: c contiene paletas claras y oscuras separadas. Migre los arrays c planos antes de guardar. La API conserva los diseños existentes al leer. El cliente cubre 220 operaciones. Consulte el registro de cambios de la API.'
         }
         current = {
-            'en': 'Version 0.31.0 adds protected manager activity and application load widgets.',
-            'da': 'Version 0.31.0 tilføjer beskyttede widgets til administratoraktivitet og driftsbelastning.',
-            'es': 'La versión 0.31.0 agrega widgets protegidos de actividad y carga.',
+            'en': 'Version 0.32.0 includes protected manager activity and application load widgets.',
+            'da': 'Version 0.32.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.',
+            'es': 'La versión 0.32.0 incluye widgets protegidos de actividad y carga.',
         }
         write(project / f'README{suffix}.md', (current[language] + '\n\n' + migration[language] + '\n\n' + RELEASE_DOCUMENTATION[language] + '\n\n' + CALENDAR_DOCUMENTATION[language] + WEATHER_DOCUMENTATION[language] if api == 'Portal' else '') + template)
         code = re.search(r'```php\n(.*?)\n```', template, re.S)[1]

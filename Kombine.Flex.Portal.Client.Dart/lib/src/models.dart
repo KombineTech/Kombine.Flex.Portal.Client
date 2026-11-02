@@ -1,5 +1,6 @@
 // Generated wire aliases. Object fields retain their exact JSON names.
 
+typedef AccountDayCount = Map<String, Object?>;
 typedef AccountDocumentResponse = Map<String, Object?>;
 typedef AccountEntryResponse = Map<String, Object?>;
 typedef AccountIconResponse = Map<String, Object?>;
@@ -13,6 +14,7 @@ typedef ActiveLocationCountResponse = Map<String, Object?>;
 typedef ActiveManagerStatisticsResponse = Map<String, Object?>;
 typedef ActiveUnitCountResponse = Map<String, Object?>;
 typedef ApplicationLoadHistoryResponse = Map<String, Object?>;
+typedef ApplicationLoadHistorySeries = Map<String, Object?>;
 typedef ApproveWallboardPairing = Map<String, Object?>;
 typedef AssistantLink = Map<String, Object?>;
 typedef AssistantMessage = Map<String, Object?>;
@@ -184,6 +186,8 @@ typedef TenantStatusSourceResult = Map<String, Object?>;
 typedef ToolKidField = Map<String, Object?>;
 typedef ToolKidInspectionRequest = Map<String, Object?>;
 typedef ToolKidInspectionResponse = Map<String, Object?>;
+typedef ToolTestMailRequest = Map<String, Object?>;
+typedef ToolTestMailResponse = Map<String, Object?>;
 typedef ToolTimeOffsetChoice = Map<String, Object?>;
 typedef ToolTimeRequest = Map<String, Object?>;
 typedef ToolTimeResponse = Map<String, Object?>;

@@ -4,6 +4,21 @@ using System.Collections.Generic;
 
 namespace Kombine.Flex.Portal.Client.Compact20
 {
+    /// <summary>AccountDayCount</summary>
+    public sealed class AccountDayCount
+    {
+        /// <summary>through ISO 8601 text, sent unchanged.</summary>
+        [JsonField("through")]
+        public string Through { get { return _Through; } set { _Through = value; } }
+        private string _Through;
+
+        /// <summary>entries</summary>
+        [JsonField("entries")]
+        public long? Entries { get { return _Entries; } set { _Entries = value; } }
+        private long? _Entries;
+
+    }
+
     /// <summary>A receipt assembled from this page's authorized lines. Further pages can contain more lines with the same key.</summary>
     public sealed class AccountDocumentResponse
     {
@@ -117,6 +132,11 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public bool? CanReverse { get { return _CanReverse; } set { _CanReverse = value; } }
         private bool? _CanReverse;
 
+        /// <summary>API-computed house icon with the authorized location number; null for postings without a location.</summary>
+        [JsonField("locationIconKid")]
+        public string LocationIconKid { get { return _LocationIconKid; } set { _LocationIconKid = value; } }
+        private string _LocationIconKid;
+
         /// <summary>API-computed unit icon identity, ready for the image URL.</summary>
         [JsonField("unitIconKid")]
         public string UnitIconKid { get { return _UnitIconKid; } set { _UnitIconKid = value; } }
@@ -221,6 +241,11 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("revision")]
         public string Revision { get { return _Revision; } set { _Revision = value; } }
         private string _Revision;
+
+        /// <summary>dayCount</summary>
+        [JsonField("dayCount")]
+        public AccountDayCount DayCount { get { return _DayCount; } set { _DayCount = value; } }
+        private AccountDayCount _DayCount;
 
         /// <summary>FlexOrm-style receipt grouping of this page. Items/offset/limit remain posting-based.</summary>
         [JsonField("documents")]
@@ -389,13 +414,23 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
         /// <summary>cpuSeries</summary>
         [JsonField("cpuSeries")]
-        public DatabaseLoadHistorySeries[] CpuSeries { get { return _CpuSeries; } set { _CpuSeries = value; } }
-        private DatabaseLoadHistorySeries[] _CpuSeries;
+        public ApplicationLoadHistorySeries[] CpuSeries { get { return _CpuSeries; } set { _CpuSeries = value; } }
+        private ApplicationLoadHistorySeries[] _CpuSeries;
 
         /// <summary>memorySeries</summary>
         [JsonField("memorySeries")]
-        public DatabaseLoadHistorySeries[] MemorySeries { get { return _MemorySeries; } set { _MemorySeries = value; } }
-        private DatabaseLoadHistorySeries[] _MemorySeries;
+        public ApplicationLoadHistorySeries[] MemorySeries { get { return _MemorySeries; } set { _MemorySeries = value; } }
+        private ApplicationLoadHistorySeries[] _MemorySeries;
+
+    }
+
+    /// <summary>One anonymous application CPU or memory series; null values represent missing samples.</summary>
+    public sealed class ApplicationLoadHistorySeries
+    {
+        /// <summary>points</summary>
+        [JsonField("points")]
+        public HostingPoint[] Points { get { return _Points; } set { _Points = value; } }
+        private HostingPoint[] _Points;
 
     }
 
@@ -5139,6 +5174,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>No recipient, tenant or message fields are accepted for a self-addressed test mail.</summary>
+    public sealed class ToolTestMailRequest
+    {
+    }
+
+    /// <summary>Confirms only that the fixed test message was queued.</summary>
+    public sealed class ToolTestMailResponse
+    {
+        /// <summary>Effective recipient after applying the existing domain restriction.</summary>
+        [JsonField("recipient")]
+        public string Recipient { get { return _Recipient; } set { _Recipient = value; } }
+        private string _Recipient;
+
+    }
+
     /// <summary>One possible offset for a local time repeated at the end of daylight saving time.</summary>
     public sealed class ToolTimeOffsetChoice
     {
@@ -8270,6 +8320,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
         private string _UnitKid;
 
+        /// <summary>Repeated canonical unit KIDs in this bank (at most 255).</summary>
+        public string[] UnitKids { get { return _UnitKids; } set { _UnitKids = value; } }
+        private string[] _UnitKids;
+
         /// <summary>Optional canonical resident KID in this bank.</summary>
         public string UserKid { get { return _UserKid; } set { _UserKid = value; } }
         private string _UserKid;
@@ -8330,6 +8384,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>Optional canonical unit KID in this bank.</summary>
         public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
         private string _UnitKid;
+
+        /// <summary>Repeated canonical unit KIDs in this bank (at most 255).</summary>
+        public string[] UnitKids { get { return _UnitKids; } set { _UnitKids = value; } }
+        private string[] _UnitKids;
 
         /// <summary>Optional canonical resident KID in this bank.</summary>
         public string UserKid { get { return _UserKid; } set { _UserKid = value; } }
@@ -8895,6 +8953,10 @@ namespace Kombine.Flex.Portal.Client.Compact20
         /// <summary>Optional canonical unit KID in this bank.</summary>
         public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
         private string _UnitKid;
+
+        /// <summary>Repeated canonical unit KIDs in this bank (at most 255).</summary>
+        public string[] UnitKids { get { return _UnitKids; } set { _UnitKids = value; } }
+        private string[] _UnitKids;
 
         /// <summary>Optional canonical resident KID in this bank.</summary>
         public string UserKid { get { return _UserKid; } set { _UserKid = value; } }

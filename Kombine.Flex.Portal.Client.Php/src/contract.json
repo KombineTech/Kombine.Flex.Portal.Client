@@ -1,5 +1,20 @@
 {
   "schemas": {
+    "AccountDayCount": {
+      "type": "object",
+      "properties": {
+        "through": {
+          "type": "string",
+          "format": "date",
+          "nullable": true
+        },
+        "entries": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "additionalProperties": false
+    },
     "AccountDocumentResponse": {
       "type": "object",
       "properties": {
@@ -97,6 +112,10 @@
         },
         "canReverse": {
           "type": "boolean"
+        },
+        "locationIconKid": {
+          "type": "string",
+          "nullable": true
         },
         "unitIconKid": {
           "type": "string",
@@ -199,6 +218,9 @@
         "revision": {
           "type": "string",
           "nullable": true
+        },
+        "dayCount": {
+          "$ref": "#/components/schemas/AccountDayCount"
         },
         "documents": {
           "type": "array",
@@ -359,14 +381,27 @@
         "cpuSeries": {
           "type": "array",
           "items": {
-            "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+            "$ref": "#/components/schemas/ApplicationLoadHistorySeries"
           },
           "nullable": true
         },
         "memorySeries": {
           "type": "array",
           "items": {
-            "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+            "$ref": "#/components/schemas/ApplicationLoadHistorySeries"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ApplicationLoadHistorySeries": {
+      "type": "object",
+      "properties": {
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/HostingPoint"
           },
           "nullable": true
         }
@@ -4827,6 +4862,20 @@
       },
       "additionalProperties": false
     },
+    "ToolTestMailRequest": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "ToolTestMailResponse": {
+      "type": "object",
+      "properties": {
+        "recipient": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "ToolTimeOffsetChoice": {
       "type": "object",
       "properties": {
@@ -7786,6 +7835,17 @@
           }
         },
         {
+          "name": "UnitKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
           "name": "UserKid",
           "where": "query",
           "required": false,
@@ -7927,6 +7987,17 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "UnitKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         {
@@ -9745,6 +9816,17 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "UnitKids",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         {
@@ -12421,6 +12503,23 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ToolKidInspectionResponse"
+      },
+      "binary": false
+    },
+    "QueueMyTestMail": {
+      "method": "POST",
+      "path": "api/v1/tenant/tools/test-mail",
+      "statuses": [
+        202
+      ],
+      "auth": true,
+      "parameters": [],
+      "body": {
+        "$ref": "#/components/schemas/ToolTestMailRequest"
+      },
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/ToolTestMailResponse"
       },
       "binary": false
     },

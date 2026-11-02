@@ -139,7 +139,7 @@
           "Accounts"
         ],
         "summary": "Lists Account2 postings with full-selection totals per currency.",
-        "description": "### Access\r\n            \r\n- Requires **Account2** and **Bank, Location, Unit and User Read**.\r\n- Location grants limit the rows, totals and available filter choices.\r\n- No business data is read when access is denied.\r\n            \r\n### Filters and paging\r\n            \r\n- Repeat `locationKids` for up to 1000 authorized locations; the same selection applies to totals, revision and export.\r\n- `from` defaults to **today** in `Europe/Copenhagen`, inclusively. Omitted `through` leaves the upper date boundary open and the response's `through` is null.\r\n- An explicit `through` remains inclusive and limits the interval to **367 days**. Page, export and database timeout limits also apply to open-ended selections.\r\n- An explicit `period` replaces the date filter.\r\n- Sorted oldest first by event time (MS2000), then by location and unit. Continue toward newer entries with increasing offsets.\r\n- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. Responses are not cached.\r\n            \r\n### Settlement periods\r\n            \r\n- The latest **100 closed period IDs** come from bank-level **LogA**.\r\n- With location-limited access, each offered period must also contain an authorized **Log1** posting.\r\n- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.\r\n            \r\n### Amounts and timestamps\r\n            \r\n- `amountMinor` preserves the signed Log1 amount. Totals describe **filtered movements**, not an account balance.\r\n- `MS2000` / `recordedAtUtc` is the event time, not an insertion watermark. Older postings may arrive days later.\r\n            \r\n### Receipts and retention\r\n            \r\n- `documents` groups this page only; merge further pages by `documentKey`. `items`, offsets and limits remain posting-based.\r\n- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.\r\n- `description` uses decoded `Kombine.Flex.FlexDto.KrumbValue.TransactionLine.ToString()` text, with numeric localization placeholders resolved by the API.\r\n- Safely displayable text-only legacy descriptions remain supported; absent DTO text uses a safe fallback. Raw JSON and payment identifiers are never exposed.\r\n- `LawAccountingYears` and `LawSurveillanceDays` come from tenant Log24 with positive manager Log7 overrides.\r\n- Expired identities become the GDPR user KID with empty names/numbers, safe description and `isAnonymized=true`.\r\n- An explicit `userKid` excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.\r\n- `paymentKind` is Credit, ReserveRefund or Managed, or empty. Payment identifiers are never returned.\r\n- Payment-managed and expired entries cannot use ordinary reversal. No external payment workflow is invoked.\r\n            \r\n### Revisions and refresh\r\n            \r\n- `revision` fingerprints the complete filtered posting set: identities, periods and monetary totals. It is independent of `offset` and `limit`.\r\n- **Compare revisions across pages.** If they differ, discard the accumulated pages and reload them.\r\n- Use `GetBankAccountRevision` for lightweight polling.\r\n- A revision is not a cursor, authorization token or frozen snapshot. Display labels may change independently.\r\n            \r\n### Errors\r\n            \r\n**HTTP 403** keeps code `forbidden`. After tab/resource authorization, the optional `reason` identifies a missing Read permission:\r\n`missing-bank-read`, `missing-location-read`, `missing-unit-read` or `missing-user-read`.\r\n            \r\n**HTTP 503** uses these codes:\r\n            \r\n- `periods-timeout`: period SQL exceeded its **10-second** limit.\r\n- `storage-timeout`: another SQL command timed out.\r\n- `storage-text-comparison`: a collation error occurred.\r\n            \r\nAvoid automatic retry loops.",
+        "description": "### Access\r\n            \r\n- Requires **Account2** and **Bank, Location, Unit and User Read**.\r\n- Location grants limit the rows, totals and available filter choices.\r\n- No business data is read when access is denied.\r\n            \r\n### Filters and paging\r\n            \r\n- Repeat `locationKids` for up to 1000 authorized locations; the same selection applies to totals, revision and export.\r\n- Repeat `unitKids` for up to 255 authorized canonical units, matched by location and unit together; the same selection applies to totals, revision and export. The legacy single `unitKid` remains supported.\r\n- `from` defaults to **today** in `Europe/Copenhagen`, inclusively. Omitted `through` leaves the upper date boundary open and the response's `through` is null.\r\n- An explicit `through` remains inclusive and limits the interval to **367 days**. Page, export and database timeout limits also apply to open-ended selections.\r\n- An explicit `period` replaces the date filter.\r\n- Sorted oldest first by event time (MS2000), then by location and unit. Continue toward newer entries with increasing offsets.\r\n- `dayCount` counts all matching postings through the last returned item's entire local day in `timeZone`, including matching earlier days. It honors period and all other filters; it is independent of offset/limit except for that final day. The lookahead row is excluded when choosing the day. Empty pages return `{through:null, entries:0}`. Full-selection `totals` are unchanged.\r\n- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. Responses are not cached.\r\n            \r\n### Settlement periods\r\n            \r\n- The latest **100 closed period IDs** come from bank-level **LogA**.\r\n- With location-limited access, each offered period must also contain an authorized **Log1** posting.\r\n- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.\r\n            \r\n### Amounts and timestamps\r\n            \r\n- `amountMinor` preserves the signed Log1 amount. Totals describe **filtered movements**, not an account balance.\r\n- `MS2000` / `recordedAtUtc` is the event time, not an insertion watermark. Older postings may arrive days later.\r\n            \r\n### Receipts and retention\r\n            \r\n- `documents` groups this page only; merge further pages by `documentKey`. `items`, offsets and limits remain posting-based.\r\n- Positive DocId groups stay within the same resident, location and period. Missing/invalid IDs and payment-managed lines remain standalone.\r\n- `description` uses decoded `Kombine.Flex.FlexDto.KrumbValue.TransactionLine.ToString()` text, with numeric localization placeholders resolved by the API.\r\n- Safely displayable text-only legacy descriptions remain supported; absent DTO text uses a safe fallback. Raw JSON and payment identifiers are never exposed.\r\n- `LawAccountingYears` and `LawSurveillanceDays` come from tenant Log24 with positive manager Log7 overrides.\r\n- Expired identities become the GDPR user KID with empty names/numbers, safe description and `isAnonymized=true`.\r\n- An explicit `userKid` excludes expired entries. Amounts remain in unfiltered bank totals. Zero/missing retention means no identity retention.\r\n- `paymentKind` is Credit, ReserveRefund or Managed, or empty. Payment identifiers are never returned.\r\n- Payment-managed and expired entries cannot use ordinary reversal. No external payment workflow is invoked.\r\n            \r\n### Revisions and refresh\r\n            \r\n- `revision` fingerprints the complete filtered posting set: identities, periods and monetary totals. It is independent of `offset` and `limit`.\r\n- **Compare revisions across pages.** If they differ, discard the accumulated pages and reload them.\r\n- Use `GetBankAccountRevision` for lightweight polling.\r\n- A revision is not a cursor, authorization token or frozen snapshot. Display labels may change independently.\r\n            \r\n### Errors\r\n            \r\n**HTTP 403** keeps code `forbidden`. After tab/resource authorization, the optional `reason` identifies a missing Read permission:\r\n`missing-bank-read`, `missing-location-read`, `missing-unit-read` or `missing-user-read`.\r\n            \r\n**HTTP 503** uses these codes:\r\n            \r\n- `periods-timeout`: period SQL exceeded its **10-second** limit.\r\n- `storage-timeout`: another SQL command timed out.\r\n- `storage-text-comparison`: a collation error occurred.\r\n            \r\nAvoid automatic retry loops.",
         "operationId": "GetBankAccount",
         "parameters": [
           {
@@ -210,6 +210,17 @@
             "description": "Optional canonical unit KID in this bank.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "UnitKids",
+            "in": "query",
+            "description": "Repeated canonical unit KIDs in this bank (at most 255).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -457,6 +468,17 @@
             "description": "Optional canonical unit KID in this bank.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "UnitKids",
+            "in": "query",
+            "description": "Repeated canonical unit KIDs in this bank (at most 255).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -844,6 +866,26 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -960,26 +1002,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
                 }
               }
             }
@@ -1028,6 +1050,26 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1144,26 +1186,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
                 }
               }
             }
@@ -1214,6 +1236,26 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1330,26 +1372,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
                 }
               }
             }
@@ -1400,6 +1422,26 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1516,26 +1558,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
                 }
               }
             }
@@ -1586,6 +1608,26 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectAddressResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1702,26 +1744,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectAddressResponse"
                 }
               }
             }
@@ -3766,26 +3788,6 @@
           }
         ],
         "responses": {
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
           "200": {
             "description": "OK",
             "content": {
@@ -3848,6 +3850,26 @@
           },
           "403": {
             "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
             "content": {
               "text/plain": {
                 "schema": {
@@ -7098,6 +7120,17 @@
             "description": "Optional canonical unit KID in this bank.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "UnitKids",
+            "in": "query",
+            "description": "Repeated canonical unit KIDs in this bank (at most 255).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -17435,7 +17468,7 @@
           "PersonalManager"
         ],
         "summary": "Save your own Wallboard1 layouts and optional portal overview layout.",
-        "description": "Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.\r\n            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.\r\n            Every display ID in every i array must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.\r\n            The response also contains one portalWallboard and its separate storage usage/limit. When absent from storage it is an in-memory default and is not written on GET. It is not a display or QR registration.\r\n            A supplied portalWallboard must be a non-null object with the same i array as the current singleton; it cannot be deleted. Its update and the display collection are committed in one transaction using the combined editor revision.\r\n            A legacy request omitting portalWallboard leaves that setting untouched and accepts either the physical collection revision or the combined editor revision. Display reads retain their physical collection revision.\r\n            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.\r\n            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].\r\n            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.\r\n            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.\r\n            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40), Wistia (41), LiveLocation (42), LogoMark (43), LogoWordmark (44), Mux (45), LocationInfo (46) and ReservedMachines (47) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar and LocationInfo require a canonical same-tenant location KID or may remain unconfigured; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text and optional light/dark style, or an empty KID while unconfigured. Logo variants accept only empty/style-only KIDs; LocationInfo remains protected and is never available on the public wallboard; other widgets accept only their documented scopes and optional style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.\r\n            Mux (45) accepts only a public playback ID (16–128 case-sensitive ASCII letters/digits) in Kid.Text and optional Style 0/1/2; empty/style-only is unconfigured. URLs, tokens and other KID metadata are rejected.\r\n            LogoMark (43) and LogoWordmark (44) use their tenant branding variants with no cross-tenant or full-logo fallback. LocationInfo (46) requires Wallboard1, Location Read and matching location grants; approved screens must contain the exact location in their selected saved layout.\r\n            Vimeo (40) accepts only Kid.Text containing a positive 1–20-digit decimal ID without leading zero and optional / followed by a 10-character lowercase hexadecimal privacy hash. Wistia (41) accepts only a 10-character lowercase ASCII letter/digit media ID. Both allow optional Style 0/1/2 and empty/style-only unconfigured KIDs. URLs, HTML, other KID fields and noncanonical references return 400 invalid-wallboard-widget; no provider content or credentials are fetched by this API.\r\n            Legacy input t=26 is normalized to YouTube (39) before widget validation and unchanged-small-widget matching; a successful authorized, revision-checked save writes t=39. KID and rectangle values are preserved. Video (26) is not a separate implemented type. LiveLocation (42), displayed as Location status, composes the existing public Machine status widgets for a canonical same-tenant location with optional Style.\r\n            Weather uses the public standalone Wallboard API with the exact screen ID and saved scan position before client-IP fallback. Clock uses the device's local time and the owner's dateFormat. No business permissions, device approvals or grants are changed.\r\n            Empty lists remove display layouts only. Each serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include separate used/limit values for the collection and portal singleton.\r\n            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.",
+        "description": "Requires a current active manager and Wallboard1. Supply the revision from GetMyManagerWallboards.\r\n            Checks credentials, API-key revocation, tab access and revision under the existing Log7 transaction lock.\r\n            Every display ID in every i array must already exist in your scanned WallBoards collection; new or renamed IDs return 400 wallboard-scan-required. Add screens through the QR scanning flow first.\r\n            The response also contains one portalWallboard and its separate storage usage/limit. When absent from storage it is an in-memory default and is not written on GET. It is not a display or QR registration.\r\n            A supplied portalWallboard must be a non-null object with the same i array as the current singleton; it cannot be deleted. Its update and the display collection are committed in one transaction using the combined editor revision.\r\n            A legacy request omitting portalWallboard leaves that setting untouched and accepts either the physical collection revision or the combined editor revision. Display reads retain their physical collection revision.\r\n            409 wallboards-conflict requires an explicit reload and reconciliation; never automatically retry.\r\n            Layouts use i/n/a/s; i is a nonempty array of display IDs, each unique across the whole collection; a is a positive finite aspect ratio (width divided by height). Pages use n/d/s; widgets use t/k/r, with r exactly [x,y,width,height].\r\n            The 60x60 grid has zero-based x/y positions (0-59), new or changed widget width/height of 3-60 cells, no overlap and page duration d of 1-86400 seconds. Every rectangle must fit within the grid. Pages/widgets use array order and have no IDs.\r\n            An omitted r defaults to [0,0,3,3]. Previously stored smaller widgets may be retained unchanged: each submitted t/k/r must match a distinct stored widget under the revision lock, including moves between the portal singleton and display layouts. New, copied or changed smaller widgets return 400 invalid-wallboards without a write. No automatic resizing occurs.\r\n            Widget types 0-10, Icon (21), Logo (22), Weather (23), Clock (24), Text (25), ReservationCalendar (29), LocationMap (36), DatabaseBankStorage (38), YouTube (39), Vimeo (40), Wistia (41), LiveLocation (42), LogoMark (43), LogoWordmark (44), Mux (45), LocationInfo (46) and ReservedMachines (47) are available on configured tenants; DatabaseLoadHistory (37) is additionally available on Team only. None (0) is an empty widget with an empty KID and no content requests. Reserved slots are not supported. LiveMachines, WashDoc and ReservationCalendar accept canonical same-site resource KIDs with current resource grants; ReservationCalendar and LocationInfo require a canonical same-tenant location KID or may remain unconfigured; Icon accepts at most one defined Kid.Icon and optional light/dark style; Text accepts only Kid.Text and optional light/dark style; YouTube accepts only a YouTube video ID (11 ASCII letters/digits, underscore or hyphen) in Kid.Text, optional light/dark style and Crc 0/1, or an empty KID while unconfigured. Logo variants accept only empty/style-only KIDs; LocationInfo remains protected and is never available on the public wallboard; other widgets accept only their documented scopes and optional style. Text is plain text, limited by the existing 2048-character KID and setting budget; control characters and non-canonical KIDs are rejected. Reading load history requires Hosting1, Managers Read and a whole-tenant grant; bank storage requires Bank Read and whole-bank/whole-tenant grants; LocationMap requires Bank Read, Location Read and current tenant/bank/location grants; ReservationCalendar reads require Bookings1, Location/Unit/User Read and current location visibility/grants, in addition to Wallboard1.\r\n            Mux (45) accepts only a public playback ID (16–128 case-sensitive ASCII letters/digits) in Kid.Text and optional Style 0/1/2 and Crc 0/1; empty/style-only is unconfigured. URLs, tokens and other KID metadata are rejected.\r\n            LogoMark (43) and LogoWordmark (44) use their tenant branding variants with no cross-tenant or full-logo fallback. LocationInfo (46) requires Wallboard1, Location Read and matching location grants; approved screens must contain the exact location in their selected saved layout.\r\n            Vimeo (40) accepts only Kid.Text containing a positive 1–20-digit decimal ID without leading zero and optional / followed by a 10-character lowercase hexadecimal privacy hash. Wistia (41) accepts only a 10-character lowercase ASCII letter/digit media ID. Both allow optional Style 0/1/2 and Crc 0/1, as well as empty/style-only unconfigured KIDs. URLs, HTML, other KID fields and noncanonical references return 400 invalid-wallboard-widget; no provider content or credentials are fetched by this API.\r\n            Operations widgets (48–51), Plex (52) and ApiDataCenter (53) retain their documented tenant, manager and screen restrictions. Text does not accept Crc. Browser autoplay restrictions apply to audible video.\r\n            Legacy input t=26 is normalized to YouTube (39) before widget validation and unchanged-small-widget matching; a successful authorized, revision-checked save writes t=39. KID and rectangle values are preserved. Video (26) is not a separate implemented type. LiveLocation (42), displayed as Location status, composes the existing public Machine status widgets for a canonical same-tenant location with optional Style.\r\n            Weather uses the public standalone Wallboard API with the exact screen ID and saved scan position before client-IP fallback. Clock uses the device's local time and the owner's dateFormat. No business permissions, device approvals or grants are changed.\r\n            Empty lists remove display layouts only. Each serialized setting is limited to 4092 characters (409 wallboards-limit). Successful responses include separate used/limit values for the collection and portal singleton.\r\n            Unsupported fields, overlap or invalid widget/KID combinations return 400. Unknown stored fields return 409 and are never silently discarded.",
         "operationId": "SaveMyManagerWallboards",
         "requestBody": {
           "content": {
@@ -20773,6 +20806,162 @@
           },
           "403": {
             "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/tenant/tools/test-mail": {
+      "post": {
+        "tags": [
+          "Tools"
+        ],
+        "summary": "Queue one fixed test email to the signed-in manager's current registered address.",
+        "description": "Requires a freshly checked active manager, More1, Bank Read and a same-site resource grant.\r\n            Send an empty JSON object. Recipient, message, sender and tenant cannot be selected by the client.\r\n            At most one request per manager/tenant per minute. The existing exact-domain recipient restriction applies;\r\n            other valid domains are redirected to the development inbox. The response reports the effective recipient.\r\n            202 confirms enqueue only, never provider delivery. Do not automatically retry an uncertain response.\r\n            Business tenants use Jobs lane Mails (5); Host retains its separate existing outbox.",
+        "operationId": "QueueMyTestMail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToolTestMailRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToolTestMailRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToolTestMailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolTestMailResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolTestMailResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolTestMailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
             "content": {
               "text/plain": {
                 "schema": {
@@ -27105,7 +27294,7 @@
           "WallboardPairing"
         ],
         "summary": "Approve one screen using your current manager bearer session, including sessions created with kid and apiKey.",
-        "description": "Requires an active manager. Local user-ID sessions and screen sessions cannot approve. The resulting screen\r\n            has permanent read-only device approval until explicitly revoked or the manager credential/account is revoked.\r\n            Individual bearer sessions last ten days; the device signs a fresh challenge to reconnect after any time offline.",
+        "description": "Requires an active manager. Local user-ID sessions and screen sessions cannot approve. The resulting screen\r\n            has permanent read-only device approval until explicitly revoked or the manager credential/account is revoked.\r\n            Individual screen bearer sessions last one hour; the device signs a fresh challenge to reconnect after any time offline.",
         "operationId": "ApproveWallboardPairing",
         "parameters": [
           {
@@ -27388,7 +27577,7 @@
           "WallboardPairing"
         ],
         "summary": "Resume a permanently approved screen after proving possession of its private signing key.",
-        "description": "No maximum offline duration. Challenges are single-use; device approval itself has no expiry.\r\n            A correctly signed but expired, consumed or superseded challenge returns status retry without a token.\r\n            Retain the device key and approval, wait briefly, then request and sign a new challenge.\r\n            Rechecks the active manager and credential stamps before returning a ten-day screen-only bearer.\r\n            Only GetCurrentManager accepts this bearer, with no manager permissions or business data.\r\n            The returned displayId comes from the stored approval and must exactly match the requested screen ID.",
+        "description": "No maximum offline duration. Challenges are single-use; device approval itself has no expiry.\r\n            A correctly signed but expired, consumed or superseded challenge returns status retry without a token.\r\n            Retain the device key and approval, wait briefly, then request and sign a new challenge.\r\n            Rechecks the active manager and credential stamps before returning a one-hour screen-only bearer.\r\n            Only GetCurrentManager accepts this bearer, with no manager permissions or business data.\r\n            The returned displayId comes from the stored approval and must exactly match the requested screen ID.",
         "operationId": "ResumeWallboardSession",
         "parameters": [
           {
@@ -29203,6 +29392,35 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -29265,35 +29483,6 @@
           },
           "503": {
             "description": "Service Unavailable"
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -29336,69 +29525,6 @@
           }
         ],
         "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Service Unavailable"
-          },
           "200": {
             "description": "OK",
             "content": {
@@ -29466,58 +29592,7 @@
           },
           "304": {
             "description": "Not Modified"
-          }
-        }
-      }
-    },
-    "/api/v1/icon/{iconSet}/{kid}/{size}.{format}": {
-      "get": {
-        "tags": [
-          "Icons"
-        ],
-        "summary": "Renders Kid.Icon and Kid.Count from a named set at a square pixel size.",
-        "description": "Same KID/name fallback, access, asset lookup, formats and cache as GetIconFromSet.\r\nSize is clamped to 16–4096 pixels (ICO at most 256). SVG retains its authored viewport.",
-        "operationId": "GetIconImageFromSet",
-        "parameters": [
-          {
-            "name": "iconSet",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "line"
           },
-          {
-            "name": "kid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "413132x7qE20i11Bi336699Ic"
-          },
-          {
-            "name": "size",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "example": 128
-          },
-          {
-            "name": "format",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "svg"
-          }
-        ],
-        "responses": {
           "400": {
             "description": "Bad Request",
             "content": {
@@ -29580,7 +29655,58 @@
           },
           "503": {
             "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/icon/{iconSet}/{kid}/{size}.{format}": {
+      "get": {
+        "tags": [
+          "Icons"
+        ],
+        "summary": "Renders Kid.Icon and Kid.Count from a named set at a square pixel size.",
+        "description": "Same KID/name fallback, access, asset lookup, formats and cache as GetIconFromSet.\r\nSize is clamped to 16–4096 pixels (ICO at most 256). SVG retains its authored viewport.",
+        "operationId": "GetIconImageFromSet",
+        "parameters": [
+          {
+            "name": "iconSet",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "line"
           },
+          {
+            "name": "kid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "413132x7qE20i11Bi336699Ic"
+          },
+          {
+            "name": "size",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 128
+          },
+          {
+            "name": "format",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "svg"
+          }
+        ],
+        "responses": {
           "200": {
             "description": "OK",
             "content": {
@@ -29645,6 +29771,69 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
           }
         }
       }
@@ -29706,69 +29895,6 @@
           }
         ],
         "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Service Unavailable"
-          },
           "200": {
             "description": "OK",
             "content": {
@@ -29833,6 +29959,69 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
           }
         }
       }
@@ -31672,6 +31861,21 @@
   },
   "components": {
     "schemas": {
+      "AccountDayCount": {
+        "type": "object",
+        "properties": {
+          "through": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "entries": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
       "AccountDocumentResponse": {
         "type": "object",
         "properties": {
@@ -31770,6 +31974,11 @@
           },
           "canReverse": {
             "type": "boolean"
+          },
+          "locationIconKid": {
+            "type": "string",
+            "description": "API-computed house icon with the authorized location number; null for postings without a location.",
+            "nullable": true
           },
           "unitIconKid": {
             "type": "string",
@@ -31879,6 +32088,9 @@
           "revision": {
             "type": "string",
             "nullable": true
+          },
+          "dayCount": {
+            "$ref": "#/components/schemas/AccountDayCount"
           },
           "documents": {
             "type": "array",
@@ -32051,20 +32263,34 @@
           "cpuSeries": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+              "$ref": "#/components/schemas/ApplicationLoadHistorySeries"
             },
             "nullable": true
           },
           "memorySeries": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/DatabaseLoadHistorySeries"
+              "$ref": "#/components/schemas/ApplicationLoadHistorySeries"
             },
             "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Protected production app CPU and memory percentages for the previous 24 hours, without provider identities."
+      },
+      "ApplicationLoadHistorySeries": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HostingPoint"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One anonymous application CPU or memory series; null values represent missing samples."
       },
       "ApproveWallboardPairing": {
         "type": "object",
@@ -36966,6 +37192,23 @@
         },
         "additionalProperties": false,
         "description": "Parsed KID data only, without database lookups, inferred scope, or derived display identities."
+      },
+      "ToolTestMailRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "No recipient, tenant or message fields are accepted for a self-addressed test mail."
+      },
+      "ToolTestMailResponse": {
+        "type": "object",
+        "properties": {
+          "recipient": {
+            "type": "string",
+            "description": "Effective recipient after applying the existing domain restriction.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Confirms only that the fixed test message was queued."
       },
       "ToolTimeOffsetChoice": {
         "type": "object",

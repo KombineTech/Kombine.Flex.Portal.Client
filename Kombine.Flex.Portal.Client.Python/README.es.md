@@ -1,4 +1,4 @@
-La versión 0.31.0 agrega widgets protegidos de actividad y carga.
+La versión 0.32.0 incluye widgets protegidos de actividad y carga.
 
 La versión 0.29.0 agrega operaciones Plex autorizadas; Plex no es público.
 

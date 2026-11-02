@@ -127,6 +127,7 @@
 | `GetTenantStatusPage` | `get_tenant_status_page` | `getTenantStatusPage` | GET | `/api/v1/tenant/status/page` |
 | `ConvertToolTime` | `convert_tool_time` | `convertToolTime` | POST | `/api/v1/tenant/tools/time` |
 | `InspectToolKid` | `inspect_tool_kid` | `inspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
+| `QueueMyTestMail` | `queue_my_test_mail` | `queueMyTestMail` | POST | `/api/v1/tenant/tools/test-mail` |
 | `GetUnitTimelineFields` | `get_unit_timeline_fields` | `getUnitTimelineFields` | GET | `/api/v1/units/{unitKid}/timeline/fields` |
 | `GetUnitTimeline` | `get_unit_timeline` | `getUnitTimeline` | GET | `/api/v1/units/{unitKid}/timeline` |
 | `GetUnitDocuments` | `get_unit_documents` | `getUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |

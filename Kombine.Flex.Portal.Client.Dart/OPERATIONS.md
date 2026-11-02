@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-231 operations. OpenAPI SHA-256: `62c482fb1a6826fae1e01c6690f7fdc56e21616e88c84cec86a741cd14476461`.
+232 operations. OpenAPI SHA-256: `39d23698022c98826d39c2953404ec976202ed572163c9f1f69ab66201c69167`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -129,6 +129,7 @@
 | `GetTenantStatusPage` | `getTenantStatusPage` | GET | `/api/v1/tenant/status/page` |
 | `ConvertToolTime` | `convertToolTime` | POST | `/api/v1/tenant/tools/time` |
 | `InspectToolKid` | `inspectToolKid` | POST | `/api/v1/tenant/tools/kid` |
+| `QueueMyTestMail` | `queueMyTestMail` | POST | `/api/v1/tenant/tools/test-mail` |
 | `GetUnitTimelineFields` | `getUnitTimelineFields` | GET | `/api/v1/units/{unitKid}/timeline/fields` |
 | `GetUnitTimeline` | `getUnitTimeline` | GET | `/api/v1/units/{unitKid}/timeline` |
 | `GetUnitDocuments` | `getUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |

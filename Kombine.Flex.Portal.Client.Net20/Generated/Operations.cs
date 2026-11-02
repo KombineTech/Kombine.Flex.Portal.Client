@@ -37,6 +37,7 @@ namespace Kombine.Flex.Portal.Client.Net20
                 path = AddQuery(path, "LocationKid", options.LocationKid);
                 path = AddQuery(path, "LocationKids", options.LocationKids);
                 path = AddQuery(path, "UnitKid", options.UnitKid);
+                path = AddQuery(path, "UnitKids", options.UnitKids);
                 path = AddQuery(path, "UserKid", options.UserKid);
                 path = AddQuery(path, "Kind", options.Kind);
                 path = AddQuery(path, "IncludeZero", options.IncludeZero);
@@ -69,6 +70,7 @@ namespace Kombine.Flex.Portal.Client.Net20
                 path = AddQuery(path, "LocationKid", options.LocationKid);
                 path = AddQuery(path, "LocationKids", options.LocationKids);
                 path = AddQuery(path, "UnitKid", options.UnitKid);
+                path = AddQuery(path, "UnitKids", options.UnitKids);
                 path = AddQuery(path, "UserKid", options.UserKid);
                 path = AddQuery(path, "Kind", options.Kind);
                 path = AddQuery(path, "IncludeZero", options.IncludeZero);
@@ -701,6 +703,7 @@ namespace Kombine.Flex.Portal.Client.Net20
                 path = AddQuery(path, "LocationKid", options.LocationKid);
                 path = AddQuery(path, "LocationKids", options.LocationKids);
                 path = AddQuery(path, "UnitKid", options.UnitKid);
+                path = AddQuery(path, "UnitKids", options.UnitKids);
                 path = AddQuery(path, "UserKid", options.UserKid);
                 path = AddQuery(path, "Kind", options.Kind);
                 path = AddQuery(path, "IncludeZero", options.IncludeZero);
@@ -1891,6 +1894,14 @@ namespace Kombine.Flex.Portal.Client.Net20
             string path = "api/v1/tenant/tools/kid";
             Dictionary<string, string> headers = new Dictionary<string, string>();
             return (ToolKidInspectionResponse)SendJson("POST", path, body, headers, 200, typeof(ToolKidInspectionResponse));
+        }
+
+        /// <summary>Queue one fixed test email to the signed-in manager's current registered address.</summary>
+        public ToolTestMailResponse QueueMyTestMail(ToolTestMailRequest body)
+        {
+            string path = "api/v1/tenant/tools/test-mail";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (ToolTestMailResponse)SendJson("POST", path, body, headers, 202, typeof(ToolTestMailResponse));
         }
 
         /// <summary>Get the authorized machine context, log categories and readable timeline fields.</summary>

@@ -120,6 +120,18 @@
         }
       },
       {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      {
         "name": "UserKid",
         "where": "query",
         "py": "user_kid",
@@ -281,6 +293,18 @@
         "js": "unitKid",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -2447,6 +2471,18 @@
         "js": "unitKid",
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "UnitKids",
+        "where": "query",
+        "py": "unit_kids",
+        "js": "unitKids",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       {
@@ -7415,6 +7451,28 @@
     "multipart": null,
     "response": {
       "$ref": "#/components/schemas/ToolKidInspectionResponse"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
+    "operation": "QueueMyTestMail",
+    "python": "queue_my_test_mail",
+    "javascript": "queueMyTestMail",
+    "method": "POST",
+    "path": "api/v1/tenant/tools/test-mail",
+    "status": 202,
+    "statuses": [
+      202
+    ],
+    "auth": true,
+    "parameters": [],
+    "body": {
+      "$ref": "#/components/schemas/ToolTestMailRequest"
+    },
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/ToolTestMailResponse"
     },
     "binary": false,
     "example": {}

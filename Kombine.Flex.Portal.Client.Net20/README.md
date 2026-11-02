@@ -1,4 +1,4 @@
-Version 0.31.0 adds protected manager activity and application load widgets.
+Version 0.32.0 includes protected manager activity and application load widgets.
 
 Version 0.29.0 adds authorized Plex operations; Plex is not public.
 
