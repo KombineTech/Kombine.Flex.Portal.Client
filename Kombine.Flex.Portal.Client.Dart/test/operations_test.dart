@@ -4462,6 +4462,24 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetPublicRunningMachineList", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/public/statistics/running-units");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], isNull);
+
+      return http.Response(encodeApiJson(<Object?>[<String, Object?>{"unitKid": null, "startedAtUtc": "2026-10-20T10:00:00Z", "doneAtUtc": null, "unitType": null, "cycle": null}]), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getPublicRunningMachineList();
+    expect(encodeApiJson(result), encodeApiJson(<Object?>[<String, Object?>{"unitKid": null, "startedAtUtc": "2026-10-20T10:00:00Z", "doneAtUtc": null, "unitType": null, "cycle": null}]));
+    expect(sends, 1);
+  });
+
   test("wire GetPublicRunningMachines", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {

@@ -3336,6 +3336,14 @@ namespace Kombine.Flex.Portal.Client.Net20
             return (ReservedMachinesStatisticsResponse)SendJson("GET", path, null, headers, 200, typeof(ReservedMachinesStatisticsResponse));
         }
 
+        /// <summary>Returns the site overview's running-machine pool, refreshed at most once a minute.</summary>
+        public RunningMachineResponse[] GetPublicRunningMachineList()
+        {
+            string path = "api/v1/public/statistics/running-units";
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (RunningMachineResponse[])SendJson("GET", path, null, headers, 200, typeof(RunningMachineResponse[]));
+        }
+
         /// <summary>Counts machines whose current Started is before now and Done is after now.</summary>
         public RunningMachinesResponse GetPublicRunningMachines()
         {

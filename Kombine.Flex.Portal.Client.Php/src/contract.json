@@ -7708,6 +7708,35 @@
       },
       "additionalProperties": false
     },
+    "RunningMachineResponse": {
+      "type": "object",
+      "properties": {
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "startedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "doneAtUtc": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true
+        },
+        "unitType": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        },
+        "cycle": {
+          "type": "integer",
+          "format": "int32",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "RunningMachinesResponse": {
       "type": "object",
       "properties": {
@@ -16187,6 +16216,24 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/ReservedMachinesStatisticsResponse"
+      },
+      "binary": false
+    },
+    "GetPublicRunningMachineList": {
+      "method": "GET",
+      "path": "api/v1/public/statistics/running-units",
+      "statuses": [
+        200
+      ],
+      "auth": false,
+      "parameters": [],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/RunningMachineResponse"
+        }
       },
       "binary": false
     },

@@ -11161,6 +11161,28 @@
     "binary": false
   },
   {
+    "operation": "GetPublicRunningMachineList",
+    "dartMethod": "getPublicRunningMachineList",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/public/statistics/running-units",
+    "auth": false,
+    "statuses": [
+      200
+    ],
+    "parameters": [],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/RunningMachineResponse"
+      }
+    },
+    "binary": false
+  },
+  {
     "operation": "GetPublicRunningMachines",
     "dartMethod": "getPublicRunningMachines",
     "example": null,

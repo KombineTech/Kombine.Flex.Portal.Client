@@ -2222,6 +2222,14 @@ ReservedMachinesStatisticsResponse = TypedDict('ReservedMachinesStatisticsRespon
     'refreshAfterSeconds': 'int',
 }, total=False)
 
+RunningMachineResponse = TypedDict('RunningMachineResponse', {
+    'unitKid': 'str | None',
+    'startedAtUtc': 'str',
+    'doneAtUtc': 'str | None',
+    'unitType': 'int | None',
+    'cycle': 'int | None',
+}, total=False)
+
 RunningMachinesResponse = TypedDict('RunningMachinesResponse', {
     'tenantKid': 'str | None',
     'count': 'int',

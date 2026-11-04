@@ -1,4 +1,4 @@
-Version 0.33.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
+Version 0.34.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
 
 Version 0.29.0 tilføjer autoriserede Plex-operationer; Plex er ikke offentligt tilgængelig.
 

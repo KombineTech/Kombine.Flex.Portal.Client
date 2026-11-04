@@ -289,6 +289,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type PurchasesResponse array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string, 'currencies'?: list<PurchaseCurrencySnapshot>|null}
  * @phpstan-type ReservationsStatisticsResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
  * @phpstan-type ReservedMachinesStatisticsResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
+ * @phpstan-type RunningMachineResponse array{'unitKid'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'unitType'?: int|null, 'cycle'?: int|null}
  * @phpstan-type RunningMachinesResponse array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
  */
 final class PortalClient extends BaseClient
@@ -2752,6 +2753,15 @@ final class PortalClient extends BaseClient
     public function getPublicReservedMachines(): mixed
     {
         return $this->request('GetPublicReservedMachines', [], null);
+    }
+
+    /**
+     * Returns the site overview's running-machine pool, refreshed at most once a minute.
+     * @return list<RunningMachineResponse>
+     */
+    public function getPublicRunningMachineList(): mixed
+    {
+        return $this->request('GetPublicRunningMachineList', [], null);
     }
 
     /**

@@ -927,6 +927,10 @@ class PortalClient(BaseClient):
         'Counts distinct machines with a dated reservation that is currently in progress.'
         return self._request('GetPublicReservedMachines', {}, None)
 
+    def get_public_running_machine_list(self) -> list[RunningMachineResponse]:
+        "Returns the site overview's running-machine pool, refreshed at most once a minute."
+        return self._request('GetPublicRunningMachineList', {}, None)
+
     def get_public_running_machines(self) -> RunningMachinesResponse:
         'Counts machines whose current Started is before now and Done is after now.'
         return self._request('GetPublicRunningMachines', {}, None)

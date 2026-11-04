@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-232 operations. OpenAPI SHA-256: `39d23698022c98826d39c2953404ec976202ed572163c9f1f69ab66201c69167`.
+233 operations. OpenAPI SHA-256: `d6af86b69d4bbe2972e8ca860b8dcd8b02a1db51529551e89952f53675088be2`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -234,5 +234,6 @@
 | `GetPublicWidgetPresentation` | `getPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
 | `GetPublicReservations` | `getPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicReservedMachines` | `getPublicReservedMachines` | GET | `/api/v1/public/statistics/reserved-machines` |
+| `GetPublicRunningMachineList` | `getPublicRunningMachineList` | GET | `/api/v1/public/statistics/running-units` |
 | `GetPublicRunningMachines` | `getPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPortalStatus` | `getPortalStatus` | GET | `/api/v1/status` |

@@ -11956,6 +11956,29 @@
     "example": {}
   },
   {
+    "operation": "GetPublicRunningMachineList",
+    "python": "get_public_running_machine_list",
+    "javascript": "getPublicRunningMachineList",
+    "method": "GET",
+    "path": "api/v1/public/statistics/running-units",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": false,
+    "parameters": [],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/RunningMachineResponse"
+      }
+    },
+    "binary": false,
+    "example": []
+  },
+  {
     "operation": "GetPublicRunningMachines",
     "python": "get_public_running_machines",
     "javascript": "getPublicRunningMachines",
