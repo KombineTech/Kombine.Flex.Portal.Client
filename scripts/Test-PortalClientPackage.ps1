@@ -61,6 +61,17 @@ $feed = [System.Security.SecurityElement]::Escape((Split-Path $packagePath -Pare
 <?xml version="1.0" encoding="utf-8"?>
 <configuration><packageSources><clear /><add key="local-client" value="$feed" /><add key="nuget.org" value="https://api.nuget.org/v3/index.json" /></packageSources><packageSourceMapping><clear /><packageSource key="local-client"><package pattern="Kombine.Flex.Portal.Client" /></packageSource><packageSource key="nuget.org"><package pattern="*" /></packageSource></packageSourceMapping></configuration>
 "@ | Set-Content -LiteralPath $configPath -Encoding utf8
+# Compile the actual EN/DA/ES camera examples against the packaged signature, rather than a copied call.
+$exampleSource = "using System; using System.IO; using System.Collections.Generic; using System.Threading; using System.Threading.Tasks; using Kombine.Flex.Portal.Client;`ninternal static class CameraReadmeExamples {`n"
+foreach ($language in @('', '.da', '.es')) {
+    $readme = [IO.File]::ReadAllText((Join-Path $root "Kombine.Flex.Portal.Client/README$language.md"))
+    $example = [regex]::Match($readme, '```csharp\r?\n(?<code>using \(var original = File\.OpenRead\(capturedJpegPath\)\)[\s\S]*?)\r?\n```')
+    if (!$example.Success) { throw "Camera README example missing: $language" }
+    $name = if ($language) { $language.Substring(1) } else { 'en' }
+    $exampleSource += "internal static async Task $name(PortalApiClient api, string capturedJpegPath, string resourceKid, DateTimeOffset capturedAtUtc, CancellationToken cancellationToken) {`n" + $example.Groups['code'].Value + "`n}`n"
+}
+$exampleSource += "}`n"
+[IO.File]::WriteAllText((Join-Path $consumer 'CameraReadmeExamples.cs'), $exampleSource, [Text.UTF8Encoding]::new($false))
 dotnet test (Join-Path $consumer 'PackageConsumer.csproj') -c $Configuration --nologo ('-p:RestorePackagesPath=' + (Join-Path $work 'packages'))
 if ($LASTEXITCODE) { throw 'Independent NuGet consumer checks failed.' }
 Write-Host 'Package assets, dependencies and all client tests passed from an independent NuGet consumer.'

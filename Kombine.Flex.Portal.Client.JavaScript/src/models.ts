@@ -1,4 +1,12 @@
 // Generated wire models. int64 is bigint; dates remain ISO 8601 strings.
+/** AccountDayCount */
+export interface AccountDayCount {
+  /** through */
+  "through"?: string | null;
+  /** entries */
+  "entries"?: bigint;
+}
+
 /** A receipt assembled from this page's authorized lines. Further pages can contain more lines with the same key. */
 export interface AccountDocumentResponse {
   /** key */
@@ -47,6 +55,8 @@ export interface AccountEntryResponse {
   "unitName"?: string | null;
   /** canReverse */
   "canReverse"?: boolean;
+  /** API-computed house icon with the authorized location number; null for postings without a location. */
+  "locationIconKid"?: string | null;
   /** API-computed unit icon identity, ready for the image URL. */
   "unitIconKid"?: string | null;
   /** Opaque bank-scoped receipt key, shared by lines belonging to the same document. */
@@ -57,6 +67,14 @@ export interface AccountEntryResponse {
   "isAnonymized"?: boolean;
   /** Credit, ReserveRefund or Managed for payment-managed lines; empty otherwise. No payment IDs. */
   "paymentKind"?: string | null;
+}
+
+/** Most frequent authorized currency and the ready-to-render Forbrug icon. */
+export interface AccountIconResponse {
+  /** currency */
+  "currency"?: string | null;
+  /** iconKid */
+  "iconKid"?: string | null;
 }
 
 /** Filtered postings, full-selection totals and server-resolved query defaults. No computed resident balance is implied. */
@@ -72,7 +90,7 @@ export interface AccountResponse {
   /** from */
   "from"?: string;
   /** through */
-  "through"?: string;
+  "through"?: string | null;
   /** timeZone */
   "timeZone"?: string | null;
   /** period */
@@ -85,6 +103,8 @@ export interface AccountResponse {
   "hasMore"?: boolean;
   /** revision */
   "revision"?: string | null;
+  /** dayCount */
+  "dayCount"?: AccountDayCount;
   /** FlexOrm-style receipt grouping of this page. Items/offset/limit remain posting-based. */
   "documents"?: (AccountDocumentResponse)[] | null;
 }
@@ -117,12 +137,74 @@ export interface AccountUnitResponse {
   "name"?: string | null;
 }
 
+/** The latest event revision; no arbitrary log value can be supplied. */
+export interface AcknowledgeErrorRequest {
+  /** expectedRevision */
+  "expectedRevision": string | null;
+}
+
+/** Accessible bank count for Enabled=1 and Deleted=0. */
+export interface ActiveBankCountResponse {
+  /** count */
+  "count"?: bigint;
+  /** Tab icon containing the authorized count. */
+  "iconKid"?: string | null;
+}
+
 /** Number of accessible locations with Enabled=1 and Deleted=0, independent of search and paging. */
 export interface ActiveLocationCountResponse {
   /** count */
   "count"?: bigint;
-  /** Ready-to-render Banks2 icon with Count in Kid.Count. */
+  /** Ready-to-render Locations1 icon with Count in Kid.Count. */
   "iconKid"?: string | null;
+}
+
+/** Protected tenant-wide activity count without manager identities. */
+export interface ActiveManagerStatisticsResponse {
+  /** count */
+  "count"?: bigint;
+  /** measuredAtUtc */
+  "measuredAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** activeWithinMinutes */
+  "activeWithinMinutes"?: number;
+}
+
+/** Accessible active units or terminals, independent of search and paging, with a ready-to-render navigation icon. */
+export interface ActiveUnitCountResponse {
+  /** count */
+  "count"?: bigint;
+  /** iconKid */
+  "iconKid"?: string | null;
+}
+
+/** Protected production app CPU and memory percentages for the previous 24 hours, without provider identities. */
+export interface ApplicationLoadHistoryResponse {
+  /** fromUtc */
+  "fromUtc"?: string;
+  /** toUtc */
+  "toUtc"?: string;
+  /** fetchedAtUtc */
+  "fetchedAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** cpuSeries */
+  "cpuSeries"?: (ApplicationLoadHistorySeries)[] | null;
+  /** memorySeries */
+  "memorySeries"?: (ApplicationLoadHistorySeries)[] | null;
+}
+
+/** One anonymous application CPU or memory series; null values represent missing samples. */
+export interface ApplicationLoadHistorySeries {
+  /** points */
+  "points"?: (HostingPoint)[] | null;
+}
+
+/** ApproveWallboardPairing */
+export interface ApproveWallboardPairing {
+  /** location */
+  "location"?: WallboardScanLocation;
 }
 
 /** A portal link derived from an authorized API result, never from generated HTML. */
@@ -163,6 +245,36 @@ export interface AssistantResponse {
   "operations"?: (string)[] | null;
   /** links */
   "links"?: (AssistantLink)[] | null;
+}
+
+/** Canonical bank identity, display metadata and stored state. */
+export interface BankDirectoryItem {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** iconKid */
+  "iconKid"?: string | null;
+  /** enabled */
+  "enabled"?: boolean;
+  /** deleted */
+  "deleted"?: boolean | null;
+  /** deletedAt */
+  "deletedAt"?: string | null;
+  /** Requested bank-level settings; null when scope does not authorize their disclosure. bankActivationCode additionally requires whole-tenant access and Bank Create. */
+  "fields"?: Record<string, string | null> | null;
+}
+
+/** A bounded bank page and optional protected continuation. */
+export interface BankDirectoryResponse {
+  /** items */
+  "items"?: (BankDirectoryItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** Selected optional field keys. Keep the same selection when following the cursor. */
+  "fields"?: (string)[] | null;
+  /** Whether this caller may display, search and sort bank activation codes. */
+  "canReadBankActivationCode"?: boolean;
 }
 
 /** One document identity with authorized display metadata and the latest matching Cycle time. */
@@ -381,12 +493,226 @@ export interface BookingsResponse {
   "hasMore"?: boolean;
 }
 
+/** Availability and effective capture permission for one exact authorized resource. */
+export interface CameraAvailabilityResponse {
+  /** hasCaptures */
+  "hasCaptures"?: boolean;
+  /** isDegraded */
+  "isDegraded"?: boolean;
+  /** canCapture */
+  "canCapture"?: boolean;
+}
+
+/** One authorized capture; all object identifiers are canonical KIDs or opaque API tokens. */
+export interface CameraCaptureItem {
+  /** id */
+  "id"?: string | null;
+  /** captureId */
+  "captureId"?: string | null;
+  /** resourceKid */
+  "resourceKid"?: string | null;
+  /** ownerKid */
+  "ownerKid"?: string | null;
+  /** fileName */
+  "fileName"?: string | null;
+  /** kind */
+  "kind"?: string | null;
+  /** capturedAtUtc */
+  "capturedAtUtc"?: string;
+  /** hasPreview */
+  "hasPreview"?: boolean;
+  /** hasMotion */
+  "hasMotion"?: boolean;
+  /** hasPlayback */
+  "hasPlayback"?: boolean;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+}
+
+/** One bounded page. A degraded page may omit captures from an unavailable region; refresh from the beginning after recovery. */
+export interface CameraCapturePage {
+  /** items */
+  "items"?: (CameraCaptureItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** isDegraded */
+  "isDegraded"?: boolean;
+}
+
+/** The unchanged signed ticket returned by PrepareCameraCapture. */
+export interface CameraConfirmationRequest {
+  /** uploadToken */
+  "uploadToken"?: string | null;
+}
+
+/** Only Confirmed=true acknowledges durable publication. ProcessingPercent is a weighted completed-stage estimate, not elapsed time; null means unknown and 100 requires confirmation. ErrorCode may report a transient processing failure. */
+export interface CameraConfirmationResponse {
+  /** confirmed */
+  "confirmed"?: boolean;
+  /** errorCode */
+  "errorCode"?: string | null;
+  /** processingPercent */
+  "processingPercent"?: number | null;
+}
+
+/** Immutable input for recorded photo, video or a paired Live Photo; tenant and owner are never client parameters. */
+export interface CameraPrepareRequest {
+  /** resourceKid */
+  "resourceKid"?: string | null;
+  /** kind */
+  "kind"?: string | null;
+  /** originalFileName */
+  "originalFileName"?: string | null;
+  /** originalNameAvailable */
+  "originalNameAvailable"?: boolean;
+  /** capturedAtUtc */
+  "capturedAtUtc"?: string;
+  /** mediaLength */
+  "mediaLength"?: bigint;
+  /** mediaSha256 */
+  "mediaSha256"?: string | null;
+  /** Available device observations with source, time and units; use an empty object when unavailable. Never include API credentials. */
+  "sensorData"?: unknown;
+  /** motionLength */
+  "motionLength"?: bigint | null;
+  /** motionSha256 */
+  "motionSha256"?: string | null;
+}
+
+/** Opaque signed ticket; retry with this exact token and unchanged original bytes. */
+export interface CameraPrepareResponse {
+  /** uploadToken */
+  "uploadToken"?: string | null;
+}
+
+/** Display metadata for the exact authorized camera resource, without parent or child data. */
+export interface CameraResourceResponse {
+  /** Canonical, site-bound bank, location or unit identity. */
+  "resourceKid"?: string | null;
+  /** Resource display name; unit localization placeholders are resolved. */
+  "name"?: string | null;
+  /** API-computed icon identity including the resource number; use unchanged in icon URLs. */
+  "iconKid"?: string | null;
+  /** True for locations and units; false for banks. Advisory only. */
+  "requiresProximityCheck"?: boolean;
+  /** Nullable location latitude in decimal degrees, inherited by units. */
+  "latitude"?: number | null;
+  /** Nullable location longitude in decimal degrees, inherited by units. */
+  "longitude"?: number | null;
+}
+
+/** A complete media set exists in at least one region; the second copy continues independently. */
+export interface CameraSaveResponse {
+  /** captureId */
+  "captureId"?: string | null;
+  /** resourceKid */
+  "resourceKid"?: string | null;
+}
+
+/** One bank schedule or location processing row. Processing is null for a bank-wide row. */
+export interface ChecklistItem {
+  /** kid */
+  "kid"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** period */
+  "period"?: number;
+  /** isLatest */
+  "isLatest"?: boolean;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** hardware */
+  "hardware"?: string | null;
+  /** periodDateUtc */
+  "periodDateUtc"?: string | null;
+  /** nextSettlementUtc */
+  "nextSettlementUtc"?: string | null;
+  /** lastRunUtc */
+  "lastRunUtc"?: string | null;
+  /** updatedAtUtc */
+  "updatedAtUtc"?: string | null;
+  /** hidden */
+  "hidden"?: boolean;
+  /** onChecklist */
+  "onChecklist"?: boolean;
+  /** scheduleStatus */
+  "scheduleStatus"?: string | null;
+  /** processing */
+  "processing"?: ChecklistProcessing;
+}
+
+/** A bounded checklist page; only read operations are supported. */
+export interface ChecklistPage {
+  /** items */
+  "items"?: (ChecklistItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** readAtUtc */
+  "readAtUtc"?: string;
+}
+
+/** The four independently stored processing states; no financial amounts. */
+export interface ChecklistProcessing {
+  /** invoice */
+  "invoice"?: ChecklistStatus;
+  /** soapInvoice */
+  "soapInvoice"?: ChecklistStatus;
+  /** soapCredit */
+  "soapCredit"?: ChecklistStatus;
+  /** easyPay */
+  "easyPay"?: ChecklistStatus;
+}
+
+/** Stored code and enum-derived state; null state means unknown, never success. */
+export interface ChecklistStatus {
+  /** code */
+  "code"?: number | null;
+  /** state */
+  "state"?: string | null;
+}
+
 /** Site database access indicator, never a manager permission or a guarantee for a business operation. */
 export interface DatabaseAccessResponse {
   /** True: Log7 read/append privilege check succeeded. False: read succeeds but the write connection is absent, denies access or is read-only. Null: status could not be determined. Checks shared Log7 and bank-zero Log7 history only; bank grants, triggers and transactions may differ. */
   "canWrite"?: boolean | null;
   /** When this cached check was started. Known results are cached for ten minutes; unknown results for one minute. */
   "checkedAtUtc"?: string;
+}
+
+/** Bounded 24-hour MySQL load and CPU histories, without provider identifiers or labels. */
+export interface DatabaseLoadHistoryResponse {
+  /** fromUtc */
+  "fromUtc"?: string;
+  /** toUtc */
+  "toUtc"?: string;
+  /** fetchedAtUtc */
+  "fetchedAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** series */
+  "series"?: (DatabaseLoadHistorySeries)[] | null;
+  /** cpuSeries */
+  "cpuSeries"?: (DatabaseLoadHistorySeries)[] | null;
+}
+
+/** One anonymous load series; null values represent missing samples. */
+export interface DatabaseLoadHistorySeries {
+  /** points */
+  "points"?: (HostingPoint)[] | null;
+}
+
+/** The complete number of rows matching the authorized export selection. */
+export interface DirectoryExportCountResponse {
+  /** count */
+  "count"?: bigint;
 }
 
 /** Finite numeric interpretation alongside original text; calculated values have no original text. */
@@ -415,10 +741,26 @@ export interface DocumentColumn {
   "iconKid"?: string | null;
 }
 
-/** Values are indexed by column position. A missing cell is null; a stored null is a cell with null text/value. */
+/** An existing same-unit document identified by its canonical KID and latest tagged Cycle timestamp. */
+export interface DocumentNeighbor {
+  /** kid */
+  "kid"?: string | null;
+  /** lastActivityUtc */
+  "lastActivityUtc"?: string;
+}
+
+/** Previous (higher numeric Doc ID) and next (lower numeric Doc ID) documents. Null means no document exists in that direction. */
+export interface DocumentNeighbors {
+  /** previous */
+  "previous"?: DocumentNeighbor;
+  /** next */
+  "next"?: DocumentNeighbor;
+}
+
+/** Only columns with data are returned, with values indexed by column position. A missing cell is null; a stored null is a cell with null text/value. */
 export interface DocumentTable {
-  /** documentKid */
-  "documentKid"?: string | null;
+  /** cycleKid */
+  "cycleKid"?: string | null;
   /** unitKid */
   "unitKid"?: string | null;
   /** unitName */
@@ -541,7 +883,7 @@ export interface InstallerDetailsResponse {
   "availableIcons"?: (string)[] | null;
 }
 
-/** Installer metadata from the site's Log7 with BankId=TenantId. Kid is canonical with type Installer; clients can derive the display UserId from it. Missing Enabled is null. DeletedAt and LastActiveAt are UTC; LastActiveAt is the Alive krumb's MS2000, not its Text. No credentials are returned. */
+/** Installer metadata from the site's Log7 with BankId=TenantId. Kid is canonical with type Installer; clients can derive the display UserId from it. Missing Enabled is null. DeletedAt and LastActiveAt are UTC; LastActiveAt is the Alive krumb's MS2000, not its Text. Passwords are never returned. */
 export interface InstallerDirectoryItem {
   /** kid */
   "kid"?: string | null;
@@ -561,6 +903,8 @@ export interface InstallerDirectoryItem {
   "enabled"?: boolean | null;
   /** lastActiveAt */
   "lastActiveAt"?: string | null;
+  /** User activation code, only when explicitly requested with Installer Create permission. */
+  "activationCode"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
 }
@@ -657,6 +1001,58 @@ export interface LiveLogsResponse {
   "servers"?: (LiveLogCard)[] | null;
 }
 
+/** DayOfWeek is 0=Sunday through 6=Saturday; times are relative to this day's midnight. */
+export interface LocationBookingCalendarDayResponse {
+  /** dayOfWeek */
+  "dayOfWeek"?: number;
+  /** slots */
+  "slots"?: (LocationBookingCalendarSlotResponse)[] | null;
+  /** date */
+  "date"?: string;
+}
+
+/** Units with the same valid stored calendar identity and effective dated schedule; status is Configured. */
+export interface LocationBookingCalendarGroup {
+  /** units */
+  "units"?: (LocationBookingCalendarUnit)[] | null;
+  /** status */
+  "status"?: string | null;
+  /** days */
+  "days"?: (LocationBookingCalendarDayResponse)[] | null;
+}
+
+/** Local wall-clock minutes; Type is 0=reservation period, 1=chance period, 2=closed, 3=unknown. */
+export interface LocationBookingCalendarSlotResponse {
+  /** startMinute */
+  "startMinute"?: number;
+  /** durationMinutes */
+  "durationMinutes"?: number;
+  /** type */
+  "type"?: number;
+}
+
+/** Authorized canonical unit KID and localized plain-text name. */
+export interface LocationBookingCalendarUnit {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+}
+
+/** The authorized location's effective dated calendars; no occupancy or booking rights. */
+export interface LocationBookingCalendarsResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** groups */
+  "groups"?: (LocationBookingCalendarGroup)[] | null;
+  /** timeZone */
+  "timeZone"?: string | null;
+  /** from */
+  "from"?: string;
+  /** days */
+  "days"?: number;
+}
+
 /** Stable code, localized plain text and whether the row needs attention. Never HTML. */
 export interface LocationBookingRule {
   /** code */
@@ -699,6 +1095,12 @@ export interface LocationBookingRulesResponse {
   "calculatedAt"?: string;
   /** groups */
   "groups"?: (LocationBookingRuleGroup)[] | null;
+}
+
+/** Exact number of locations matching the authorized, filtered directory at count time. */
+export interface LocationCountResponse {
+  /** count */
+  "count"?: bigint;
 }
 
 /** Bank and location identifiers are canonical KIDs. Activation codes are null without the required Create permission and scope. */
@@ -785,6 +1187,8 @@ export interface LocationDirectoryItem {
   "giftSplit"?: string | null;
   /** giftPN */
   "giftPN"?: string | null;
+  /** soapEnd */
+  "soapEnd"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
@@ -833,12 +1237,110 @@ export interface LocationOpeningHoursResponse {
   "groups"?: (OpeningHoursGroup)[] | null;
 }
 
+/** Unit KID, local epoch start minute, absolute duration, UTC event revision and cancellation state. */
+export interface LocationReservationHistoryItem {
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** startMinute */
+  "startMinute"?: number;
+  /** durationMinutes */
+  "durationMinutes"?: number;
+  /** revision */
+  "revision"?: bigint;
+  /** cancelled */
+  "cancelled"?: boolean;
+  /** userNumber */
+  "userNumber"?: string | null;
+  /** userName */
+  "userName"?: string | null;
+  /** userKid */
+  "userKid"?: string | null;
+}
+
+/** Bank reservation history with resident display metadata. */
+export interface LocationReservationHistoryResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** from */
+  "from"?: string;
+  /** days */
+  "days"?: number;
+  /** items */
+  "items"?: (LocationReservationHistoryItem)[] | null;
+}
+
+/** Unit KID, local epoch/weekly start minute and positive duration. No slot rounding. */
+export interface LocationReservationResponse {
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** startMinute */
+  "startMinute"?: number;
+  /** durationMinutes */
+  "durationMinutes"?: number;
+  /** userNumber */
+  "userNumber"?: string | null;
+  /** userName */
+  "userName"?: string | null;
+  /** userKid */
+  "userKid"?: string | null;
+}
+
+/** Current active reservations, independent of calendar configuration, with resident display metadata. */
+export interface LocationReservationsResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** from */
+  "from"?: string;
+  /** days */
+  "days"?: number;
+  /** items */
+  "items"?: (LocationReservationResponse)[] | null;
+}
+
 /** An authorized location and its visible unit list. */
 export interface LocationUnitsResponse {
   /** location */
   "location"?: BankLocationResponse;
   /** items */
   "items"?: (UnitOverviewResponse)[] | null;
+}
+
+/** Open-Meteo model conditions. Times are UTC; units are explicit in measurement names. */
+export interface LocationWeatherCurrent {
+  /** observedAtUtc */
+  "observedAtUtc"?: string;
+  /** retrievedAtUtc */
+  "retrievedAtUtc"?: string;
+  /** temperatureCelsius */
+  "temperatureCelsius"?: number;
+  /** apparentTemperatureCelsius */
+  "apparentTemperatureCelsius"?: number | null;
+  /** windSpeedMetresPerSecond */
+  "windSpeedMetresPerSecond"?: number | null;
+  /** precipitationMillimetres */
+  "precipitationMillimetres"?: number | null;
+  /** relativeHumidityPercent */
+  "relativeHumidityPercent"?: number | null;
+  /** weatherCode */
+  "weatherCode"?: number | null;
+  /** isDay */
+  "isDay"?: boolean | null;
+}
+
+/** Weather for one authorized location. Null measurements mean unknown, never zero. */
+export interface LocationWeatherResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** status */
+  "status"?: string | null;
+  /** address */
+  "address"?: string | null;
+  /** zip */
+  "zip"?: string | null;
+  /** positionSource */
+  "positionSource"?: string | null;
+  /** Current conditions, or null unless status is Available. */
+  "current"?: LocationWeatherCurrent | null;
 }
 
 /** The canonical KID of the newly activated empty administrator. */
@@ -967,12 +1469,16 @@ export interface ManagerLoginErrorResponse {
   "code"?: string | null;
 }
 
-/** Credentials submitted over HTTPS; never log request bodies for this endpoint. */
+/** Exactly one manager credential pair submitted over HTTPS. Never log this body. */
 export interface ManagerLoginRequest {
-  /** The manager's email address. */
-  "email": string;
-  /** The original password, normalized only by the documented legacy verifier. */
-  "password": string;
+  /** Manager email for password login. */
+  "email"?: string | null;
+  /** Original manager password. */
+  "password"?: string | null;
+  /** Manager login username from Kid.ToUserId (tenant.0-userId), or canonical bank-zero manager KID, on this API's tenant. */
+  "kid"?: string | null;
+  /** Original case-sensitive API key, never its hash. */
+  "apiKey"?: string | null;
 }
 
 /** A resource category's independent ePermission2 flags. */
@@ -1015,12 +1521,14 @@ export interface ManagerPermissionChangeRequest {
 
 /** Apply a server-defined role to the complete permission matrix. */
 export interface ManagerPermissionRoleRequest {
-  /** accounting, caretaker or operator; case-sensitive, required. */
+  /** accounting, caretaker, operator, technical-support, tenant-installer, tenant-accounting or combine; case-sensitive, required. */
   "role": string | null;
   /** Exactly Managers, Installer, Service, Bank, Location, Unit, User, Tabs and Kids with last displayed flags. Explicit null represents an invalid stored mask. */
   "expectedFlags": Record<string, number | null> | null;
-  /** Required for accounting: tabsRevision from GetManager or the last acknowledged edit. Other roles keep tabs unchanged. */
+  /** Required for accounting and combine: tabsRevision from GetManager or the last acknowledged edit. */
   "expectedTabsRevision"?: string | null;
+  /** Required for combine: kidsRevision from GetManager or the last acknowledged edit. */
+  "expectedKidsRevision"?: string | null;
 }
 
 /** The acknowledged preset and complete persisted permission matrix. */
@@ -1037,6 +1545,12 @@ export interface ManagerPermissionRoleResponse {
   "tabsRevision"?: string | null;
   /** False when the change removes your required Managers access. */
   "canEditTabs"?: boolean;
+  /** Authoritative resource grants after the role assignment. */
+  "resourceGrants"?: (ManagerResourceGrantResponse)[] | null;
+  /** Revision for the next resource-grant edit. */
+  "kidsRevision"?: string | null;
+  /** Whether the caller retains permission to edit resource grants. */
+  "canEditKids"?: boolean;
 }
 
 /** One desired profile value plus the profile revision last shown to the caller. */
@@ -1089,6 +1603,8 @@ export interface ManagerProfileResponse {
   "tabs"?: (number)[] | null;
   /** Whether at least one bank/location grant applies on this site. */
   "hasBankAccess"?: boolean;
+  /** Exact approved display ID for a read-only Wallboard session, resolved from its device record. Null for ordinary managers. */
+  "wallboardDisplayId"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
   /** databaseAccess */
@@ -1105,6 +1621,16 @@ export interface ManagerProfileResponse {
   "themeMode"?: EThemeMode;
   /** Preferred icon set: g or line. Missing or unsupported stored values return line; an explicit g is preserved. This grants no permissions. */
   "iconSet"?: string | null;
+  /** Personal eLanguage identity; null follows browser/tenant policy. Danish is zero. */
+  "language"?: number | null;
+  /** Allowlisted short-date pattern; empty follows the language. */
+  "dateFormat"?: string | null;
+  /** Number-format culture; empty follows the language. Does not change currency. */
+  "numberFormat"?: string | null;
+  /** Personal table/list vertical spacing factor: 0.75, 1, 1.25, 1.5, 1.75 or 2. Missing/invalid values use 1. */
+  "lineSpacing"?: number;
+  /** Maximum workspace banks; null means unlimited. This display preference grants no access. */
+  "portalMaxOpenBanks"?: number | null;
   /** Names and IDs from the shared eTab enum, limited to the manager's recognized grants. */
   "tabDetails"?: (ManagerTabResponse)[] | null;
   /** Decoded bank/location scopes belonging only to this site. Empty means no bank/location access. */
@@ -1139,6 +1665,28 @@ export interface ManagerSessionResponse {
   "expiresIn"?: bigint;
   /** The Authorization header scheme. */
   "tokenType"?: string | null;
+}
+
+/** Single-use mailbox proof for the pending manager. */
+export interface ManagerSignUpConfirmation {
+  /** Protected single-use mailbox proof. */
+  "token"?: string | null;
+}
+
+/** Required self-registration profile with no permission selectors. */
+export interface ManagerSignUpRequest {
+  /** Mailbox to verify. */
+  "email"?: string | null;
+  /** Manager name. */
+  "name"?: string | null;
+  /** Manager organisation. */
+  "organisation"?: string | null;
+  /** Password chosen at registration. */
+  "password"?: string | null;
+  /** Matching password confirmation. */
+  "confirmPassword"?: string | null;
+  /** Optional email language: exactly lowercase en, da or es. Omitted/null uses English; empty or other values are invalid. */
+  "language"?: string | null;
 }
 
 /** Desired state of one numeric eTab grant, using the last returned Tabs revision. */
@@ -1181,6 +1729,48 @@ export interface ManagerThemeRequest {
 export interface ManagerThemeResponse {
   /** themeMode */
   "themeMode"?: EThemeMode;
+}
+
+/** Moves one committed page between public and private layouts. Indexes are zero-based and bound to both revisions. ToPublic selects publication; SourceDisplayId then selects the private source instead of TargetDisplayId. */
+export interface MovePublicWallboardPageRequest {
+  /** revision */
+  "revision"?: string | null;
+  /** publicRevision */
+  "publicRevision"?: string | null;
+  /** pageIndex */
+  "pageIndex": number;
+  /** targetPageIndex */
+  "targetPageIndex": number;
+  /** targetDisplayId */
+  "targetDisplayId"?: string | null;
+  /** portrait */
+  "portrait"?: boolean;
+  /** toPublic */
+  "toPublic"?: boolean;
+  /** sourceDisplayId */
+  "sourceDisplayId"?: string | null;
+}
+
+/** Both committed settings after an atomic page move across the public/private boundary. */
+export interface MovePublicWallboardPageResponse {
+  /** personal */
+  "personal"?: PersonalWallboardsResponse;
+  /** public */
+  "public"?: PublicWallboardEditorResponse;
+}
+
+/** Authorized display identity and great-circle distance in metres, without the caller's position. */
+export interface NearestLocationItem {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** iconKid */
+  "iconKid"?: string | null;
+  /** distanceMeters */
+  "distanceMeters"?: number;
 }
 
 /** Current own settings, stable revision and safe operation outcome; no inherited address. */
@@ -1251,10 +1841,96 @@ export interface OpeningHoursUnit {
   "name"?: string | null;
 }
 
+/** Authorized machine, setting audit and revision. Status is null for an unknown nonzero stored code. */
+export interface OutOfOrderItem {
+  /** kid */
+  "kid"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** unitType */
+  "unitType"?: number;
+  /** outOfOrder */
+  "outOfOrder"?: number;
+  /** status */
+  "status"?: string | null;
+  /** statusLabel */
+  "statusLabel"?: string | null;
+  /** timestampUtc */
+  "timestampUtc"?: string;
+  /** changedBy */
+  "changedBy"?: UnitSettingEditorResponse;
+  /** revision */
+  "revision"?: string | null;
+  /** canRestore */
+  "canRestore"?: boolean;
+}
+
+/** Current out-of-order settings and an opaque next-page cursor. */
+export interface OutOfOrderPage {
+  /** items */
+  "items"?: (OutOfOrderItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+}
+
+/** Revision from the list; the action always writes Enabled (0). */
+export interface OutOfOrderRestoreRequest {
+  /** expectedRevision */
+  "expectedRevision": string | null;
+}
+
+/** Confirmed storage result; Sync zero is pending device synchronization, not physical acknowledgement. */
+export interface OutOfOrderRestoreResponse {
+  /** kid */
+  "kid"?: string | null;
+  /** outOfOrder */
+  "outOfOrder"?: number;
+  /** status */
+  "status"?: string | null;
+  /** timestampUtc */
+  "timestampUtc"?: string;
+  /** revision */
+  "revision"?: string | null;
+  /** sync */
+  "sync"?: number | null;
+}
+
+/** Authorized count and red badge icon; each operation documents its cache age and precision. */
+export interface PeopleDirectoryCount {
+  /** count */
+  "count"?: bigint;
+  /** iconKid */
+  "iconKid"?: string | null;
+}
+
 /** Stable success/error code, containing no secrets. */
 export interface PersonalAccountResult {
   /** code */
   "code"?: string | null;
+}
+
+/** Generate a replacement against the last acknowledged API-key revision. */
+export interface PersonalApiKeyRequest {
+  /** revision */
+  "revision": string | null;
+}
+
+/** One-time plaintext key returned only after the hash was committed. Never log this response. */
+export interface PersonalApiKeyResponse {
+  /** apiKey */
+  "apiKey"?: string | null;
+  /** details */
+  "details"?: PersonalManagerApiKey;
 }
 
 /** The single-use proof from the new mailbox. */
@@ -1271,6 +1947,14 @@ export interface PersonalEmailRequest {
   "currentPassword": string | null;
   /** language */
   "language"?: string | null;
+}
+
+/** Own API-key status; never contains the hash or plaintext key. */
+export interface PersonalManagerApiKey {
+  /** hasApiKey */
+  "hasApiKey"?: boolean;
+  /** revision */
+  "revision"?: string | null;
 }
 
 /** Personal preferences; no credentials, administrative grants or internal verification proofs. */
@@ -1297,6 +1981,16 @@ export interface PersonalManagerProfile {
   "retentionDays"?: number;
   /** iconSet */
   "iconSet"?: string | null;
+  /** language */
+  "language"?: number | null;
+  /** dateFormat */
+  "dateFormat"?: string | null;
+  /** numberFormat */
+  "numberFormat"?: string | null;
+  /** lineSpacing */
+  "lineSpacing"?: number;
+  /** portalMaxOpenBanks */
+  "portalMaxOpenBanks"?: number | null;
 }
 
 /** A stable numeric tab identity and its enum-derived name. */
@@ -1349,6 +2043,66 @@ export interface PersonalTabRequest {
   "enabled": boolean;
 }
 
+/** Add a display to the authenticated manager's own layout list; grants no device or resource access. */
+export interface PersonalWallboardRequest {
+  /** displayId */
+  "displayId": string | null;
+  /** targetDisplayId */
+  "targetDisplayId"?: string | null;
+}
+
+/** Own layout collection and opaque optimistic concurrency revision. */
+export interface PersonalWallboardsResponse {
+  /** wallboards */
+  "wallboards"?: (Wallboard)[] | null;
+  /** revision */
+  "revision"?: string | null;
+  /** storageUsedCharacters */
+  "storageUsedCharacters"?: number;
+  /** storageLimitCharacters */
+  "storageLimitCharacters"?: number;
+  /** portalWallboard */
+  "portalWallboard"?: Wallboard;
+  /** portalStorageUsedCharacters */
+  "portalStorageUsedCharacters"?: number;
+  /** portalStorageLimitCharacters */
+  "portalStorageLimitCharacters"?: number;
+  /** dateFormat */
+  "dateFormat"?: string | null;
+}
+
+/** Current playback queue without exposing media paths. */
+export interface PlexQueueResponse {
+  /** Canonical reference requested by the caller. */
+  "reference"?: string | null;
+  /** Current video or playlist title. */
+  "title"?: string | null;
+  /** Current number of items, zero for an empty playlist. */
+  "count"?: number;
+}
+
+/** A selectable private Plex item; contains no media URL or credential. */
+export interface PlexSearchItem {
+  /** Canonical machine/v-or-p/numeric-ID reference. */
+  "reference"?: string | null;
+  /** Plex title, at most 240 characters. */
+  "title"?: string | null;
+  /** video or playlist. */
+  "kind"?: string | null;
+}
+
+/** At most thirty items from the caller's explicitly configured server. */
+export interface PlexSearchResponse {
+  /** Deduplicated selectable items. */
+  "items"?: (PlexSearchItem)[] | null;
+}
+
+/** An opaque ticket bound to the same authenticated manager/screen and selected layout. */
+export interface PlexStartResponse {
+  /** Append to the stream route; never contains a Plex credential. */
+  "ticket"?: string | null;
+}
+
 /** ProblemDetails */
 export interface ProblemDetails {
   /** type */
@@ -1363,7 +2117,51 @@ export interface ProblemDetails {
   "instance"?: string | null;
 }
 
-/** Mixed-result shape; kind is an enum-derived type and Kid is the sole object identifier. */
+/** The separately revisioned tenant-wide wallboard stored for user zero. */
+export interface PublicWallboardEditorResponse {
+  /** wallboard */
+  "wallboard"?: Wallboard;
+  /** Opaque revision. */
+  "revision"?: string | null;
+  /** Stored characters. */
+  "storageUsedCharacters"?: number;
+  /** Maximum characters. */
+  "storageLimitCharacters"?: number;
+}
+
+/** RedeemWallboardPairing */
+export interface RedeemWallboardPairing {
+  /** deviceCode */
+  "deviceCode"?: string | null;
+}
+
+/** ResumeWallboardSession */
+export interface ResumeWallboardSession {
+  /** challenge */
+  "challenge"?: string | null;
+  /** signature */
+  "signature"?: string | null;
+}
+
+/** Replaces own layouts only when the current revision matches; no automatic retries. */
+export interface SavePersonalWallboardsRequest {
+  /** revision */
+  "revision"?: string | null;
+  /** wallboards */
+  "wallboards": unknown;
+  /** portalWallboard */
+  "portalWallboard"?: unknown;
+}
+
+/** A revision-checked replacement of the public wallboard. */
+export interface SavePublicWallboardRequest {
+  /** The revision from the editor read. */
+  "revision"?: string | null;
+  /** The compact wallboard layout. */
+  "wallboard": unknown;
+}
+
+/** Mixed-result shape; kind is an enum-derived type. Kid identifies the result; optional BankKid identifies a resident's parent bank. */
 export interface SearchResult {
   /** kid */
   "kid"?: string | null;
@@ -1381,6 +2179,8 @@ export interface SearchResult {
   "isContext"?: boolean;
   /** number */
   "number"?: string | null;
+  /** Canonical parent bank KID for a resident result. This identity grants no bank access; names require authorized context results. */
+  "bankKid"?: string | null;
   /** API-computed icon identity; use unchanged in the icon image URL. */
   "iconKid"?: string | null;
 }
@@ -1407,7 +2207,7 @@ export interface ServiceApiKeyResponse {
   "details"?: ServiceDetailsResponse;
 }
 
-/** ApiKeyHash is the hash stored in eSetting.Password and is included only for callers with Service Write. The published JSON names are preserved; this is never a plaintext API key. CanEdit is only a display hint; every mutation independently reauthorizes. */
+/** ApiKeyHash is the hash stored in eSetting.ApiKeyHash (or an existing legacy Password-only service record) and is included only for callers with Service Write. The published JSON names are preserved; this is never a plaintext API key. CanEdit is only a display hint; every mutation independently reauthorizes. */
 export interface ServiceDetailsResponse {
   /** service */
   "service"?: ServiceDirectoryItem;
@@ -1529,6 +2329,14 @@ export interface SettlementPeriodResponse {
   "transactionCount"?: bigint | null;
 }
 
+/** StartWallboardPairing */
+export interface StartWallboardPairing {
+  /** displayId */
+  "displayId"?: string | null;
+  /** publicKey */
+  "publicKey"?: string | null;
+}
+
 /** One alert with canonical object KIDs and a UTC last-contact or out-of-order timestamp. */
 export interface TenantStatusItem {
   /** kind */
@@ -1601,6 +2409,102 @@ export interface TenantStatusSourceResult {
   "errorCode"?: string | null;
 }
 
+/** One nondefault, nonzero data property returned by the installed Flex KID parser. */
+export interface ToolKidField {
+  /** Exact Kid property name, independent of display language. */
+  "name"?: string | null;
+  /** Exact invariant numeric value or decoded text; numbers remain strings to avoid JavaScript precision loss. */
+  "value"?: string | null;
+  /** The actual enum ToString() name, or null when the enum value has no name. */
+  "enumName"?: string | null;
+  /** Exact enum numeric value as a string; null for properties that are not enums. */
+  "enumNumber"?: string | null;
+  /** Zero-based original list position for Settings and Icons, otherwise null. */
+  "index"?: number | null;
+}
+
+/** Input to the KID inspection tool. Parsing never resolves resources or grants access. */
+export interface ToolKidInspectionRequest {
+  /** A Flex KID in a representation accepted by the installed Kid parser, up to 2048 characters. */
+  "kid"?: string | null;
+}
+
+/** Parsed KID data only, without database lookups, inferred scope, or derived display identities. */
+export interface ToolKidInspectionResponse {
+  /** The installed parser's ToString() output. */
+  "canonicalKid"?: string | null;
+  /** Nondefault, nonzero properties, with all nonzero Settings and Icons preserved in their original order. */
+  "fields"?: (ToolKidField)[] | null;
+  /** True when the installed parser reserialized the input differently, including ignored input or whitespace. */
+  "normalized"?: boolean;
+}
+
+/** No recipient, tenant or message fields are accepted for a self-addressed test mail. */
+export interface ToolTestMailRequest {
+}
+
+/** Confirms only that the fixed test message was queued. */
+export interface ToolTestMailResponse {
+  /** Effective recipient after applying the existing domain restriction. */
+  "recipient"?: string | null;
+}
+
+/** One possible offset for a local time repeated at the end of daylight saving time. */
+export interface ToolTimeOffsetChoice {
+  /** offset */
+  "offset"?: string | null;
+  /** utc */
+  "utc"?: string | null;
+}
+
+/** Pure conversion input. Format is ms2000, mi2000, ss2000, utc or local; all numbers travel as strings. */
+export interface ToolTimeRequest {
+  /** format */
+  "format"?: string | null;
+  /** value */
+  "value"?: string | null;
+  /** timeZone */
+  "timeZone"?: string | null;
+  /** offset */
+  "offset"?: string | null;
+}
+
+/** A validation outcome, or one instant expressed in all supported reversible formats. */
+export interface ToolTimeResponse {
+  /** success */
+  "success"?: boolean;
+  /** error */
+  "error"?: string | null;
+  /** result */
+  "result"?: ToolTimeResult;
+  /** offsetChoices */
+  "offsetChoices"?: (ToolTimeOffsetChoice)[] | null;
+}
+
+/** MS2000 preserves input milliseconds. Date input follows Kombine.Flex.Time's two-millisecond truncation; DateInputRounded reports any lost ticks. MI2000 and SS2000 are null outside their reversible Int32 range. MillisecondRemainder is the part lost by SS2000; SecondRemainder is the seconds lost by MI2000. Local is an offset-free ISO wall time in the explicitly supplied IANA TimeZone; Offset identifies the instant. */
+export interface ToolTimeResult {
+  /** ms2000 */
+  "ms2000"?: string | null;
+  /** mi2000 */
+  "mi2000"?: string | null;
+  /** ss2000 */
+  "ss2000"?: string | null;
+  /** utc */
+  "utc"?: string | null;
+  /** local */
+  "local"?: string | null;
+  /** timeZone */
+  "timeZone"?: string | null;
+  /** offset */
+  "offset"?: string | null;
+  /** dateInputRounded */
+  "dateInputRounded"?: boolean;
+  /** millisecondRemainder */
+  "millisecondRemainder"?: string | null;
+  /** secondRemainder */
+  "secondRemainder"?: string | null;
+}
+
 /** Authorized unit with the declared groups for its resolved type. No setting/state values or write permissions are returned. */
 export interface UnitDetailsResponse {
   /** location */
@@ -1651,9 +2555,31 @@ export interface UnitDirectoryItem {
   "latitude"?: number | null;
   /** longitude */
   "longitude"?: number | null;
+  /** Last stored eState.ErrorUnit JSON text; null unless selected, empty when absent. May describe a historical fault. */
+  "errorUnit"?: string | null;
+  /** Stored AutoOutOfOrder JSON when autoOutOfOrderOnly is true; otherwise null. */
+  "autoOutOfOrder"?: string | null;
+  /** Requested terminal eState.VersionMinor as decoded text; null unless selected, empty when absent. */
+  "versionMinor"?: string | null;
+  /** Requested terminal eState.BootReason as decoded text; null unless selected, empty when absent. */
+  "bootReason"?: string | null;
+  /** Requested terminal eSetting.Booted as decoded text; null unless selected, empty when absent. */
+  "booted"?: string | null;
+  /** Requested terminal eState.Firmware as decoded text; null unless selected, empty when absent. */
+  "firmware"?: string | null;
+  /** Requested terminal eState.StorageCardSerialNumber as decoded text; null unless selected, empty when absent. */
+  "storageCardSerialNumber"?: string | null;
+  /** Requested terminal eState.Page as decoded text; null unless selected, empty when absent. */
+  "page"?: string | null;
+  /** Requested terminal eState.BackLight as decoded text; null unless selected, empty when absent. */
+  "backLight"?: string | null;
+  /** terminal */
+  "terminal"?: UnitTerminalResponse;
+  /** progress */
+  "progress"?: UnitProgressResponse;
 }
 
-/** A scoped Units1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location. */
+/** A scoped Units1 or Terminals1 page. Identifiers are canonical KIDs; map coordinates belong to the parent location. */
 export interface UnitDirectoryResponse {
   /** items */
   "items"?: (UnitDirectoryItem)[] | null;
@@ -1663,6 +2589,88 @@ export interface UnitDirectoryResponse {
   "hasAllBanksAccess"?: boolean;
   /** fields */
   "fields"?: (string)[] | null;
+}
+
+/** Distinct document count and effective inclusive UTC history bounds for the exact authorized unit. */
+export interface UnitDocumentCount {
+  /** count */
+  "count"?: bigint;
+  /** from */
+  "from"?: string;
+  /** through */
+  "through"?: string;
+}
+
+/** One bounded, sorted document page for the exact authorized unit. */
+export interface UnitDocumentPage {
+  /** Document identities and authorized unit display metadata. */
+  "items"?: (BankDocumentItem)[] | null;
+  /** Effective inclusive UTC search start. */
+  "from"?: string;
+  /** Effective inclusive UTC search end. */
+  "through"?: string;
+  /** Effective sort field. */
+  "sort"?: string | null;
+  /** Effective sort direction. */
+  "direction"?: string | null;
+  /** Effective offset. */
+  "offset"?: number;
+  /** Effective page size. */
+  "limit"?: number;
+  /** Another page existed when this query ran. */
+  "hasMore"?: boolean;
+}
+
+/** One authorized error event. Null description/code/count means that the stored payload does not provide it. */
+export interface UnitErrorItem {
+  /** kid */
+  "kid"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** unitType */
+  "unitType"?: number | null;
+  /** timestampUtc */
+  "timestampUtc"?: string;
+  /** severity */
+  "severity"?: string | null;
+  /** level */
+  "level"?: string | null;
+  /** code */
+  "code"?: number | null;
+  /** count */
+  "count"?: number | null;
+  /** description */
+  "description"?: string | null;
+  /** payloadFormat */
+  "payloadFormat"?: string | null;
+  /** acknowledged */
+  "acknowledged"?: boolean;
+  /** revision */
+  "revision"?: string | null;
+  /** canAcknowledge */
+  "canAcknowledge"?: boolean;
+}
+
+/** A keyset page with a fixed UTC time window and optional opaque continuation. */
+export interface UnitErrorPage {
+  /** items */
+  "items"?: (UnitErrorItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** fromUtc */
+  "fromUtc"?: string;
+  /** untilUtc */
+  "untilUtc"?: string;
 }
 
 /** Stored current-unit value, or an explicit absence/scope/redaction status. MS2000 is the source krumb timestamp. */
@@ -1699,9 +2707,13 @@ export interface UnitGroupFieldResponse {
   "canReadHistory"?: boolean;
   /** hasHistory */
   "hasHistory"?: boolean;
+  /** valueFormat */
+  "valueFormat"?: string | null;
+  /** pattern */
+  "pattern"?: string | null;
 }
 
-/** The authorized unit and one descriptor-defined group, with read-only stored values. */
+/** The authorized unit and one catalog-defined group, with read-only stored values. */
 export interface UnitGroupResponse {
   /** location */
   "location"?: BankLocationResponse;
@@ -1753,6 +2765,8 @@ export interface UnitOverviewResponse {
   "iconKid"?: string | null;
   /** progress */
   "progress"?: UnitProgressResponse;
+  /** terminal */
+  "terminal"?: UnitTerminalResponse;
 }
 
 /** API-calculated progress. Percent and remaining time are estimates, not hardware completion signals. */
@@ -1803,9 +2817,11 @@ export interface UnitSettingHistoryResponse {
   "items"?: (UnitSettingHistoryItem)[] | null;
   /** nextBeforeMs2000 */
   "nextBeforeMs2000"?: bigint | null;
+  /** valueFormat */
+  "valueFormat"?: string | null;
 }
 
-/** A selectable persisted value and its localized descriptor label. */
+/** A selectable persisted value and its localized catalog label. */
 export interface UnitSettingOption {
   /** value */
   "value"?: string | null;
@@ -1839,6 +2855,94 @@ export interface UnitSettingResponse {
   "sync"?: number | null;
   /** changedBy */
   "changedBy"?: UnitSettingEditorResponse;
+}
+
+/** Visible authorized main terminal identified by a canonical unit KID; no extra access is granted. */
+export interface UnitTerminalResponse {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** API-computed terminal icon identity, including its controller number. */
+  "iconKid"?: string | null;
+}
+
+/** One readable enum field; numeric IDs remain stable. */
+export interface UnitTimelineField {
+  /** kind */
+  "kind"?: string | null;
+  /** id */
+  "id"?: number;
+  /** name */
+  "name"?: string | null;
+}
+
+/** Authorized context and capabilities; a capability never replaces endpoint authorization. */
+export interface UnitTimelineFields {
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** unitType */
+  "unitType"?: number | null;
+  /** sources */
+  "sources"?: (string)[] | null;
+  /** fields */
+  "fields"?: (UnitTimelineField)[] | null;
+  /** canReadTextDiagnostics */
+  "canReadTextDiagnostics"?: boolean;
+  /** canReadDocuments */
+  "canReadDocuments"?: boolean;
+}
+
+/** One log row; eventKey is a unit-local source/time key, not a resource grant or object KID. */
+export interface UnitTimelineItem {
+  /** eventKey */
+  "eventKey"?: string | null;
+  /** source */
+  "source"?: string | null;
+  /** ms2000 */
+  "ms2000"?: string | null;
+  /** timestampUtc */
+  "timestampUtc"?: string;
+  /** sync */
+  "sync"?: number | null;
+  /** field */
+  "field"?: string | null;
+  /** amount */
+  "amount"?: string | null;
+  /** currency */
+  "currency"?: string | null;
+  /** text */
+  "text"?: string | null;
+  /** contentStatus */
+  "contentStatus"?: string | null;
+  /** period */
+  "period"?: number;
+  /** userKid */
+  "userKid"?: string | null;
+  /** documentKid */
+  "documentKid"?: string | null;
+  /** auxiliaryValue */
+  "auxiliaryValue"?: string | null;
+}
+
+/** Chronological page over an inclusive/exclusive UTC range. */
+export interface UnitTimelinePage {
+  /** context */
+  "context"?: UnitTimelineFields;
+  /** fromUtc */
+  "fromUtc"?: string;
+  /** untilUtc */
+  "untilUtc"?: string;
+  /** items */
+  "items"?: (UnitTimelineItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
 }
 
 /** Both address components and the last observed revision are required. */
@@ -1953,6 +3057,42 @@ export interface UserCurrencyBalanceItem {
   "previousPeriod"?: number | null;
   /** previousPeriodIsProvisional */
   "previousPeriodIsProvisional"?: boolean;
+}
+
+/** Resident and parent bank identities with display metadata only. */
+export interface UserDirectoryItem {
+  /** kid */
+  "kid"?: string | null;
+  /** bankKid */
+  "bankKid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** number */
+  "number"?: string | null;
+  /** iconKid */
+  "iconKid"?: string | null;
+  /** deletedAt */
+  "deletedAt"?: string | null;
+}
+
+/** Authorized resident page. A short page may still have a continuation. */
+export interface UserDirectoryResponse {
+  /** items */
+  "items"?: (UserDirectoryItem)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** scanLimitReached */
+  "scanLimitReached"?: boolean;
+}
+
+/** A sensitive resident login URL. Never log, persist, prefetch or share it. ExpiresAtUtc is the legacy admission deadline, not the duration of the resulting eVaskeri session. */
+export interface UserEvaskeriSession {
+  /** kid */
+  "kid"?: string | null;
+  /** url */
+  "url"?: string | null;
+  /** expiresAtUtc */
+  "expiresAtUtc"?: string;
 }
 
 /** A location KID, Access/NoAccess state and eIcon name (default house), cached up to 60 seconds. Location-scoped managers see only their locations. */
@@ -2107,8 +3247,361 @@ export interface ValidationProblemDetails {
   "errors"?: Record<string, (string)[]> | null;
 }
 
+/** A canonical provider reference and plain-text title. */
+export interface VideoSearchItem {
+  /** id */
+  "id"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** sourceUrl */
+  "sourceUrl"?: string | null;
+}
+
+/** At most twenty results, identifying provider search or cited public web discovery. */
+export interface VideoSearchResponse {
+  /** items */
+  "items"?: (VideoSearchItem)[] | null;
+  /** source */
+  "source"?: string | null;
+}
+
+/** Wallboard */
+export interface Wallboard {
+  /** i */
+  "i"?: (string)[] | null;
+  /** n */
+  "n"?: string | null;
+  /** a */
+  "a"?: number;
+  /** c */
+  "c"?: ((number)[])[] | null;
+  /** s */
+  "s"?: (WallboardPage)[] | null;
+}
+
+/** One reservation without resident or payment details, in local minutes since 2000-01-01. */
+export interface WallboardAnonymousReservation {
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** startMinute */
+  "startMinute"?: number;
+  /** durationMinutes */
+  "durationMinutes"?: number;
+}
+
+/** Saved byte measurements and their individual registration times; null means unknown. */
+export interface WallboardBankStorageItem {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** dataBytes */
+  "dataBytes"?: string | null;
+  /** indexBytes */
+  "indexBytes"?: string | null;
+  /** freeBytes */
+  "freeBytes"?: string | null;
+  /** dataRecordedAtUtc */
+  "dataRecordedAtUtc"?: string | null;
+  /** indexRecordedAtUtc */
+  "indexRecordedAtUtc"?: string | null;
+  /** freeRecordedAtUtc */
+  "freeRecordedAtUtc"?: string | null;
+}
+
+/** Bank storage values visible to this authorized Wallboard session. */
+export interface WallboardBankStorageResponse {
+  /** fetchedAtUtc */
+  "fetchedAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** items */
+  "items"?: (WallboardBankStorageItem)[] | null;
+}
+
+/** WallboardDeviceChallenge */
+export interface WallboardDeviceChallenge {
+  /** challenge */
+  "challenge"?: string | null;
+  /** message */
+  "message"?: string | null;
+  /** expiresIn */
+  "expiresIn"?: number;
+}
+
+/** WallboardDeviceInfo */
+export interface WallboardDeviceInfo {
+  /** deviceId */
+  "deviceId"?: string | null;
+  /** displayId */
+  "displayId"?: string | null;
+  /** createdAt */
+  "createdAt"?: string;
+  /** location */
+  "location"?: WallboardScanLocation;
+}
+
+/** One display's selected orientation; null means no configured layout. */
+export interface WallboardDisplayResponse {
+  /** layout */
+  "layout"?: Wallboard;
+  /** revision */
+  "revision"?: string | null;
+  /** dateFormat */
+  "dateFormat"?: string | null;
+}
+
+/** The selected location's canonical identity and stored name, without other location metadata. */
+export interface WallboardLocationInfoResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** name */
+  "name"?: string | null;
+}
+
+/** A location's canonical identity, name and WGS84 coordinates in decimal degrees. */
+export interface WallboardLocationMapItem {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** latitude */
+  "latitude"?: number;
+  /** longitude */
+  "longitude"?: number;
+}
+
+/** Authorized visible locations with valid coordinates, never a partial catalogue. */
+export interface WallboardLocationMapResponse {
+  /** fetchedAtUtc */
+  "fetchedAtUtc"?: string;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** items */
+  "items"?: (WallboardLocationMapItem)[] | null;
+}
+
+/** WallboardPage */
+export interface WallboardPage {
+  /** n */
+  "n"?: string | null;
+  /** d */
+  "d"?: number;
+  /** s */
+  "s"?: (WallboardWidget)[] | null;
+}
+
+/** WallboardPairingInfo */
+export interface WallboardPairingInfo {
+  /** pairingId */
+  "pairingId"?: string | null;
+  /** displayId */
+  "displayId"?: string | null;
+  /** expiresAt */
+  "expiresAt"?: string;
+  /** approved */
+  "approved"?: boolean;
+}
+
+/** WallboardPairingStarted */
+export interface WallboardPairingStarted {
+  /** pairingId */
+  "pairingId"?: string | null;
+  /** deviceCode */
+  "deviceCode"?: string | null;
+  /** displayId */
+  "displayId"?: string | null;
+  /** expiresAt */
+  "expiresAt"?: string;
+  /** intervalSeconds */
+  "intervalSeconds"?: number;
+}
+
+/** WallboardPairingToken */
+export interface WallboardPairingToken {
+  /** status */
+  "status"?: string | null;
+  /** accessToken */
+  "accessToken"?: string | null;
+  /** expiresIn */
+  "expiresIn"?: bigint | null;
+  /** displayId */
+  "displayId"?: string | null;
+}
+
+/** Configured dated calendars and anonymous current reservations in location-local time. */
+export interface WallboardReservationCalendarResponse {
+  /** locationKid */
+  "locationKid"?: string | null;
+  /** groups */
+  "groups"?: (LocationBookingCalendarGroup)[] | null;
+  /** timeZone */
+  "timeZone"?: string | null;
+  /** from */
+  "from"?: string;
+  /** days */
+  "days"?: number;
+  /** reservations */
+  "reservations"?: (WallboardAnonymousReservation)[] | null;
+}
+
+/** WallboardScanLocation */
+export interface WallboardScanLocation {
+  /** latitude */
+  "latitude"?: number;
+  /** longitude */
+  "longitude"?: number;
+  /** accuracyMeters */
+  "accuracyMeters"?: number;
+  /** capturedAt */
+  "capturedAt"?: string;
+}
+
+/** WallboardWidget */
+export interface WallboardWidget {
+  /** t */
+  "t"?: EWidgetType;
+  /** k */
+  "k"?: string | null;
+  /** r */
+  "r"?: (number)[] | null;
+}
+
+/** Actual SoapInfo event. Missing duration/amounts remain null; quantity is never inferred from duration. */
+export interface WashDocChartDosing {
+  /** ms2000 */
+  "ms2000"?: bigint;
+  /** name */
+  "name"?: string | null;
+  /** durationMs */
+  "durationMs"?: bigint | null;
+  /** volumeMl */
+  "volumeMl"?: number | null;
+  /** massGrams */
+  "massGrams"?: number | null;
+  /** process */
+  "process"?: string | null;
+  /** step */
+  "step"?: string | null;
+}
+
+/** A stored Cycle, Process, CycleSub or Error transition. Process retains the legacy eProcess byte, independently of newer cycle enums. Stable name/value and localization key are independent of the display label. */
+export interface WashDocChartEvent {
+  /** ms2000 */
+  "ms2000"?: bigint;
+  /** kind */
+  "kind"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** value */
+  "value"?: number | null;
+  /** label */
+  "label"?: string | null;
+  /** localization */
+  "localization"?: string | null;
+  /** isCalculated */
+  "isCalculated"?: boolean;
+}
+
+/** One stored timestamp. Null values break curves. Edge samples anchor drawing but are outside the visible window. */
+export interface WashDocChartPoint {
+  /** ms2000 */
+  "ms2000"?: bigint;
+  /** value */
+  "value"?: number | null;
+  /** isCalculated */
+  "isCalculated"?: boolean;
+  /** isEdge */
+  "isEdge"?: boolean;
+  /** unit */
+  "unit"?: string | null;
+}
+
+/** Renderer-independent WashDoc measurements. All times are UTC milliseconds since 2000-01-01. */
+export interface WashDocChartResponse {
+  /** cycleKid */
+  "cycleKid"?: string | null;
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** finished */
+  "finished"?: boolean;
+  /** fromMs2000 */
+  "fromMs2000"?: bigint;
+  /** toMs2000 */
+  "toMs2000"?: bigint;
+  /** startedMs2000 */
+  "startedMs2000"?: bigint | null;
+  /** endedMs2000 */
+  "endedMs2000"?: bigint | null;
+  /** series */
+  "series"?: (WashDocChartSeries)[] | null;
+  /** events */
+  "events"?: (WashDocChartEvent)[] | null;
+  /** signals */
+  "signals"?: (WashDocChartSignal)[] | null;
+  /** dosing */
+  "dosing"?: (WashDocChartDosing)[] | null;
+  /** presentation */
+  "presentation"?: WashDocPresentation;
+}
+
+/** A sparse measurement or target series. Unit is null when not known or not uniform. Raw values are not visual band coordinates. */
+export interface WashDocChartSeries {
+  /** kind */
+  "kind"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** label */
+  "label"?: string | null;
+  /** localization */
+  "localization"?: string | null;
+  /** group */
+  "group"?: string | null;
+  /** role */
+  "role"?: string | null;
+  /** unit */
+  "unit"?: string | null;
+  /** step */
+  "step"?: boolean;
+  /** points */
+  "points"?: (WashDocChartPoint)[] | null;
+}
+
+/** Actual InOutletHeat changes interpreted by the trusted machine profile. Null means unknown or inapplicable, never off. Holds until next stored change. */
+export interface WashDocChartSignal {
+  /** ms2000 */
+  "ms2000"?: bigint;
+  /** flags */
+  "flags"?: number | null;
+  /** heat */
+  "heat"?: boolean | null;
+  /** inlet */
+  "inlet"?: boolean | null;
+  /** outlet */
+  "outlet"?: boolean | null;
+  /** isCalculated */
+  "isCalculated"?: boolean;
+  /** Alliance dryer airflow switch. Null for other protocols or unknown input. */
+  "airflow"?: boolean | null;
+}
+
+/** Server-selected presentation for the original, decoded UnitType. Group order is a preference, not a measurement filter. */
+export interface WashDocPresentation {
+  /** unitType */
+  "unitType"?: number | null;
+  /** kind */
+  "kind"?: string | null;
+  /** groupOrder */
+  "groupOrder"?: (string)[] | null;
+}
+
 /** Wire values: [0, 1, 2]. */
 export type EThemeMode = number;
+
+/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]. */
+export type EWidgetType = number;
 
 /** Public tenant-wide count; does not expose or grant access to any individual account. */
 export interface ActiveUsersResponse {
@@ -2134,10 +3627,174 @@ export interface ApiStatusResponse {
   "apiVersion"?: string | null;
 }
 
+/** Public presentation for the shared chart, without business data or credentials. */
+export interface CycleChartPresentationResponse {
+  /** Culture selected by Accept-Language. */
+  "language"?: string | null;
+  /** Localized graph labels, help and status messages from the portal resources. */
+  "messages"?: Record<string, string> | null;
+  /** Stable enum identifiers for grouped controls. */
+  "stateNames"?: Record<string, string> | null;
+}
+
 /** Opaque image identity: eIcon name for an icon alone, otherwise canonical Kid.ToString(). */
 export interface IconPresentationResponse {
   /** iconKid */
   "iconKid"?: string | null;
+}
+
+/** Minimal public site-tenant machine display, without resident or payment fields. */
+export interface LiveMachineResponse {
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** startedAtUtc */
+  "startedAtUtc"?: string;
+  /** doneAtUtc */
+  "doneAtUtc"?: string | null;
+  /** temperature */
+  "temperature"?: number | null;
+}
+
+/** Public thumbnail URL and relative portal destination; no original or sensor metadata. */
+export interface PublicCameraPhoto {
+  /** thumbnailUrl */
+  "thumbnailUrl"?: string | null;
+  /** workspacePath */
+  "workspacePath"?: string | null;
+}
+
+/** Explicitly public, minimal WashDoc presentation. GraphSvg is text-free first-party SVG, not a raw measurement table. */
+export interface PublicCycleWidgetResponse {
+  /** cycleKid */
+  "cycleKid"?: string | null;
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** unitName */
+  "unitName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** startedAtUtc */
+  "startedAtUtc"?: string;
+  /** endedAtUtc */
+  "endedAtUtc"?: string | null;
+  /** finished */
+  "finished"?: boolean;
+  /** graphSvg */
+  "graphSvg"?: string | null;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+  /** cycleKidText */
+  "cycleKidText"?: string | null;
+}
+
+/** Public identity, display names and error code; no raw state payload. */
+export interface PublicMachineError {
+  /** kid */
+  "kid"?: string | null;
+  /** name */
+  "name"?: string | null;
+  /** bankName */
+  "bankName"?: string | null;
+  /** locationName */
+  "locationName"?: string | null;
+  /** errorId */
+  "errorId"?: string | null;
+}
+
+/** Public machine-error page, with a protected next-page cursor and refresh interval. */
+export interface PublicMachineErrorsPage {
+  /** items */
+  "items"?: (PublicMachineError)[] | null;
+  /** nextCursor */
+  "nextCursor"?: string | null;
+  /** refreshAfterSeconds */
+  "refreshAfterSeconds"?: number;
+}
+
+/** Minimal public unit display and expected timing. */
+export interface PublicScopedProgressItem {
+  /** Canonical site-bound unit identity. */
+  "unitKid"?: string | null;
+  /** Localized unit name. */
+  "unitName"?: string | null;
+  /** Localized location name. */
+  "locationName"?: string | null;
+  /** Expected start or null for unknown timing. */
+  "startedAtUtc"?: string | null;
+  /** Expected end or null for unknown timing. */
+  "doneAtUtc"?: string | null;
+  /** progress */
+  "progress"?: UnitProgressResponse;
+}
+
+/** A bounded page of public progress for the exact site-bound scope. */
+export interface PublicScopedProgressResponse {
+  /** Requested canonical KID. */
+  "scopeKid"?: string | null;
+  /** Unit, Location or Bank enum name. */
+  "scopeKind"?: string | null;
+  /** UTC calculation time. */
+  "calculatedAtUtc"?: string;
+  /** Recommended refresh interval. */
+  "refreshAfterSeconds"?: number;
+  /** Public units in numeric identity order. */
+  "items"?: (PublicScopedProgressItem)[] | null;
+  /** Opaque next-page cursor, or null after the last page. */
+  "nextCursor"?: string | null;
+}
+
+/** Public presentation selected by this API site's trusted tenant. */
+export interface PublicWidgetPresentationResponse {
+  /** Resolved supported culture for labels, names and number formatting. */
+  "language"?: string | null;
+  /** Hyphen-separated RGB hex palette for the API's circle SVGs. */
+  "colors"?: string | null;
+  /** RGB hex background inside the progress circle. */
+  "background"?: string | null;
+  /** Trusted HTTPS portal origin for the public purchase map, or null when unavailable. */
+  "webBase"?: string | null;
+  /** Existing localized portal text keys used by the widgets; contains no account data. */
+  "labels"?: Record<string, string> | null;
+  /** Public browser Maps key, restricted by HTTP referrer at Google; never a server credential. Null when maps are not configured. */
+  "googleMapsBrowserKey"?: string | null;
+  /** Trusted tenant's wallboard map renderer: google or maptiler. Applies to LocationMap (36), purchase-map (7) and revenue heatmap (8); other maps retain their current renderer. */
+  "mapProvider"?: string | null;
+  /** Public MapTiler browser key, restricted by allowed HTTP origins at MapTiler; never a server credential. Null when disabled or not configured. An enabled provider without its key is unavailable and must not silently change providers. */
+  "mapTilerBrowserKey"?: string | null;
+  /** Public tenant branding icon. Local assets use the configured tenant Web origin; null if that origin is unavailable. */
+  "brandIconUrl"?: string | null;
+  /** Display name from the trusted tenant's branding profile. */
+  "brandName"?: string | null;
+  /** Light-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable. */
+  "brandLogoUrl"?: string | null;
+  /** Dark-presentation tenant logo; local paths use the configured HTTPS Web origin, or null if unavailable. */
+  "brandDarkLogoUrl"?: string | null;
+  /** Tenant's symbol-only light logo, or null when this variant is unavailable. */
+  "brandLogoMarkUrl"?: string | null;
+  /** Tenant's symbol-only dark logo, or null when this variant is unavailable. */
+  "brandDarkLogoMarkUrl"?: string | null;
+  /** Tenant's text-only light logo, or null when this variant is unavailable. */
+  "brandLogoWordmarkUrl"?: string | null;
+  /** Tenant's text-only dark logo, or null when this variant is unavailable. */
+  "brandDarkLogoWordmarkUrl"?: string | null;
+  /** Public validated CSS custom properties for this tenant's light presentation. */
+  "brandLightTokens"?: Record<string, string> | null;
+  /** Public validated CSS custom properties for this tenant's dark presentation. */
+  "brandDarkTokens"?: Record<string, string> | null;
+}
+
+/** Purchase count and total for one currency; no currency conversion is performed. */
+export interface PurchaseCurrencySnapshot {
+  /** Stored currency code; null represents purchases with no currency code. */
+  "currency"?: string | null;
+  /** Number of matching purchase rows for this currency. */
+  "count"?: bigint;
+  /** Positive total in major currency units (negated stored Amount divided by 100). */
+  "amount"?: number;
 }
 
 /** Total revenue at a coordinate across all retained purchases, independent of the coin limit. */
@@ -2188,10 +3845,58 @@ export interface PurchasesResponse {
   "sinceUtc"?: string;
   /** UTC measurement time. */
   "measuredAtUtc"?: string;
-  /** Positive purchase total in major currency units; zero for no matches. */
-  "amount"?: number;
-  /** MAX(Currency), or null for no matches. No currency conversion. */
-  "currency"?: string | null;
+  /** One count and amount per stored currency; empty for no matches. No currency conversion. */
+  "currencies"?: (PurchaseCurrencySnapshot)[] | null;
+}
+
+/** Public count of reservations that have not ended. */
+export interface ReservationsStatisticsResponse {
+  /** Configured site's canonical tenant KID. */
+  "tenantKid"?: string | null;
+  /** Qualifying reservations; zero only for a successful empty count. */
+  "count"?: bigint;
+  /** UTC instant used for the strict reservation-end comparison. */
+  "measuredAtUtc"?: string;
+  /** Recommended polling interval, 60 seconds. */
+  "refreshAfterSeconds"?: number;
+}
+
+/** Public count of machines with an ongoing dated reservation. */
+export interface ReservedMachinesStatisticsResponse {
+  /** Configured site's canonical tenant KID. */
+  "tenantKid"?: string | null;
+  /** Distinct qualifying machines; zero only for a successful empty count. */
+  "count"?: bigint;
+  /** UTC instant used for the location-local start/end comparison. */
+  "measuredAtUtc"?: string;
+  /** Recommended polling interval, 60 seconds. */
+  "refreshAfterSeconds"?: number;
+}
+
+/** Minimal public site-tenant machine display, without resident or payment fields. */
+export interface RunningMachineResponse {
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** startedAtUtc */
+  "startedAtUtc"?: string;
+  /** doneAtUtc */
+  "doneAtUtc"?: string | null;
+  /** unitType */
+  "unitType"?: number | null;
+  /** cycle */
+  "cycle"?: number | null;
+}
+
+/** Public count of currently running machines. */
+export interface RunningMachinesResponse {
+  /** Configured site's canonical tenant KID. */
+  "tenantKid"?: string | null;
+  /** Distinct qualifying machines; zero only for a successful empty count. */
+  "count"?: bigint;
+  /** UTC instant used for both strict time comparisons. */
+  "measuredAtUtc"?: string;
+  /** Recommended polling interval, 15 seconds. */
+  "refreshAfterSeconds"?: number;
 }
 
 export interface GetBankAccountOptions {
@@ -2200,7 +3905,9 @@ export interface GetBankAccountOptions {
   timeZone?: string;
   period?: number;
   locationKid?: string;
+  locationKids?: (string)[];
   unitKid?: string;
+  unitKids?: (string)[];
   userKid?: string;
   kind?: string;
   includeZero?: boolean;
@@ -2216,7 +3923,9 @@ export interface GetBankAccountRevisionOptions {
   timeZone?: string;
   period?: number;
   locationKid?: string;
+  locationKids?: (string)[];
   unitKid?: string;
+  unitKids?: (string)[];
   userKid?: string;
   kind?: string;
   includeZero?: boolean;
@@ -2226,8 +3935,75 @@ export interface GetBankAccountRevisionOptions {
   limit?: number;
 }
 
+export interface GetBankExportCountOptions {
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+  fields?: string;
+  bankType?: string;
+}
+
+export interface GetBanksOptions {
+  pageSize?: number;
+  cursor?: string;
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+  fields?: string;
+  bankType?: string;
+}
+
 export interface GetBankDocumentsOptions {
   locationKid?: string;
+  locationKids?: (string)[];
+  date?: string;
+  search?: string;
+  unitKids?: (string)[];
+  sort?: string;
+  direction?: string;
+  unitKid?: string;
+  from?: string;
+  through?: string;
+  offset?: number;
+  limit?: number;
+}
+
+export interface GetBankDocumentsCountOptions {
+  locationKid?: string;
+  locationKids?: (string)[];
+  date?: string;
+  search?: string;
+  unitKids?: (string)[];
+  sort?: string;
+  direction?: string;
+  unitKid?: string;
+  from?: string;
+  through?: string;
+  offset?: number;
+  limit?: number;
+}
+
+export interface GetLocationDocumentsOptions {
+  date?: string;
+  search?: string;
+  unitKids?: (string)[];
+  sort?: string;
+  direction?: string;
+  unitKid?: string;
+  from?: string;
+  through?: string;
+  offset?: number;
+  limit?: number;
+}
+
+export interface GetLocationDocumentsCountOptions {
+  date?: string;
+  search?: string;
+  unitKids?: (string)[];
+  sort?: string;
+  direction?: string;
   unitKid?: string;
   from?: string;
   through?: string;
@@ -2247,6 +4023,15 @@ export interface SearchBankActivationOptions {
   q?: string;
 }
 
+export interface GetBankUserExportCountOptions {
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  locationKid?: string;
+  deleted?: string;
+  locationKids?: (string)[];
+}
+
 export interface GetBankUsersOptions {
   pageSize?: number;
   cursor?: string;
@@ -2256,6 +4041,7 @@ export interface GetBankUsersOptions {
   userKid?: string;
   locationKid?: string;
   deleted?: string;
+  locationKids?: (string)[];
 }
 
 export interface GetBankBookingsOptions {
@@ -2268,6 +4054,46 @@ export interface GetBankBookingsOptions {
   search?: string;
   offset?: number;
   limit?: number;
+  locationKids?: (string)[];
+}
+
+export interface GetCameraNearestLocationOptions {
+  latitude?: number;
+  longitude?: number;
+  accuracyMeters?: number;
+}
+
+export interface GetCameraResourceOptions {
+  resourceKid?: string;
+}
+
+export interface GetCameraAvailabilityOptions {
+  resourceKid?: string;
+}
+
+export interface SaveCameraCaptureOptions {
+  background?: boolean;
+}
+
+export interface GetCameraCapturesOptions {
+  resourceKid?: string;
+  cursor?: string;
+}
+
+export interface GetCameraCaptureContentOptions {
+  part?: string;
+  range?: string;
+}
+
+export interface GetChecklistOptions {
+  scopeKid?: string;
+  includeResolved?: boolean;
+  pageSize?: number;
+  cursor?: string;
+}
+
+export interface GetWallboardDisplayDatabaseLoadHistoryOptions {
+  portrait?: boolean;
 }
 
 export interface ExportBankAccountOptions {
@@ -2276,7 +4102,9 @@ export interface ExportBankAccountOptions {
   timeZone?: string;
   period?: number;
   locationKid?: string;
+  locationKids?: (string)[];
   unitKid?: string;
+  unitKids?: (string)[];
   userKid?: string;
   kind?: string;
   includeZero?: boolean;
@@ -2293,6 +4121,7 @@ export interface ExportBankUsersOptions {
   deleted?: string;
   sort?: string;
   direction?: string;
+  locationKids?: (string)[];
 }
 
 export interface DownloadBankSettlementOptions {
@@ -2302,11 +4131,21 @@ export interface DownloadBankSettlementOptions {
 export interface DownloadUnitDocumentCsvOptions {
   states?: string;
   settings?: string;
+  historicalMeasurements?: boolean;
 }
 
 export interface DownloadUnitDocumentXlsOptions {
   states?: string;
   settings?: string;
+  historicalMeasurements?: boolean;
+}
+
+export interface GetBankErrorsOptions {
+  days?: number;
+  level?: string;
+  includeAcknowledged?: boolean;
+  pageSize?: number;
+  cursor?: string;
 }
 
 export interface GetHostingLogsOptions {
@@ -2320,12 +4159,24 @@ export interface GetHostingMetricsOptions {
   hours?: number;
 }
 
+export interface GetInstallerExportCountOptions {
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  includeActivationCode?: boolean;
+}
+
 export interface GetInstallersOptions {
   pageSize?: number;
   cursor?: string;
   filter?: string;
   sort?: string;
   direction?: string;
+  includeActivationCode?: boolean;
+}
+
+export interface GetActiveLocationCountOptions {
+  bankKid?: string;
 }
 
 export interface GetLocationsOptions {
@@ -2337,6 +4188,16 @@ export interface GetLocationsOptions {
   enabledOnly?: boolean;
   fields?: string;
   includeCoordinates?: boolean;
+  bankKid?: string;
+}
+
+export interface GetLocationCountOptions {
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+  fields?: string;
+  bankKid?: string;
 }
 
 export interface SearchLocationsOptions {
@@ -2347,7 +4208,21 @@ export interface SearchLocationActivationOptions {
   q?: string;
 }
 
+export interface GetLocationBookingCalendarsOptions {
+  acceptLanguage?: string;
+  from?: string;
+  days?: number;
+}
+
 export interface GetLocationBookingRulesOptions {
+  acceptLanguage?: string;
+}
+
+export interface GetControllerOverviewOptions {
+  acceptLanguage?: string;
+}
+
+export interface GetControllerGroupOptions {
   acceptLanguage?: string;
 }
 
@@ -2380,6 +4255,18 @@ export interface GetLocationOpeningHoursOptions {
   acceptLanguage?: string;
 }
 
+export interface GetLocationReservationHistoryOptions {
+  from?: string;
+  days?: number;
+  acceptLanguage?: string;
+}
+
+export interface GetLocationReservationsOptions {
+  from?: string;
+  days?: number;
+  acceptLanguage?: string;
+}
+
 export interface GetManagersOptions {
   pageSize?: number;
   cursor?: string;
@@ -2388,8 +4275,42 @@ export interface GetManagersOptions {
   direction?: string;
 }
 
+export interface GetManagerExportCountOptions {
+  filter?: string;
+  sort?: string;
+  direction?: string;
+}
+
 export interface LoginManagerOptions {
   xPortalLoginClientIp?: string;
+}
+
+export interface GetCurrentManagerOptions {
+  refresh?: boolean;
+}
+
+export interface GetNearestLocationsOptions {
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface GetMyManagerWallboardsOptions {
+  after?: string;
+}
+
+export interface GetMyManagerWallboardDisplayOptions {
+  portrait?: boolean;
+  after?: string;
+}
+
+export interface GetPublicWallboardOptions {
+  after?: string;
+}
+
+export interface GetServiceExportCountOptions {
+  filter?: string;
+  sort?: string;
+  direction?: string;
 }
 
 export interface GetServicesOptions {
@@ -2413,20 +4334,98 @@ export interface GetTenantStatusPageOptions {
   anchor?: string;
 }
 
+export interface GetUnitTimelineOptions {
+  fromUtc?: string;
+  untilUtc?: string;
+  sources?: string;
+  field?: string;
+  pageSize?: number;
+  cursor?: string;
+}
+
+export interface GetUnitDocumentsOptions {
+  sort?: string;
+  direction?: string;
+  offset?: number;
+  limit?: number;
+  search?: string;
+  date?: string;
+}
+
+export interface GetUnitDocumentsCountOptions {
+  search?: string;
+  date?: string;
+}
+
 export interface GetUnitDocumentTableOptions {
   states?: string;
   settings?: string;
+  historicalMeasurements?: boolean;
 }
 
 export interface GetUnitDocumentHtmlOptions {
   states?: string;
   settings?: string;
+  historicalMeasurements?: boolean;
 }
 
 export interface GetUnitDocumentSvgOptions {
   states?: string;
   settings?: string;
+  historicalMeasurements?: boolean;
   width?: number;
+}
+
+export interface GetUnitDocumentSvg2Options {
+  states?: string;
+  settings?: string;
+  historicalMeasurements?: boolean;
+}
+
+export interface GetUnitDocumentGraphOptions {
+  states?: string;
+  settings?: string;
+  historicalMeasurements?: boolean;
+}
+
+export interface GetUnitDocumentPngOptions {
+  states?: string;
+  settings?: string;
+  historicalMeasurements?: boolean;
+}
+
+export interface GetUnitDocumentIconOptions {
+  states?: string;
+  settings?: string;
+  historicalMeasurements?: boolean;
+}
+
+export interface GetOutOfOrderUnitsOptions {
+  pageSize?: number;
+  cursor?: string;
+}
+
+export interface GetUnitExportCountOptions {
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+  fields?: string;
+  locationKid?: string;
+  terminalKid?: string;
+  runningOnly?: boolean;
+  autoOutOfOrderOnly?: boolean;
+}
+
+export interface GetTerminalExportCountOptions {
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+  fields?: string;
+  locationKid?: string;
+  terminalKid?: string;
+  runningOnly?: boolean;
 }
 
 export interface GetUnitsOptions {
@@ -2438,10 +4437,44 @@ export interface GetUnitsOptions {
   enabledOnly?: boolean;
   fields?: string;
   includeCoordinates?: boolean;
+  locationKid?: string;
+  terminalKid?: string;
+  runningOnly?: boolean;
+  autoOutOfOrderOnly?: boolean;
+}
+
+export interface GetTerminalsOptions {
+  pageSize?: number;
+  cursor?: string;
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+  fields?: string;
+  includeCoordinates?: boolean;
+  locationKid?: string;
+  terminalKid?: string;
+  runningOnly?: boolean;
 }
 
 export interface GetBankNextUserNumberOptions {
   userNumber?: string;
+}
+
+export interface GetUserExportCountOptions {
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
+}
+
+export interface GetUsersOptions {
+  pageSize?: number;
+  cursor?: string;
+  filter?: string;
+  sort?: string;
+  direction?: string;
+  enabledOnly?: boolean;
 }
 
 export interface GetUserReceiptsOptions {
@@ -2462,14 +4495,90 @@ export interface SearchUserActivationOptions {
   q?: string;
 }
 
+export interface GetWallboardDisplayBankStorageOptions {
+  portrait?: boolean;
+}
+
+export interface GetMyWallboardLocationInfoOptions {
+  locationKid?: string;
+}
+
+export interface GetWallboardDisplayLocationInfoOptions {
+  locationKid?: string;
+  portrait?: boolean;
+}
+
+export interface GetWallboardDisplayLocationMapOptions {
+  portrait?: boolean;
+}
+
+export interface GetWallboardDisplayActiveManagersOptions {
+  portrait?: boolean;
+}
+
+export interface GetWallboardDisplayApplicationLoadHistoryOptions {
+  portrait?: boolean;
+}
+
+export interface FindWallboardPairingsOptions {
+  displayId?: string;
+}
+
+export interface SearchMyWallboardPlexOptions {
+  query?: string;
+}
+
+export interface GetMyWallboardPlexQueueOptions {
+  reference?: string;
+  displayId?: string;
+  portrait?: boolean;
+}
+
+export interface StartMyWallboardPlexPlaybackOptions {
+  reference?: string;
+  index?: number;
+  displayId?: string;
+  portrait?: boolean;
+}
+
+export interface GetMyWallboardReservationCalendarOptions {
+  locationKid?: string;
+}
+
+export interface GetWallboardDisplayReservationCalendarOptions {
+  locationKid?: string;
+  portrait?: boolean;
+}
+
+export interface SearchMyWallboardVideosOptions {
+  widgetType?: number;
+  query?: string;
+}
+
 export interface GetIconPresentationOptions {
   iconKid?: string;
   text?: string;
   count?: bigint;
   color?: number;
+  useCalendarText?: boolean;
+}
+
+export interface GetPublicMachineErrorsOptions {
+  pageSize?: number;
+  cursor?: string;
+}
+
+export interface GetPublicCycleWidgetOptions {
+  cycleKid?: string;
+  unitKid?: string;
 }
 
 export interface GetPublicDisp73Options {
   limit?: number;
+}
+
+export interface GetPublicScopedUnitProgressOptions {
+  pageSize?: number;
+  cursor?: string;
 }
 

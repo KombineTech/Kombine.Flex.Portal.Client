@@ -1,10 +1,24 @@
+Version 0.24.0 indeholder 217 operationer, herunder GetUnitTimeline og GetUnitTimelineFields. Wallboard-svar identificerer den præcise godkendte skærm; skærmsessioner viser kun minimal identitet uden normale administratorrettigheder. Brug et normalt administratorlogin til Portal-operationer. Permanent enhedsgodkendelse og UserBalance er fortsat kompatible. Se [API-changelog](https://api.team.kombine.technology/docs#changelog).
+
+Version 0.18.0 tilføjer FindWallboardPairings og GetWallboardDevice (217 operationer i alt) samt valgfri lokationsmetadata ved skærmgodkendelse. Den samlede Wallboard-opsætning bruger én QR-skanning; privat lokation er kun tilgængelig for den godkendende administrator via enheds-endpointet. Enhedsgodkendelsen udløber ikke automatisk og kontrollerer fortsat tilbagekaldelse, administratoroplysninger samt tenant og miljø. Eksisterende UserBalance-klienter er fortsat kompatible. Se [API-changelog](https://api.team.kombine.technology/docs#changelog) og [Wallboard-vejledningen](https://api.team.kombine.technology/docs#wallboard-pairing).
+
+Version 0.17.0 tilføjer syv operationer til Wallboard-godkendelse og enheder (198 i alt). En aktiv administrator godkender skærmen én gang; enhedens godkendelse udløber ikke automatisk. Behold den ikke-eksporterbare private ECDSA P-256-nøgle på skærmen, underskriv engangsudfordringer ved genforbindelse, og hold administratoroplysninger og bearer-tokens ude af URL’er og browserlager. Tilbagekaldelse og kontrol af administratorens konto og legitimationsoplysninger bevares. Sessionsvarigheden på ti dage begrænser ikke enhedsgodkendelsen. UserBalance er fortsat kompatibel. Se [API-changelog](https://api.team.kombine.technology/docs#changelog) og [Wallboard-vejledningen](https://api.team.kombine.technology/docs#wallboard-pairing).
+
+Version 0.16.1 tilføjer afregningschecklisten med læseadgang, maskinfejlhistorik og kvittering, visning og genåbning af maskiner ude af drift samt autoriseret adgang til beboerens eVaskeri. Beboersøgning inkluderer bankKid. Alle operationer bevarer administrator-, tenant- og ressourcekontrol. eVaskeri-links er følsomme adgangsoplysninger: åbn straks uden opener/referrer, og gem eller log dem aldrig. Gentag aldrig ændringskald automatisk efter et usikkert svar. UserBalance er fortsat kompatibel. Se [API-changelog](https://api.team.kombine.technology/docs#changelog).
+
+Version 0.15.0 bruger GetPublicCycleWidget og GetCycleChartPresentation. Erstat de udgåede WashDoc-widget-/præsentationsruter med /api/v1/public/widgets/cycle og /api/v1/public/cycle-chart/presentation. Dokumenternes stiparametre og tabel-/graf-/widgetfelter bruger cycleKid; widgettens visningsfelt hedder cycleKidText. Eksisterende KID-værdier og dokumentoperationernes ID er bevaret. Genbyg klienterne, og opdater feltbindingerne. UserBalance er fortsat kompatibel. Se [API-changelog](https://api.team.kombine.technology/docs#changelog).
+
+Version 0.14.0 synkroniserer personlige valg af sprog, dato/tid, talformat og linjeafstand. WashDoc-widgets erstatter unitKidText med documentKidText; graphSvg kan være null uden målinger. Stop polling ved refreshAfterSeconds=0; igangværende dokumenter bruger 15 sekunder. Administratorsessioner varer ti dage: brug svarets expiresIn og forny kun efter aktivitet. UserBalance er fortsat kompatibel. Se [API-changelog](/docs#changelog).
+
+Version 0.13.0 flytter ConvertToolTime og InspectToolKid til /api/v1/tenant/tools/time og /api/v1/tenant/tools/kid. Fjern bankKid-argumentet ved genbygning; sitet vælger tenant. Aktiv manager, More1, Bank Read og et ressourcegrant i sitets tenant kræves fortsat. JSON-input og -svar er uændrede. GetUnitDocumentNeighbors giver autoriseret dokumentnavigation for samme enhed. Se [API-changelog](/docs#changelog).
+
 [English](README.md) · [Dansk](README.da.md) · [Español](README.es.md)
 
 # Kombine Flex __API__-klient til PHP
 
 [API-kontraktens changelog](__ORIGIN__/docs#changelog) — brug `/docs#changelog` på samme tenant-API og miljø som klienten. Changelog er kun på engelsk.
 
-Version **0.1.0**, klargjort lokalt; ikke deployet eller udgivet på Packagist. Indeholder __COUNT__ offentlige operationer fra den medfølgende OpenAPI-kontrakt. Kræver **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS og betroede CA-certifikater. Ingen ekstra PHP-biblioteker eller interne Kombine-DLL'er kræves. Transporten understøtter Windows, Linux og macOS; denne version er testet med Windows CLI. Brug en PHP-version, der fortsat understøttes.
+Version **0.1.0**, deployment og udgivelse på Packagist følges separat. Indeholder __COUNT__ offentlige operationer fra den medfølgende OpenAPI-kontrakt. Kræver **64-bit PHP 8.2+**, `ext-curl`, `ext-json`, HTTPS og betroede CA-certifikater. Ingen ekstra PHP-biblioteker eller interne Kombine-DLL'er kræves. Transporten understøtter Windows, Linux og macOS; denne version er testet med Windows CLI. Brug en PHP-version, der fortsat understøttes.
 
 ## Installation
 
@@ -74,3 +88,6 @@ Standardgrænser: 30 sekunder for hele kaldet, højst 10 sekunder til forbindels
 ## Bygning og kontrol
 
 Til vedligeholdere: `scripts/Update-PhpClients.ps1` eksporterer metadata fra den aktuelle API-kode uden at starte API-jobs eller tilgå databaser og genererer derefter PHP. `scripts/Test-PhpClients.ps1` kontrollerer generering, tester alle operationer mod lokale HTTP-fixtures, bygger deterministiske ZIP-filer, tester de udpakkede pakker og kopierer kun PHP-downloads til begge API'er. De øvrige klienter beholder deres egne udgivelseskontrakter. Der udføres ingen publicering eller deployment.
+
+
+GetTerminals bruger rapporteret ComputerName til navn, filtrering og sortering; manglende navne er tomme. Bed om fields=versionMinor,bootReason,booted,firmware,storageCardSerialNumber,page,backLight for terminaldata. Værdier er strenge, null ved fravalg og tomme ved manglende data. Behold fields under sideskift, og genstart gamle cursors. Lokationsnavne følger altid med. Se /docs#changelog for alle migreringskrav.

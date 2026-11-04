@@ -2,6 +2,12 @@
 
 Requests and responses use associative arrays with exact JSON field names. Dates remain strings. All integer fields use 64-bit PHP integers; never convert them to floats. Null and absent values are preserved.
 
+### AccountDayCount
+
+```php
+array{'through'?: string|null, 'entries'?: int}
+```
+
 ### AccountDocumentResponse
 
 ```php
@@ -11,13 +17,19 @@ array{'key'?: string|null, 'docId'?: int|null, 'lines'?: list<AccountEntryRespon
 ### AccountEntryResponse
 
 ```php
-array{'kid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'userKid'?: string|null, 'recordedAtUtc'?: string, 'amountMinor'?: int, 'currency'?: string|null, 'description'?: string|null, 'transactionType'?: string|null, 'period'?: int, 'reversed'?: bool, 'reversalOfKid'?: string|null, 'userName'?: string|null, 'userNumber'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'canReverse'?: bool, 'unitIconKid'?: string|null, 'documentKey'?: string|null, 'documentId'?: int|null, 'isAnonymized'?: bool, 'paymentKind'?: string|null}
+array{'kid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'userKid'?: string|null, 'recordedAtUtc'?: string, 'amountMinor'?: int, 'currency'?: string|null, 'description'?: string|null, 'transactionType'?: string|null, 'period'?: int, 'reversed'?: bool, 'reversalOfKid'?: string|null, 'userName'?: string|null, 'userNumber'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'canReverse'?: bool, 'locationIconKid'?: string|null, 'unitIconKid'?: string|null, 'documentKey'?: string|null, 'documentId'?: int|null, 'isAnonymized'?: bool, 'paymentKind'?: string|null}
+```
+
+### AccountIconResponse
+
+```php
+array{'currency'?: string|null, 'iconKid'?: string|null}
 ```
 
 ### AccountResponse
 
 ```php
-array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'documents'?: list<AccountDocumentResponse>|null}
+array{'items'?: list<AccountEntryResponse>|null, 'units'?: list<AccountUnitResponse>|null, 'periods'?: list<int>|null, 'totals'?: list<AccountTotal>|null, 'from'?: string, 'through'?: string|null, 'timeZone'?: string|null, 'period'?: int|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool, 'revision'?: string|null, 'dayCount'?: AccountDayCount, 'documents'?: list<AccountDocumentResponse>|null}
 ```
 
 ### AccountRevisionResponse
@@ -38,10 +50,52 @@ array{'currency'?: string|null, 'entries'?: int, 'amountMinor'?: int}
 array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: string|null, 'name'?: string|null}
 ```
 
+### AcknowledgeErrorRequest
+
+```php
+array{'expectedRevision': string|null}
+```
+
+### ActiveBankCountResponse
+
+```php
+array{'count'?: int, 'iconKid'?: string|null}
+```
+
 ### ActiveLocationCountResponse
 
 ```php
 array{'count'?: int, 'iconKid'?: string|null}
+```
+
+### ActiveManagerStatisticsResponse
+
+```php
+array{'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'activeWithinMinutes'?: int}
+```
+
+### ActiveUnitCountResponse
+
+```php
+array{'count'?: int, 'iconKid'?: string|null}
+```
+
+### ApplicationLoadHistoryResponse
+
+```php
+array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<ApplicationLoadHistorySeries>|null, 'memorySeries'?: list<ApplicationLoadHistorySeries>|null}
+```
+
+### ApplicationLoadHistorySeries
+
+```php
+array{'points'?: list<HostingPoint>|null}
+```
+
+### ApproveWallboardPairing
+
+```php
+array{'location'?: WallboardScanLocation}
 ```
 
 ### AssistantLink
@@ -66,6 +120,18 @@ array{'question': string, 'history'?: list<AssistantMessage>|null}
 
 ```php
 array{'answer'?: string|null, 'operations'?: list<string>|null, 'links'?: list<AssistantLink>|null}
+```
+
+### BankDirectoryItem
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'fields'?: array<string,mixed>|null}
+```
+
+### BankDirectoryResponse
+
+```php
+array{'items'?: list<BankDirectoryItem>|null, 'nextCursor'?: string|null, 'fields'?: list<string>|null, 'canReadBankActivationCode'?: bool}
 ```
 
 ### BankDocumentItem
@@ -152,10 +218,106 @@ array{'locationKid'?: string|null, 'unitKid'?: string|null, 'locationName'?: str
 array{'items'?: list<BookingResponse>|null, 'units'?: list<BookingUnitResponse>|null, 'from'?: string, 'through'?: string, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool}
 ```
 
+### CameraAvailabilityResponse
+
+```php
+array{'hasCaptures'?: bool, 'isDegraded'?: bool, 'canCapture'?: bool}
+```
+
+### CameraCaptureItem
+
+```php
+array{'id'?: string|null, 'captureId'?: string|null, 'resourceKid'?: string|null, 'ownerKid'?: string|null, 'fileName'?: string|null, 'kind'?: string|null, 'capturedAtUtc'?: string, 'hasPreview'?: bool, 'hasMotion'?: bool, 'hasPlayback'?: bool, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null}
+```
+
+### CameraCapturePage
+
+```php
+array{'items'?: list<CameraCaptureItem>|null, 'nextCursor'?: string|null, 'isDegraded'?: bool}
+```
+
+### CameraConfirmationRequest
+
+```php
+array{'uploadToken'?: string|null}
+```
+
+### CameraConfirmationResponse
+
+```php
+array{'confirmed'?: bool, 'errorCode'?: string|null, 'processingPercent'?: int|null}
+```
+
+### CameraPrepareRequest
+
+```php
+array{'resourceKid'?: string|null, 'kind'?: string|null, 'originalFileName'?: string|null, 'originalNameAvailable'?: bool, 'capturedAtUtc'?: string, 'mediaLength'?: int, 'mediaSha256'?: string|null, 'sensorData'?: array<string,mixed>, 'motionLength'?: int|null, 'motionSha256'?: string|null}
+```
+
+### CameraPrepareResponse
+
+```php
+array{'uploadToken'?: string|null}
+```
+
+### CameraResourceResponse
+
+```php
+array{'resourceKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'requiresProximityCheck'?: bool, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
+```
+
+### CameraSaveResponse
+
+```php
+array{'captureId'?: string|null, 'resourceKid'?: string|null}
+```
+
+### ChecklistItem
+
+```php
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'period'?: int, 'isLatest'?: bool, 'bankName'?: string|null, 'locationName'?: string|null, 'hardware'?: string|null, 'periodDateUtc'?: string|null, 'nextSettlementUtc'?: string|null, 'lastRunUtc'?: string|null, 'updatedAtUtc'?: string|null, 'hidden'?: bool, 'onChecklist'?: bool, 'scheduleStatus'?: string|null, 'processing'?: ChecklistProcessing}
+```
+
+### ChecklistPage
+
+```php
+array{'items'?: list<ChecklistItem>|null, 'nextCursor'?: string|null, 'readAtUtc'?: string}
+```
+
+### ChecklistProcessing
+
+```php
+array{'invoice'?: ChecklistStatus, 'soapInvoice'?: ChecklistStatus, 'soapCredit'?: ChecklistStatus, 'easyPay'?: ChecklistStatus}
+```
+
+### ChecklistStatus
+
+```php
+array{'code'?: int|null, 'state'?: string|null}
+```
+
 ### DatabaseAccessResponse
 
 ```php
 array{'canWrite'?: bool|null, 'checkedAtUtc'?: string}
+```
+
+### DatabaseLoadHistoryResponse
+
+```php
+array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'series'?: list<DatabaseLoadHistorySeries>|null, 'cpuSeries'?: list<DatabaseLoadHistorySeries>|null}
+```
+
+### DatabaseLoadHistorySeries
+
+```php
+array{'points'?: list<HostingPoint>|null}
+```
+
+### DirectoryExportCountResponse
+
+```php
+array{'count'?: int}
 ```
 
 ### DocumentCell
@@ -170,10 +332,22 @@ array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
 array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
 ```
 
+### DocumentNeighbor
+
+```php
+array{'kid'?: string|null, 'lastActivityUtc'?: string}
+```
+
+### DocumentNeighbors
+
+```php
+array{'previous'?: DocumentNeighbor, 'next'?: DocumentNeighbor}
+```
+
 ### DocumentTable
 
 ```php
-array{'documentKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'columns'?: list<DocumentColumn>|null, 'rows'?: list<DocumentTableRow>|null}
+array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'columns'?: list<DocumentColumn>|null, 'rows'?: list<DocumentTableRow>|null}
 ```
 
 ### DocumentTableRow
@@ -233,7 +407,7 @@ array{'installer'?: InstallerDirectoryItem, 'canEditIcon'?: bool, 'iconRevision'
 ### InstallerDirectoryItem
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'email'?: string|null, 'locations'?: list<InstallerLocationResponse>|null, 'tags'?: list<InstallerTagResponse>|null, 'deleted'?: bool, 'deletedAt'?: string|null, 'enabled'?: bool|null, 'lastActiveAt'?: string|null, 'iconKid'?: string|null}
+array{'kid'?: string|null, 'name'?: string|null, 'email'?: string|null, 'locations'?: list<InstallerLocationResponse>|null, 'tags'?: list<InstallerTagResponse>|null, 'deleted'?: bool, 'deletedAt'?: string|null, 'enabled'?: bool|null, 'lastActiveAt'?: string|null, 'activationCode'?: string|null, 'iconKid'?: string|null}
 ```
 
 ### InstallerDirectoryResponse
@@ -284,6 +458,36 @@ array{'timestamp'?: string, 'level'?: string|null, 'message'?: string|null, 'cat
 array{'tenantKid'?: string|null, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'servers'?: list<LiveLogCard>|null}
 ```
 
+### LocationBookingCalendarDayResponse
+
+```php
+array{'dayOfWeek'?: int, 'slots'?: list<LocationBookingCalendarSlotResponse>|null, 'date'?: string}
+```
+
+### LocationBookingCalendarGroup
+
+```php
+array{'units'?: list<LocationBookingCalendarUnit>|null, 'status'?: string|null, 'days'?: list<LocationBookingCalendarDayResponse>|null}
+```
+
+### LocationBookingCalendarSlotResponse
+
+```php
+array{'startMinute'?: int, 'durationMinutes'?: int, 'type'?: int}
+```
+
+### LocationBookingCalendarUnit
+
+```php
+array{'kid'?: string|null, 'name'?: string|null}
+```
+
+### LocationBookingCalendarsResponse
+
+```php
+array{'locationKid'?: string|null, 'groups'?: list<LocationBookingCalendarGroup>|null, 'timeZone'?: string|null, 'from'?: string, 'days'?: int}
+```
+
 ### LocationBookingRule
 
 ```php
@@ -308,10 +512,16 @@ array{'text'?: string|null, 'isValue'?: bool}
 array{'locationKid'?: string|null, 'calculatedAt'?: string, 'groups'?: list<LocationBookingRuleGroup>|null}
 ```
 
+### LocationCountResponse
+
+```php
+array{'count'?: int}
+```
+
 ### LocationDirectoryItem
 
 ```php
-array{'kid'?: string|null, 'bankKid'?: string|null, 'bankName'?: string|null, 'name'?: string|null, 'vismaCustNo'?: string|null, 'bankActivationCode'?: string|null, 'locationActivationCode'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'longitude'?: int|float|null, 'latitude'?: int|float|null, 'teltonikaSms'?: string|null, 'alternativeBankName'?: string|null, 'mask'?: string|null, 'timeZone'?: string|null, 'online'?: bool|null, 'lastContactAt'?: string|null, 'vismaCrAcNo'?: string|null, 'vismaInvoiceVersion'?: string|null, 'vismaOrdre'?: string|null, 'vismaPNTurnover'?: string|null, 'vismaPNSettlement'?: string|null, 'vismaSettlement'?: string|null, 'vismaVAT'?: string|null, 'vismaServiceKey'?: string|null, 'vismaStart'?: string|null, 'vismaNote'?: string|null, 'hiddenNote'?: string|null, 'vismaGuaranteeMonth'?: string|null, 'vismaGuaranteeUnder'?: string|null, 'vismaGuarantee'?: string|null, 'vismaGuaranteeCustomer'?: string|null, 'vismaGuaranteeOver'?: string|null, 'gift'?: string|null, 'giftBegin'?: string|null, 'giftEnd'?: string|null, 'giftSplit'?: string|null, 'giftPN'?: string|null, 'iconKid'?: string|null, 'bankIconKid'?: string|null}
+array{'kid'?: string|null, 'bankKid'?: string|null, 'bankName'?: string|null, 'name'?: string|null, 'vismaCustNo'?: string|null, 'bankActivationCode'?: string|null, 'locationActivationCode'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'longitude'?: int|float|null, 'latitude'?: int|float|null, 'teltonikaSms'?: string|null, 'alternativeBankName'?: string|null, 'mask'?: string|null, 'timeZone'?: string|null, 'online'?: bool|null, 'lastContactAt'?: string|null, 'vismaCrAcNo'?: string|null, 'vismaInvoiceVersion'?: string|null, 'vismaOrdre'?: string|null, 'vismaPNTurnover'?: string|null, 'vismaPNSettlement'?: string|null, 'vismaSettlement'?: string|null, 'vismaVAT'?: string|null, 'vismaServiceKey'?: string|null, 'vismaStart'?: string|null, 'vismaNote'?: string|null, 'hiddenNote'?: string|null, 'vismaGuaranteeMonth'?: string|null, 'vismaGuaranteeUnder'?: string|null, 'vismaGuarantee'?: string|null, 'vismaGuaranteeCustomer'?: string|null, 'vismaGuaranteeOver'?: string|null, 'gift'?: string|null, 'giftBegin'?: string|null, 'giftEnd'?: string|null, 'giftSplit'?: string|null, 'giftPN'?: string|null, 'soapEnd'?: string|null, 'iconKid'?: string|null, 'bankIconKid'?: string|null}
 ```
 
 ### LocationDirectoryResponse
@@ -338,10 +548,46 @@ array{'items'?: list<LocationIconResponse>|null}
 array{'locationKid'?: string|null, 'timeZone'?: string|null, 'calculatedAt'?: string, 'groups'?: list<OpeningHoursGroup>|null}
 ```
 
+### LocationReservationHistoryItem
+
+```php
+array{'unitKid'?: string|null, 'startMinute'?: int, 'durationMinutes'?: int, 'revision'?: int, 'cancelled'?: bool, 'userNumber'?: string|null, 'userName'?: string|null, 'userKid'?: string|null}
+```
+
+### LocationReservationHistoryResponse
+
+```php
+array{'locationKid'?: string|null, 'from'?: string, 'days'?: int, 'items'?: list<LocationReservationHistoryItem>|null}
+```
+
+### LocationReservationResponse
+
+```php
+array{'unitKid'?: string|null, 'startMinute'?: int, 'durationMinutes'?: int, 'userNumber'?: string|null, 'userName'?: string|null, 'userKid'?: string|null}
+```
+
+### LocationReservationsResponse
+
+```php
+array{'locationKid'?: string|null, 'from'?: string, 'days'?: int, 'items'?: list<LocationReservationResponse>|null}
+```
+
 ### LocationUnitsResponse
 
 ```php
 array{'location'?: BankLocationResponse, 'items'?: list<UnitOverviewResponse>|null}
+```
+
+### LocationWeatherCurrent
+
+```php
+array{'observedAtUtc'?: string, 'retrievedAtUtc'?: string, 'temperatureCelsius'?: int|float, 'apparentTemperatureCelsius'?: int|float|null, 'windSpeedMetresPerSecond'?: int|float|null, 'precipitationMillimetres'?: int|float|null, 'relativeHumidityPercent'?: int|float|null, 'weatherCode'?: int|null, 'isDay'?: bool|null}
+```
+
+### LocationWeatherResponse
+
+```php
+array{'locationKid'?: string|null, 'status'?: string|null, 'address'?: string|null, 'zip'?: string|null, 'positionSource'?: string|null, 'current'?: LocationWeatherCurrent|null}
 ```
 
 ### ManagerCreationResponse
@@ -407,7 +653,7 @@ array{'code'?: string|null}
 ### ManagerLoginRequest
 
 ```php
-array{'email': string, 'password': string}
+array{'email'?: string|null, 'password'?: string|null, 'kid'?: string|null, 'apiKey'?: string|null}
 ```
 
 ### ManagerOperationPermissionResponse
@@ -431,13 +677,13 @@ array{'flag'?: int|null, 'enabled'?: bool|null, 'expectedFlags': int|null}
 ### ManagerPermissionRoleRequest
 
 ```php
-array{'role': string|null, 'expectedFlags': array<string,mixed>|null, 'expectedTabsRevision'?: string|null}
+array{'role': string|null, 'expectedFlags': array<string,mixed>|null, 'expectedTabsRevision'?: string|null, 'expectedKidsRevision'?: string|null}
 ```
 
 ### ManagerPermissionRoleResponse
 
 ```php
-array{'role'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'canEditPermissions'?: bool, 'tabs'?: list<ManagerTabResponse>|null, 'tabsRevision'?: string|null, 'canEditTabs'?: bool}
+array{'role'?: string|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null, 'canEditPermissions'?: bool, 'tabs'?: list<ManagerTabResponse>|null, 'tabsRevision'?: string|null, 'canEditTabs'?: bool, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'kidsRevision'?: string|null, 'canEditKids'?: bool}
 ```
 
 ### ManagerProfileChangeRequest
@@ -455,7 +701,7 @@ array{'field': string|null, 'name': string|null, 'organisation': string|null, 'e
 ### ManagerProfileResponse
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
+array{'kid'?: string|null, 'name'?: string|null, 'tabs'?: list<int>|null, 'hasBankAccess'?: bool, 'wallboardDisplayId'?: string|null, 'iconKid'?: string|null, 'databaseAccess'?: DatabaseAccessResponse, 'navigationBanks'?: list<BankNavigationResponse>|null, 'organisation'?: string|null, 'gravatarUrl'?: string|null, 'retentionDays'?: int, 'themeMode'?: eThemeMode, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'portalMaxOpenBanks'?: int|null, 'tabDetails'?: list<ManagerTabResponse>|null, 'resourceGrants'?: list<ManagerResourceGrantResponse>|null, 'operationPermissions'?: list<ManagerOperationPermissionResponse>|null}
 ```
 
 ### ManagerResetPasswordRequest
@@ -474,6 +720,18 @@ array{'kid'?: string|null, 'scope'?: string|null}
 
 ```php
 array{'accessToken'?: string|null, 'expiresIn'?: int, 'tokenType'?: string|null}
+```
+
+### ManagerSignUpConfirmation
+
+```php
+array{'token'?: string|null}
+```
+
+### ManagerSignUpRequest
+
+```php
+array{'email'?: string|null, 'name'?: string|null, 'organisation'?: string|null, 'password'?: string|null, 'confirmPassword'?: string|null, 'language'?: string|null}
 ```
 
 ### ManagerTabChangeRequest
@@ -506,6 +764,24 @@ array{'themeMode': eThemeMode}
 array{'themeMode'?: eThemeMode}
 ```
 
+### MovePublicWallboardPageRequest
+
+```php
+array{'revision'?: string|null, 'publicRevision'?: string|null, 'pageIndex': int, 'targetPageIndex': int, 'targetDisplayId'?: string|null, 'portrait'?: bool, 'toPublic'?: bool, 'sourceDisplayId'?: string|null}
+```
+
+### MovePublicWallboardPageResponse
+
+```php
+array{'personal'?: PersonalWallboardsResponse, 'public'?: PublicWallboardEditorResponse}
+```
+
+### NearestLocationItem
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'bankName'?: string|null, 'iconKid'?: string|null, 'distanceMeters'?: int|float}
+```
+
 ### ObjectAddressResponse
 
 ```php
@@ -536,10 +812,52 @@ array{'label'?: string|null, 'status'?: string|null, 'opens'?: string|null, 'clo
 array{'kid'?: string|null, 'name'?: string|null}
 ```
 
+### OutOfOrderItem
+
+```php
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'unitType'?: int, 'outOfOrder'?: int, 'status'?: string|null, 'statusLabel'?: string|null, 'timestampUtc'?: string, 'changedBy'?: UnitSettingEditorResponse, 'revision'?: string|null, 'canRestore'?: bool}
+```
+
+### OutOfOrderPage
+
+```php
+array{'items'?: list<OutOfOrderItem>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
+```
+
+### OutOfOrderRestoreRequest
+
+```php
+array{'expectedRevision': string|null}
+```
+
+### OutOfOrderRestoreResponse
+
+```php
+array{'kid'?: string|null, 'outOfOrder'?: int, 'status'?: string|null, 'timestampUtc'?: string, 'revision'?: string|null, 'sync'?: int|null}
+```
+
+### PeopleDirectoryCount
+
+```php
+array{'count'?: int, 'iconKid'?: string|null}
+```
+
 ### PersonalAccountResult
 
 ```php
 array{'code'?: string|null}
+```
+
+### PersonalApiKeyRequest
+
+```php
+array{'revision': string|null}
+```
+
+### PersonalApiKeyResponse
+
+```php
+array{'apiKey'?: string|null, 'details'?: PersonalManagerApiKey}
 ```
 
 ### PersonalEmailConfirmation
@@ -554,10 +872,16 @@ array{'token': string|null}
 array{'email': string|null, 'currentPassword': string|null, 'language'?: string|null}
 ```
 
+### PersonalManagerApiKey
+
+```php
+array{'hasApiKey'?: bool, 'revision'?: string|null}
+```
+
 ### PersonalManagerProfile
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'organisation'?: string|null, 'iconKid'?: string|null, 'email'?: string|null, 'emailVerified'?: bool, 'themeMode'?: eThemeMode, 'revision'?: string|null, 'availableIcons'?: list<string>|null, 'retentionDays'?: int, 'iconSet'?: string|null}
+array{'kid'?: string|null, 'name'?: string|null, 'organisation'?: string|null, 'iconKid'?: string|null, 'email'?: string|null, 'emailVerified'?: bool, 'themeMode'?: eThemeMode, 'revision'?: string|null, 'availableIcons'?: list<string>|null, 'retentionDays'?: int, 'iconSet'?: string|null, 'language'?: int|null, 'dateFormat'?: string|null, 'numberFormat'?: string|null, 'lineSpacing'?: int|float, 'portalMaxOpenBanks'?: int|null}
 ```
 
 ### PersonalManagerTab
@@ -590,16 +914,82 @@ array{'revision': string|null, 'value': mixed}
 array{'revision': string|null, 'enabled': bool}
 ```
 
+### PersonalWallboardRequest
+
+```php
+array{'displayId': string|null, 'targetDisplayId'?: string|null}
+```
+
+### PersonalWallboardsResponse
+
+```php
+array{'wallboards'?: list<Wallboard>|null, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int, 'portalWallboard'?: Wallboard, 'portalStorageUsedCharacters'?: int, 'portalStorageLimitCharacters'?: int, 'dateFormat'?: string|null}
+```
+
+### PlexQueueResponse
+
+```php
+array{'reference'?: string|null, 'title'?: string|null, 'count'?: int}
+```
+
+### PlexSearchItem
+
+```php
+array{'reference'?: string|null, 'title'?: string|null, 'kind'?: string|null}
+```
+
+### PlexSearchResponse
+
+```php
+array{'items'?: list<PlexSearchItem>|null}
+```
+
+### PlexStartResponse
+
+```php
+array{'ticket'?: string|null}
+```
+
 ### ProblemDetails
 
 ```php
 array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null}
 ```
 
+### PublicWallboardEditorResponse
+
+```php
+array{'wallboard'?: Wallboard, 'revision'?: string|null, 'storageUsedCharacters'?: int, 'storageLimitCharacters'?: int}
+```
+
+### RedeemWallboardPairing
+
+```php
+array{'deviceCode'?: string|null}
+```
+
+### ResumeWallboardSession
+
+```php
+array{'challenge'?: string|null, 'signature'?: string|null}
+```
+
+### SavePersonalWallboardsRequest
+
+```php
+array{'revision'?: string|null, 'wallboards': mixed, 'portalWallboard'?: mixed}
+```
+
+### SavePublicWallboardRequest
+
+```php
+array{'revision'?: string|null, 'wallboard': mixed}
+```
+
 ### SearchResult
 
 ```php
-array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'iconKid'?: string|null}
+array{'kid'?: string|null, 'kind'?: string|null, 'name'?: string|null, 'zip'?: string|null, 'matchedSetting'?: string|null, 'matchedValue'?: string|null, 'isContext'?: bool, 'number'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
 ```
 
 ### SearchResults
@@ -680,6 +1070,12 @@ array{'kid'?: string|null, 'nextSettlement'?: string|null, 'periods'?: list<Sett
 array{'period'?: int, 'settlementDate'?: string|null, 'settlementRun'?: string|null, 'firstTransaction'?: string|null, 'lastTransaction'?: string|null, 'amountMinor'?: int|null, 'transactionCount'?: int|null}
 ```
 
+### StartWallboardPairing
+
+```php
+array{'displayId'?: string|null, 'publicKey'?: string|null}
+```
+
 ### TenantStatusItem
 
 ```php
@@ -704,6 +1100,60 @@ array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'sources'?: list<Te
 array{'kind'?: string|null, 'count'?: int, 'hasMore'?: bool, 'errorCode'?: string|null}
 ```
 
+### ToolKidField
+
+```php
+array{'name'?: string|null, 'value'?: string|null, 'enumName'?: string|null, 'enumNumber'?: string|null, 'index'?: int|null}
+```
+
+### ToolKidInspectionRequest
+
+```php
+array{'kid'?: string|null}
+```
+
+### ToolKidInspectionResponse
+
+```php
+array{'canonicalKid'?: string|null, 'fields'?: list<ToolKidField>|null, 'normalized'?: bool}
+```
+
+### ToolTestMailRequest
+
+```php
+array{}
+```
+
+### ToolTestMailResponse
+
+```php
+array{'recipient'?: string|null}
+```
+
+### ToolTimeOffsetChoice
+
+```php
+array{'offset'?: string|null, 'utc'?: string|null}
+```
+
+### ToolTimeRequest
+
+```php
+array{'format'?: string|null, 'value'?: string|null, 'timeZone'?: string|null, 'offset'?: string|null}
+```
+
+### ToolTimeResponse
+
+```php
+array{'success'?: bool, 'error'?: string|null, 'result'?: ToolTimeResult, 'offsetChoices'?: list<ToolTimeOffsetChoice>|null}
+```
+
+### ToolTimeResult
+
+```php
+array{'ms2000'?: string|null, 'mi2000'?: string|null, 'ss2000'?: string|null, 'utc'?: string|null, 'local'?: string|null, 'timeZone'?: string|null, 'offset'?: string|null, 'dateInputRounded'?: bool, 'millisecondRemainder'?: string|null, 'secondRemainder'?: string|null}
+```
+
 ### UnitDetailsResponse
 
 ```php
@@ -713,7 +1163,7 @@ array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'descrip
 ### UnitDirectoryItem
 
 ```php
-array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null}
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null, 'errorUnit'?: string|null, 'autoOutOfOrder'?: string|null, 'versionMinor'?: string|null, 'bootReason'?: string|null, 'booted'?: string|null, 'firmware'?: string|null, 'storageCardSerialNumber'?: string|null, 'page'?: string|null, 'backLight'?: string|null, 'terminal'?: UnitTerminalResponse, 'progress'?: UnitProgressResponse}
 ```
 
 ### UnitDirectoryResponse
@@ -722,10 +1172,34 @@ array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null,
 array{'items'?: list<UnitDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
 ```
 
+### UnitDocumentCount
+
+```php
+array{'count'?: int, 'from'?: string, 'through'?: string}
+```
+
+### UnitDocumentPage
+
+```php
+array{'items'?: list<BankDocumentItem>|null, 'from'?: string, 'through'?: string, 'sort'?: string|null, 'direction'?: string|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool}
+```
+
+### UnitErrorItem
+
+```php
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'unitKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'unitType'?: int|null, 'timestampUtc'?: string, 'severity'?: string|null, 'level'?: string|null, 'code'?: int|null, 'count'?: int|null, 'description'?: string|null, 'payloadFormat'?: string|null, 'acknowledged'?: bool, 'revision'?: string|null, 'canAcknowledge'?: bool}
+```
+
+### UnitErrorPage
+
+```php
+array{'items'?: list<UnitErrorItem>|null, 'nextCursor'?: string|null, 'fromUtc'?: string, 'untilUtc'?: string}
+```
+
 ### UnitGroupFieldResponse
 
 ```php
-array{'name'?: string|null, 'valueType'?: string|null, 'scope'?: string|null, 'valueStatus'?: string|null, 'value'?: string|null, 'ms2000'?: int|null, 'canEdit'?: bool, 'revision'?: string|null, 'required'?: bool, 'minimum'?: int|null, 'maximum'?: int|null, 'options'?: list<UnitSettingOption>|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse, 'canReadHistory'?: bool, 'hasHistory'?: bool}
+array{'name'?: string|null, 'valueType'?: string|null, 'scope'?: string|null, 'valueStatus'?: string|null, 'value'?: string|null, 'ms2000'?: int|null, 'canEdit'?: bool, 'revision'?: string|null, 'required'?: bool, 'minimum'?: int|null, 'maximum'?: int|null, 'options'?: list<UnitSettingOption>|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse, 'canReadHistory'?: bool, 'hasHistory'?: bool, 'valueFormat'?: string|null, 'pattern'?: string|null}
 ```
 
 ### UnitGroupResponse
@@ -749,7 +1223,7 @@ array{'items'?: list<UnitIconResponse>|null}
 ### UnitOverviewResponse
 
 ```php
-array{'kid'?: string|null, 'name'?: string|null, 'cycle'?: string|null, 'cycleText'?: string|null, 'unitType'?: int|null, 'unitTypeName'?: string|null, 'unitTypeSource'?: string|null, 'iconKid'?: string|null, 'progress'?: UnitProgressResponse}
+array{'kid'?: string|null, 'name'?: string|null, 'cycle'?: string|null, 'cycleText'?: string|null, 'unitType'?: int|null, 'unitTypeName'?: string|null, 'unitTypeSource'?: string|null, 'iconKid'?: string|null, 'progress'?: UnitProgressResponse, 'terminal'?: UnitTerminalResponse}
 ```
 
 ### UnitProgressResponse
@@ -773,7 +1247,7 @@ array{'value'?: string|null, 'ms2000'?: int, 'sync'?: int|null, 'changedBy'?: Un
 ### UnitSettingHistoryResponse
 
 ```php
-array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, 'items'?: list<UnitSettingHistoryItem>|null, 'nextBeforeMs2000'?: int|null}
+array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, 'items'?: list<UnitSettingHistoryItem>|null, 'nextBeforeMs2000'?: int|null, 'valueFormat'?: string|null}
 ```
 
 ### UnitSettingOption
@@ -792,6 +1266,36 @@ array{'value': string|null, 'expectedRevision': string|null}
 
 ```php
 array{'unitKid'?: string|null, 'group'?: string|null, 'setting'?: string|null, 'value'?: string|null, 'ms2000'?: int, 'revision'?: string|null, 'sync'?: int|null, 'changedBy'?: UnitSettingEditorResponse}
+```
+
+### UnitTerminalResponse
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null}
+```
+
+### UnitTimelineField
+
+```php
+array{'kind'?: string|null, 'id'?: int, 'name'?: string|null}
+```
+
+### UnitTimelineFields
+
+```php
+array{'unitKid'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'unitName'?: string|null, 'unitType'?: int|null, 'sources'?: list<string>|null, 'fields'?: list<UnitTimelineField>|null, 'canReadTextDiagnostics'?: bool, 'canReadDocuments'?: bool}
+```
+
+### UnitTimelineItem
+
+```php
+array{'eventKey'?: string|null, 'source'?: string|null, 'ms2000'?: string|null, 'timestampUtc'?: string, 'sync'?: int|null, 'field'?: string|null, 'amount'?: string|null, 'currency'?: string|null, 'text'?: string|null, 'contentStatus'?: string|null, 'period'?: int, 'userKid'?: string|null, 'documentKid'?: string|null, 'auxiliaryValue'?: string|null}
+```
+
+### UnitTimelinePage
+
+```php
+array{'context'?: UnitTimelineFields, 'fromUtc'?: string, 'untilUtc'?: string, 'items'?: list<UnitTimelineItem>|null, 'nextCursor'?: string|null}
 ```
 
 ### UpdateObjectAddressRequest
@@ -848,6 +1352,24 @@ array{'action'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'n
 array{'currency'?: string|null, 'currentBalanceMinor'?: int, 'previousBalanceMinor'?: int|null, 'previousPeriod'?: int|null, 'previousPeriodIsProvisional'?: bool}
 ```
 
+### UserDirectoryItem
+
+```php
+array{'kid'?: string|null, 'bankKid'?: string|null, 'name'?: string|null, 'number'?: string|null, 'iconKid'?: string|null, 'deletedAt'?: string|null}
+```
+
+### UserDirectoryResponse
+
+```php
+array{'items'?: list<UserDirectoryItem>|null, 'nextCursor'?: string|null, 'scanLimitReached'?: bool}
+```
+
+### UserEvaskeriSession
+
+```php
+array{'kid'?: string|null, 'url'?: string|null, 'expiresAtUtc'?: string}
+```
+
 ### UserLocationResponse
 
 ```php
@@ -902,7 +1424,169 @@ array{'kid'?: string|null, 'revision'?: string|null, 'name'?: string|null, 'numb
 array{'type'?: string|null, 'title'?: string|null, 'status'?: int|null, 'detail'?: string|null, 'instance'?: string|null, 'errors'?: array<string,mixed>|null}
 ```
 
+### VideoSearchItem
+
+```php
+array{'id'?: string|null, 'name'?: string|null, 'sourceUrl'?: string|null}
+```
+
+### VideoSearchResponse
+
+```php
+array{'items'?: list<VideoSearchItem>|null, 'source'?: string|null}
+```
+
+### Wallboard
+
+```php
+array{'i'?: list<string>|null, 'n'?: string|null, 'a'?: int|float, 'c'?: list<list<int>>|null, 's'?: list<WallboardPage>|null}
+```
+
+### WallboardAnonymousReservation
+
+```php
+array{'unitKid'?: string|null, 'startMinute'?: int, 'durationMinutes'?: int}
+```
+
+### WallboardBankStorageItem
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'dataBytes'?: string|null, 'indexBytes'?: string|null, 'freeBytes'?: string|null, 'dataRecordedAtUtc'?: string|null, 'indexRecordedAtUtc'?: string|null, 'freeRecordedAtUtc'?: string|null}
+```
+
+### WallboardBankStorageResponse
+
+```php
+array{'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<WallboardBankStorageItem>|null}
+```
+
+### WallboardDeviceChallenge
+
+```php
+array{'challenge'?: string|null, 'message'?: string|null, 'expiresIn'?: int}
+```
+
+### WallboardDeviceInfo
+
+```php
+array{'deviceId'?: string|null, 'displayId'?: string|null, 'createdAt'?: string, 'location'?: WallboardScanLocation}
+```
+
+### WallboardDisplayResponse
+
+```php
+array{'layout'?: Wallboard, 'revision'?: string|null, 'dateFormat'?: string|null}
+```
+
+### WallboardLocationInfoResponse
+
+```php
+array{'locationKid'?: string|null, 'name'?: string|null}
+```
+
+### WallboardLocationMapItem
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'latitude'?: int|float, 'longitude'?: int|float}
+```
+
+### WallboardLocationMapResponse
+
+```php
+array{'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<WallboardLocationMapItem>|null}
+```
+
+### WallboardPage
+
+```php
+array{'n'?: string|null, 'd'?: int, 's'?: list<WallboardWidget>|null}
+```
+
+### WallboardPairingInfo
+
+```php
+array{'pairingId'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'approved'?: bool}
+```
+
+### WallboardPairingStarted
+
+```php
+array{'pairingId'?: string|null, 'deviceCode'?: string|null, 'displayId'?: string|null, 'expiresAt'?: string, 'intervalSeconds'?: int}
+```
+
+### WallboardPairingToken
+
+```php
+array{'status'?: string|null, 'accessToken'?: string|null, 'expiresIn'?: int|null, 'displayId'?: string|null}
+```
+
+### WallboardReservationCalendarResponse
+
+```php
+array{'locationKid'?: string|null, 'groups'?: list<LocationBookingCalendarGroup>|null, 'timeZone'?: string|null, 'from'?: string, 'days'?: int, 'reservations'?: list<WallboardAnonymousReservation>|null}
+```
+
+### WallboardScanLocation
+
+```php
+array{'latitude'?: int|float, 'longitude'?: int|float, 'accuracyMeters'?: int|float, 'capturedAt'?: string}
+```
+
+### WallboardWidget
+
+```php
+array{'t'?: eWidgetType, 'k'?: string|null, 'r'?: list<int>|null}
+```
+
+### WashDocChartDosing
+
+```php
+array{'ms2000'?: int, 'name'?: string|null, 'durationMs'?: int|null, 'volumeMl'?: int|float|null, 'massGrams'?: int|float|null, 'process'?: string|null, 'step'?: string|null}
+```
+
+### WashDocChartEvent
+
+```php
+array{'ms2000'?: int, 'kind'?: string|null, 'name'?: string|null, 'value'?: int|float|null, 'label'?: string|null, 'localization'?: string|null, 'isCalculated'?: bool}
+```
+
+### WashDocChartPoint
+
+```php
+array{'ms2000'?: int, 'value'?: int|float|null, 'isCalculated'?: bool, 'isEdge'?: bool, 'unit'?: string|null}
+```
+
+### WashDocChartResponse
+
+```php
+array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'startedMs2000'?: int|null, 'endedMs2000'?: int|null, 'series'?: list<WashDocChartSeries>|null, 'events'?: list<WashDocChartEvent>|null, 'signals'?: list<WashDocChartSignal>|null, 'dosing'?: list<WashDocChartDosing>|null, 'presentation'?: WashDocPresentation}
+```
+
+### WashDocChartSeries
+
+```php
+array{'kind'?: string|null, 'name'?: string|null, 'label'?: string|null, 'localization'?: string|null, 'group'?: string|null, 'role'?: string|null, 'unit'?: string|null, 'step'?: bool, 'points'?: list<WashDocChartPoint>|null}
+```
+
+### WashDocChartSignal
+
+```php
+array{'ms2000'?: int, 'flags'?: int|null, 'heat'?: bool|null, 'inlet'?: bool|null, 'outlet'?: bool|null, 'isCalculated'?: bool, 'airflow'?: bool|null}
+```
+
+### WashDocPresentation
+
+```php
+array{'unitType'?: int|null, 'kind'?: string|null, 'groupOrder'?: list<string>|null}
+```
+
 ### eThemeMode
+
+```php
+int
+```
+
+### eWidgetType
 
 ```php
 int
@@ -920,10 +1604,70 @@ array{'tenantKid'?: string|null, 'count'?: int, 'lookbackDays'?: int, 'sinceUtc'
 array{'service'?: string|null, 'status'?: string|null, 'apiVersion'?: string|null}
 ```
 
+### CycleChartPresentationResponse
+
+```php
+array{'language'?: string|null, 'messages'?: array<string,mixed>|null, 'stateNames'?: array<string,mixed>|null}
+```
+
 ### IconPresentationResponse
 
 ```php
 array{'iconKid'?: string|null}
+```
+
+### LiveMachineResponse
+
+```php
+array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'temperature'?: int|float|null}
+```
+
+### PublicCameraPhoto
+
+```php
+array{'thumbnailUrl'?: string|null, 'workspacePath'?: string|null}
+```
+
+### PublicCycleWidgetResponse
+
+```php
+array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string, 'endedAtUtc'?: string|null, 'finished'?: bool, 'graphSvg'?: string|null, 'refreshAfterSeconds'?: int, 'cycleKidText'?: string|null}
+```
+
+### PublicMachineError
+
+```php
+array{'kid'?: string|null, 'name'?: string|null, 'bankName'?: string|null, 'locationName'?: string|null, 'errorId'?: string|null}
+```
+
+### PublicMachineErrorsPage
+
+```php
+array{'items'?: list<PublicMachineError>|null, 'nextCursor'?: string|null, 'refreshAfterSeconds'?: int}
+```
+
+### PublicScopedProgressItem
+
+```php
+array{'unitKid'?: string|null, 'unitName'?: string|null, 'locationName'?: string|null, 'startedAtUtc'?: string|null, 'doneAtUtc'?: string|null, 'progress'?: UnitProgressResponse}
+```
+
+### PublicScopedProgressResponse
+
+```php
+array{'scopeKid'?: string|null, 'scopeKind'?: string|null, 'calculatedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<PublicScopedProgressItem>|null, 'nextCursor'?: string|null}
+```
+
+### PublicWidgetPresentationResponse
+
+```php
+array{'language'?: string|null, 'colors'?: string|null, 'background'?: string|null, 'webBase'?: string|null, 'labels'?: array<string,mixed>|null, 'googleMapsBrowserKey'?: string|null, 'mapProvider'?: string|null, 'mapTilerBrowserKey'?: string|null, 'brandIconUrl'?: string|null, 'brandName'?: string|null, 'brandLogoUrl'?: string|null, 'brandDarkLogoUrl'?: string|null, 'brandLogoMarkUrl'?: string|null, 'brandDarkLogoMarkUrl'?: string|null, 'brandLogoWordmarkUrl'?: string|null, 'brandDarkLogoWordmarkUrl'?: string|null, 'brandLightTokens'?: array<string,mixed>|null, 'brandDarkTokens'?: array<string,mixed>|null}
+```
+
+### PurchaseCurrencySnapshot
+
+```php
+array{'currency'?: string|null, 'count'?: int, 'amount'?: int|float}
 ```
 
 ### PurchaseHeatmapPoint
@@ -947,5 +1691,29 @@ array{'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'items'?: list<Purc
 ### PurchasesResponse
 
 ```php
-array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string, 'amount'?: int|float, 'currency'?: string|null}
+array{'tenantKid'?: string|null, 'count'?: int, 'lookbackHours'?: int, 'sinceUtc'?: string, 'measuredAtUtc'?: string, 'currencies'?: list<PurchaseCurrencySnapshot>|null}
+```
+
+### ReservationsStatisticsResponse
+
+```php
+array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
+```
+
+### ReservedMachinesStatisticsResponse
+
+```php
+array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
+```
+
+### RunningMachineResponse
+
+```php
+array{'unitKid'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'unitType'?: int|null, 'cycle'?: int|null}
+```
+
+### RunningMachinesResponse
+
+```php
+array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
 ```

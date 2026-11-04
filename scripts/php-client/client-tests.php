@@ -26,11 +26,21 @@ foreach ($fixtures as $i => $case) {
     $client = new $class($base . 'matrix/' . $i . '/');
     $client->setAccessToken('synthetic-token');
     $args = $case['args'];
+    $uploadFiles = [];
+    if ($case['multipart']) {
+        foreach (['original' => "original\0bytes", 'motion' => "motion\xffbytes"] as $name => $bytes) {
+            $file = tempnam(sys_get_temp_dir(), 'portal-camera-test-');
+            file_put_contents($file, $bytes);
+            $uploadFiles[] = $file;
+            $args[0][$name] = new CURLFile($file, 'application/octet-stream', $name . '.bin');
+        }
+    }
     if ($case['binary']) {
         $stream = fopen('php://temp', 'w+b');
         array_splice($args, $case['sinkIndex'], 0, [$stream]);
     }
-    $result = $client->{$case['method']}(...$args);
+    try { $result = $client->{$case['method']}(...$args); }
+    finally { foreach ($uploadFiles as $file) unlink($file); }
     if ($case['binary']) {
         check($result->bytes === strlen($case['response']), 'Download byte count ' . $case['method']);
         rewind($stream);
@@ -57,6 +67,16 @@ ob_start(); var_dump($client); $debug = ob_get_clean();
 check(!str_contains($debug, 'retained-token'), 'No token in debug output');
 raises(LogicException::class, fn() => serialize($client));
 if ($api === 'Portal') {
+    // Validate advertised metadata separately from the readable local path, before any HTTP request.
+    $file = tempnam(sys_get_temp_dir(), 'portal-multipart-name-');
+    file_put_contents($file, 'synthetic bytes');
+    $upload = new $class($base . 'invalid-upload/'); $upload->setAccessToken('token');
+    try {
+        foreach (["bad\r\nInjected: value", 'bad"name', "bad\\name", str_repeat('x', 1025)] as $badName) {
+            raises(InvalidArgumentException::class, fn() => $upload->saveCameraCapture(['uploadToken' => 'fixture', 'original' => new CURLFile($file, 'application/octet-stream', $badName)]));
+        }
+        raises(InvalidArgumentException::class, fn() => $upload->saveCameraCapture(['uploadToken' => 'fixture', 'original' => new CURLFile($file, "text/plain\r\nInjected: value", 'safe.txt')]));
+    } finally { unlink($file); }
     $client->renew();
     check($client->getAccessToken() === 'renewed-token', 'Renew replaces the token');
     $anonymous = new $class($base . 'anonymous/');
