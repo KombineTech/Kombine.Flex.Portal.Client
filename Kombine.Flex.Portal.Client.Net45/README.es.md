@@ -1,3 +1,5 @@
+La versión 0.34.0 ajusta la versión del ensamblado a la del paquete.
+
 La versión 0.33.0 incluye widgets protegidos de actividad y carga.
 
 La versión 0.29.0 agrega operaciones Plex autorizadas; Plex no es público.

@@ -1,3 +1,5 @@
+Version 0.34.0 aligns the assembly version with the package release.
+
 Version 0.33.0 includes protected manager activity and application load widgets.
 
 Version 0.29.0 adds authorized Plex operations; Plex is not public.
