@@ -143,6 +143,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetPublicRecentCameraPhotosAsync` | GET | `/api/v1/public/camera/photos` |
 | `GetPublicReservationsAsync` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicReservedMachinesAsync` | GET | `/api/v1/public/statistics/reserved-machines` |
+| `GetPublicRunningMachineListAsync` | GET | `/api/v1/public/statistics/running-units` |
 | `GetPublicRunningMachinesAsync` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPublicScopedUnitProgressAsync` | GET | `/api/v1/public/widgets/progress/{kid}` |
 | `GetPublicWallboardAsync` | GET | `/api/v1/public/wallboard` |

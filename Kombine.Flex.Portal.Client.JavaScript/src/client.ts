@@ -1153,6 +1153,11 @@ export class PortalClient extends BaseClient {
     return this.send("GetPublicReservedMachines", {}, undefined, request) as Promise<Models.ReservedMachinesStatisticsResponse>;
   }
 
+  /** Returns the site overview's running-machine pool, refreshed at most once a minute. */
+  getPublicRunningMachineList(request: RequestOptions = {}): Promise<Models.RunningMachineResponse[]> {
+    return this.send("GetPublicRunningMachineList", {}, undefined, request) as Promise<Models.RunningMachineResponse[]>;
+  }
+
   /** Counts machines whose current Started is before now and Done is after now. */
   getPublicRunningMachines(request: RequestOptions = {}): Promise<Models.RunningMachinesResponse> {
     return this.send("GetPublicRunningMachines", {}, undefined, request) as Promise<Models.RunningMachinesResponse>;

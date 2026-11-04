@@ -1,3 +1,11 @@
+## 0.27.0
+
+- Refresh the client guide.
+
+## 0.26.0
+
+- Add the public running-units operation.
+
 ## 0.25.0
 
 - Refresh the generated API contract for the current Portal release.

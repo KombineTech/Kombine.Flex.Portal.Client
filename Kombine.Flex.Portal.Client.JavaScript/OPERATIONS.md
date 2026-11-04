@@ -232,5 +232,6 @@
 | `GetPublicWidgetPresentation` | `get_public_widget_presentation` | `getPublicWidgetPresentation` | GET | `/api/v1/public/widgets` |
 | `GetPublicReservations` | `get_public_reservations` | `getPublicReservations` | GET | `/api/v1/public/statistics/reservations` |
 | `GetPublicReservedMachines` | `get_public_reserved_machines` | `getPublicReservedMachines` | GET | `/api/v1/public/statistics/reserved-machines` |
+| `GetPublicRunningMachineList` | `get_public_running_machine_list` | `getPublicRunningMachineList` | GET | `/api/v1/public/statistics/running-units` |
 | `GetPublicRunningMachines` | `get_public_running_machines` | `getPublicRunningMachines` | GET | `/api/v1/public/statistics/running-machines` |
 | `GetPortalStatus` | `get_portal_status` | `getPortalStatus` | GET | `/api/v1/status` |

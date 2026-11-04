@@ -8264,6 +8264,36 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Minimal public site-tenant machine display, without resident or payment fields.</summary>
+    public sealed class RunningMachineResponse
+    {
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>startedAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("startedAtUtc")]
+        public string StartedAtUtc { get { return _StartedAtUtc; } set { _StartedAtUtc = value; } }
+        private string _StartedAtUtc;
+
+        /// <summary>doneAtUtc ISO 8601 text, sent unchanged.</summary>
+        [JsonField("doneAtUtc")]
+        public string DoneAtUtc { get { return _DoneAtUtc; } set { _DoneAtUtc = value; } }
+        private string _DoneAtUtc;
+
+        /// <summary>unitType</summary>
+        [JsonField("unitType")]
+        public int? UnitType { get { return _UnitType; } set { _UnitType = value; } }
+        private int? _UnitType;
+
+        /// <summary>cycle</summary>
+        [JsonField("cycle")]
+        public int? Cycle { get { return _Cycle; } set { _Cycle = value; } }
+        private int? _Cycle;
+
+    }
+
     /// <summary>Public count of currently running machines.</summary>
     public sealed class RunningMachinesResponse
     {

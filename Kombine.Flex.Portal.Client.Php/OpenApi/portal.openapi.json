@@ -31786,6 +31786,50 @@
         }
       }
     },
+    "/api/v1/public/statistics/running-units": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Returns the site overview\u0027s running-machine pool, refreshed at most once a minute.",
+        "description": "Anonymous tenant-bound full list without paging or temperature. Existing running rule: Started \u003C now \u003C Done, Started within 100 hours and Done at most three hours ahead. Returns 503 on source overflow. UnitType and Cycle may be null. Refresh at most once per minute.",
+        "operationId": "GetPublicRunningMachineList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RunningMachineResponse"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RunningMachineResponse"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RunningMachineResponse"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
     "/api/v1/public/statistics/running-machines": {
       "get": {
         "tags": [
@@ -39667,7 +39711,9 @@
           50,
           51,
           52,
-          53
+          53,
+          54,
+          55
         ],
         "type": "integer",
         "format": "int32"
@@ -40283,6 +40329,36 @@
         },
         "additionalProperties": false,
         "description": "Public count of machines with an ongoing dated reservation."
+      },
+      "RunningMachineResponse": {
+        "type": "object",
+        "properties": {
+          "unitKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "doneAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "unitType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "cycle": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Minimal public site-tenant machine display, without resident or payment fields."
       },
       "RunningMachinesResponse": {
         "type": "object",

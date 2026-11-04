@@ -1706,6 +1706,12 @@ array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refre
 array{'tenantKid'?: string|null, 'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int}
 ```
 
+### RunningMachineResponse
+
+```php
+array{'unitKid'?: string|null, 'startedAtUtc'?: string, 'doneAtUtc'?: string|null, 'unitType'?: int|null, 'cycle'?: int|null}
+```
+
 ### RunningMachinesResponse
 
 ```php
