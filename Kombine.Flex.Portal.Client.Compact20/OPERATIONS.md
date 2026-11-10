@@ -157,6 +157,7 @@
 | `GetTenantStatus` | GET | `/api/v1/tenant/status` |
 | `GetTerminalExportCount` | GET | `/api/v1/terminals/export-count` |
 | `GetTerminals` | GET | `/api/v1/terminals` |
+| `GetUnitDocumentCycleInfo` | GET | `/api/v1/documents/{cycleKid}/cycle-info` |
 | `GetUnitDocumentGraph` | GET | `/api/v1/documents/{cycleKid}/graph` |
 | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{cycleKid}/table.html` |
 | `GetUnitDocumentIcon` | GET | `/api/v1/documents/{cycleKid}/icon.svg` |

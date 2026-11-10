@@ -179,7 +179,7 @@ export interface ActiveUnitCountResponse {
   "iconKid"?: string | null;
 }
 
-/** Protected production app CPU and memory percentages for the previous 24 hours, without provider identities. */
+/** Protected app CPU and memory percentages for the previous 24 hours, without provider identities. */
 export interface ApplicationLoadHistoryResponse {
   /** fromUtc */
   "fromUtc"?: string;
@@ -193,12 +193,18 @@ export interface ApplicationLoadHistoryResponse {
   "cpuSeries"?: (ApplicationLoadHistorySeries)[] | null;
   /** memorySeries */
   "memorySeries"?: (ApplicationLoadHistorySeries)[] | null;
+  /** Scope of the selected metrics. */
+  "scope"?: string | null;
+  /** Regions whose measurements are unavailable. */
+  "unavailableRegions"?: (string)[] | null;
 }
 
-/** One anonymous application CPU or memory series; null values represent missing samples. */
+/** One anonymous application CPU or memory series. */
 export interface ApplicationLoadHistorySeries {
   /** points */
   "points"?: (HostingPoint)[] | null;
+  /** Optional server-selected region. */
+  "region"?: string | null;
 }
 
 /** ApproveWallboardPairing */
@@ -707,6 +713,8 @@ export interface DatabaseLoadHistoryResponse {
 export interface DatabaseLoadHistorySeries {
   /** points */
   "points"?: (HostingPoint)[] | null;
+  /** Optional server-selected region (FRA/AMS), never a provider instance identifier. */
+  "region"?: string | null;
 }
 
 /** The complete number of rows matching the authorized export selection. */
@@ -723,6 +731,8 @@ export interface DocumentCell {
   "text"?: string | null;
   /** isCalculated */
   "isCalculated"?: boolean;
+  /** Raw TagId for the recorded value, represented as text to preserve precision. */
+  "tagId"?: string | null;
 }
 
 /** Stable enum column metadata; kind is state or setting. */
@@ -2505,6 +2515,32 @@ export interface ToolTimeResult {
   "secondRemainder"?: string | null;
 }
 
+/** A tagged timestamp and the safe machine type, when present. */
+export interface UnitCycleInfoEntry {
+  /** ms2000 */
+  "ms2000"?: bigint;
+  /** unitType */
+  "unitType"?: unknown | null;
+  /** machineType */
+  "machineType"?: unknown | null;
+  /** machineProgramSet */
+  "machineProgramSet"?: unknown | null;
+  /** version */
+  "version"?: unknown | null;
+  /** values */
+  "values"?: Record<string, string> | null;
+}
+
+/** Sanitized CycleInfo samples belonging to one document. */
+export interface UnitCycleInfoResponse {
+  /** cycleKid */
+  "cycleKid"?: string | null;
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** entries */
+  "entries"?: (UnitCycleInfoEntry)[] | null;
+}
+
 /** Authorized unit with the declared groups for its resolved type. No setting/state values or write permissions are returned. */
 export interface UnitDetailsResponse {
   /** location */
@@ -2555,6 +2591,12 @@ export interface UnitDirectoryItem {
   "latitude"?: number | null;
   /** longitude */
   "longitude"?: number | null;
+  /** Stored eSetting.MashineType text, only when machineType is selected; null if not selected or absent. */
+  "machineType"?: string | null;
+  /** Stored eSetting.MashineProgramSet text, only when machineProgramSet is selected; null if not selected or absent. */
+  "machineProgramSet"?: string | null;
+  /** Stored eSetting.CurrentVersion text; omitted when absent or unselected. */
+  "currentVersion"?: string | null;
   /** Last stored eState.ErrorUnit JSON text; null unless selected, empty when absent. May describe a historical fault. */
   "errorUnit"?: string | null;
   /** Stored AutoOutOfOrder JSON when autoOutOfOrderOnly is true; otherwise null. */
@@ -3600,7 +3642,7 @@ export interface WashDocPresentation {
 /** Wire values: [0, 1, 2]. */
 export type EThemeMode = number;
 
-/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]. */
+/** Wire values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56]. */
 export type EWidgetType = number;
 
 /** Public tenant-wide count; does not expose or grant access to any individual account. */

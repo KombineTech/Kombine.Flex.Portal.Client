@@ -112,10 +112,13 @@ ApplicationLoadHistoryResponse = TypedDict('ApplicationLoadHistoryResponse', {
     'refreshAfterSeconds': 'int',
     'cpuSeries': 'list[ApplicationLoadHistorySeries] | None',
     'memorySeries': 'list[ApplicationLoadHistorySeries] | None',
+    'scope': 'str | None',
+    'unavailableRegions': 'list[str] | None',
 }, total=False)
 
 ApplicationLoadHistorySeries = TypedDict('ApplicationLoadHistorySeries', {
     'points': 'list[HostingPoint] | None',
+    'region': 'str | None',
 }, total=False)
 
 ApproveWallboardPairing = TypedDict('ApproveWallboardPairing', {
@@ -407,6 +410,7 @@ DatabaseLoadHistoryResponse = TypedDict('DatabaseLoadHistoryResponse', {
 
 DatabaseLoadHistorySeries = TypedDict('DatabaseLoadHistorySeries', {
     'points': 'list[HostingPoint] | None',
+    'region': 'str | None',
 }, total=False)
 
 DirectoryExportCountResponse = TypedDict('DirectoryExportCountResponse', {
@@ -417,6 +421,7 @@ DocumentCell = TypedDict('DocumentCell', {
     'value': 'float | None',
     'text': 'str | None',
     'isCalculated': 'bool',
+    'tagId': 'str | None',
 }, total=False)
 
 DocumentColumn = TypedDict('DocumentColumn', {
@@ -1447,6 +1452,21 @@ ToolTimeResult = TypedDict('ToolTimeResult', {
     'secondRemainder': 'str | None',
 }, total=False)
 
+UnitCycleInfoEntry = TypedDict('UnitCycleInfoEntry', {
+    'ms2000': 'int',
+    'unitType': 'Any | None',
+    'machineType': 'Any | None',
+    'machineProgramSet': 'Any | None',
+    'version': 'Any | None',
+    'values': 'dict[str, str] | None',
+}, total=False)
+
+UnitCycleInfoResponse = TypedDict('UnitCycleInfoResponse', {
+    'cycleKid': 'str | None',
+    'unitKid': 'str | None',
+    'entries': 'list[UnitCycleInfoEntry] | None',
+}, total=False)
+
 UnitDetailsResponse = TypedDict('UnitDetailsResponse', {
     'location': 'BankLocationResponse',
     'unit': 'UnitOverviewResponse',
@@ -1473,6 +1493,9 @@ UnitDirectoryItem = TypedDict('UnitDirectoryItem', {
     'outOfOrder': 'str | None',
     'latitude': 'float | None',
     'longitude': 'float | None',
+    'machineType': 'str | None',
+    'machineProgramSet': 'str | None',
+    'currentVersion': 'str | None',
     'errorUnit': 'str | None',
     'autoOutOfOrder': 'str | None',
     'versionMinor': 'str | None',

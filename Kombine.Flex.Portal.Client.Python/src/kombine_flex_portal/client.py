@@ -160,11 +160,11 @@ class PortalClient(BaseClient):
         return self._request('GetChecklistPeriod', {'periodKid': period_kid}, None)
 
     def get_my_wallboard_database_load_history(self) -> DatabaseLoadHistoryResponse:
-        "Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview."
+        "Read the trusted Team, Electrolux, Portal or Finelec MySQL cluster's 24-hour load and CPU history."
         return self._request('GetMyWallboardDatabaseLoadHistory', {}, None)
 
     def get_wallboard_display_database_load_history(self, display_id: str, *, portrait: bool | None = None) -> DatabaseLoadHistoryResponse:
-        "Read the Team MySQL cluster's load and CPU history for a display that contains the widget."
+        "Read the tenant MySQL cluster's load and CPU history for a display that contains the widget."
         return self._request('GetWallboardDisplayDatabaseLoadHistory', {'displayId': display_id, 'portrait': portrait}, None)
 
     def export_bank_account(self, bank_kid: str, *, from_: str | None = None, through: str | None = None, time_zone: str | None = None, period: int | None = None, location_kid: str | None = None, location_kids: list[str] | None = None, unit_kid: str | None = None, unit_kids: list[str] | None = None, user_kid: str | None = None, kind: str | None = None, include_zero: bool | None = None, include_bookings: bool | None = None, include_monthly: bool | None = None, offset: int | None = None, limit: int | None = None, format: str | None = None) -> PortalDownload:
@@ -531,6 +531,10 @@ class PortalClient(BaseClient):
         'Find the previous (higher Doc ID) and next (lower Doc ID) existing document for this exact unit.'
         return self._request('GetUnitDocumentNeighbors', {'cycleKid': cycle_kid}, None)
 
+    def get_unit_document_cycle_info(self, cycle_kid: str) -> UnitCycleInfoResponse:
+        'Read the safe machine information from CycleInfo records tagged with this exact document.'
+        return self._request('GetUnitDocumentCycleInfo', {'cycleKid': cycle_kid}, None)
+
     def get_unit_document_table(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> DocumentTable:
         "Read a document's table as JSON with original values and column metadata."
         return self._request('GetUnitDocumentTable', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
@@ -684,7 +688,7 @@ class PortalClient(BaseClient):
         return self._request('GetWallboardDisplayActiveManagers', {'displayId': display_id, 'portrait': portrait}, None)
 
     def get_my_wallboard_application_load_history(self, widget_type: int) -> ApplicationLoadHistoryResponse:
-        'Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.'
+        'Team production CPU/memory for widgets 49–51, or dedicated Electrolux/Portal/Finelec beta Portal Web+API for widget 50; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.'
         return self._request('GetMyWallboardApplicationLoadHistory', {'widgetType': widget_type}, None)
 
     def get_wallboard_display_application_load_history(self, widget_type: int, display_id: str, *, portrait: bool | None = None) -> ApplicationLoadHistoryResponse:
@@ -928,7 +932,7 @@ class PortalClient(BaseClient):
         return self._request('GetPublicReservedMachines', {}, None)
 
     def get_public_running_machine_list(self) -> list[RunningMachineResponse]:
-        "Returns the site overview's running-machine pool, refreshed at most once a minute."
+        "Returns the site overview's running-machine pool, refreshed every 15 seconds."
         return self._request('GetPublicRunningMachineList', {}, None)
 
     def get_public_running_machines(self) -> RunningMachinesResponse:

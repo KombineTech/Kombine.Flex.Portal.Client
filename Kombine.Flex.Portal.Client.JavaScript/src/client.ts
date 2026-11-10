@@ -193,12 +193,12 @@ export class PortalClient extends BaseClient {
     return this.send("GetChecklistPeriod", {"periodKid": periodKid}, undefined, request) as Promise<Models.ChecklistItem>;
   }
 
-  /** Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview. */
+  /** Read the trusted Team, Electrolux, Portal or Finelec MySQL cluster's 24-hour load and CPU history. */
   getMyWallboardDatabaseLoadHistory(request: RequestOptions = {}): Promise<Models.DatabaseLoadHistoryResponse> {
     return this.send("GetMyWallboardDatabaseLoadHistory", {}, undefined, request) as Promise<Models.DatabaseLoadHistoryResponse>;
   }
 
-  /** Read the Team MySQL cluster's load and CPU history for a display that contains the widget. */
+  /** Read the tenant MySQL cluster's load and CPU history for a display that contains the widget. */
   getWallboardDisplayDatabaseLoadHistory(displayId: string, options: Models.GetWallboardDisplayDatabaseLoadHistoryOptions = {}, request: RequestOptions = {}): Promise<Models.DatabaseLoadHistoryResponse> {
     return this.send("GetWallboardDisplayDatabaseLoadHistory", {"displayId": displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.DatabaseLoadHistoryResponse>;
   }
@@ -658,6 +658,11 @@ export class PortalClient extends BaseClient {
     return this.send("GetUnitDocumentNeighbors", {"cycleKid": cycleKid}, undefined, request) as Promise<Models.DocumentNeighbors>;
   }
 
+  /** Read the safe machine information from CycleInfo records tagged with this exact document. */
+  getUnitDocumentCycleInfo(cycleKid: string, request: RequestOptions = {}): Promise<Models.UnitCycleInfoResponse> {
+    return this.send("GetUnitDocumentCycleInfo", {"cycleKid": cycleKid}, undefined, request) as Promise<Models.UnitCycleInfoResponse>;
+  }
+
   /** Read a document's table as JSON with original values and column metadata. */
   getUnitDocumentTable(cycleKid: string, options: Models.GetUnitDocumentTableOptions = {}, request: RequestOptions = {}): Promise<Models.DocumentTable> {
     return this.send("GetUnitDocumentTable", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<Models.DocumentTable>;
@@ -848,7 +853,7 @@ export class PortalClient extends BaseClient {
     return this.send("GetWallboardDisplayActiveManagers", {"displayId": displayId, "portrait": options.portrait}, undefined, request) as Promise<Models.ActiveManagerStatisticsResponse>;
   }
 
-  /** Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access. */
+  /** Team production CPU/memory for widgets 49–51, or dedicated Electrolux/Portal/Finelec beta Portal Web+API for widget 50; requires Hosting1, Managers Read and whole-tenant Wallboard1 access. */
   getMyWallboardApplicationLoadHistory(widgetType: number, request: RequestOptions = {}): Promise<Models.ApplicationLoadHistoryResponse> {
     return this.send("GetMyWallboardApplicationLoadHistory", {"widgetType": widgetType}, undefined, request) as Promise<Models.ApplicationLoadHistoryResponse>;
   }
@@ -1153,7 +1158,7 @@ export class PortalClient extends BaseClient {
     return this.send("GetPublicReservedMachines", {}, undefined, request) as Promise<Models.ReservedMachinesStatisticsResponse>;
   }
 
-  /** Returns the site overview's running-machine pool, refreshed at most once a minute. */
+  /** Returns the site overview's running-machine pool, refreshed every 15 seconds. */
   getPublicRunningMachineList(request: RequestOptions = {}): Promise<Models.RunningMachineResponse[]> {
     return this.send("GetPublicRunningMachineList", {}, undefined, request) as Promise<Models.RunningMachineResponse[]>;
   }

@@ -159,6 +159,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetTenantStatusPageAsync` | GET | `/api/v1/tenant/status/page` |
 | `GetTerminalExportCountAsync` | GET | `/api/v1/terminals/export-count` |
 | `GetTerminalsAsync` | GET | `/api/v1/terminals` |
+| `GetUnitDocumentCycleInfoAsync` | GET | `/api/v1/documents/{cycleKid}/cycle-info` |
 | `GetUnitDocumentGraphAsync` | GET | `/api/v1/documents/{cycleKid}/graph` |
 | `GetUnitDocumentHtmlAsync` | GET | `/api/v1/documents/{cycleKid}/table.html` |
 | `GetUnitDocumentIconAsync` | GET | `/api/v1/documents/{cycleKid}/icon.svg` |

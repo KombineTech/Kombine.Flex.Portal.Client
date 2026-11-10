@@ -18,8 +18,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ActiveLocationCountResponse array{'count'?: int, 'iconKid'?: string|null}
  * @phpstan-type ActiveManagerStatisticsResponse array{'count'?: int, 'measuredAtUtc'?: string, 'refreshAfterSeconds'?: int, 'activeWithinMinutes'?: int}
  * @phpstan-type ActiveUnitCountResponse array{'count'?: int, 'iconKid'?: string|null}
- * @phpstan-type ApplicationLoadHistoryResponse array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<ApplicationLoadHistorySeries>|null, 'memorySeries'?: list<ApplicationLoadHistorySeries>|null}
- * @phpstan-type ApplicationLoadHistorySeries array{'points'?: list<HostingPoint>|null}
+ * @phpstan-type ApplicationLoadHistoryResponse array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<ApplicationLoadHistorySeries>|null, 'memorySeries'?: list<ApplicationLoadHistorySeries>|null, 'scope'?: string|null, 'unavailableRegions'?: list<string>|null}
+ * @phpstan-type ApplicationLoadHistorySeries array{'points'?: list<HostingPoint>|null, 'region'?: string|null}
  * @phpstan-type ApproveWallboardPairing array{'location'?: WallboardScanLocation}
  * @phpstan-type AssistantLink array{'kid'?: string|null, 'path'?: string|null, 'name'?: string|null, 'bankKid'?: string|null, 'iconKid'?: string|null}
  * @phpstan-type AssistantMessage array{'role'?: string|null, 'content'?: string|null}
@@ -56,9 +56,9 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ChecklistStatus array{'code'?: int|null, 'state'?: string|null}
  * @phpstan-type DatabaseAccessResponse array{'canWrite'?: bool|null, 'checkedAtUtc'?: string}
  * @phpstan-type DatabaseLoadHistoryResponse array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'series'?: list<DatabaseLoadHistorySeries>|null, 'cpuSeries'?: list<DatabaseLoadHistorySeries>|null}
- * @phpstan-type DatabaseLoadHistorySeries array{'points'?: list<HostingPoint>|null}
+ * @phpstan-type DatabaseLoadHistorySeries array{'points'?: list<HostingPoint>|null, 'region'?: string|null}
  * @phpstan-type DirectoryExportCountResponse array{'count'?: int}
- * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
+ * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool, 'tagId'?: string|null}
  * @phpstan-type DocumentColumn array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
  * @phpstan-type DocumentNeighbor array{'kid'?: string|null, 'lastActivityUtc'?: string}
  * @phpstan-type DocumentNeighbors array{'previous'?: DocumentNeighbor, 'next'?: DocumentNeighbor}
@@ -197,8 +197,10 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type ToolTimeRequest array{'format'?: string|null, 'value'?: string|null, 'timeZone'?: string|null, 'offset'?: string|null}
  * @phpstan-type ToolTimeResponse array{'success'?: bool, 'error'?: string|null, 'result'?: ToolTimeResult, 'offsetChoices'?: list<ToolTimeOffsetChoice>|null}
  * @phpstan-type ToolTimeResult array{'ms2000'?: string|null, 'mi2000'?: string|null, 'ss2000'?: string|null, 'utc'?: string|null, 'local'?: string|null, 'timeZone'?: string|null, 'offset'?: string|null, 'dateInputRounded'?: bool, 'millisecondRemainder'?: string|null, 'secondRemainder'?: string|null}
+ * @phpstan-type UnitCycleInfoEntry array{'ms2000'?: int, 'unitType'?: mixed|null, 'machineType'?: mixed|null, 'machineProgramSet'?: mixed|null, 'version'?: mixed|null, 'values'?: array<string,mixed>|null}
+ * @phpstan-type UnitCycleInfoResponse array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'entries'?: list<UnitCycleInfoEntry>|null}
  * @phpstan-type UnitDetailsResponse array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'descriptorAvailable'?: bool, 'settingGroups'?: list<string>|null, 'stateGroups'?: list<string>|null}
- * @phpstan-type UnitDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null, 'errorUnit'?: string|null, 'autoOutOfOrder'?: string|null, 'versionMinor'?: string|null, 'bootReason'?: string|null, 'booted'?: string|null, 'firmware'?: string|null, 'storageCardSerialNumber'?: string|null, 'page'?: string|null, 'backLight'?: string|null, 'terminal'?: UnitTerminalResponse, 'progress'?: UnitProgressResponse}
+ * @phpstan-type UnitDirectoryItem array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null, 'machineType'?: string|null, 'machineProgramSet'?: string|null, 'currentVersion'?: string|null, 'errorUnit'?: string|null, 'autoOutOfOrder'?: string|null, 'versionMinor'?: string|null, 'bootReason'?: string|null, 'booted'?: string|null, 'firmware'?: string|null, 'storageCardSerialNumber'?: string|null, 'page'?: string|null, 'backLight'?: string|null, 'terminal'?: UnitTerminalResponse, 'progress'?: UnitProgressResponse}
  * @phpstan-type UnitDirectoryResponse array{'items'?: list<UnitDirectoryItem>|null, 'nextCursor'?: string|null, 'hasAllBanksAccess'?: bool, 'fields'?: list<string>|null}
  * @phpstan-type UnitDocumentCount array{'count'?: int, 'from'?: string, 'through'?: string}
  * @phpstan-type UnitDocumentPage array{'items'?: list<BankDocumentItem>|null, 'from'?: string, 'through'?: string, 'sort'?: string|null, 'direction'?: string|null, 'offset'?: int, 'limit'?: int, 'hasMore'?: bool}
@@ -707,7 +709,7 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview.
+     * Read the trusted Team, Electrolux, Portal or Finelec MySQL cluster's 24-hour load and CPU history.
      * @return DatabaseLoadHistoryResponse
      */
     public function getMyWallboardDatabaseLoadHistory(): mixed
@@ -716,7 +718,7 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * Read the Team MySQL cluster's load and CPU history for a display that contains the widget.
+     * Read the tenant MySQL cluster's load and CPU history for a display that contains the widget.
      * @param string $displayId
      * @param array{'portrait'?: bool} $options
      * @return DatabaseLoadHistoryResponse
@@ -1679,6 +1681,16 @@ final class PortalClient extends BaseClient
     }
 
     /**
+     * Read the safe machine information from CycleInfo records tagged with this exact document.
+     * @param string $cycleKid
+     * @return UnitCycleInfoResponse
+     */
+    public function getUnitDocumentCycleInfo(mixed $cycleKid): mixed
+    {
+        return $this->request('GetUnitDocumentCycleInfo', ['cycleKid' => $cycleKid], null);
+    }
+
+    /**
      * Read a document's table as JSON with original values and column metadata.
      * @param string $cycleKid
      * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
@@ -2080,7 +2092,7 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.
+     * Team production CPU/memory for widgets 49–51, or dedicated Electrolux/Portal/Finelec beta Portal Web+API for widget 50; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.
      * @param int $widgetType
      * @return ApplicationLoadHistoryResponse
      */
@@ -2756,7 +2768,7 @@ final class PortalClient extends BaseClient
     }
 
     /**
-     * Returns the site overview's running-machine pool, refreshed at most once a minute.
+     * Returns the site overview's running-machine pool, refreshed every 15 seconds.
      * @return list<RunningMachineResponse>
      */
     public function getPublicRunningMachineList(): mixed

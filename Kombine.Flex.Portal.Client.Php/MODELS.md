@@ -83,13 +83,13 @@ array{'count'?: int, 'iconKid'?: string|null}
 ### ApplicationLoadHistoryResponse
 
 ```php
-array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<ApplicationLoadHistorySeries>|null, 'memorySeries'?: list<ApplicationLoadHistorySeries>|null}
+array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'cpuSeries'?: list<ApplicationLoadHistorySeries>|null, 'memorySeries'?: list<ApplicationLoadHistorySeries>|null, 'scope'?: string|null, 'unavailableRegions'?: list<string>|null}
 ```
 
 ### ApplicationLoadHistorySeries
 
 ```php
-array{'points'?: list<HostingPoint>|null}
+array{'points'?: list<HostingPoint>|null, 'region'?: string|null}
 ```
 
 ### ApproveWallboardPairing
@@ -311,7 +311,7 @@ array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAft
 ### DatabaseLoadHistorySeries
 
 ```php
-array{'points'?: list<HostingPoint>|null}
+array{'points'?: list<HostingPoint>|null, 'region'?: string|null}
 ```
 
 ### DirectoryExportCountResponse
@@ -323,7 +323,7 @@ array{'count'?: int}
 ### DocumentCell
 
 ```php
-array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
+array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool, 'tagId'?: string|null}
 ```
 
 ### DocumentColumn
@@ -1154,6 +1154,18 @@ array{'success'?: bool, 'error'?: string|null, 'result'?: ToolTimeResult, 'offse
 array{'ms2000'?: string|null, 'mi2000'?: string|null, 'ss2000'?: string|null, 'utc'?: string|null, 'local'?: string|null, 'timeZone'?: string|null, 'offset'?: string|null, 'dateInputRounded'?: bool, 'millisecondRemainder'?: string|null, 'secondRemainder'?: string|null}
 ```
 
+### UnitCycleInfoEntry
+
+```php
+array{'ms2000'?: int, 'unitType'?: mixed|null, 'machineType'?: mixed|null, 'machineProgramSet'?: mixed|null, 'version'?: mixed|null, 'values'?: array<string,mixed>|null}
+```
+
+### UnitCycleInfoResponse
+
+```php
+array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'entries'?: list<UnitCycleInfoEntry>|null}
+```
+
 ### UnitDetailsResponse
 
 ```php
@@ -1163,7 +1175,7 @@ array{'location'?: BankLocationResponse, 'unit'?: UnitOverviewResponse, 'descrip
 ### UnitDirectoryItem
 
 ```php
-array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null, 'errorUnit'?: string|null, 'autoOutOfOrder'?: string|null, 'versionMinor'?: string|null, 'bootReason'?: string|null, 'booted'?: string|null, 'firmware'?: string|null, 'storageCardSerialNumber'?: string|null, 'page'?: string|null, 'backLight'?: string|null, 'terminal'?: UnitTerminalResponse, 'progress'?: UnitProgressResponse}
+array{'kid'?: string|null, 'bankKid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'iconKid'?: string|null, 'bankName'?: string|null, 'bankIconKid'?: string|null, 'locationName'?: string|null, 'locationIconKid'?: string|null, 'enabled'?: bool, 'deleted'?: bool|null, 'deletedAt'?: string|null, 'unitType'?: string|null, 'washDocId'?: string|null, 'outOfOrder'?: string|null, 'latitude'?: int|float|null, 'longitude'?: int|float|null, 'machineType'?: string|null, 'machineProgramSet'?: string|null, 'currentVersion'?: string|null, 'errorUnit'?: string|null, 'autoOutOfOrder'?: string|null, 'versionMinor'?: string|null, 'bootReason'?: string|null, 'booted'?: string|null, 'firmware'?: string|null, 'storageCardSerialNumber'?: string|null, 'page'?: string|null, 'backLight'?: string|null, 'terminal'?: UnitTerminalResponse, 'progress'?: UnitProgressResponse}
 ```
 
 ### UnitDirectoryResponse

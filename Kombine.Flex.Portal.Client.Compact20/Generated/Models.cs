@@ -389,7 +389,7 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
-    /// <summary>Protected production app CPU and memory percentages for the previous 24 hours, without provider identities.</summary>
+    /// <summary>Protected app CPU and memory percentages for the previous 24 hours, without provider identities.</summary>
     public sealed class ApplicationLoadHistoryResponse
     {
         /// <summary>fromUtc ISO 8601 text, sent unchanged.</summary>
@@ -422,15 +422,30 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public ApplicationLoadHistorySeries[] MemorySeries { get { return _MemorySeries; } set { _MemorySeries = value; } }
         private ApplicationLoadHistorySeries[] _MemorySeries;
 
+        /// <summary>Scope of the selected metrics.</summary>
+        [JsonField("scope")]
+        public string Scope { get { return _Scope; } set { _Scope = value; } }
+        private string _Scope;
+
+        /// <summary>Regions whose measurements are unavailable.</summary>
+        [JsonField("unavailableRegions")]
+        public string[] UnavailableRegions { get { return _UnavailableRegions; } set { _UnavailableRegions = value; } }
+        private string[] _UnavailableRegions;
+
     }
 
-    /// <summary>One anonymous application CPU or memory series; null values represent missing samples.</summary>
+    /// <summary>One anonymous application CPU or memory series.</summary>
     public sealed class ApplicationLoadHistorySeries
     {
         /// <summary>points</summary>
         [JsonField("points")]
         public HostingPoint[] Points { get { return _Points; } set { _Points = value; } }
         private HostingPoint[] _Points;
+
+        /// <summary>Optional server-selected region.</summary>
+        [JsonField("region")]
+        public string Region { get { return _Region; } set { _Region = value; } }
+        private string _Region;
 
     }
 
@@ -1517,6 +1532,11 @@ namespace Kombine.Flex.Portal.Client.Compact20
         public HostingPoint[] Points { get { return _Points; } set { _Points = value; } }
         private HostingPoint[] _Points;
 
+        /// <summary>Optional server-selected region (FRA/AMS), never a provider instance identifier.</summary>
+        [JsonField("region")]
+        public string Region { get { return _Region; } set { _Region = value; } }
+        private string _Region;
+
     }
 
     /// <summary>The complete number of rows matching the authorized export selection.</summary>
@@ -1546,6 +1566,11 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("isCalculated")]
         public bool? IsCalculated { get { return _IsCalculated; } set { _IsCalculated = value; } }
         private bool? _IsCalculated;
+
+        /// <summary>Raw TagId for the recorded value, represented as text to preserve precision.</summary>
+        [JsonField("tagId")]
+        public string TagId { get { return _TagId; } set { _TagId = value; } }
+        private string _TagId;
 
     }
 
@@ -5309,6 +5334,65 @@ namespace Kombine.Flex.Portal.Client.Compact20
 
     }
 
+    /// <summary>A tagged timestamp and the safe machine type, when present.</summary>
+    public sealed class UnitCycleInfoEntry
+    {
+        /// <summary>ms2000</summary>
+        [JsonField("ms2000")]
+        public long? Ms2000 { get { return _Ms2000; } set { _Ms2000 = value; } }
+        private long? _Ms2000;
+
+        /// <summary>unitType</summary>
+        /// <summary>Wire values: None</summary>
+        [JsonField("unitType")]
+        public object UnitType { get { return _UnitType; } set { _UnitType = value; } }
+        private object _UnitType;
+
+        /// <summary>machineType</summary>
+        /// <summary>Wire values: None</summary>
+        [JsonField("machineType")]
+        public object MachineType { get { return _MachineType; } set { _MachineType = value; } }
+        private object _MachineType;
+
+        /// <summary>machineProgramSet</summary>
+        /// <summary>Wire values: None</summary>
+        [JsonField("machineProgramSet")]
+        public object MachineProgramSet { get { return _MachineProgramSet; } set { _MachineProgramSet = value; } }
+        private object _MachineProgramSet;
+
+        /// <summary>version</summary>
+        /// <summary>Wire values: None</summary>
+        [JsonField("version")]
+        public object Version { get { return _Version; } set { _Version = value; } }
+        private object _Version;
+
+        /// <summary>values</summary>
+        [JsonField("values")]
+        public Dictionary<string, string> Values { get { return _Values; } set { _Values = value; } }
+        private Dictionary<string, string> _Values;
+
+    }
+
+    /// <summary>Sanitized CycleInfo samples belonging to one document.</summary>
+    public sealed class UnitCycleInfoResponse
+    {
+        /// <summary>cycleKid</summary>
+        [JsonField("cycleKid")]
+        public string CycleKid { get { return _CycleKid; } set { _CycleKid = value; } }
+        private string _CycleKid;
+
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>entries</summary>
+        [JsonField("entries")]
+        public UnitCycleInfoEntry[] Entries { get { return _Entries; } set { _Entries = value; } }
+        private UnitCycleInfoEntry[] _Entries;
+
+    }
+
     /// <summary>Authorized unit with the declared groups for its resolved type. No setting/state values or write permissions are returned.</summary>
     public sealed class UnitDetailsResponse
     {
@@ -5426,6 +5510,21 @@ namespace Kombine.Flex.Portal.Client.Compact20
         [JsonField("longitude")]
         public double? Longitude { get { return _Longitude; } set { _Longitude = value; } }
         private double? _Longitude;
+
+        /// <summary>Stored eSetting.MashineType text, only when machineType is selected; null if not selected or absent.</summary>
+        [JsonField("machineType")]
+        public string MachineType { get { return _MachineType; } set { _MachineType = value; } }
+        private string _MachineType;
+
+        /// <summary>Stored eSetting.MashineProgramSet text, only when machineProgramSet is selected; null if not selected or absent.</summary>
+        [JsonField("machineProgramSet")]
+        public string MachineProgramSet { get { return _MachineProgramSet; } set { _MachineProgramSet = value; } }
+        private string _MachineProgramSet;
+
+        /// <summary>Stored eSetting.CurrentVersion text; omitted when absent or unselected.</summary>
+        [JsonField("currentVersion")]
+        public string CurrentVersion { get { return _CurrentVersion; } set { _CurrentVersion = value; } }
+        private string _CurrentVersion;
 
         /// <summary>Last stored eState.ErrorUnit JSON text; null unless selected, empty when absent. May describe a historical fault.</summary>
         [JsonField("errorUnit")]
