@@ -92,7 +92,7 @@ Use the same tenant and environment as your client: append /docs#changelog to it
 The package is **not yet published to PyPI**. Install the supplied local distribution:
 
 ```sh
-python -m pip install ./kombine_flex_portal_client-0.39.0-py3-none-any.whl
+python -m pip install ./kombine_flex_portal_client-0.40.0-py3-none-any.whl
 ```
 
 Version 0.13.0 previously targeted the beta candidate with 182 operations. Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.

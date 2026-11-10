@@ -90,7 +90,7 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 Pakken er **ikke publiceret på npm**. Installér den leverede tarball:
 
 ```sh
-npm install ./kombine-flex-portal-client-0.38.0.tgz
+npm install ./kombine-flex-portal-client-0.39.0.tgz
 ```
 
 Version 0.13.0 følger den aktuelle beta-kandidat (182 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.

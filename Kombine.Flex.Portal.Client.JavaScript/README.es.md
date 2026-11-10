@@ -90,7 +90,7 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 El paquete **todavía no está publicado en npm**. Instale la distribución local:
 
 ```sh
-npm install ./kombine-flex-portal-client-0.38.0.tgz
+npm install ./kombine-flex-portal-client-0.39.0.tgz
 ```
 
 La versión 0.13.0 correspondía al candidato beta anterior (182 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.
