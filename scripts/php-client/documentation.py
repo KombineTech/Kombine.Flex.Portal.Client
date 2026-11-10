@@ -73,7 +73,7 @@ RELEASE_DOCUMENTATION = {'en': 'Version 0.24.0 synchronizes 217 API operations w
 
 def generate(root, project, api, count, write):
     lower = api.lower()
-    version = '0.33.0' if api == 'Portal' else '0.1.0'
+    version = '0.34.0' if api == 'Portal' else '0.1.0'
     archive = f'kombine-flex-{lower}-client-php-{version}.zip'
     domain = 'technology' if api == 'Portal' else 'equipment'
     login = '$email, $password' if api == 'Portal' else '$serviceKid, $apiKey'

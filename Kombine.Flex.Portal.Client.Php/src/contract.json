@@ -391,6 +391,17 @@
             "$ref": "#/components/schemas/ApplicationLoadHistorySeries"
           },
           "nullable": true
+        },
+        "scope": {
+          "type": "string",
+          "nullable": true
+        },
+        "unavailableRegions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -403,6 +414,10 @@
           "items": {
             "$ref": "#/components/schemas/HostingPoint"
           },
+          "nullable": true
+        },
+        "region": {
+          "type": "string",
           "nullable": true
         }
       },
@@ -1396,6 +1411,10 @@
             "$ref": "#/components/schemas/HostingPoint"
           },
           "nullable": true
+        },
+        "region": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -1424,6 +1443,10 @@
         },
         "isCalculated": {
           "type": "boolean"
+        },
+        "tagId": {
+          "type": "string",
+          "nullable": true
         }
       },
       "additionalProperties": false
@@ -4980,6 +5003,56 @@
       },
       "additionalProperties": false
     },
+    "UnitCycleInfoEntry": {
+      "type": "object",
+      "properties": {
+        "ms2000": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unitType": {
+          "nullable": true
+        },
+        "machineType": {
+          "nullable": true
+        },
+        "machineProgramSet": {
+          "nullable": true
+        },
+        "version": {
+          "nullable": true
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "UnitCycleInfoResponse": {
+      "type": "object",
+      "properties": {
+        "cycleKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/UnitCycleInfoEntry"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "UnitDetailsResponse": {
       "type": "object",
       "properties": {
@@ -5080,6 +5153,18 @@
         "longitude": {
           "type": "number",
           "format": "double",
+          "nullable": true
+        },
+        "machineType": {
+          "type": "string",
+          "nullable": true
+        },
+        "machineProgramSet": {
+          "type": "string",
+          "nullable": true
+        },
+        "currentVersion": {
+          "type": "string",
           "nullable": true
         },
         "errorUnit": {
@@ -12786,6 +12871,30 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/DocumentNeighbors"
+      },
+      "binary": false
+    },
+    "GetUnitDocumentCycleInfo": {
+      "method": "GET",
+      "path": "api/v1/documents/{cycleKid}/cycle-info",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "cycleKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/UnitCycleInfoResponse"
       },
       "binary": false
     },

@@ -655,7 +655,7 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (ChecklistItem)SendJson("GET", path, null, headers, 200, typeof(ChecklistItem));
         }
 
-        /// <summary>Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview.</summary>
+        /// <summary>Read the trusted Team, Electrolux, Portal or Finelec MySQL cluster's 24-hour load and CPU history.</summary>
         public DatabaseLoadHistoryResponse GetMyWallboardDatabaseLoadHistory()
         {
             string path = "api/v1/session/me/wallboards/database-load-history";
@@ -663,13 +663,13 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (DatabaseLoadHistoryResponse)SendJson("GET", path, null, headers, 200, typeof(DatabaseLoadHistoryResponse));
         }
 
-        /// <summary>Read the Team MySQL cluster's load and CPU history for a display that contains the widget.</summary>
+        /// <summary>Read the tenant MySQL cluster's load and CPU history for a display that contains the widget.</summary>
         public DatabaseLoadHistoryResponse GetWallboardDisplayDatabaseLoadHistory(string @displayId)
         {
             return GetWallboardDisplayDatabaseLoadHistory(@displayId, null);
         }
 
-        /// <summary>Read the Team MySQL cluster's load and CPU history for a display that contains the widget.</summary>
+        /// <summary>Read the tenant MySQL cluster's load and CPU history for a display that contains the widget.</summary>
         public DatabaseLoadHistoryResponse GetWallboardDisplayDatabaseLoadHistory(string @displayId, GetWallboardDisplayDatabaseLoadHistoryOptions options)
         {
             string path = "api/v1/session/me/wallboards/display/{displayId}/database-load-history";
@@ -1990,6 +1990,15 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (DocumentNeighbors)SendJson("GET", path, null, headers, 200, typeof(DocumentNeighbors));
         }
 
+        /// <summary>Read the safe machine information from CycleInfo records tagged with this exact document.</summary>
+        public UnitCycleInfoResponse GetUnitDocumentCycleInfo(string @cycleKid)
+        {
+            string path = "api/v1/documents/{cycleKid}/cycle-info";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return (UnitCycleInfoResponse)SendJson("GET", path, null, headers, 200, typeof(UnitCycleInfoResponse));
+        }
+
         /// <summary>Read a document's table as JSON with original values and column metadata.</summary>
         public DocumentTable GetUnitDocumentTable(string @cycleKid)
         {
@@ -2623,7 +2632,7 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (ActiveManagerStatisticsResponse)SendJson("GET", path, null, headers, 200, typeof(ActiveManagerStatisticsResponse));
         }
 
-        /// <summary>Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.</summary>
+        /// <summary>Team production CPU/memory for widgets 49–51, or dedicated Electrolux/Portal/Finelec beta Portal Web+API for widget 50; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.</summary>
         public ApplicationLoadHistoryResponse GetMyWallboardApplicationLoadHistory(int @widgetType)
         {
             string path = "api/v1/session/me/wallboards/application-load-history/{widgetType}";
@@ -3336,7 +3345,7 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (ReservedMachinesStatisticsResponse)SendJson("GET", path, null, headers, 200, typeof(ReservedMachinesStatisticsResponse));
         }
 
-        /// <summary>Returns the site overview's running-machine pool, refreshed at most once a minute.</summary>
+        /// <summary>Returns the site overview's running-machine pool, refreshed every 15 seconds.</summary>
         public RunningMachineResponse[] GetPublicRunningMachineList()
         {
             string path = "api/v1/public/statistics/running-units";

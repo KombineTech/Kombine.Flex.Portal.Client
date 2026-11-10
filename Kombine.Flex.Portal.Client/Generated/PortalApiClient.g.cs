@@ -65,13 +65,17 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- An explicit `period` replaces the date filter.
         /// <br/>- Sorted oldest first by event time (MS2000), then by location and unit. Continue toward newer entries with increasing offsets.
         /// <br/>- `dayCount` counts all matching postings through the last returned item's entire local day in `timeZone`, including matching earlier days. It honors period and all other filters; it is independent of offset/limit except for that final day. The lookahead row is excluded when choosing the day. Empty pages return `{through:null, entries:0}`. Full-selection `totals` are unchanged.
-        /// <br/>- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. Responses are not cached.
+        /// <br/>- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. HTTP responses remain `no-store`.
         /// <br/>
         /// <br/>### Settlement periods
         /// <br/>
         /// <br/>- The latest **100 closed period IDs** come from bank-level **LogA**.
         /// <br/>- With location-limited access, each offered period must also contain an authorized **Log1** posting.
         /// <br/>- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.
+        /// <br/>- Positive periods are closed: their postings and membership do not change. Authorized raw selections may be reused from a bounded, in-memory cache without time expiry; eviction or an API restart requires a new read.
+        /// <br/>- Existing raw **Period 0** postings may be reused for at most **one hour per row**, measured from that row's load time. Adding a row never extends older rows' expiry. SQL still discovers matching membership and numeric metadata on every Data read; new, expired or metadata-changed rows are loaded, and rows that moved to a closed period or no longer match are removed from the open selection.
+        /// <br/>- Closed and open selections share a **1 GiB**, **8192-selection** least-recently-used memory budget per tenant/API instance, allocated on demand. Cache identity includes tenant, bank, period, authorized scope and every stable filter that constrained the selection. Oversized selections and unsupported legacy currency forms use the original SQL path.
+        /// <br/>- MS2000 does not determine period membership: a new period may contain older event timestamps. Date selections must still discover these postings. Current retention, display labels and refund state are applied separately from cached raw postings.
         /// <br/>
         /// <br/>### Amounts and timestamps
         /// <br/>
@@ -137,7 +141,7 @@ namespace Kombine.Flex.Portal.Client
         /// ### Scope and work
         /// <br/>
         /// <br/>- Uses the same filters and permissions as `GetBankAccount`. Paging does not affect the revision.
-        /// <br/>- Runs **one Log1 aggregate**, plus bounded retention-setting reads, without posting rows or label lookups.
+        /// <br/>- Reuses eligible raw-posting caches, with fresh period discovery, open-selection membership/numeric metadata and retention settings at each Data read. Existing open rows have a fixed one-hour maximum lifetime; this never delays discovery of new rows until that expiry. Otherwise runs the Log1 aggregate. No display-label lookup is needed for revision checks.
         /// <br/>- Identical authorized scopes and filters for the same manager share a cache for at most **30 seconds** per API instance. Account and permission checks always run first.
         /// <br/>
         /// <br/>### Polling and refresh
@@ -867,10 +871,10 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview.
+        /// Read the trusted Team, Electrolux, Portal or Finelec MySQL cluster's 24-hour load and CPU history.
         /// </summary>
         /// <remarks>
-        /// Requires active Team manager, Wallboard1, Hosting1, Managers Read and a whole-tenant grant. Hosting permissions use the existing manager snapshot, which is at most 60 seconds old. Series contains load1; CpuSeries contains actual CPU percentage from 0 to 100. Each source may independently return an empty array; both failing returns 503. Uses fixed server configuration; no provider IDs or credentials are returned. Invalid stored wallboards return 409 invalid-stored-wallboards.
+        /// Requires active manager, Wallboard1, Hosting1, Managers Read and a whole-tenant grant, rechecked uncached before and after the read. Series contains load1; CpuSeries contains actual CPU percentage from 0 to 100. Each source may independently return an empty array; both failing returns 503. Uses fixed server configuration; no provider IDs or credentials are returned. Invalid stored wallboards return 409 invalid-stored-wallboards.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -878,10 +882,10 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Read the Team MySQL cluster's load and CPU history for a display that contains the widget.
+        /// Read the tenant MySQL cluster's load and CPU history for a display that contains the widget.
         /// </summary>
         /// <remarks>
-        /// Approved screen sessions are bound to their own display and recheck the approving manager's Wallboard1, Hosting1, Managers Read and whole-tenant access on each request. Hosting permissions use the existing manager snapshot, which is at most 60 seconds old. Invalid stored wallboards return 409 invalid-stored-wallboards.
+        /// Approved screen sessions are bound to their own display and recheck the approving manager's uncached Wallboard1, Hosting1, Managers Read and whole-tenant access before and after the read. Invalid stored wallboards return 409 invalid-stored-wallboards.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -1542,7 +1546,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Result
         /// <br/>- Returns `location`, `unit`, `descriptorAvailable`, `settingGroups` and `stateGroups`.
         /// <br/>- Group identifiers are stable eSettingGroup/eStateGroup names, deduplicated and ordered by numeric enum value.
-        /// <br/>- Metadata comes from SettingsAndStates.json and the shared enums, selected by the unit's effective type; no hardware connection is made.
+        /// <br/>- Metadata comes from Catalog.json and the shared enums, selected by the unit's effective type; no hardware connection is made.
         /// <br/>- Missing, malformed or unsupported types return descriptorAvailable=false and empty groups. No default type is substituted.
         /// <br/>- This read-only operation returns group metadata, not setting/state values or editing rights.
         /// <br/>### Errors
@@ -2991,6 +2995,17 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read the safe machine information from CycleInfo records tagged with this exact document.
+        /// </summary>
+        /// <remarks>
+        /// Same WashDoc manager, tenant, resource, retention and unit access as GetUnitDocumentTable. Returns UnitType, MachineType, MachineProgramSet, Version and numeric Values; other properties are redacted. Values are strings to preserve 64-bit precision. Empty entries means no tagged CycleInfo. 404 means the cycle is missing. At most 256 records and 128 values per record; 400 invalid KID, 401 session, 403 access, 422 oversized data, 503 storage unavailable. Implemented locally, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UnitCycleInfoResponse> GetUnitDocumentCycleInfoAsync(string cycleKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read a document's table as JSON with original values and column metadata.
         /// </summary>
         /// <remarks>
@@ -3257,7 +3272,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>or an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.
         /// <br/>sort: kid, name, bankName, locationName, unitId, unitType, washDocId, outOfOrder, errorUnit, progress; direction asc/desc.
         /// <br/>kid sorts numerically by bank, location and unit within the trusted tenant. Unit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.
-        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder, errorUnit, progress. Core parent names/icons remain populated.
+        /// <br/>fields: bankName, locationName, unitType, machineType, machineProgramSet, currentVersion, washDocId, outOfOrder, errorUnit, progress. Core parent names/icons remain populated.
+        /// <br/>machineType, machineProgramSet and currentVersion are the decoded original eSetting.MashineType and eSetting.MashineProgramSet and eSetting.CurrentVersion values for the exact unit; absent or unselected values are omitted. No defaults or fallback are inferred.
         /// <br/>errorUnit is the last stored eState.ErrorUnit JSON text (empty if absent, null unless selected); it does not prove the fault is still active. Sorting is lexical by stored text.
         /// <br/>progress is optional and sortable with sort=progress (Units1 only), and uses the overview-card calculation at request time: status, percent, remainingSeconds, calculatedAtUtc.
         /// <br/>Percent uses only (now-start)/(expectedEnd-start)*100, clamped to 0–100; missing/invalid timing gives null.
@@ -3329,7 +3345,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Send `value` as invariant text (maximum 4096 characters) and `expectedRevision` from GetUnitGroup for this field.
         /// <br/>- Price editors send raw minor units: displayed 12.50 becomes value "1250". RegExs.Price validates this raw value, not the displayed amount. Responses remain raw; decimal display text is invalid input.
         /// <br/>- Example: `{ "value": "Washer 1", "expectedRevision": "64 hexadecimal characters" }` for the Name setting.
-        /// <br/>- Enum metadata and SettingsAndStates.json required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.
+        /// <br/>- Enum metadata and Catalog.json required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.
         /// <br/>- Appends bank Log2 history with the editor's UserId and Sync=0. The Log24 projection must match before commit.
         /// <br/>- Returns confirmed value, source MS2000 and new revision. A successful save means storage accepted it, not that the physical unit has acknowledged it.
         /// <br/>### Errors
@@ -3762,7 +3778,7 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.
+        /// Team production CPU/memory for widgets 49–51, or dedicated Electrolux/Portal/Finelec beta Portal Web+API for widget 50; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -4626,10 +4642,10 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Returns the site overview's running-machine pool, refreshed at most once a minute.
+        /// Returns the site overview's running-machine pool, refreshed every 15 seconds.
         /// </summary>
         /// <remarks>
-        /// Anonymous tenant-bound full list without paging or temperature. Existing running rule: Started &lt; now &lt; Done, Started within 100 hours and Done at most three hours ahead. Returns 503 on source overflow. UnitType and Cycle may be null. Refresh at most once per minute.
+        /// Anonymous tenant-bound full list without paging or temperature. Existing running rule: Started &lt; now &lt; Done, Started within 100 hours and Done at most three hours ahead. Returns 503 on source overflow. UnitType and Cycle may be null. Refresh every 15 seconds.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -4848,13 +4864,17 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- An explicit `period` replaces the date filter.
         /// <br/>- Sorted oldest first by event time (MS2000), then by location and unit. Continue toward newer entries with increasing offsets.
         /// <br/>- `dayCount` counts all matching postings through the last returned item's entire local day in `timeZone`, including matching earlier days. It honors period and all other filters; it is independent of offset/limit except for that final day. The lookahead row is excluded when choosing the day. Empty pages return `{through:null, entries:0}`. Full-selection `totals` are unchanged.
-        /// <br/>- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. Responses are not cached.
+        /// <br/>- `offset`: **0–100,000**. `limit`: **1–200**, default **50**. HTTP responses remain `no-store`.
         /// <br/>
         /// <br/>### Settlement periods
         /// <br/>
         /// <br/>- The latest **100 closed period IDs** come from bank-level **LogA**.
         /// <br/>- With location-limited access, each offered period must also contain an authorized **Log1** posting.
         /// <br/>- Period **0** remains explicitly selectable. Any nonnegative period can be requested explicitly.
+        /// <br/>- Positive periods are closed: their postings and membership do not change. Authorized raw selections may be reused from a bounded, in-memory cache without time expiry; eviction or an API restart requires a new read.
+        /// <br/>- Existing raw **Period 0** postings may be reused for at most **one hour per row**, measured from that row's load time. Adding a row never extends older rows' expiry. SQL still discovers matching membership and numeric metadata on every Data read; new, expired or metadata-changed rows are loaded, and rows that moved to a closed period or no longer match are removed from the open selection.
+        /// <br/>- Closed and open selections share a **1 GiB**, **8192-selection** least-recently-used memory budget per tenant/API instance, allocated on demand. Cache identity includes tenant, bank, period, authorized scope and every stable filter that constrained the selection. Oversized selections and unsupported legacy currency forms use the original SQL path.
+        /// <br/>- MS2000 does not determine period membership: a new period may contain older event timestamps. Date selections must still discover these postings. Current retention, display labels and refund state are applied separately from cached raw postings.
         /// <br/>
         /// <br/>### Amounts and timestamps
         /// <br/>
@@ -5093,7 +5113,7 @@ namespace Kombine.Flex.Portal.Client
         /// ### Scope and work
         /// <br/>
         /// <br/>- Uses the same filters and permissions as `GetBankAccount`. Paging does not affect the revision.
-        /// <br/>- Runs **one Log1 aggregate**, plus bounded retention-setting reads, without posting rows or label lookups.
+        /// <br/>- Reuses eligible raw-posting caches, with fresh period discovery, open-selection membership/numeric metadata and retention settings at each Data read. Existing open rows have a fixed one-hour maximum lifetime; this never delays discovery of new rows until that expiry. Otherwise runs the Log1 aggregate. No display-label lookup is needed for revision checks.
         /// <br/>- Identical authorized scopes and filters for the same manager share a cache for at most **30 seconds** per API instance. Account and permission checks always run first.
         /// <br/>
         /// <br/>### Polling and refresh
@@ -10662,10 +10682,10 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Read the Team MySQL cluster's 24-hour load and CPU history for an authorized manager preview.
+        /// Read the trusted Team, Electrolux, Portal or Finelec MySQL cluster's 24-hour load and CPU history.
         /// </summary>
         /// <remarks>
-        /// Requires active Team manager, Wallboard1, Hosting1, Managers Read and a whole-tenant grant. Hosting permissions use the existing manager snapshot, which is at most 60 seconds old. Series contains load1; CpuSeries contains actual CPU percentage from 0 to 100. Each source may independently return an empty array; both failing returns 503. Uses fixed server configuration; no provider IDs or credentials are returned. Invalid stored wallboards return 409 invalid-stored-wallboards.
+        /// Requires active manager, Wallboard1, Hosting1, Managers Read and a whole-tenant grant, rechecked uncached before and after the read. Series contains load1; CpuSeries contains actual CPU percentage from 0 to 100. Each source may independently return an empty array; both failing returns 503. Uses fixed server configuration; no provider IDs or credentials are returned. Invalid stored wallboards return 409 invalid-stored-wallboards.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -10785,10 +10805,10 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Read the Team MySQL cluster's load and CPU history for a display that contains the widget.
+        /// Read the tenant MySQL cluster's load and CPU history for a display that contains the widget.
         /// </summary>
         /// <remarks>
-        /// Approved screen sessions are bound to their own display and recheck the approving manager's Wallboard1, Hosting1, Managers Read and whole-tenant access on each request. Hosting permissions use the existing manager snapshot, which is at most 60 seconds old. Invalid stored wallboards return 409 invalid-stored-wallboards.
+        /// Approved screen sessions are bound to their own display and recheck the approving manager's uncached Wallboard1, Hosting1, Managers Read and whole-tenant access before and after the read. Invalid stored wallboards return 409 invalid-stored-wallboards.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -14781,7 +14801,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>### Result
         /// <br/>- Returns `location`, `unit`, `descriptorAvailable`, `settingGroups` and `stateGroups`.
         /// <br/>- Group identifiers are stable eSettingGroup/eStateGroup names, deduplicated and ordered by numeric enum value.
-        /// <br/>- Metadata comes from SettingsAndStates.json and the shared enums, selected by the unit's effective type; no hardware connection is made.
+        /// <br/>- Metadata comes from Catalog.json and the shared enums, selected by the unit's effective type; no hardware connection is made.
         /// <br/>- Missing, malformed or unsupported types return descriptorAvailable=false and empty groups. No default type is substituted.
         /// <br/>- This read-only operation returns group metadata, not setting/state values or editing rights.
         /// <br/>### Errors
@@ -23909,6 +23929,148 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read the safe machine information from CycleInfo records tagged with this exact document.
+        /// </summary>
+        /// <remarks>
+        /// Same WashDoc manager, tenant, resource, retention and unit access as GetUnitDocumentTable. Returns UnitType, MachineType, MachineProgramSet, Version and numeric Values; other properties are redacted. Values are strings to preserve 64-bit precision. Empty entries means no tagged CycleInfo. 404 means the cycle is missing. At most 256 records and 128 values per record; 400 invalid KID, 401 session, 403 access, 422 oversized data, 503 storage unavailable. Implemented locally, unreleased.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UnitCycleInfoResponse> GetUnitDocumentCycleInfoAsync(string cycleKid, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/documents/{cycleKid}/cycle-info"
+                    urlBuilder_.Append("api/v1/documents/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/cycle-info");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UnitCycleInfoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read a document's table as JSON with original values and column metadata.
         /// </summary>
         /// <remarks>
@@ -25871,7 +26033,8 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>or an exact site-relative/canonical bank, location or unit KID. Names use stored text for SQL search/order and localized display.
         /// <br/>sort: kid, name, bankName, locationName, unitId, unitType, washDocId, outOfOrder, errorUnit, progress; direction asc/desc.
         /// <br/>kid sorts numerically by bank, location and unit within the trusted tenant. Unit numbers/types/WashDocId sort numerically, others by MySQL utf8mb4_general_ci; bank/location/unit numbers break ties.
-        /// <br/>fields: bankName, locationName, unitType, washDocId, outOfOrder, errorUnit, progress. Core parent names/icons remain populated.
+        /// <br/>fields: bankName, locationName, unitType, machineType, machineProgramSet, currentVersion, washDocId, outOfOrder, errorUnit, progress. Core parent names/icons remain populated.
+        /// <br/>machineType, machineProgramSet and currentVersion are the decoded original eSetting.MashineType and eSetting.MashineProgramSet and eSetting.CurrentVersion values for the exact unit; absent or unselected values are omitted. No defaults or fallback are inferred.
         /// <br/>errorUnit is the last stored eState.ErrorUnit JSON text (empty if absent, null unless selected); it does not prove the fault is still active. Sorting is lexical by stored text.
         /// <br/>progress is optional and sortable with sort=progress (Units1 only), and uses the overview-card calculation at request time: status, percent, remainingSeconds, calculatedAtUtc.
         /// <br/>Percent uses only (now-start)/(expectedEnd-start)*100, clamped to 0–100; missing/invalid timing gives null.
@@ -26251,7 +26414,7 @@ namespace Kombine.Flex.Portal.Client
         /// <br/>- Send `value` as invariant text (maximum 4096 characters) and `expectedRevision` from GetUnitGroup for this field.
         /// <br/>- Price editors send raw minor units: displayed 12.50 becomes value "1250". RegExs.Price validates this raw value, not the displayed amount. Responses remain raw; decimal display text is invalid input.
         /// <br/>- Example: `{ "value": "Washer 1", "expectedRevision": "64 hexadecimal characters" }` for the Name setting.
-        /// <br/>- Enum metadata and SettingsAndStates.json required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.
+        /// <br/>- Enum metadata and Catalog.json required/type/range/pattern/select constraints apply. Boolean values become 0/1. Empty optional values remain empty; no defaults are inserted.
         /// <br/>- Appends bank Log2 history with the editor's UserId and Sync=0. The Log24 projection must match before commit.
         /// <br/>- Returns confirmed value, source MS2000 and new revision. A successful save means storage accepted it, not that the physical unit has acknowledged it.
         /// <br/>### Errors
@@ -29204,7 +29367,7 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Production CPU and memory for Team widget 49, 50 or 51; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.
+        /// Team production CPU/memory for widgets 49–51, or dedicated Electrolux/Portal/Finelec beta Portal Web+API for widget 50; requires Hosting1, Managers Read and whole-tenant Wallboard1 access.
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -35861,10 +36024,10 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Returns the site overview's running-machine pool, refreshed at most once a minute.
+        /// Returns the site overview's running-machine pool, refreshed every 15 seconds.
         /// </summary>
         /// <remarks>
-        /// Anonymous tenant-bound full list without paging or temperature. Existing running rule: Started &lt; now &lt; Done, Started within 100 hours and Done at most three hours ahead. Returns 503 on source overflow. UnitType and Cycle may be null. Refresh at most once per minute.
+        /// Anonymous tenant-bound full list without paging or temperature. Existing running rule: Started &lt; now &lt; Done, Started within 100 hours and Done at most three hours ahead. Returns 503 on source overflow. UnitType and Cycle may be null. Refresh every 15 seconds.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="PortalApiException">A server side error occurred.</exception>
@@ -36576,7 +36739,7 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
-    /// Protected production app CPU and memory percentages for the previous 24 hours, without provider identities.
+    /// Protected app CPU and memory percentages for the previous 24 hours, without provider identities.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ApplicationLoadHistoryResponse
@@ -36600,10 +36763,22 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("memorySeries")]
         public System.Collections.Generic.ICollection<ApplicationLoadHistorySeries>? MemorySeries { get; set; } = default!;
 
+        /// <summary>
+        /// Scope of the selected metrics.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("scope")]
+        public string? Scope { get; set; } = default!;
+
+        /// <summary>
+        /// Regions whose measurements are unavailable.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("unavailableRegions")]
+        public System.Collections.Generic.ICollection<string>? UnavailableRegions { get; set; } = default!;
+
     }
 
     /// <summary>
-    /// One anonymous application CPU or memory series; null values represent missing samples.
+    /// One anonymous application CPU or memory series.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ApplicationLoadHistorySeries
@@ -36611,6 +36786,12 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("points")]
         public System.Collections.Generic.ICollection<HostingPoint>? Points { get; set; } = default!;
+
+        /// <summary>
+        /// Optional server-selected region.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("region")]
+        public string? Region { get; set; } = default!;
 
     }
 
@@ -37617,6 +37798,12 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("points")]
         public System.Collections.Generic.ICollection<HostingPoint>? Points { get; set; } = default!;
 
+        /// <summary>
+        /// Optional server-selected region (FRA/AMS), never a provider instance identifier.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("region")]
+        public string? Region { get; set; } = default!;
+
     }
 
     /// <summary>
@@ -37646,6 +37833,12 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("isCalculated")]
         public bool? IsCalculated { get; set; } = default!;
+
+        /// <summary>
+        /// Raw TagId for the recorded value, represented as text to preserve precision.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("tagId")]
+        public string? TagId { get; set; } = default!;
 
     }
 
@@ -41380,6 +41573,51 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
+    /// A tagged timestamp and the safe machine type, when present.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitCycleInfoEntry
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ms2000")]
+        public long? Ms2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitType")]
+        public UnitCycleInfoEntryUnitType? UnitType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("machineType")]
+        public UnitCycleInfoEntryMachineType? MachineType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("machineProgramSet")]
+        public UnitCycleInfoEntryMachineProgramSet? MachineProgramSet { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("version")]
+        public UnitCycleInfoEntryVersion? Version { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("values")]
+        public System.Collections.Generic.IDictionary<string, string>? Values { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Sanitized CycleInfo samples belonging to one document.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnitCycleInfoResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("cycleKid")]
+        public string? CycleKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("entries")]
+        public System.Collections.Generic.ICollection<UnitCycleInfoEntry>? Entries { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Authorized unit with the declared groups for its resolved type. No setting/state values or write permissions are returned.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -41460,6 +41698,24 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("longitude")]
         public double? Longitude { get; set; } = default!;
+
+        /// <summary>
+        /// Stored eSetting.MashineType text, only when machineType is selected; null if not selected or absent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("machineType")]
+        public string? MachineType { get; set; } = default!;
+
+        /// <summary>
+        /// Stored eSetting.MashineProgramSet text, only when machineProgramSet is selected; null if not selected or absent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("machineProgramSet")]
+        public string? MachineProgramSet { get; set; } = default!;
+
+        /// <summary>
+        /// Stored eSetting.CurrentVersion text; omitted when absent or unselected.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("currentVersion")]
+        public string? CurrentVersion { get; set; } = default!;
 
         /// <summary>
         /// Last stored eState.ErrorUnit JSON text; null unless selected, empty when absent. May describe a historical fault.
@@ -43450,6 +43706,8 @@ namespace Kombine.Flex.Portal.Client
 
         _55 = 55,
 
+        _56 = 56,
+
     }
 
     /// <summary>
@@ -44157,6 +44415,30 @@ namespace Kombine.Flex.Portal.Client
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum UnitCycleInfoEntryUnitType
+    {
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum UnitCycleInfoEntryMachineType
+    {
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum UnitCycleInfoEntryMachineProgramSet
+    {
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum UnitCycleInfoEntryVersion
+    {
 
     }
 

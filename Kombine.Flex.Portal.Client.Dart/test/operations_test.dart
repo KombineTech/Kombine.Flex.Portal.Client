@@ -2595,6 +2595,24 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetUnitDocumentCycleInfo", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/documents/fixture%20%2F%C3%A6%3F%26/cycle-info");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+
+      return http.Response(encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "entries": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitDocumentCycleInfo(cycleKid: "fixture /\u00e6?&");
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "entries": null}));
+    expect(sends, 1);
+  });
+
   test("wire GetUnitDocumentTable", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
@@ -3356,11 +3374,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
 
-      return http.Response(encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null, "scope": null, "unavailableRegions": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getMyWallboardApplicationLoadHistory(widgetType: 7);
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null, "scope": null, "unavailableRegions": null}));
     expect(sends, 1);
   });
 
@@ -3374,11 +3392,11 @@ void main() {
       expect(request.followRedirects, isFalse);
       expect(request.headers['authorization'], "Bearer fixture-token");
       expect(request.url.queryParametersAll["portrait"], <Object?>["false"]);
-      return http.Response(encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null}), 200);
+      return http.Response(encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null, "scope": null, "unavailableRegions": null}), 200);
     }));
     addTearDown(client.close); client.accessToken = 'fixture-token';
     final result = await client.getWallboardDisplayApplicationLoadHistory(widgetType: 7, displayId: "fixture /\u00e6?&", portrait: false);
-    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null}));
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"fromUtc": "2026-10-20T10:00:00Z", "toUtc": "2026-10-20T10:00:00Z", "fetchedAtUtc": "2026-10-20T10:00:00Z", "refreshAfterSeconds": 7, "cpuSeries": null, "memorySeries": null, "scope": null, "unavailableRegions": null}));
     expect(sends, 1);
   });
 

@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `1fd8cb85aa156ef87883127ab9b2d8f36d7fa0bb99ad53220d08a4c5244f3ef5`).
-233 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `c6261febf0340754ba69a32c40239ccf7babe82831cb7d38f736ac20840e2939`).
+234 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -160,6 +160,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `1fd8cb85aa156ef8788
 | `getTenantStatus` | `GetTenantStatus` | GET | `/api/v1/tenant/status` | Bearer |
 | `getTerminalExportCount` | `GetTerminalExportCount` | GET | `/api/v1/terminals/export-count` | Bearer |
 | `getTerminals` | `GetTerminals` | GET | `/api/v1/terminals` | Bearer |
+| `getUnitDocumentCycleInfo` | `GetUnitDocumentCycleInfo` | GET | `/api/v1/documents/{cycleKid}/cycle-info` | Bearer |
 | `getUnitDocumentGraph` | `GetUnitDocumentGraph` | GET | `/api/v1/documents/{cycleKid}/graph` | Bearer |
 | `getUnitDocumentHtml` | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{cycleKid}/table.html` | Bearer |
 | `getUnitDocumentIcon` | `GetUnitDocumentIcon` | GET | `/api/v1/documents/{cycleKid}/icon.svg` | Bearer |

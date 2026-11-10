@@ -1,6 +1,6 @@
 # Portal Dart operations
 
-233 operations. OpenAPI SHA-256: `d6af86b69d4bbe2972e8ca860b8dcd8b02a1db51529551e89952f53675088be2`.
+234 operations. OpenAPI SHA-256: `c6261febf0340754ba69a32c40239ccf7babe82831cb7d38f736ac20840e2939`.
 
 | Stable operation ID | Dart method | HTTP | Path |
 | --- | --- | --- | --- |
@@ -135,6 +135,7 @@
 | `GetUnitDocuments` | `getUnitDocuments` | GET | `/api/v1/units/{unitKid}/documents` |
 | `GetUnitDocumentsCount` | `getUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` |
 | `GetUnitDocumentNeighbors` | `getUnitDocumentNeighbors` | GET | `/api/v1/documents/{cycleKid}/neighbors` |
+| `GetUnitDocumentCycleInfo` | `getUnitDocumentCycleInfo` | GET | `/api/v1/documents/{cycleKid}/cycle-info` |
 | `GetUnitDocumentTable` | `getUnitDocumentTable` | GET | `/api/v1/documents/{cycleKid}/table` |
 | `GetUnitDocumentHtml` | `getUnitDocumentHtml` | GET | `/api/v1/documents/{cycleKid}/table.html` |
 | `GetUnitDocumentSvg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{cycleKid}/graph.svg` |
