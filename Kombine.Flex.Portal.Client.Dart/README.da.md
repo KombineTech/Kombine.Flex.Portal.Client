@@ -1,4 +1,4 @@
-Version 0.27.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
+Version 0.29.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
 
 Version 0.20.0 tilføjer autoriserede Plex-operationer; Plex er ikke offentligt tilgængelig.
 
@@ -26,7 +26,7 @@ Version 0.3.0 flytter ConvertToolTime og InspectToolKid til /api/v1/tenant/tools
 
 # Kombine Flex Portal Dart-klient
 
-Version **0.27.0** dækker **233 operationer** fra den medfølgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilføj nedenstående sti i `pubspec.yaml`, og kør `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
+Version **0.29.0** dækker **234 operationer** fra den medfølgende OpenAPI-kontrakt. Pak ZIP-filen ud ved siden af dit projekt, tilføj nedenstående sti i `pubspec.yaml`, og kør `dart pub get` eller `flutter pub get`. Eksemplets legitimationsoplysninger leveres af din applikation.
 
 ```yaml
 dependencies:
