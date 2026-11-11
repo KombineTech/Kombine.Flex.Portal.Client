@@ -323,7 +323,7 @@ array{'count'?: int}
 ### DocumentCell
 
 ```php
-array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool, 'tagId'?: string|null}
+array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
 ```
 
 ### DocumentColumn

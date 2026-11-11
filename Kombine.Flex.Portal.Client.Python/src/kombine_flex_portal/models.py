@@ -421,7 +421,6 @@ DocumentCell = TypedDict('DocumentCell', {
     'value': 'float | None',
     'text': 'str | None',
     'isCalculated': 'bool',
-    'tagId': 'str | None',
 }, total=False)
 
 DocumentColumn = TypedDict('DocumentColumn', {

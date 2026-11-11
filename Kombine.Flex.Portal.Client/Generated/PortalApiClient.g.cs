@@ -37834,12 +37834,6 @@ namespace Kombine.Flex.Portal.Client
         [System.Text.Json.Serialization.JsonPropertyName("isCalculated")]
         public bool? IsCalculated { get; set; } = default!;
 
-        /// <summary>
-        /// Raw TagId for the recorded value, represented as text to preserve precision.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("tagId")]
-        public string? TagId { get; set; } = default!;
-
     }
 
     /// <summary>
@@ -41573,7 +41567,7 @@ namespace Kombine.Flex.Portal.Client
     }
 
     /// <summary>
-    /// A tagged timestamp and the safe machine type, when present.
+    /// A tagged timestamp, sanitized machine metadata and bounded numeric values as strings.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class UnitCycleInfoEntry
