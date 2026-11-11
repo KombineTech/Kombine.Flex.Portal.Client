@@ -1567,11 +1567,6 @@ namespace Kombine.Flex.Portal.Client.Net20
         public bool? IsCalculated { get { return _IsCalculated; } set { _IsCalculated = value; } }
         private bool? _IsCalculated;
 
-        /// <summary>Raw TagId for the recorded value, represented as text to preserve precision.</summary>
-        [JsonField("tagId")]
-        public string TagId { get { return _TagId; } set { _TagId = value; } }
-        private string _TagId;
-
     }
 
     /// <summary>Stable enum column metadata; kind is state or setting.</summary>
@@ -5334,7 +5329,7 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
-    /// <summary>A tagged timestamp and the safe machine type, when present.</summary>
+    /// <summary>A tagged timestamp, sanitized machine metadata and bounded numeric values as strings.</summary>
     public sealed class UnitCycleInfoEntry
     {
         /// <summary>ms2000</summary>

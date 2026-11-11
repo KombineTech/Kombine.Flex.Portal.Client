@@ -731,8 +731,6 @@ export interface DocumentCell {
   "text"?: string | null;
   /** isCalculated */
   "isCalculated"?: boolean;
-  /** Raw TagId for the recorded value, represented as text to preserve precision. */
-  "tagId"?: string | null;
 }
 
 /** Stable enum column metadata; kind is state or setting. */
@@ -2515,7 +2513,7 @@ export interface ToolTimeResult {
   "secondRemainder"?: string | null;
 }
 
-/** A tagged timestamp and the safe machine type, when present. */
+/** A tagged timestamp, sanitized machine metadata and bounded numeric values as strings. */
 export interface UnitCycleInfoEntry {
   /** ms2000 */
   "ms2000"?: bigint;

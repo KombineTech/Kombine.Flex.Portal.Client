@@ -58,7 +58,7 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type DatabaseLoadHistoryResponse array{'fromUtc'?: string, 'toUtc'?: string, 'fetchedAtUtc'?: string, 'refreshAfterSeconds'?: int, 'series'?: list<DatabaseLoadHistorySeries>|null, 'cpuSeries'?: list<DatabaseLoadHistorySeries>|null}
  * @phpstan-type DatabaseLoadHistorySeries array{'points'?: list<HostingPoint>|null, 'region'?: string|null}
  * @phpstan-type DirectoryExportCountResponse array{'count'?: int}
- * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool, 'tagId'?: string|null}
+ * @phpstan-type DocumentCell array{'value'?: int|float|null, 'text'?: string|null, 'isCalculated'?: bool}
  * @phpstan-type DocumentColumn array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
  * @phpstan-type DocumentNeighbor array{'kid'?: string|null, 'lastActivityUtc'?: string}
  * @phpstan-type DocumentNeighbors array{'previous'?: DocumentNeighbor, 'next'?: DocumentNeighbor}

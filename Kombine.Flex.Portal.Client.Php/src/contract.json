@@ -1443,10 +1443,6 @@
         },
         "isCalculated": {
           "type": "boolean"
-        },
-        "tagId": {
-          "type": "string",
-          "nullable": true
         }
       },
       "additionalProperties": false
