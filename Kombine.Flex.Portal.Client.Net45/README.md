@@ -1,4 +1,4 @@
-Version 0.35.0 aligns the assembly version with the package release.
+Version 0.36.0 aligns the assembly version with the package release.
 
 Version 0.33.0 includes protected manager activity and application load widgets.
 

@@ -1,4 +1,4 @@
-La versión 0.35.0 ajusta la versión del ensamblado a la del paquete.
+La versión 0.36.0 ajusta la versión del ensamblado a la del paquete.
 
 La versión 0.33.0 incluye widgets protegidos de actividad y carga.
 
