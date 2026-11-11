@@ -1,4 +1,4 @@
-Version 0.35.0 bringer assembly-versionen i overensstemmelse med pakkeversionen.
+Version 0.36.0 bringer assembly-versionen i overensstemmelse med pakkeversionen.
 
 Version 0.33.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
 
