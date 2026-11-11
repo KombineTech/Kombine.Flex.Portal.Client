@@ -1,6 +1,6 @@
 Version 0.39.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
 
-Version 0.29.0 tilføjer autoriserede Plex-operationer; Plex er ikke offentligt tilgængelig.
+Version 0.30.0 tilføjer autoriserede Plex-operationer; Plex er ikke offentligt tilgængelig.
 
 Version 0.28.0 opdaterer widgettypen med Plex (52); serveren bestemmer separat, hvilke typer der er tilgængelige.
 
@@ -87,12 +87,12 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 
 # Kombine Flex Portal — Python-klient
 
-`kombine-flex-portal-client` er en selvstændig Python 3.11+-pakke til alle **234 offentlige API-operationer**. Den bruger kun Pythons standardbibliotek. Ingen .NET, NuGet, databaseadgang eller andre Kombine-pakker er nødvendige. Rettigheder og forretningsregler håndhæves fortsat af API'et.
+`kombine-flex-portal-client` er en selvstændig Python 3.11+-pakke til alle **235 offentlige API-operationer**. Den bruger kun Pythons standardbibliotek. Ingen .NET, NuGet, databaseadgang eller andre Kombine-pakker er nødvendige. Rettigheder og forretningsregler håndhæves fortsat af API'et.
 
 Pakken er **ikke publiceret på PyPI**. Installér den leverede wheel lokalt:
 
 ```sh
-python -m pip install ./kombine_flex_portal_client-0.42.0-py3-none-any.whl
+python -m pip install ./kombine_flex_portal_client-0.43.0-py3-none-any.whl
 ```
 
 Version 0.13.0 følger den aktuelle beta-kandidat (182 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.

@@ -7312,6 +7312,58 @@
     "binary": false
   },
   {
+    "operation": "GetUnitDocumentMeasurements",
+    "dartMethod": "getUnitDocumentMeasurements",
+    "example": null,
+    "method": "GET",
+    "path": "api/v1/documents/{cycleKid}/measurements",
+    "auth": true,
+    "statuses": [
+      200
+    ],
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "required": false,
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "bodyRequired": false,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DocumentMeasurements"
+    },
+    "binary": false
+  },
+  {
     "operation": "GetUnitDocumentTable",
     "dartMethod": "getUnitDocumentTable",
     "example": null,

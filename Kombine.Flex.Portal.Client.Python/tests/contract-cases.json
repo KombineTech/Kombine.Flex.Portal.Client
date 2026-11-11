@@ -7789,6 +7789,63 @@
     "example": {}
   },
   {
+    "operation": "GetUnitDocumentMeasurements",
+    "python": "get_unit_document_measurements",
+    "javascript": "getUnitDocumentMeasurements",
+    "method": "GET",
+    "path": "api/v1/documents/{cycleKid}/measurements",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "auth": true,
+    "parameters": [
+      {
+        "name": "cycleKid",
+        "where": "path",
+        "py": "cycle_kid",
+        "js": "cycleKid",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "States",
+        "where": "query",
+        "py": "states",
+        "js": "states",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "Settings",
+        "where": "query",
+        "py": "settings",
+        "js": "settings",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "HistoricalMeasurements",
+        "where": "query",
+        "py": "historical_measurements",
+        "js": "historicalMeasurements",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    ],
+    "body": null,
+    "multipart": null,
+    "response": {
+      "$ref": "#/components/schemas/DocumentMeasurements"
+    },
+    "binary": false,
+    "example": {}
+  },
+  {
     "operation": "GetUnitDocumentTable",
     "python": "get_unit_document_table",
     "javascript": "getUnitDocumentTable",

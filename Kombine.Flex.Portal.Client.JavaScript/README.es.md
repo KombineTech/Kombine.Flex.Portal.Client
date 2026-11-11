@@ -1,6 +1,6 @@
 La versión 0.38.0 incluye widgets protegidos de actividad y carga.
 
-La versión 0.29.0 agrega operaciones Plex autorizadas; Plex no es público.
+La versión 0.30.0 agrega operaciones Plex autorizadas; Plex no es público.
 
 La versión 0.28.0 actualiza el tipo de widget con Plex (52); el servidor controla por separado los tipos disponibles.
 
@@ -85,12 +85,12 @@ Use el mismo tenant y entorno que su cliente: añada /docs#changelog a la URL ba
 
 # Kombine Flex Portal — cliente JavaScript
 
-`@kombine/flex-portal-client` admite **Node.js 22+ / modern browsers** y las **234 operaciones públicas**. No necesita dependencias de ejecución, .NET, NuGet ni otras bibliotecas Kombine. Es un paquete ESM con JavaScript compilado y declaraciones TypeScript; requiere fetch, BigInt, Web Streams y ES2022. Los permisos y las reglas de negocio siguen en la API.
+`@kombine/flex-portal-client` admite **Node.js 22+ / modern browsers** y las **235 operaciones públicas**. No necesita dependencias de ejecución, .NET, NuGet ni otras bibliotecas Kombine. Es un paquete ESM con JavaScript compilado y declaraciones TypeScript; requiere fetch, BigInt, Web Streams y ES2022. Los permisos y las reglas de negocio siguen en la API.
 
 El paquete **todavía no está publicado en npm**. Instale la distribución local:
 
 ```sh
-npm install ./kombine-flex-portal-client-0.40.0.tgz
+npm install ./kombine-flex-portal-client-0.41.0.tgz
 ```
 
 La versión 0.13.0 correspondía al candidato beta anterior (182 operaciones). Cambie los campos de respuesta `icon`, `bankIcon` y `unitIcon` por `iconKid`, `bankIconKid` y `unitIconKid`. Use las rutas de iconos con un conjunto explícito descritas en el [registro de cambios de la API](/docs#changelog). La operación generada `RenewManagerSession` renueva una sesión de administrador que aún no ha caducado; asigne el token devuelto al mismo cliente antes de continuar. No existe un token de renovación separado ni renovación automática. Las descargas de Windows devuelven streams; estos clientes solicitan archivos completos, sin cabeceras de rango ni condicionales.

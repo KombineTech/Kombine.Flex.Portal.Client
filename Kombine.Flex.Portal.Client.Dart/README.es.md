@@ -1,4 +1,4 @@
-La versión 0.29.0 incluye widgets protegidos de actividad y carga.
+La versión 0.30.0 incluye widgets protegidos de actividad y carga.
 
 La versión 0.20.0 agrega operaciones Plex autorizadas; Plex no es público.
 
@@ -26,7 +26,7 @@ La versión 0.3.0 mueve ConvertToolTime e InspectToolKid a /api/v1/tenant/tools/
 
 # Cliente Dart de Kombine Flex Portal
 
-La versión **0.29.0** incluye **234 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicación, añada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicación proporciona las credenciales del ejemplo.
+La versión **0.30.0** incluye **235 operaciones** del contrato OpenAPI adjunto. Extraiga el ZIP junto a su aplicación, añada la dependencia local y ejecute `dart pub get` o `flutter pub get`. La aplicación proporciona las credenciales del ejemplo.
 
 ```yaml
 dependencies:

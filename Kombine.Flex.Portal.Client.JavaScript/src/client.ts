@@ -663,6 +663,11 @@ export class PortalClient extends BaseClient {
     return this.send("GetUnitDocumentCycleInfo", {"cycleKid": cycleKid}, undefined, request) as Promise<Models.UnitCycleInfoResponse>;
   }
 
+  /** Read individual authorized source measurements without storage identifiers. */
+  getUnitDocumentMeasurements(cycleKid: string, options: Models.GetUnitDocumentMeasurementsOptions = {}, request: RequestOptions = {}): Promise<Models.DocumentMeasurements> {
+    return this.send("GetUnitDocumentMeasurements", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<Models.DocumentMeasurements>;
+  }
+
   /** Read a document's table as JSON with original values and column metadata. */
   getUnitDocumentTable(cycleKid: string, options: Models.GetUnitDocumentTableOptions = {}, request: RequestOptions = {}): Promise<Models.DocumentTable> {
     return this.send("GetUnitDocumentTable", {"cycleKid": cycleKid, "States": options.states, "Settings": options.settings, "HistoricalMeasurements": options.historicalMeasurements}, undefined, request) as Promise<Models.DocumentTable>;

@@ -3006,6 +3006,20 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read individual authorized source measurements without storage identifiers.
+        /// </summary>
+        /// <remarks>
+        /// Uses the same access and field selection as the document table. Preserves duplicate measurements. CycleInfo is sanitized; source tags are not returned.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DocumentMeasurements> GetUnitDocumentMeasurementsAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read a document's table as JSON with original values and column metadata.
         /// </summary>
         /// <remarks>
@@ -24071,6 +24085,165 @@ namespace Kombine.Flex.Portal.Client
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// Read individual authorized source measurements without storage identifiers.
+        /// </summary>
+        /// <remarks>
+        /// Uses the same access and field selection as the document table. Preserves duplicate measurements. CycleInfo is sanitized; source tags are not returned.
+        /// </remarks>
+        /// <param name="states">Exact comma-separated eState names; omit for permitted states or empty for none.</param>
+        /// <param name="settings">Exact comma-separated eSetting names; omit for permitted settings or empty for none.</param>
+        /// <param name="historicalMeasurements">Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="PortalApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<DocumentMeasurements> GetUnitDocumentMeasurementsAsync(string cycleKid, string? states = null, string? settings = null, bool? historicalMeasurements = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (cycleKid == null)
+                throw new System.ArgumentNullException("cycleKid");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/documents/{cycleKid}/measurements"
+                    urlBuilder_.Append("api/v1/documents/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cycleKid, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/measurements");
+                    urlBuilder_.Append('?');
+                    if (states != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("States")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(states, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (settings != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Settings")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(settings, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (historicalMeasurements != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("HistoricalMeasurements")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(historicalMeasurements, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await SendRequestAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DocumentMeasurements>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new PortalApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new PortalApiException<ProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new PortalApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// Read a document's table as JSON with original values and column metadata.
         /// </summary>
         /// <remarks>
@@ -37893,6 +38066,51 @@ namespace Kombine.Flex.Portal.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("next")]
         public DocumentNeighbor? Next { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Source measurements for a single authorized cycle.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DocumentMeasurements
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("cycleKid")]
+        public string? CycleKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitKid")]
+        public string? UnitKid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("finished")]
+        public bool? Finished { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rows")]
+        public System.Collections.Generic.ICollection<DocumentMeasurement>? Rows { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One authorized, sanitized source measurement; storage identifiers are not exposed.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DocumentMeasurement
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ms2000")]
+        public long? Ms2000 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("source")]
+        public string? Source { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fieldId")]
+        public int? FieldId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("field")]
+        public string? Field { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("text")]
+        public string? Text { get; set; } = default!;
 
     }
 

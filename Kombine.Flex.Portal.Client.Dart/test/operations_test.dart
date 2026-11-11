@@ -2613,6 +2613,26 @@ void main() {
     expect(sends, 1);
   });
 
+  test("wire GetUnitDocumentMeasurements", () async {
+    var sends = 0;
+    final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {
+      sends++;
+      expect(request.method, "GET");
+      expect(request.url.origin, 'https://example.invalid');
+      expect(request.url.toString().split('?').first, "https://example.invalid/api/v1/documents/fixture%20%2F%C3%A6%3F%26/measurements");
+      expect(request.followRedirects, isFalse);
+      expect(request.headers['authorization'], "Bearer fixture-token");
+      expect(request.url.queryParametersAll["States"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["Settings"], <Object?>["fixture"]);
+      expect(request.url.queryParametersAll["HistoricalMeasurements"], <Object?>["false"]);
+      return http.Response(encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "finished": false, "rows": null}), 200);
+    }));
+    addTearDown(client.close); client.accessToken = 'fixture-token';
+    final result = await client.getUnitDocumentMeasurements(cycleKid: "fixture /\u00e6?&", states: "fixture", settings: "fixture", historicalMeasurements: false);
+    expect(encodeApiJson(result), encodeApiJson(<String, Object?>{"cycleKid": null, "unitKid": null, "finished": false, "rows": null}));
+    expect(sends, 1);
+  });
+
   test("wire GetUnitDocumentTable", () async {
     var sends = 0;
     final client = PortalClient('https://example.invalid/', httpClient: MockClient((request) async {

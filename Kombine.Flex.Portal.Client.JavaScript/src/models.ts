@@ -765,6 +765,32 @@ export interface DocumentNeighbors {
   "next"?: DocumentNeighbor;
 }
 
+/** Source measurements for a single authorized cycle. */
+export interface DocumentMeasurements {
+  /** cycleKid */
+  "cycleKid"?: string | null;
+  /** unitKid */
+  "unitKid"?: string | null;
+  /** finished */
+  "finished"?: boolean;
+  /** rows */
+  "rows"?: (DocumentMeasurement)[] | null;
+}
+
+/** One authorized, sanitized source measurement; storage identifiers are not exposed. */
+export interface DocumentMeasurement {
+  /** ms2000 */
+  "ms2000"?: bigint;
+  /** source */
+  "source"?: string | null;
+  /** fieldId */
+  "fieldId"?: number;
+  /** field */
+  "field"?: string | null;
+  /** text */
+  "text"?: string | null;
+}
+
 /** Only columns with data are returned, with values indexed by column position. A missing cell is null; a stored null is a cell with null text/value. */
 export interface DocumentTable {
   /** cycleKid */
@@ -4395,6 +4421,12 @@ export interface GetUnitDocumentsOptions {
 export interface GetUnitDocumentsCountOptions {
   search?: string;
   date?: string;
+}
+
+export interface GetUnitDocumentMeasurementsOptions {
+  states?: string;
+  settings?: string;
+  historicalMeasurements?: boolean;
 }
 
 export interface GetUnitDocumentTableOptions {

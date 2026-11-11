@@ -134,6 +134,7 @@
 | `GetUnitDocumentsCount` | `get_unit_documents_count` | `getUnitDocumentsCount` | GET | `/api/v1/units/{unitKid}/documents/count` |
 | `GetUnitDocumentNeighbors` | `get_unit_document_neighbors` | `getUnitDocumentNeighbors` | GET | `/api/v1/documents/{cycleKid}/neighbors` |
 | `GetUnitDocumentCycleInfo` | `get_unit_document_cycle_info` | `getUnitDocumentCycleInfo` | GET | `/api/v1/documents/{cycleKid}/cycle-info` |
+| `GetUnitDocumentMeasurements` | `get_unit_document_measurements` | `getUnitDocumentMeasurements` | GET | `/api/v1/documents/{cycleKid}/measurements` |
 | `GetUnitDocumentTable` | `get_unit_document_table` | `getUnitDocumentTable` | GET | `/api/v1/documents/{cycleKid}/table` |
 | `GetUnitDocumentHtml` | `get_unit_document_html` | `getUnitDocumentHtml` | GET | `/api/v1/documents/{cycleKid}/table.html` |
 | `GetUnitDocumentSvg` | `get_unit_document_svg` | `getUnitDocumentSvg` | GET | `/api/v1/documents/{cycleKid}/graph.svg` |

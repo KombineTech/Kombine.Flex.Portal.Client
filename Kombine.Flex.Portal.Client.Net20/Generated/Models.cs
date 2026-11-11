@@ -1634,6 +1634,61 @@ namespace Kombine.Flex.Portal.Client.Net20
 
     }
 
+    /// <summary>Source measurements for a single authorized cycle.</summary>
+    public sealed class DocumentMeasurements
+    {
+        /// <summary>cycleKid</summary>
+        [JsonField("cycleKid")]
+        public string CycleKid { get { return _CycleKid; } set { _CycleKid = value; } }
+        private string _CycleKid;
+
+        /// <summary>unitKid</summary>
+        [JsonField("unitKid")]
+        public string UnitKid { get { return _UnitKid; } set { _UnitKid = value; } }
+        private string _UnitKid;
+
+        /// <summary>finished</summary>
+        [JsonField("finished")]
+        public bool? Finished { get { return _Finished; } set { _Finished = value; } }
+        private bool? _Finished;
+
+        /// <summary>rows</summary>
+        [JsonField("rows")]
+        public DocumentMeasurement[] Rows { get { return _Rows; } set { _Rows = value; } }
+        private DocumentMeasurement[] _Rows;
+
+    }
+
+    /// <summary>One authorized, sanitized source measurement; storage identifiers are not exposed.</summary>
+    public sealed class DocumentMeasurement
+    {
+        /// <summary>ms2000</summary>
+        [JsonField("ms2000")]
+        public long? Ms2000 { get { return _Ms2000; } set { _Ms2000 = value; } }
+        private long? _Ms2000;
+
+        /// <summary>source</summary>
+        [JsonField("source")]
+        public string Source { get { return _Source; } set { _Source = value; } }
+        private string _Source;
+
+        /// <summary>fieldId</summary>
+        [JsonField("fieldId")]
+        public int? FieldId { get { return _FieldId; } set { _FieldId = value; } }
+        private int? _FieldId;
+
+        /// <summary>field</summary>
+        [JsonField("field")]
+        public string Field { get { return _Field; } set { _Field = value; } }
+        private string _Field;
+
+        /// <summary>text</summary>
+        [JsonField("text")]
+        public string Text { get { return _Text; } set { _Text = value; } }
+        private string _Text;
+
+    }
+
     /// <summary>Only columns with data are returned, with values indexed by column position. A missing cell is null; a stored null is a cell with null text/value.</summary>
     public sealed class DocumentTable
     {
@@ -9780,6 +9835,23 @@ namespace Kombine.Flex.Portal.Client.Net20
         /// <summary>UTC calendar date (yyyy-MM-dd), inclusive through its last millisecond; defaults to UTC today.</summary>
         public string Date { get { return _Date; } set { _Date = value; } }
         private string _Date;
+
+    }
+
+    /// <summary>Optional query/header parameters for GetUnitDocumentMeasurements. Null values use API defaults.</summary>
+    public sealed class GetUnitDocumentMeasurementsOptions
+    {
+        /// <summary>Exact comma-separated eState names; omit for permitted states or empty for none.</summary>
+        public string States { get { return _States; } set { _States = value; } }
+        private string _States;
+
+        /// <summary>Exact comma-separated eSetting names; omit for permitted settings or empty for none.</summary>
+        public string Settings { get { return _Settings; } set { _Settings = value; } }
+        private string _Settings;
+
+        /// <summary>Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.</summary>
+        public bool? HistoricalMeasurements { get { return _HistoricalMeasurements; } set { _HistoricalMeasurements = value; } }
+        private bool? _HistoricalMeasurements;
 
     }
 

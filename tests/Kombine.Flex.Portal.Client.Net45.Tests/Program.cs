@@ -39,7 +39,7 @@ internal static class Program
             LoopbackCamera(false); LoopbackCamera(true); LoopbackTransport();
             LoopbackPost(false);
             LoopbackPost(true);
-            Console.WriteLine("PASS: " + _assertions + " checks, 234 API operations; CLR " + Environment.Version + ".");
+            Console.WriteLine("PASS: " + _assertions + " checks, 235 API operations; CLR " + Environment.Version + ".");
             return 0;
         }
         catch (Exception error)
@@ -190,7 +190,7 @@ internal static class Program
     private static void Contracts()
     {
         string[] rows = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ContractCases.tsv"));
-        Equal(234, rows.Length, "Published operation count");
+        Equal(235, rows.Length, "Published operation count");
         foreach (string row in rows)
         {
             string[] fields = row.Split(new char[] { '\t' });
@@ -242,8 +242,8 @@ internal static class Program
             Equal(0L, resident.Balances[1].PreviousBalanceMinor.Value, "Real zero preserved");
             Check(Encoding.UTF8.GetString(fake.Last.Body).IndexOf("CaseSensitive-KID", StringComparison.Ordinal) >= 0, "Typed request serialization");
         }
-        BankUserResponse user = (BankUserResponse)PortalJson.Deserialize("{\"deletedAt\":\"2026-09-26T15:23:40.1234567+02:00\",\"futureField\":true}", typeof(BankUserResponse));
-        Equal("2026-09-26T15:23:40.1234567+02:00", user.DeletedAt, "Timestamp text and offset preserved");
+        BankUserResponse user = (BankUserResponse)PortalJson.Deserialize("{\"deletedAt\":\"2026-09-26T15:23:40.1235567+02:00\",\"futureField\":true}", typeof(BankUserResponse));
+        Equal("2026-09-26T15:23:40.1235567+02:00", user.DeletedAt, "Timestamp text and offset preserved");
         ManagerThemeResponse theme = (ManagerThemeResponse)PortalJson.Deserialize("{\"themeMode\":2}", typeof(ManagerThemeResponse));
         Equal(2, theme.ThemeMode.Value, "Enum numeric identity preserved without enum package");
         ValidationProblemDetails errors = (ValidationProblemDetails)PortalJson.Deserialize("{\"errors\":{\"email\":[\"invalid\"]}}", typeof(ValidationProblemDetails));
@@ -371,10 +371,10 @@ internal static class Program
         using (PortalApiClient client = Client(fake))
         {
             GetBankAccountOptions options = new GetBankAccountOptions(); options.From = "2026-09-01"; options.Through = "2026-09-26"; options.IncludeZero = false;
-            client.TimeoutMilliseconds = 1234; client.GetBankAccount("bank-KID", options);
+            client.TimeoutMilliseconds = 1235; client.GetBankAccount("bank-KID", options);
             Check(fake.Last.Uri.Query.IndexOf("From=2026-09-01", StringComparison.Ordinal) >= 0, "Date only query");
             Check(fake.Last.Uri.Query.IndexOf("IncludeZero=false", StringComparison.Ordinal) >= 0, "Lowercase boolean query");
-            Equal(1234, fake.Last.Timeout, "Explicit timeout propagated");
+            Equal(1235, fake.Last.Timeout, "Explicit timeout propagated");
             SearchBanksOptions search = new SearchBanksOptions(); search.Q = "æ&plus+ #?="; client.SearchBanks(search);
             Equal("?q=%C3%A6%26plus%2B%20%23%3F%3D", fake.Last.Uri.Query, "Encoded search query");
             Throws<ArgumentException>(delegate() { client.AccessToken = "header\r\ninjection"; }, "Token rejects control characters");
@@ -396,7 +396,7 @@ internal static class Program
         string[] invalid = new string[] { "http://tenant.example/", "https://user:pass@tenant.example/", "https://tenant.example/?tenant=999", "https://tenant.example/#token", "https://tenant.example/api" };
         foreach (string uri in invalid)
         { string captured = uri; Throws<ArgumentException>(delegate() { new PortalApiClient(new Uri(captured)); }, "Unsafe endpoint rejected"); }
-        using (PortalApiClient client = new PortalApiClient(new Uri("http://127.0.0.1:12345/"))) { Check(client.Endpoint.IsLoopback, "HTTP loopback test endpoint allowed"); }
+        using (PortalApiClient client = new PortalApiClient(new Uri("http://127.0.0.1:12355/"))) { Check(client.Endpoint.IsLoopback, "HTTP loopback test endpoint allowed"); }
     }
     private static void LoopbackTransport()
     {

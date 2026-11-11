@@ -1,6 +1,6 @@
 Version 0.35.0 indeholder beskyttede widgets til administratoraktivitet og driftsbelastning.
 
-Version 0.29.0 tilføjer autoriserede Plex-operationer; Plex er ikke offentligt tilgængelig.
+Version 0.30.0 tilføjer autoriserede Plex-operationer; Plex er ikke offentligt tilgængelig.
 
 Version 0.28.0 opdaterer widgettypen med Plex (52); serveren bestemmer separat, hvilke typer der er tilgængelige.
 

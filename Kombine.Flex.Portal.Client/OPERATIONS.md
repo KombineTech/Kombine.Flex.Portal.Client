@@ -163,6 +163,7 @@ Generated from the checked-in public integration contract. All business rules ar
 | `GetUnitDocumentGraphAsync` | GET | `/api/v1/documents/{cycleKid}/graph` |
 | `GetUnitDocumentHtmlAsync` | GET | `/api/v1/documents/{cycleKid}/table.html` |
 | `GetUnitDocumentIconAsync` | GET | `/api/v1/documents/{cycleKid}/icon.svg` |
+| `GetUnitDocumentMeasurementsAsync` | GET | `/api/v1/documents/{cycleKid}/measurements` |
 | `GetUnitDocumentNeighborsAsync` | GET | `/api/v1/documents/{cycleKid}/neighbors` |
 | `GetUnitDocumentPngAsync` | GET | `/api/v1/documents/{cycleKid}/graph.png` |
 | `GetUnitDocumentsAsync` | GET | `/api/v1/units/{unitKid}/documents` |

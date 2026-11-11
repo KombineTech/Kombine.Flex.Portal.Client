@@ -442,6 +442,21 @@ DocumentNeighbors = TypedDict('DocumentNeighbors', {
     'next': 'DocumentNeighbor',
 }, total=False)
 
+DocumentMeasurements = TypedDict('DocumentMeasurements', {
+    'cycleKid': 'str | None',
+    'unitKid': 'str | None',
+    'finished': 'bool',
+    'rows': 'list[DocumentMeasurement] | None',
+}, total=False)
+
+DocumentMeasurement = TypedDict('DocumentMeasurement', {
+    'ms2000': 'int',
+    'source': 'str | None',
+    'fieldId': 'int',
+    'field': 'str | None',
+    'text': 'str | None',
+}, total=False)
+
 DocumentTable = TypedDict('DocumentTable', {
     'cycleKid': 'str | None',
     'unitKid': 'str | None',

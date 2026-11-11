@@ -535,6 +535,10 @@ class PortalClient(BaseClient):
         'Read the safe machine information from CycleInfo records tagged with this exact document.'
         return self._request('GetUnitDocumentCycleInfo', {'cycleKid': cycle_kid}, None)
 
+    def get_unit_document_measurements(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> DocumentMeasurements:
+        'Read individual authorized source measurements without storage identifiers.'
+        return self._request('GetUnitDocumentMeasurements', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)
+
     def get_unit_document_table(self, cycle_kid: str, *, states: str | None = None, settings: str | None = None, historical_measurements: bool | None = None) -> DocumentTable:
         "Read a document's table as JSON with original values and column metadata."
         return self._request('GetUnitDocumentTable', {'cycleKid': cycle_kid, 'States': states, 'Settings': settings, 'HistoricalMeasurements': historical_measurements}, None)

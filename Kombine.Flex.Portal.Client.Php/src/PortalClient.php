@@ -62,6 +62,8 @@ namespace Kombine\Flex\Portal;
  * @phpstan-type DocumentColumn array{'kind'?: string|null, 'name'?: string|null, 'localization'?: string|null, 'color'?: string|null, 'onlyNumericValues'?: bool, 'iconKid'?: string|null}
  * @phpstan-type DocumentNeighbor array{'kid'?: string|null, 'lastActivityUtc'?: string}
  * @phpstan-type DocumentNeighbors array{'previous'?: DocumentNeighbor, 'next'?: DocumentNeighbor}
+ * @phpstan-type DocumentMeasurements array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'finished'?: bool, 'rows'?: list<DocumentMeasurement>|null}
+ * @phpstan-type DocumentMeasurement array{'ms2000'?: int, 'source'?: string|null, 'fieldId'?: int, 'field'?: string|null, 'text'?: string|null}
  * @phpstan-type DocumentTable array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'unitName'?: string|null, 'finished'?: bool, 'fromMs2000'?: int, 'toMs2000'?: int, 'columns'?: list<DocumentColumn>|null, 'rows'?: list<DocumentTableRow>|null}
  * @phpstan-type DocumentTableRow array{'ms2000'?: int, 'cells'?: list<DocumentCell>|null}
  * @phpstan-type DocumentUnitOption array{'kid'?: string|null, 'locationKid'?: string|null, 'name'?: string|null, 'unitType'?: int|null}
@@ -1688,6 +1690,17 @@ final class PortalClient extends BaseClient
     public function getUnitDocumentCycleInfo(mixed $cycleKid): mixed
     {
         return $this->request('GetUnitDocumentCycleInfo', ['cycleKid' => $cycleKid], null);
+    }
+
+    /**
+     * Read individual authorized source measurements without storage identifiers.
+     * @param string $cycleKid
+     * @param array{'States'?: string, 'Settings'?: string, 'HistoricalMeasurements'?: bool} $options
+     * @return DocumentMeasurements
+     */
+    public function getUnitDocumentMeasurements(mixed $cycleKid, array $options = []): mixed
+    {
+        return $this->request('GetUnitDocumentMeasurements', ['cycleKid' => $cycleKid] + $options, null);
     }
 
     /**

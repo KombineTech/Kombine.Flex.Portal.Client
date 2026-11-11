@@ -130,6 +130,7 @@ GetUnitDocuments	GET	/api/v1/units/{unitKid}/documents	200	{}
 GetUnitDocumentsCount	GET	/api/v1/units/{unitKid}/documents/count	200	{}
 GetUnitDocumentNeighbors	GET	/api/v1/documents/{cycleKid}/neighbors	200	{}
 GetUnitDocumentCycleInfo	GET	/api/v1/documents/{cycleKid}/cycle-info	200	{}
+GetUnitDocumentMeasurements	GET	/api/v1/documents/{cycleKid}/measurements	200	{}
 GetUnitDocumentTable	GET	/api/v1/documents/{cycleKid}/table	200	{}
 GetUnitDocumentHtml	GET	/api/v1/documents/{cycleKid}/table.html	200	{}
 GetUnitDocumentSvg	GET	/api/v1/documents/{cycleKid}/graph.svg	200	{}
