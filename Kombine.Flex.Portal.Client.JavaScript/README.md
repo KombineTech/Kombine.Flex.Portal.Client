@@ -85,12 +85,12 @@ Use the same tenant and environment as your client: append /docs#changelog to it
 
 # Kombine Flex Portal — JavaScript client
 
-`@kombine/flex-portal-client` supports **Node.js 22+ / modern browsers** and all **233 public API operations**. No runtime packages, .NET, NuGet or other Kombine libraries are required. It is ESM with compiled JavaScript and TypeScript declarations, requiring fetch, BigInt, Web Streams and ES2022. Business rules and authorization remain in the API.
+`@kombine/flex-portal-client` supports **Node.js 22+ / modern browsers** and all **234 public API operations**. No runtime packages, .NET, NuGet or other Kombine libraries are required. It is ESM with compiled JavaScript and TypeScript declarations, requiring fetch, BigInt, Web Streams and ES2022. Business rules and authorization remain in the API.
 
 The package is **not yet published to npm**. Install the supplied local distribution:
 
 ```sh
-npm install ./kombine-flex-portal-client-0.39.0.tgz
+npm install ./kombine-flex-portal-client-0.40.0.tgz
 ```
 
 Version 0.13.0 previously targeted the beta candidate with 182 operations. Migrate response fields `icon`, `bankIcon` and `unitIcon` to `iconKid`, `bankIconKid` and `unitIconKid`. Use the explicit-set icon routes described in the [API changelog](/docs#changelog). The generated `RenewManagerSession` operation renews an unexpired manager session; assign its returned access token to the same client before further calls. There is no separate refresh token or automatic renewal. Windows application downloads return streams; these clients request complete files, without range or conditional headers.

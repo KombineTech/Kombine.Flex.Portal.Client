@@ -1,3 +1,7 @@
+## 0.29.0
+
+Refresh the bundled Portal contract to 234 operations and preserve lossless authenticated requests.
+
 ## 0.27.0
 
 - Refresh the client guide.
