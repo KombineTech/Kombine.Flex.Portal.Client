@@ -92,7 +92,7 @@ Brug samme tenant og miljø som klienten: tilføj /docs#changelog til API’ets 
 Pakken er **ikke publiceret på PyPI**. Installér den leverede wheel lokalt:
 
 ```sh
-python -m pip install ./kombine_flex_portal_client-0.41.0-py3-none-any.whl
+python -m pip install ./kombine_flex_portal_client-0.42.0-py3-none-any.whl
 ```
 
 Version 0.13.0 følger den aktuelle beta-kandidat (182 operationer). Skift svarfelterne `icon`, `bankIcon` og `unitIcon` til `iconKid`, `bankIconKid` og `unitIconKid`. Brug ikonruter med eksplicit ikonsæt som beskrevet i [API-changelog](/docs#changelog). Den genererede operation `RenewManagerSession` fornyer en administratorsession, som endnu ikke er udløbet; tildel det returnerede token til samme klient før næste kald. Der er ingen separat refresh-token eller automatisk fornyelse. Windows-appdownloads returnerer streams; klienterne henter hele filer uden range- eller conditional-headere.

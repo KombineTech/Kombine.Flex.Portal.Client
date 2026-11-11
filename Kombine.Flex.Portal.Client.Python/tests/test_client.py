@@ -4,15 +4,23 @@ from pathlib import Path
 import threading
 import time
 import unittest
+import tomllib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit, quote
 from urllib.error import HTTPError
 
 from kombine_flex_portal import PortalClient, PortalApiError, PortalProtocolError, PortalSessionError, PortalDownload, PortalUploadFile
 from kombine_flex_portal import models
+from kombine_flex_portal import __version__
 from kombine_flex_portal._runtime import _CONTRACT
 
 CASES = json.loads(Path(__file__).with_name('contract-cases.json').read_text())
+
+
+class VersionTests(unittest.TestCase):
+    def test_public_version_matches_package_metadata(self):
+        metadata = tomllib.loads((Path(__file__).parent.parent / 'pyproject.toml').read_text(encoding='utf-8'))
+        self.assertEqual(__version__, metadata['project']['version'])
 
 
 class Response(io.BytesIO):
