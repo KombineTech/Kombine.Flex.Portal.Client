@@ -1,7 +1,7 @@
 # Portal PHP operations
 
-Generated from the bundled public OpenAPI snapshot (SHA-256 `ecbd4f8864671e512da4685949e56224214326b742f1e4ad9cf382774c0c0767`).
-234 operations. Business permissions are enforced by the API.
+Generated from the bundled public OpenAPI snapshot (SHA-256 `8225a048818df9920a08e329a61e35940e9f2031134dbbbc36514700d7cd8b11`).
+235 operations. Business permissions are enforced by the API.
 
 | PHP method | Stable operation ID | HTTP | Path | Access |
 | --- | --- | --- | --- | --- |
@@ -164,6 +164,7 @@ Generated from the bundled public OpenAPI snapshot (SHA-256 `ecbd4f8864671e512da
 | `getUnitDocumentGraph` | `GetUnitDocumentGraph` | GET | `/api/v1/documents/{cycleKid}/graph` | Bearer |
 | `getUnitDocumentHtml` | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{cycleKid}/table.html` | Bearer |
 | `getUnitDocumentIcon` | `GetUnitDocumentIcon` | GET | `/api/v1/documents/{cycleKid}/icon.svg` | Bearer |
+| `getUnitDocumentMeasurements` | `GetUnitDocumentMeasurements` | GET | `/api/v1/documents/{cycleKid}/measurements` | Bearer |
 | `getUnitDocumentNeighbors` | `GetUnitDocumentNeighbors` | GET | `/api/v1/documents/{cycleKid}/neighbors` | Bearer |
 | `getUnitDocumentPng` | `GetUnitDocumentPng` | GET | `/api/v1/documents/{cycleKid}/graph.png` | Bearer |
 | `getUnitDocumentSvg2` | `GetUnitDocumentSvg2` | GET | `/api/v1/documents/{cycleKid}/graph2.svg` | Bearer |

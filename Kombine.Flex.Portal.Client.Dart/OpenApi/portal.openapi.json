@@ -22062,6 +22062,197 @@
         ]
       }
     },
+    "/api/v1/documents/{cycleKid}/measurements": {
+      "get": {
+        "tags": [
+          "UnitDocuments"
+        ],
+        "summary": "Read individual authorized source measurements without storage identifiers.",
+        "description": "Uses the same access and field selection as the document table. Preserves duplicate measurements. CycleInfo is sanitized; source tags are not returned.",
+        "operationId": "GetUnitDocumentMeasurements",
+        "parameters": [
+          {
+            "name": "cycleKid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "States",
+            "in": "query",
+            "description": "Exact comma-separated eState names; omit for permitted states or empty for none.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Settings",
+            "in": "query",
+            "description": "Exact comma-separated eSetting names; omit for permitted settings or empty for none.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "HistoricalMeasurements",
+            "in": "query",
+            "description": "Also permit the fixed historical WashDoc measurement/event fields, independently of today's unit model. Default false; graph2 always enables this.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentMeasurements"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentMeasurements"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentMeasurements"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ManagerBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/documents/{cycleKid}/table": {
       "get": {
         "tags": [
@@ -33688,6 +33879,58 @@
         },
         "additionalProperties": false,
         "description": "Previous (higher numeric Doc ID) and next (lower numeric Doc ID) documents. Null means no document exists in that direction."
+      },
+      "DocumentMeasurements": {
+        "type": "object",
+        "properties": {
+          "cycleKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitKid": {
+            "type": "string",
+            "nullable": true
+          },
+          "finished": {
+            "type": "boolean"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentMeasurement"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Source measurements for a single authorized cycle."
+      },
+      "DocumentMeasurement": {
+        "type": "object",
+        "properties": {
+          "ms2000": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "fieldId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "field": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One authorized, sanitized source measurement; storage identifiers are not exposed."
       },
       "DocumentTable": {
         "type": "object",

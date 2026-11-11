@@ -161,6 +161,7 @@
 | `GetUnitDocumentGraph` | GET | `/api/v1/documents/{cycleKid}/graph` |
 | `GetUnitDocumentHtml` | GET | `/api/v1/documents/{cycleKid}/table.html` |
 | `GetUnitDocumentIcon` | GET | `/api/v1/documents/{cycleKid}/icon.svg` |
+| `GetUnitDocumentMeasurements` | GET | `/api/v1/documents/{cycleKid}/measurements` |
 | `GetUnitDocumentNeighbors` | GET | `/api/v1/documents/{cycleKid}/neighbors` |
 | `GetUnitDocumentPng` | GET | `/api/v1/documents/{cycleKid}/graph.png` |
 | `GetUnitDocumentSvg2` | GET | `/api/v1/documents/{cycleKid}/graph2.svg` |

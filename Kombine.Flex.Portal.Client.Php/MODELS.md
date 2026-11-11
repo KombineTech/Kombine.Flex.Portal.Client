@@ -344,6 +344,18 @@ array{'kid'?: string|null, 'lastActivityUtc'?: string}
 array{'previous'?: DocumentNeighbor, 'next'?: DocumentNeighbor}
 ```
 
+### DocumentMeasurements
+
+```php
+array{'cycleKid'?: string|null, 'unitKid'?: string|null, 'finished'?: bool, 'rows'?: list<DocumentMeasurement>|null}
+```
+
+### DocumentMeasurement
+
+```php
+array{'ms2000'?: int, 'source'?: string|null, 'fieldId'?: int, 'field'?: string|null, 'text'?: string|null}
+```
+
 ### DocumentTable
 
 ```php

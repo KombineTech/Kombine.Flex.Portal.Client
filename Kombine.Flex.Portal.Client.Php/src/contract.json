@@ -1502,6 +1502,56 @@
       },
       "additionalProperties": false
     },
+    "DocumentMeasurements": {
+      "type": "object",
+      "properties": {
+        "cycleKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "unitKid": {
+          "type": "string",
+          "nullable": true
+        },
+        "finished": {
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/DocumentMeasurement"
+          },
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "DocumentMeasurement": {
+      "type": "object",
+      "properties": {
+        "ms2000": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "source": {
+          "type": "string",
+          "nullable": true
+        },
+        "fieldId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "field": {
+          "type": "string",
+          "nullable": true
+        },
+        "text": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "DocumentTable": {
       "type": "object",
       "properties": {
@@ -12891,6 +12941,54 @@
       "multipart": null,
       "response": {
         "$ref": "#/components/schemas/UnitCycleInfoResponse"
+      },
+      "binary": false
+    },
+    "GetUnitDocumentMeasurements": {
+      "method": "GET",
+      "path": "api/v1/documents/{cycleKid}/measurements",
+      "statuses": [
+        200
+      ],
+      "auth": true,
+      "parameters": [
+        {
+          "name": "cycleKid",
+          "where": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "States",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Settings",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "HistoricalMeasurements",
+          "where": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "body": null,
+      "multipart": null,
+      "response": {
+        "$ref": "#/components/schemas/DocumentMeasurements"
       },
       "binary": false
     },

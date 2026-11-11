@@ -1999,6 +1999,27 @@ namespace Kombine.Flex.Portal.Client.Net45
             return (UnitCycleInfoResponse)SendJson("GET", path, null, headers, 200, typeof(UnitCycleInfoResponse));
         }
 
+        /// <summary>Read individual authorized source measurements without storage identifiers.</summary>
+        public DocumentMeasurements GetUnitDocumentMeasurements(string @cycleKid)
+        {
+            return GetUnitDocumentMeasurements(@cycleKid, null);
+        }
+
+        /// <summary>Read individual authorized source measurements without storage identifiers.</summary>
+        public DocumentMeasurements GetUnitDocumentMeasurements(string @cycleKid, GetUnitDocumentMeasurementsOptions options)
+        {
+            string path = "api/v1/documents/{cycleKid}/measurements";
+            path = path.Replace("{cycleKid}", PathValue(@cycleKid));
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            if (options != null)
+            {
+                path = AddQuery(path, "States", options.States);
+                path = AddQuery(path, "Settings", options.Settings);
+                path = AddQuery(path, "HistoricalMeasurements", options.HistoricalMeasurements);
+            }
+            return (DocumentMeasurements)SendJson("GET", path, null, headers, 200, typeof(DocumentMeasurements));
+        }
+
         /// <summary>Read a document's table as JSON with original values and column metadata.</summary>
         public DocumentTable GetUnitDocumentTable(string @cycleKid)
         {
